@@ -54,6 +54,8 @@ def thesis(r: dict, sec: dict, uni_sector: dict) -> tuple[str, list[str]]:
         risks.append(f"Beta {f['beta']:.1f}，大盤回檔時波動放大")
     if pf.get("dist200") is not None and pf["dist200"] > 0.35:
         risks.append(f"股價高於 200 日線 {pf['dist200'] * 100:.0f}%，短線追高風險")
+    if v["capped"]:
+        risks.append(f"模型原始上檔空間 {v['raw_blend'] / r['price'] - 1:.0%}，已套用上檔上限，估值可能過度樂觀，請與券商共識交叉比對")
     if v["n_methods"] < 3:
         risks.append("可用估值方法少於 3 種，目標價可信度較低")
     return "\n\n".join(parts), risks

@@ -59,13 +59,16 @@ def value_stock(price: float, f: dict, pf: dict, market: str, peers: dict, p: di
         adj = 1.0
         if g is not None and peers.get("g") is not None:
             adj = clip(1 + 0.5 * (g - peers["g"]), 0.8, 1.3)
-        tpe = clip(peers["pe"] * adj, *v["pe_bounds"])
+        peer_pe = clip(peers["pe"] * adj, *v["pe_bounds"])
+        cur_pe = price / eps
+        # 部分均值回歸：12 個月內本益比只向同業水準靠攏 pe_reversion（預設一半），避免『預估獲利暴增 → 本益比極低』被誤判成大幅低估
+        tpe = clip(cur_pe + v["pe_reversion"] * (peer_pe - cur_pe), *v["pe_bounds"])
         methods["pe"] = {"label": "同業相對本益比", "value": eps * tpe,
-                         "detail": f"預估EPS {eps:.2f} × 目標本益比 {tpe:.1f}（同業中位數 {peers['pe']:.1f} × 成長調整 {adj:.2f}）"}
+                         "detail": f"預估EPS {eps:.2f} × 目標本益比 {tpe:.1f}（現行 {cur_pe:.1f} 向同業 {peer_pe:.1f} 靠攏 {v['pe_reversion']:.0%}；同業中位數 {peers['pe']:.1f} × 成長調整 {adj:.2f}）"}
     if eps and eps > 0 and g is not None and g >= 0.05:
-        fpe = clip(g * 100 * v["peg_target"], *v["pe_bounds"])
+        fpe = clip(min(g, v["peg_growth_cap"]) * 100 * v["peg_target"], *v["pe_bounds"])
         methods["peg"] = {"label": "PEG 成長調整", "value": eps * fpe,
-                          "detail": f"預估EPS {eps:.2f} × 合理本益比 {fpe:.1f}（成長率 {g * 100:.1f}% × PEG {v['peg_target']}）"}
+                          "detail": f"預估EPS {eps:.2f} × 合理本益比 {fpe:.1f}（成長率 {min(g, v['peg_growth_cap']) * 100:.1f}%（上限 {v['peg_growth_cap']:.0%}）× PEG {v['peg_target']}）"}
     if f.get("same_ccy") and g is not None:
         val, d = dcf_per_share(f, g, market, f.get("beta"), p)
         if val:
@@ -89,6 +92,7 @@ def value_stock(price: float, f: dict, pf: dict, market: str, peers: dict, p: di
         m["weight"] = w[k] / tot
         m["upside"] = m["value"] / price - 1
     blend = sum(m["value"] * m["weight"] for m in methods.values())
+    raw_blend = blend
     blend = min(blend, price * (1 + v["max_upside"]))
     base = price * (1 + (blend / price - 1) * p["target_shrink"])
     vals = [m["value"] for m in methods.values()]
@@ -101,6 +105,6 @@ def value_stock(price: float, f: dict, pf: dict, market: str, peers: dict, p: di
     return {
         "methods": methods, "growth": g, "peer_pe": peers.get("pe"), "blend": blend, "base": base, "bull": bull, "bear": bear,
         "dispersion": d, "ev": ev, "upside": base / price - 1, "ev_upside": ev / price - 1,
-        "spread": spread, "confidence": confidence, "dropped": dropped,
+        "raw_blend": raw_blend, "capped": raw_blend > blend + 1e-9, "spread": spread, "confidence": confidence, "dropped": dropped,
         "rr": (base - price) / (price - bear) if bear < price else None, "n_methods": len(methods),
     }
