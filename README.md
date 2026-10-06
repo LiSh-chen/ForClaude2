@@ -24,3 +24,11 @@ Repo Secrets:`ANTHROPIC_API_KEY`、`NEWS_SUBSCRIBERS`(逗號或換行分隔)、`
 - 退訂目前是「回信說 unsubscribe」,由你手動改 Secret;訂閱量大時需要另做訂閱/退訂網頁。
 - `sources.json` 的 feed 網址未經實際連線驗證(開發環境網路受限),首次執行看日誌中的 ✓/✗ 並修正。
 - 評分只看標題+摘要,未讀全文。
+
+---
+
+# 投資研究日誌系統
+
+另含一套每日財經新聞 → 產業 → 個股 → 目標價 → 研究日誌的系統，並定期檢討績效、回饋參數。
+說明見 [docs/invest-journal.md](docs/invest-journal.md)，方法論見 [docs/methodology.md](docs/methodology.md)。
+程式在 `ijournal/`，設定在 `config/`，workflow 為 `invest_journal_daily.yml` / `invest_journal_review.yml`。
