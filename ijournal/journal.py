@@ -200,6 +200,10 @@ def write_journal(date: str, ctx: dict) -> str:
         A("- 這是第一期日誌，無前期可比較。")
     A("")
 
+    if ctx.get("emerging_top"):
+        A("## 附：前瞻專區\n")
+        A("主榜追逐『現在被關注』的產業；另有專區找『證據已具備、但新聞尚未充分報導』的結構性趨勢（見網站「前瞻專區」）。今日趨勢雷達前三：" +
+          "、".join(f"{n}（{s}）" for n, s in ctx["emerging_top"]) + "。\n")
     # 7 自我檢視
     A("## 八、系統自我檢視\n")
     perf = ctx.get("perf_summary")

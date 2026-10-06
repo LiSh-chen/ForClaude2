@@ -105,3 +105,19 @@ def sector_news_score(scan_res: dict, sid: str, market: str, history: dict | Non
             base = sum(past) / len(past)
             accel = heat / base - 1 if base > 0 else None
     return {"heat": heat, "sent": sent, "accel": accel, "n": d["n"] + o["n"]}
+
+
+def unmatched_titles(items: list[dict], groups: list[dict], now: dt.datetime | None = None, limit: int = 150) -> list[str]:
+    """回傳沒有命中任何已知產業/趨勢關鍵字的近期標題（新興線索的原料）。"""
+    now = now or dt.datetime.now(dt.timezone.utc)
+    rxs = [r for r in (_compile(g["keywords_zh"] + g["keywords_en"]) for g in groups) if r is not None]
+    out = []
+    for it in sorted(items, key=lambda x: -x.get("weight", 1.0)):
+        if recency_weight(it.get("published"), now) <= 0:
+            continue
+        text = it["title"] + " " + it.get("summary", "")
+        if not any(r.search(text) for r in rxs):
+            out.append(it["title"])
+        if len(out) >= limit:
+            break
+    return out

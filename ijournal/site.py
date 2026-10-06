@@ -26,7 +26,7 @@ ul.arch{list-style:none;padding:0}ul.arch li{padding:6px 0;border-bottom:1px sol
 svg text{fill:var(--fg);font-size:11px}
 footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);font-size:12.5px}
 """
-NAV = [("index.html", "最新日誌"), ("archive.html", "日誌列表"), ("performance.html", "績效追蹤"), ("reviews.html", "檢討報告"), ("methodology.html", "方法論")]
+NAV = [("index.html", "最新日誌"), ("emerging.html", "前瞻專區"), ("archive.html", "日誌列表"), ("performance.html", "績效追蹤"), ("reviews.html", "檢討報告"), ("methodology.html", "方法論")]
 
 
 def md2html(text: str) -> str:
@@ -65,7 +65,10 @@ def build_site() -> None:
     jdir, rdir, data = C.path("journal"), C.path("reviews"), C.path("data")
     (out / "journal").mkdir(exist_ok=True)
     (out / "reviews").mkdir(exist_ok=True)
+    edir = C.path("emerging")
+    (out / "emerging").mkdir(exist_ok=True)
     journals = sorted(jdir.glob("*.md"), reverse=True)
+    emerging = sorted(edir.glob("*.md"), reverse=True)
     reviews = sorted(rdir.glob("*.md"), reverse=True)
     # 日誌頁
     for f in journals:
@@ -73,6 +76,14 @@ def build_site() -> None:
         (out / "journal" / f"{f.stem}.html").write_text(page(f.stem, body, "../"), encoding="utf-8")
     for f in reviews:
         (out / "reviews" / f"{f.stem}.html").write_text(page(f.stem, md2html(f.read_text(encoding="utf-8")), "../"), encoding="utf-8")
+    for f in emerging:
+        (out / "emerging" / f"{f.stem}.html").write_text(page("前瞻專區 " + f.stem, md2html(f.read_text(encoding="utf-8")), "../"), encoding="utf-8")
+    if emerging:
+        older = "".join(f'<li><a href="emerging/{f.stem}.html">{f.stem}</a></li>' for f in emerging[1:30])
+        body = md2html(emerging[0].read_text(encoding="utf-8")) + (f'<h2>過往前瞻報告</h2><ul class="arch">{older}</ul>' if older else "")
+    else:
+        body = "<h1>前瞻專區</h1><p>第一份前瞻報告將在下次日誌產生時出現。</p>"
+    (out / "emerging.html").write_text(page("前瞻專區", body), encoding="utf-8")
     # 首頁
     if journals:
         latest = journals[0]
@@ -99,14 +110,22 @@ def build_site() -> None:
                 t.append(f"<tr><td>{h} 日</td><td>{s['n']}</td><td>{pct(s['avg_ret'], 1, True)}</td><td>{pct(s['avg_alpha'], 1, True)}</td><td>{pct(s['win'], 0)}</td><td>{pct(s['win_alpha'], 0)}</td></tr>")
         t.append("</table></div>")
         body += ["<h2>到期績效</h2>", "".join(t)]
-        coh = sorted(perf["cohorts"], key=lambda c: c["date"])
+        coh = sorted([c for c in perf["cohorts"] if c.get("book", "main") == "main"], key=lambda c: c["date"])
         body += ["<h2>各期推薦批次迄今平均超額報酬</h2>", _bar_svg([(c["date"], c["avg_alpha"]) for c in coh[-40:] if isnum(c["avg_alpha"])])]
         t = ['<h2>全部推薦明細</h2><div class="tw"><table><tr><th>推薦日</th><th>代號</th><th>名稱</th><th>進場價</th><th>目標價</th><th>現價</th><th>報酬</th><th>超額</th><th>天數</th><th>狀態</th></tr>']
-        for p in sorted(perf["positions"], key=lambda p: (p["date"], p["ticker"]), reverse=True):
+        for p in sorted([p for p in perf["positions"] if p.get("book", "main") == "main"], key=lambda p: (p["date"], p["ticker"]), reverse=True):
             st = "達標" if p["target_hit"] else "觸停損" if p["stop_hit"] else "持有"
             t.append(f"<tr><td>{p['date']}</td><td>{p['ticker']}</td><td>{html.escape(p['name'])}</td><td>{p['entry']:.2f}</td><td>{p['target']:.2f}</td><td>{p['last_price']:.2f}</td><td>{pct(p['rlast'], 1, True)}</td><td>{pct(p['alast'], 1, True)}</td><td>{p['n_days']}</td><td>{st}</td></tr>")
         t.append("</table></div>")
         body.append("".join(t))
+        es = (perf.get("emerging") or {}).get("summary", {})
+        if any(s["n"] for s in es.values()):
+            t = ['<h2>前瞻專區（獨立追蹤）</h2><div class="tw"><table><tr><th>持有期</th><th>到期檔數</th><th>平均報酬</th><th>平均超額報酬</th><th>贏大盤比例</th></tr>']
+            for h, s in es.items():
+                if s["n"]:
+                    t.append(f"<tr><td>{h} 日</td><td>{s['n']}</td><td>{pct(s['avg_ret'], 1, True)}</td><td>{pct(s['avg_alpha'], 1, True)}</td><td>{pct(s['win_alpha'], 0)}</td></tr>")
+            t.append("</table></div>")
+            body.append("".join(t))
         body.append(f'<p class="muted">更新於 {perf["generated"]}。報酬以推薦日收盤價為進場價，未計成本。</p>')
     else:
         body.append("<p>尚無追蹤資料。</p>")

@@ -57,7 +57,7 @@ def diagnostics(min_obs: int, horizon: int, params: dict) -> dict:
         sel_alpha += [r["a"] for r in rows if r["picked"]]
         focus_alpha += [r["a"] for r in rows if r["in_focus"]]
     mean = lambda xs: (sum(xs) / len(xs)) if xs else None
-    pos = [p for p in perf["positions"] if p.get(f"r{horizon}") is not None]
+    pos = [p for p in perf["positions"] if p.get("book", "main") == "main" and p.get(f"r{horizon}") is not None]
     exp = lambda p: (1 + p["target_upside"]) ** (horizon / 250) - 1
     bias = mean([p[f"r{horizon}"] - exp(p) for p in pos])
     return {"ic_dates": ic_dates, "method_ic_dates": mdates, "factor_ic": {k: mean(v) for k, v in factor_ics.items()},
@@ -74,7 +74,8 @@ def run_review(period: str, tune: bool = False, date: str | None = None, min_dat
     H = t["horizon_days"]
     d = diagnostics(t["min_obs_per_date"], H, params)
     perf = d["perf"]
-    pos = perf.get("positions", [])
+    pos = [p for p in perf.get("positions", []) if p.get("book", "main") == "main"]
+    emg = [p for p in perf.get("positions", []) if p.get("book") == "emerging"]
     L, A = [], None
     A = L.append
     label = "週" if period == "weekly" else "月"
@@ -97,7 +98,7 @@ def run_review(period: str, tune: bool = False, date: str | None = None, min_dat
         A("**各期推薦批次迄今表現**\n")
         A("| 推薦日 | 檔數 | 已持有交易日 | 平均報酬 | 平均超額報酬 |")
         A("|---|---|---|---|---|")
-        for c in sorted(perf["cohorts"], key=lambda x: x["date"], reverse=True)[:15]:
+        for c in sorted([c for c in perf["cohorts"] if c.get("book", "main") == "main"], key=lambda x: x["date"], reverse=True)[:15]:
             A(f"| {c['date']} | {c['n']} | {c['n_days']} | {pct(c['avg_ret'], 1, True)} | {pct(c['avg_alpha'], 1, True)} |")
         A("")
         A("## 二、最佳與最差個股（迄今）\n")
@@ -153,6 +154,27 @@ def run_review(period: str, tune: bool = False, date: str | None = None, min_dat
         for sct, ps in sorted(by.items(), key=lambda kv: -(avg([x["alast"] for x in kv[1]]) or -9)):
             A(f"| {sname.get(sct, sct)} | {len(ps)} | {pct(avg([x['alast'] for x in ps]), 1, True)} | {pct(avg([x['rlast'] for x in ps]), 1, True)} |")
         A("")
+    # 前瞻專區
+    A("## 六之二、前瞻專區績效（獨立追蹤）\n")
+    es = perf.get("emerging", {}).get("summary", {})
+    if emg and any(s["n"] for s in es.values()):
+        A("| 持有期 | 到期檔數 | 平均報酬 | 平均超額報酬 | 勝率（贏大盤） |")
+        A("|---|---|---|---|---|")
+        for h in HORIZONS:
+            s = es.get(str(h))
+            if s and s["n"]:
+                A(f"| {h} 日 | {s['n']} | {pct(s['avg_ret'], 1, True)} | {pct(s['avg_alpha'], 1, True)} | {pct(s['win_alpha'], 0)} |")
+        A("\n若此專區長期沒有超額報酬，代表『冷門趨勢』篩選沒有附加價值，應下修或停用，不應因為故事動聽而保留。\n")
+        bt = {}
+        for p in emg:
+            bt.setdefault(p.get("theme") or "?", []).append(p)
+        A("| 趨勢 | 筆數 | 平均超額（迄今） |")
+        A("|---|---|---|")
+        for k, ps in sorted(bt.items(), key=lambda kv: -(avg([x["alast"] for x in kv[1]]) or -9)):
+            A(f"| {k} | {len(ps)} | {pct(avg([x['alast'] for x in ps]), 1, True)} |")
+        A("")
+    else:
+        A(f"已追蹤 {len(emg)} 筆，尚無到期樣本。\n" if emg else "尚無前瞻專區推薦紀錄。\n")
     # 7 診斷
     A("## 七、診斷與改進行動\n")
     acts = []

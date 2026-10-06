@@ -107,3 +107,48 @@ def test_end_to_end_with_feedback_loop():
     from ijournal.site import build_site
     build_site()
     assert (C.path("site") / "index.html").exists() and (C.path("site") / "performance.html").exists()
+
+
+def test_emerging_zone_pipeline():
+    import json
+    from ijournal.daily import run_daily
+    from ijournal.tracker import run_tracker
+    uni = C.load_universe()
+    assert len(uni["themes"]) >= 6 and any(s.get("emerging_only") for s in uni["stocks"].values())
+    # 趨勢專屬標的不得出現在主榜產業內
+    main_ids = {s["id"] for s in uni["sectors"]}
+    assert all(s["sector"] in main_ids for s in uni["stocks"].values() if not s.get("emerging_only"))
+    prov = DemoProvider(end=dt.date(2026, 9, 30))
+    d = run_daily(prov, asof="2026-07-06")
+    md = (C.path("emerging") / f"{d}.md").read_text(encoding="utf-8")
+    assert "前瞻專區" in md and "論點不成立的條件" in md
+    rec = C.load_json(C.path("data") / "emerging" / f"{d}.json")
+    assert rec["themes"] and all(p["book"] == "emerging" and p["theme"] for p in rec["picks"])
+    # 主榜推薦不含趨勢專屬標的；前瞻績效與主榜分開統計
+    main = C.load_json(C.path("data") / "picks" / f"{d}.json")
+    assert not ({p["ticker"] for p in main["picks"]} & {s["ticker"] for s in uni["stocks"].values() if s.get("emerging_only")})
+    perf = run_tracker(prov)
+    assert "emerging" in perf and all(p["book"] in ("main", "emerging") for p in perf["positions"])
+    assert perf["summary"]["5"]["n"] == len([p for p in perf["positions"] if p["book"] == "main" and p.get("r5") is not None])
+
+
+def test_emerging_scoring_prefers_low_coverage():
+    import datetime as dt2
+    from ijournal.emerging import score_themes
+    from ijournal.news import scan as nscan
+    uni, src = C.load_universe(), C.load_sources()
+    now = dt2.datetime.now(dt2.timezone.utc)
+    # 大量報導 water 主題、完全不報導 pq 主題
+    items = [{"title": f"drought water scarcity ultrapure water story {i}", "summary": "", "link": "", "source": "t", "market": "US", "weight": 1.0, "published": now} for i in range(40)]
+    main = nscan(items, uni, src, now)
+    from ijournal.daily import run_daily  # noqa: F401  (確保模組可匯入)
+    from ijournal.features import norm_fundamentals, price_features
+    prov = DemoProvider(end=dt.date(2026, 9, 30))
+    px = prov.prices(list(uni["stocks"]) + ["^GSPC", "^TWII"])
+    from ijournal.selection import score_stocks
+    feats = {t: price_features(px[t], px["^TWII" if uni["stocks"][t]["market"] == "TW" else "^GSPC"]) for t in uni["stocks"]}
+    funds = {t: norm_fundamentals(prov.fundamentals(t), feats[t]["last"], "USD") for t in uni["stocks"]}
+    rows = score_stocks(uni, feats, funds, {"US": {}, "TW": {}}, main, P)
+    th = {t["id"]: t for t in score_themes(uni, items, main, src, rows, P)}
+    assert th["water_infra"]["coverage_ratio"] > th["pq_security"]["coverage_ratio"]
+    assert th["pq_security"]["components"]["low_coverage"] > th["water_infra"]["components"]["low_coverage"]
