@@ -65,9 +65,10 @@ function rangeBar(price, bear, base, bull, full) {
     h('div', {class: 'tg', style: `left:${P(base)}`}), h('div', {class: 'px', style: `left:${P(price)}`}),
     kept.map(k => h('span', {class: 'lb', style: `left:${k[2].toFixed(1)}%;transform:translateX(${k[2] < 14 ? '0' : k[2] > 86 ? '-100%' : '-50%'})`}, k[0] + ' ' + px(k[1]))));
 }
-function barRows(rows, wide) { // [{label, v(0-100), text, tip}]
-  return h('div', {class: 'bl'}, rows.map(r => h('div', {class: 'row' + (wide ? ' wide' : ''), tip: r.tip},
-    h('span', null, r.label), h('div', {class: 'tr'}, h('div', {class: 'fi', style: `width:${Math.max(0, Math.min(100, r.v || 0))}%`})), h('span', {class: 'v num'}, r.text ?? nz(r.v, 0)))));
+function barRows(rows, wide, emph) { // [{label, v(0-100), text, tip}]；emph=true：≥80 標「強」（實色粗體）、<30 標「弱」（轉灰）
+  return h('div', {class: 'bl'}, rows.map(r => { const hi = emph && (r.v || 0) >= 80, lo = emph && isNum(r.v) && r.v < 30;
+    return h('div', {class: 'row' + (wide ? ' wide' : '') + (hi ? ' hi' : '') + (lo ? ' lo' : ''), tip: r.tip},
+      h('span', null, r.label), h('div', {class: 'tr'}, h('div', {class: 'fi' + (emph && !hi ? ' mid' : ''), style: `width:${Math.max(0, Math.min(100, r.v || 0))}%`})), h('span', {class: 'v num'}, r.text ?? nz(r.v, 0), hi ? ' 強' : lo ? ' 弱' : '')); }));
 }
 function lineChart(series) {
   const c = series.c, n = c.length; if (n < 3) return h('p', {class: 'muted'}, '價格資料不足');
@@ -102,7 +103,9 @@ const kpi = (l, x, tp) => h('div', {class: 'kpi', tip: tp}, h('div', {class: 'l'
 function newsLinks(a) { return a && a.length ? h('ul', null, a.map(n => h('li', null, safeUrl(n.link) ? h('a', {href: n.link, target: '_blank', rel: 'noopener noreferrer'}, n.title) : n.title, h('span', {class: 'muted sm'}, ` ｜${n.source}`)))) : null; }
 function whyBlock(p) {
   if (!p.why) return null;
-  return sec('為什麼推薦（利多）', h('p', {class: 'hl'}, p.headline), h('ul', {class: 'why'}, p.why.map(w => h('li', null, h('span', {class: 'badge'}, w.tag), ' ', w.t, w.news ? newsLinks([w.news]) : null))));
+  return h('section', {class: 'whybox'}, h('h4', null, '為什麼推薦（利多）'), h('p', {class: 'hl'}, p.headline),
+    p.highlights && p.highlights.length ? h('div', {class: 'hlrow'}, p.highlights.map(x => h('span', {class: 'hl-chip'}, x.t))) : null,
+    h('ul', {class: 'why'}, p.why.map(w => h('li', null, h('span', {class: 'badge'}, w.tag), ' ', w.t, w.news ? newsLinks([w.news]) : null))));
 }
 function riskBlock(p) {
   if (!p.risks_now && !p.risks_watch) return sec('主要風險', h('ul', null, (p.risks || []).map(r => h('li', null, r))));
@@ -129,7 +132,7 @@ function stockDrawer(p) {
         h('span', {style: 'white-space:nowrap'}, `${m.label} ${Math.round(m.weight * 100)}%`), h('span', {class: 'dv'}, h('i', {class: 'zero'}), h('i', {class: 'b', style: `${pos ? 'left:50%' : `right:50%`};width:${w}%;background:var(${pos ? '--up' : '--down'});border-radius:${pos ? '0 4px 4px 0' : '4px 0 0 4px'}`})), h('span', {class: 'num', style: 'text-align:right;white-space:nowrap'}, `${px(m.value)} ${pct(m.upside, 0)}`))),
         h('p', {class: 'p'}, m.detail + `（隱含 ${pct(m.upside)}）`)); })),
       p.dropped.length ? h('p', {class: 'muted sm'}, '已剔除離群估值：' + p.dropped.join('、')) : null),
-    sec('綜合評分（0–100）', barRows(FACTORS.map(([key, lb]) => ({label: lb, v: p.scores[key], text: nz(p.scores[key], 0)})))),
+    sec('綜合評分（0–100；≥80 標「強」、<30 標「弱」）', barRows(FACTORS.map(([key, lb]) => ({label: lb, v: p.scores[key], text: nz(p.scores[key], 0)})), false, true)),
     sec('關鍵指標', h('div', {class: 'kpis'}, kpi('ROE', pct(f.roe, 1, false)), kpi('營業利益率', pct(f.op_margin, 1, false)), kpi('毛利率', pct(f.gross_margin, 1, false)), kpi('營收年增', pct(f.rev_growth)), kpi('獲利年增', pct(f.eps_growth)),
       kpi('預估本益比', nz(f.pe_fwd), `同業中位數 ${nz(t.peer_pe)}`), kpi('同業本益比', nz(t.peer_pe)), kpi('PEG', nz(f.peg, 2)), kpi('負債權益比', nz(f.de, 2)), kpi('Beta', nz(f.beta, 2)), kpi('市值', big(f.market_cap)), kpi('券商目標價', px(f.target_mean), `${f.n_analysts || '—'} 位分析師`),
       kpi('近3月相對大盤', pct(k.rel_3m)), kpi('距200日線', pct(k.dist200)), kpi('距52週高', pct(k.from_high)), kpi('年化波動', pct(k.vol_ann, 0, false)))),
@@ -169,12 +172,12 @@ function themeDrawer(x, e) {
 
 /* ---------- 卡片 ---------- */
 function pickCard(p) {
-  const t = p.target;
-  return h('button', {class: 'pick', type: 'button', on: {click: () => stockDrawer(p)}, 'aria-label': `${p.ticker} ${p.name}，點擊看詳細`, tip: p.headline},
-    h('div', {class: 'r1'}, h('span', {class: 'rk'}, p.rank), h('span', {class: 'tk'}, p.ticker.replace(/\.(TW|TWO)$/, '')), h('span', {class: 'nm'}, p.name), h('span', {class: 'up2 num', tip: `目標 ${px(t.base)} 相對現價 ${px(p.price)}`}, delta(t.upside))),
-    h('div', {class: 'r2'}, h('span', {class: 'muted sm sc2'}, p.theme_name || p.sector_name),
+  const t = p.target, top = p.rank === 1, hls = p.highlights || [];
+  return h('button', {class: 'pick' + (top ? ' top' : ''), type: 'button', on: {click: () => stockDrawer(p)}, 'aria-label': `${p.ticker} ${p.name}，${top ? '首選，' : ''}點擊看詳細`, tip: p.headline},
+    h('div', {class: 'r1'}, top ? h('span', {class: 'crown'}, '★ 首選') : h('span', {class: 'rk'}, p.rank), h('span', {class: 'tk'}, p.ticker.replace(/\.(TW|TWO)$/, '')), h('span', {class: 'nm'}, p.name), h('span', {class: 'up2 num', tip: `目標 ${px(t.base)} 相對現價 ${px(p.price)}`}, delta(t.upside))),
+    h('div', {class: 'r2'}, hls.length ? hls.map(x => h('span', {class: 'hl-chip', tip: '亮點'}, x.t)) : h('span', {class: 'muted sm sc2'}, p.theme_name || p.sector_name),
       t.confidence === '低' && h('span', {class: 'badge lo', tip: '各估值方法差距大，信心偏低'}, '信心低'), t.capped && h('span', {class: 'badge lo', tip: '模型原始上檔更高，已套用上限'}, '上限'), p.relaxed && h('span', {class: 'badge lo', tip: '幅度分歧、方向一致'}, '分歧'), p.also_main && h('span', {class: 'badge'}, '亦主榜'),
-      h('span', {class: 'muted sm num', style: 'margin-left:auto;white-space:nowrap'}, `${px(p.price)} → ${px(t.base)}`)),
+      h('span', {class: 'muted sm num px2'}, `${px(p.price)} → ${px(t.base)}`)),
     h('div', {class: 'r3'}, h('div', {style: 'flex:1;min-width:0'}, rangeBar(p.price, t.bear, t.base, t.bull, null)), spark(p.series.c.slice(-60), 72, 24)));
 }
 function marketCol(m, picks, st, book) {
@@ -193,15 +196,32 @@ function indexTile(x) {
 function heatmap(m) {
   const list = S.snap.sectors[m]; const sc = list.map(x => x.score).filter(isNum), lo = Math.min(...sc), hi = Math.max(...sc);
   const R = ramp(0), R2 = ramp(1);
+  const tile = x => { const c = ramp(hi > lo ? (x.score - lo) / (hi - lo) : .5);
+    return h('button', {class: 'hx ' + (x.focus ? 'focus' : 'dim'), type: 'button', style: `background:${c.bg};color:${c.fg}`, tip: `${x.name}\n分數 ${nz(x.score, 0)}（新聞 ${x.parts.news}｜動能 ${x.parts.mom}｜成長 ${x.parts.fund}）\n${(x.tags || []).join('、')}`, on: {click: () => sectorDrawer(x, m)}, 'aria-label': `${x.focus ? '重點產業 ' : ''}${x.name} 分數 ${nz(x.score, 0)}`},
+      h('span', {class: 'n'}, (x.focus ? '★ ' : '') + x.name), h('span', {class: 's num'}, nz(x.score, 0), x.focus && x.tags && x.tags[0] ? h('small', null, x.tags[0].split('（')[0]) : null)); };
+  const foc = list.filter(x => x.focus), oth = list.filter(x => !x.focus);
   return h('div', null,
-    h('div', {class: 'heat'}, list.map(x => { const c = ramp(hi > lo ? (x.score - lo) / (hi - lo) : .5);
-      return h('button', {class: 'hx', type: 'button', style: `background:${c.bg};color:${c.fg}`, tip: `${x.name}\n分數 ${nz(x.score, 0)}（新聞 ${x.parts.news}｜動能 ${x.parts.mom}｜成長 ${x.parts.fund}）\n${(x.tags || []).join('、')}`, on: {click: () => sectorDrawer(x, m)}, 'aria-label': `${x.name} 分數 ${nz(x.score, 0)}`},
-        h('span', {class: 'n'}, (x.focus ? '★ ' : '') + x.name), h('span', {class: 's num'}, nz(x.score, 0), h('small', null, x.tags && x.tags[0] ? x.tags[0].split('（')[0] : ''))); })),
-    h('div', {class: 'scale'}, '分數低', h('i', {style: `background:linear-gradient(90deg,${R.bg},${R2.bg})`}), '分數高（顏色為同市場內相對高低；★＝今日重點產業，只從重點產業選股）'));
+    h('div', {class: 'hm-title'}, h('span', {class: 'star'}, '★'), ' 重點產業', h('span', {class: 'muted sm'}, '　今日只從這裡選股')), h('div', {class: 'heat big'}, foc.map(tile)),
+    oth.length ? h('div', {class: 'hm-title dim'}, '其他產業') : null, oth.length ? h('div', {class: 'heat small'}, oth.map(tile)) : null,
+    h('div', {class: 'scale'}, '分數低', h('i', {style: `background:linear-gradient(90deg,${R.bg},${R2.bg})`}), '分數高（顏色＝同市場內相對高低）'));
+}
+function keyCell(label, main, sub, chips, onClick, muted) {
+  return h('button', {class: 'key' + (muted ? ' off' : ''), type: 'button', on: {click: onClick}}, h('span', {class: 'kl'}, label), h('span', {class: 'km'}, main), h('span', {class: 'ks'}, sub), chips && chips.length ? h('span', {class: 'kc'}, chips.map(x => h('span', {class: 'hl-chip'}, x.t))) : null);
+}
+function keyStrip(sn) {
+  const cells = ['TW', 'US'].map(m => { const p = sn.picks[m][0];
+    return p ? keyCell(`${MK[m]}首選`, `${p.ticker.replace(/\.(TW|TWO)$/, '')} ${p.name}`, [delta(p.target.upside), h('span', {class: 'muted'}, ' 目標上檔')], p.highlights, () => stockDrawer(p))
+      : keyCell(`${MK[m]}首選`, '今日無合格標的', [h('span', {class: 'muted'}, '不硬補滿；點看原因')], [], () => shortageDrawer(m, sn.shortage[m], ''), true); });
+  const hot = ['TW', 'US'].map(m => [m, sn.sectors[m][0]]).filter(x => x[1]);
+  if (hot.length) cells.push(h('div', {class: 'key'}, h('span', {class: 'kl'}, '最熱產業'), hot.map(([m, x]) => h('button', {type: 'button', class: 'kline', on: {click: () => sectorDrawer(x, m)}}, h('span', {class: 'muted'}, MK[m] + ' '), h('b', null, x.name), h('span', {class: 'num'}, ` ${nz(x.score, 0)}`)))));
+  const th = sn.emerging && sn.emerging.themes[0];
+  if (th) cells.push(keyCell('前瞻首選趨勢', th.name, [h('span', {class: 'num'}, `分數 ${nz(th.score, 0)}`), h('span', {class: 'muted'}, `　證據級${th.tier}・${th.status}`)], [], () => themeDrawer(th)));
+  return h('div', {class: 'keys', role: 'list', 'aria-label': '今日重點'}, cells);
 }
 function overview() {
   const sn = S.snap, root = h('div');
-  root.append(h('div', {class: 'sec'}, h('h2', null, '市場'), h('span', {class: 'sub'}, `資料日 ${sn.date}`)), h('div', {class: 'tiles'}, sn.indices.map(indexTile)));
+  root.append(h('div', {class: 'sec', style: 'margin-top:4px'}, h('h2', null, '今日重點'), h('span', {class: 'sub'}, `資料日 ${sn.date}；點任一格看詳細`)), keyStrip(sn));
+  root.append(h('div', {class: 'sec'}, h('h2', null, '市場')), h('div', {class: 'tiles'}, sn.indices.map(indexTile)));
   if (sn.summary) root.append(h('div', {class: 'note', style: 'margin-top:10px'}, 'AI 摘要：' + sn.summary));
   root.append(h('div', {class: 'sec'}, h('h2', null, '今日推薦'), h('span', {class: 'sub'}, '點卡片看估值、財務、風險與走勢；進度條＝bear｜現價｜目標｜bull')),
     h('div', {class: 'grid g2'}, marketCol('TW', sn.picks.TW, sn.shortage.TW, ''), marketCol('US', sn.picks.US, sn.shortage.US, '')));
@@ -213,24 +233,26 @@ function overview() {
         h('div', {class: 'card sm'}, '主榜追逐「現在被關注」的產業；前瞻專區找「證據已具備、但新聞尚未充分報導、股價尚未被擠進去」的結構性趨勢。', h('br'), h('span', {class: 'muted'}, `今日前瞻推薦：台股 ${sn.emerging.shortage.TW.n} 檔、美股 ${sn.emerging.shortage.US.n} 檔`)))); }
   return root;
 }
-function radar(themes) {
-  const W = 560, H = 300, L = 44, R = 14, T = 14, B = 38;
+function radar(themes, topN) {
+  const W = 560, H = 300, L = 44, R = 14, T = 26, B = 38;
   const mx = Math.max(.5, Math.ceil(Math.max(...themes.map(t => t.coverage || 0)) * 1.3 * 20) / 20);
   const ys = themes.map(t => t.parts.fundamental ?? 0), y0 = Math.max(0, Math.floor((Math.min(...ys) - 12) / 10) * 10), y1 = 100;
   const PADX = 22, X = v => L + PADX + (v / mx) * (W - L - R - PADX), Y = v => T + (H - T - B) * (1 - (v - y0) / (y1 - y0));
   const svg = s('svg', {viewBox: `0 0 ${W} ${H}`, width: '100%', role: 'img', 'aria-label': '趨勢雷達：橫軸新聞覆蓋度、縱軸基本面分數'});
+  { const cx1 = X(Math.min(.5, mx)), yb = Y(Math.max(60, y0)); // 重點象限：新聞覆蓋度低於主流一半、基本面分數 ≥ 60
+    svg.append(s('rect', {x: L, y: T, width: cx1 - L, height: Math.max(0, yb - T), style: 'fill:var(--accent);opacity:.09'}), s('text', {x: L + 4, y: T - 8, style: 'font-weight:650;fill:var(--ink)'}, '淺藍區＝冷門且基本面強（重點）')); }
   for (let v = y0; v <= y1; v += (y1 - y0) / 4) svg.append(s('line', {x1: L, x2: W - R, y1: Y(v), y2: Y(v), style: 'stroke:var(--grid)'}), s('text', {x: L - 6, y: Y(v) + 4, 'text-anchor': 'end'}, Math.round(v)));
   const step = mx <= .6 ? .1 : .25; for (let v = 0; v <= mx + 1e-9; v += step) svg.append(s('text', {x: X(v), y: H - 22, 'text-anchor': 'middle'}, v.toFixed(2)));
   if (mx >= 1) svg.append(s('line', {x1: X(1), x2: X(1), y1: T, y2: H - B, style: 'stroke:var(--axis)'}), s('text', {x: X(1) + 4, y: T + 10}, '主流產業水準 1.0'));
   svg.append(s('text', {x: (L + W - R) / 2, y: H - 6, 'text-anchor': 'middle'}, `新聞覆蓋度（越左越冷門；1.0＝主流產業中位數）→`), s('text', {x: 12, y: (T + H - B) / 2, transform: `rotate(-90 12 ${(T + H - B) / 2})`, 'text-anchor': 'middle'}, '基本面分數 ↑'));
   const sc = themes.map(t => t.score), lo = Math.min(...sc), hi = Math.max(...sc), placed = [];
   [...themes].sort((a, b) => (b.parts.fundamental ?? 0) - (a.parts.fundamental ?? 0)).forEach(t => {
-    const c = ramp(hi > lo ? (t.score - lo) / (hi - lo) : .5), r = t.tier === 'A' ? 15 : t.tier === 'B' ? 12 : 9, cy = Y(t.parts.fundamental ?? 0); let cx = X(t.coverage || 0);
+    const top = t.rank <= topN, c = ramp(hi > lo ? (t.score - lo) / (hi - lo) : .5), r = t.tier === 'A' ? 15 : t.tier === 'B' ? 12 : 9, cy = Y(t.parts.fundamental ?? 0); let cx = X(t.coverage || 0);
     // 重疊時只沿橫向錯開（位置為示意；tooltip 與側欄仍顯示真值）
     for (let k = 1; k < 20 && placed.some(q => Math.hypot(q[0] - cx, q[1] - cy) < q[2] + r + 2); k++) cx = X(t.coverage || 0) + k * (r + 6);
     placed.push([cx, cy, r]);
     const g = s('g', {tabindex: 0, role: 'button', 'aria-label': `${t.rank}. ${t.name}`, style: 'cursor:pointer', 'data-tip': `${t.rank}. ${t.name}\n證據級${t.tier}｜綜合${nz(t.score, 0)}\n覆蓋度 ${nz(t.coverage, 2)}｜基本面 ${t.parts.fundamental}`},
-      s('circle', {cx, cy, r, style: `fill:${c.bg};stroke:var(--surface);stroke-width:2`}), s('text', {x: cx, y: cy + 4, 'text-anchor': 'middle', style: `fill:${c.fg};font-weight:700`}, t.rank));
+      s('circle', {cx, cy, r: top ? r + 2 : r, style: `fill:${c.bg};stroke:${top ? 'var(--ink)' : 'var(--surface)'};stroke-width:${top ? 3 : 2};${top ? '' : 'opacity:.5'}`}), s('text', {x: cx, y: cy + 4, 'text-anchor': 'middle', style: `fill:${c.fg};font-weight:700;${top ? '' : 'opacity:.7'}`}, t.rank));
     g.addEventListener('click', () => themeDrawer(t)); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); themeDrawer(t); } }); svg.append(g); });
   return svg;
 }
@@ -239,10 +261,10 @@ function emergingView() {
   if (!em) return h('div', {class: 'empty'}, '此日期沒有前瞻專區資料。');
   root.append(h('div', {class: 'note'}, '找「結構性證據已具備、但新聞尚未充分報導、股價尚未被擠進去」的趨勢。「確定」只指驅動力（人口、法規時程、成本限制、已簽約產能）有可查證證據，', h('b', null, '不代表股價必漲'), '；每個趨勢都附證偽條件。趨勢清單為人工研究假設，請自行查證。',
     h('div', {class: 'muted sm', style: 'margin-top:4px'}, `新聞覆蓋度＝近48小時命中數÷主流產業中位數（本次掃描 ${em.n_scanned} 則標題；0 只代表沒命中，不等於沒人報導）。證據級 A＝不可逆驅動力、B＝採用率/成本曲線有資料、C＝商業化未定。`)));
-  root.append(h('div', {class: 'sec'}, h('h2', null, '趨勢雷達'), h('span', {class: 'sub'}, '氣泡＝趨勢（數字＝排名、大小＝證據級、深淺＝綜合分）；愈靠左上＝愈冷門且基本面愈強；點氣泡或右側列看詳細')),
-    h('div', {class: 'grid g2'}, h('div', {class: 'card'}, radar(em.themes)),
-      h('div', {class: 'card'}, h('div', {class: 'bl'}, em.themes.map(t => h('button', {type: 'button', class: 'row wide', style: 'text-align:left', on: {click: () => themeDrawer(t)}, tip: `證據${t.parts.evidence}｜低覆蓋${t.parts.low_coverage}｜基本面${t.parts.fundamental}｜未擁擠${t.parts.not_crowded}`},
-        h('span', {style: 'line-height:1.3'}, `${t.rank}. ${t.name}`), h('div', {class: 'tr'}, h('div', {class: 'fi', style: `width:${t.score}%`})), h('span', {class: 'v num'}, `${nz(t.score, 0)}·${t.tier}`)))))));
+  root.append(h('div', {class: 'sec'}, h('h2', null, '趨勢雷達'), h('span', {class: 'sub'}, '★／粗框＝前 4 名重點趨勢（其餘淡化）；氣泡數字＝排名、大小＝證據級、深淺＝綜合分；愈靠左上愈冷門且基本面愈強；點氣泡或右側列看詳細')),
+    h('div', {class: 'grid g2'}, h('div', {class: 'card'}, radar(em.themes, em.top_n || 4)),
+      h('div', {class: 'card'}, h('div', {class: 'bl'}, em.themes.map(t => h('button', {type: 'button', class: 'row wide' + (t.rank <= (em.top_n || 4) ? ' hot' : ''), style: 'text-align:left', on: {click: () => themeDrawer(t)}, tip: `證據${t.parts.evidence}｜低覆蓋${t.parts.low_coverage}｜基本面${t.parts.fundamental}｜未擁擠${t.parts.not_crowded}`},
+        h('span', {style: 'line-height:1.3'}, `${t.rank <= (em.top_n || 4) ? '★ ' : ''}${t.rank}. ${t.name}`), h('div', {class: 'tr'}, h('div', {class: 'fi', style: `width:${t.score}%`})), h('span', {class: 'v num'}, `${nz(t.score, 0)}·${t.tier}`)))))));
   root.append(h('div', {class: 'sec'}, h('h2', null, '前瞻推薦'), h('span', {class: 'sub'}, '門檻比主榜寬，但仍需品質、上檔與估值一致性；合格不足就照實少選')),
     h('div', {class: 'grid g2'}, marketCol('TW', em.picks.TW, em.shortage.TW, '（前瞻）'), marketCol('US', em.picks.US, em.shortage.US, '（前瞻）')));
   if (em.clues && em.clues.length) root.append(h('div', {class: 'sec'}, h('h2', null, 'AI 新興線索'), h('span', {class: 'sub'}, '未經驗證，不在推薦中')), h('div', {class: 'card'}, h('ul', null, em.clues.map(c => h('li', null, h('b', null, c.topic), '：' + c.why)))));
@@ -266,6 +288,7 @@ function perfView() {
     coh.forEach((c, i) => { const x = L + 6 + i * (W - L - R - 6) / coh.length, y0 = Y(0), y1 = Y(c.avg_alpha), up = c.avg_alpha >= 0, top = Math.min(y0, y1), hgt = Math.max(1, Math.abs(y1 - y0)), r = Math.min(4, hgt / 2);
       const rect = s('path', {d: up ? `M${x},${y0}V${top + r}Q${x},${top} ${x + r},${top}H${x + bw - r}Q${x + bw},${top} ${x + bw},${top + r}V${y0}Z` : `M${x},${y0}V${top + hgt - r}Q${x},${top + hgt} ${x + r},${top + hgt}H${x + bw - r}Q${x + bw},${top + hgt} ${x + bw},${top + hgt - r}V${y0}Z`,
         style: `fill:var(${up ? '--up' : '--down'})`, 'data-tip': `${c.date}（${c.n} 檔，已持有 ${c.n_days} 交易日）\n平均報酬 ${pct(c.avg_ret)}\n平均超額 ${pct(c.avg_alpha)}`}); svg.append(rect);
+      if (i === coh.length - 1) svg.append(s('text', {x: x + bw / 2, y: up ? top - 5 : top + hgt + 13, 'text-anchor': 'middle', style: 'font-weight:700;fill:var(--ink)'}, pct(c.avg_alpha)));
       if (coh.length <= 14 || i % Math.ceil(coh.length / 12) === 0) svg.append(s('text', {x: x + bw / 2, y: H - 10, 'text-anchor': 'middle'}, c.date.slice(5))); });
     root.append(h('div', {class: 'sec'}, h('h2', null, '各期推薦批次：平均超額報酬'), h('span', {class: 'sub'}, '▲紅＝贏大盤、▼藍＝輸大盤；滑過長條看詳細')), h('div', {class: 'card'}, h('div', {style: 'max-width:760px'}, svg))); }
   root.append(h('details', {class: 'card', style: 'margin-top:12px'}, h('summary', null, `全部推薦明細（${pos.length} 筆，點擊展開）`),

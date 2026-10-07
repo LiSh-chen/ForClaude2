@@ -199,6 +199,9 @@ def test_dashboard_snapshot_and_site_assets():
     for p in allp:  # 每檔都要有「為什麼推薦」（一定含估值）與兩組風險（已出現／尚未發生）
         assert p["headline"] and 1 <= len(p["why"]) <= 5 and any(w["tag"] == "估值" for w in p["why"]), p["ticker"]
         assert isinstance(p["risks_now"], list) and p["risks_watch"], p["ticker"]
+    for p in allp:  # 亮點標籤：最多 3 個、皆為非空短字串（沒有突出事實就不放，不硬湊）
+        assert len(p["highlights"]) <= 3 and all(isinstance(x["t"], str) and 0 < len(x["t"]) <= 14 for x in p["highlights"]), p["ticker"]
+    assert sn["emerging"]["top_n"] == C.load_params()["emerging"]["top_themes"] and all(x["short"] for x in sn["emerging"]["themes"])
     assert all(p["risks_watch"][0]["t"].startswith("若出現就代表論點不成立") for m in ("TW", "US") for p in sn["emerging"]["picks"][m])
     md = (C.path("journal") / f"{d}.md").read_text(encoding="utf-8")
     assert "**為什麼推薦（利多）**" in md and "**已出現的風險**" in md and "**未來需留意（尚未發生）**" in md
