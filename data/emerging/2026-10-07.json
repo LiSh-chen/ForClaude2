@@ -54,14 +54,14 @@
    "id": "adv_packaging_supply",
    "name": "先進封裝測試介面與材料",
    "tier": "B",
-   "score": 76.729,
-   "coverage_ratio": 0.105,
-   "n_headlines": 2,
+   "score": 78.126,
+   "coverage_ratio": 0.05,
+   "n_headlines": 1,
    "status": "尚未被充分報導",
    "rank": 4,
    "components": {
     "evidence": 75,
-    "low_coverage": 89.5,
+    "low_coverage": 95.0,
     "fundamental": 97.1,
     "not_crowded": 37.9
    }
@@ -70,7 +70,7 @@
    "id": "edge_ai_industrial",
    "name": "工業邊緣 AI 與嵌入式運算",
    "tier": "B",
-   "score": 74.031,
+   "score": 74.049,
    "coverage_ratio": 0.093,
    "n_headlines": 1,
    "status": "尚未被充分報導",
@@ -86,14 +86,14 @@
    "id": "process_control",
    "name": "先進製程量測、檢測與可靠度驗證",
    "tier": "B",
-   "score": 73.154,
-   "coverage_ratio": 0.098,
+   "score": 73.173,
+   "coverage_ratio": 0.097,
    "n_headlines": 2,
    "status": "尚未被充分報導",
    "rank": 6,
    "components": {
     "evidence": 75,
-    "low_coverage": 90.2,
+    "low_coverage": 90.3,
     "fundamental": 53.7,
     "not_crowded": 73.3
    }
@@ -102,7 +102,7 @@
    "id": "water_infra",
    "name": "水資源與超純水處理",
    "tier": "B",
-   "score": 72.893,
+   "score": 72.911,
    "coverage_ratio": 0.093,
    "n_headlines": 1,
    "status": "尚未被充分報導",
@@ -141,7 +141,7 @@
    "rank": 1,
    "entry_price": 131.0,
    "entry_date": "2026-10-07",
-   "composite": 55.9,
+   "composite": 57.83,
    "scores": {
     "sector": null,
     "leader": 0.0,
@@ -149,7 +149,7 @@
     "growth": 100.0,
     "valuation": 73.2,
     "momentum": 66.4,
-    "news": 40.0
+    "news": 59.3
    },
    "target": {
     "base": 156.09,
@@ -291,30 +291,30 @@
    "rank": 1,
    "entry_price": 278.2,
    "entry_date": "2026-10-06",
-   "composite": 69.34,
+   "composite": 69.37,
    "scores": {
     "sector": null,
     "leader": 100.0,
     "quality": 83.9,
     "growth": 70.6,
-    "valuation": 89.6,
+    "valuation": 89.7,
     "momentum": 6.7,
     "news": 40.0
    },
    "target": {
-    "base": 388.07,
-    "bull": 541.1,
-    "bear": 158.54,
-    "ev": 361.29,
+    "base": 388.43,
+    "bull": 541.13,
+    "bear": 159.39,
+    "ev": 361.71,
     "confidence": "中",
-    "upside": 0.3949,
-    "ev_upside": 0.2987,
+    "upside": 0.3962,
+    "ev_upside": 0.3002,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 293.38,
+      "value": 294.27,
       "weight": 0.4,
-      "upside": 0.0546
+      "upside": 0.0578
      },
      "peg": {
       "value": 543.05,
@@ -355,7 +355,7 @@
     "ret_1m": -0.07933559882394858,
     "ret_3m": -0.1461496615154979,
     "rel_3m": -0.19108260915063846,
-    "dist200": -0.15059462063097084,
+    "dist200": -0.15059462221386877,
     "vol_ann": 0.3963195018857298
    },
    "theme": "aging_care",
@@ -590,7 +590,7 @@
     "ret_1m": 0.11764703533661769,
     "ret_3m": -0.20059406542304825,
     "rel_3m": -0.2455270130581888,
-    "dist200": -0.06765166502304132,
+    "dist200": -0.06765166409140211,
     "vol_ann": 0.883430025762641
    },
    "theme": "adv_packaging_supply",
@@ -670,7 +670,7 @@
     "ret_1m": 0.07283390355602837,
     "ret_3m": -0.024360755493283315,
     "rel_3m": -0.06929370312842387,
-    "dist200": 0.07796612584530105,
+    "dist200": 0.0779661243761347,
     "vol_ann": 0.46267986395674404
    },
    "theme": "edge_ai_industrial",

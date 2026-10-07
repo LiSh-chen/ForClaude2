@@ -13,15 +13,15 @@
    "rank": 1,
    "entry_price": 5950.0,
    "entry_date": "2026-10-07",
-   "composite": 74.48,
+   "composite": 72.73,
    "scores": {
-    "sector": 93.0,
+    "sector": 88.3,
     "leader": 75.0,
     "quality": 58.9,
     "growth": 100.0,
     "valuation": 70.1,
     "momentum": 62.7,
-    "news": 70.2
+    "news": 60.0
    },
    "target": {
     "base": 6845.58,
@@ -85,9 +85,9 @@
    "rank": 2,
    "entry_price": 1245.0,
    "entry_date": "2026-10-07",
-   "composite": 72.74,
+   "composite": 71.81,
    "scores": {
-    "sector": 93.0,
+    "sector": 88.3,
     "leader": 25.0,
     "quality": 67.6,
     "growth": 100.0,
@@ -157,7 +157,7 @@
    "rank": 1,
    "entry_price": 239.24,
    "entry_date": "2026-10-06",
-   "composite": 92.42,
+   "composite": 92.43,
    "scores": {
     "sector": 91.9,
     "leader": 100.0,
@@ -168,19 +168,19 @@
     "news": 84.4
    },
    "target": {
-    "base": 382.78,
-    "bull": 506.16,
-    "bear": 197.72,
-    "ev": 361.19,
+    "base": 382.59,
+    "bull": 505.98,
+    "bear": 197.5,
+    "ev": 361.0,
     "confidence": "中",
-    "upside": 0.6,
-    "ev_upside": 0.5098,
+    "upside": 0.5992,
+    "ev_upside": 0.5089,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 368.24,
+      "value": 367.18,
       "weight": 0.5,
-      "upside": 0.5392
+      "upside": 0.5348
      },
      "peg": {
       "value": 513.47,
@@ -216,7 +216,7 @@
     "ret_1m": 0.03971048008690192,
     "ret_3m": 0.17336720685489038,
     "rel_3m": 0.12843425921974982,
-    "dist200": 0.19006787072469478,
+    "dist200": 0.19006786891810434,
     "vol_ann": 0.3734231847968207
    }
   },
@@ -229,9 +229,9 @@
    "rank": 2,
    "entry_price": 1660.46,
    "entry_date": "2026-10-06",
-   "composite": 86.26,
+   "composite": 85.39,
    "scores": {
-    "sector": 79.4,
+    "sector": 75.0,
     "leader": 66.7,
     "quality": 99.9,
     "growth": 100.0,
@@ -301,30 +301,30 @@
    "rank": 3,
    "entry_price": 482.3,
    "entry_date": "2026-10-06",
-   "composite": 85.72,
+   "composite": 85.24,
    "scores": {
     "sector": 91.9,
     "leader": 75.0,
     "quality": 95.7,
     "growth": 100.0,
-    "valuation": 77.3,
+    "valuation": 77.2,
     "momentum": 72.0,
-    "news": 71.0
+    "news": 65.3
    },
    "target": {
-    "base": 592.95,
-    "bull": 718.52,
-    "bear": 404.59,
-    "ev": 570.97,
+    "base": 592.21,
+    "bull": 717.69,
+    "bear": 404.0,
+    "ev": 570.25,
     "confidence": "高",
-    "upside": 0.2294,
-    "ev_upside": 0.1839,
+    "upside": 0.2279,
+    "ev_upside": 0.1824,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 571.8,
+      "value": 570.33,
       "weight": 0.5,
-      "upside": 0.1856
+      "upside": 0.1825
      },
      "peg": {
       "value": 712.57,
@@ -373,15 +373,15 @@
    "rank": 4,
    "entry_price": 529.3,
    "entry_date": "2026-10-06",
-   "composite": 77.89,
+   "composite": 78.21,
    "scores": {
-    "sector": 67.5,
+    "sector": 69.7,
     "leader": 100.0,
     "quality": 74.4,
     "growth": 74.1,
     "valuation": 69.7,
     "momentum": 92.3,
-    "news": 85.6
+    "news": 84.1
    },
    "target": {
     "base": 680.5,
@@ -432,7 +432,7 @@
     "ret_1m": 0.05923549102030812,
     "ret_3m": 0.38335783413889146,
     "rel_3m": 0.3384248865037509,
-    "dist200": 0.2252439174828944,
+    "dist200": 0.22524391705011837,
     "vol_ann": 0.401797865528204
    }
   },
@@ -445,9 +445,9 @@
    "rank": 5,
    "entry_price": 144.77,
    "entry_date": "2026-10-06",
-   "composite": 66.77,
+   "composite": 67.2,
    "scores": {
-    "sector": 67.5,
+    "sector": 69.7,
     "leader": 75.0,
     "quality": 55.2,
     "growth": 99.4,
@@ -504,7 +504,7 @@
     "ret_1m": -0.08823526019993067,
     "ret_3m": 0.034049707511514926,
     "rel_3m": -0.010883240123625626,
-    "dist200": -0.10540316581854003,
+    "dist200": -0.1054031653967793,
     "vol_ann": 0.5413318718733573
    }
   }
@@ -521,8 +521,8 @@
    "pcb_materials",
    "financials",
    "energy_materials",
-   "ai_chips",
-   "internet_platforms"
+   "internet_platforms",
+   "ai_chips"
   ]
  }
 }
