@@ -59,40 +59,42 @@ def run_tracker(provider) -> dict:
     uni = C.load_universe()
     data = C.path("data")
     pick_files = sorted((data / "picks").glob("*.json"))
-    if not pick_files:
+    emerging_files = sorted((data / "emerging").glob("*.json")) if (data / "emerging").exists() else []
+    if not pick_files and not emerging_files:
         print("[track] 還沒有任何推薦紀錄。")
         C.save_json(data / "performance.json", {"generated": str(dt.date.today()), "positions": [], "summary": {}, "cohorts": []})
         return {}
-    picks_by_date = {f.stem: C.load_json(f) for f in pick_files}
-    tickers = {p["ticker"] for pj in picks_by_date.values() for p in pj["picks"]}
+    books = {"main": {f.stem: C.load_json(f) for f in pick_files}, "emerging": {f.stem: C.load_json(f) for f in emerging_files}}
+    tickers = {p["ticker"] for b in books.values() for pj in b.values() for p in pj["picks"]}
     for f in sorted((data / "candidates").glob("*.json")) if (data / "candidates").exists() else []:
         tickers |= {r["ticker"] for r in C.load_json(f)["rows"]}
     benches = set(uni["benchmarks"].values())
     prices = provider.prices(sorted(tickers | benches))
     positions, cohorts = [], []
-    for date, pj in picks_by_date.items():
-        coh = []
-        for p in pj["picks"]:
-            df, b = prices.get(p["ticker"]), prices.get(uni["benchmarks"][p["market"]])
-            if df is None or b is None:
-                continue
-            f = _fwd(df, b, date, p["entry_price"])
-            if not f:
-                continue
-            tg = p["target"]
-            n = max(f["n_days"], 0)
-            exp = (1 + tg["upside"]) ** (n / tg["horizon_days"]) - 1 if n else 0.0
-            rec = {"date": date, "ticker": p["ticker"], "name": p["zh_name"], "market": p["market"], "sector": p["sector"],
-                   "entry": p["entry_price"], "target": tg["base"], "target_upside": tg["upside"], "stop": p["stop"],
-                   "expected_ret_now": exp, "ret_vs_expected": f["r" + "last"] - exp, **{k: v for k, v in f.items() if k not in ("entry",)},
-                   "stop_hit": f["min_low"] <= p["stop"] / p["entry_price"] - 1, "target_hit": f["max_high"] >= tg["upside"],
-                   "params_version": pj.get("params_version")}
-            positions.append(rec)
-            coh.append(rec)
-        if coh:
-            cohorts.append({"date": date, "n": len(coh), "avg_ret": sum(x["rlast"] for x in coh) / len(coh),
-                            "avg_alpha": (sum(x["alast"] for x in coh if x["alast"] is not None) / max(1, sum(1 for x in coh if x["alast"] is not None))),
-                            "n_days": coh[0]["n_days"]})
+    for book, picks_by_date in books.items():
+        for date, pj in picks_by_date.items():
+            coh = []
+            for p in pj["picks"]:
+                df, b = prices.get(p["ticker"]), prices.get(uni["benchmarks"][p["market"]])
+                if df is None or b is None:
+                    continue
+                f = _fwd(df, b, date, p["entry_price"])
+                if not f:
+                    continue
+                tg = p["target"]
+                n = max(f["n_days"], 0)
+                exp = (1 + tg["upside"]) ** (n / tg["horizon_days"]) - 1 if n else 0.0
+                rec = {"date": date, "ticker": p["ticker"], "name": p["zh_name"], "market": p["market"], "sector": p["sector"],
+                       "entry": p["entry_price"], "target": tg["base"], "target_upside": tg["upside"], "stop": p["stop"],
+                       "expected_ret_now": exp, "ret_vs_expected": f["r" + "last"] - exp, **{k: v for k, v in f.items() if k not in ("entry",)},
+                       "stop_hit": f["min_low"] <= p["stop"] / p["entry_price"] - 1, "target_hit": f["max_high"] >= tg["upside"],
+                       "params_version": pj.get("params_version"), "book": book, "theme": p.get("theme")}
+                positions.append(rec)
+                coh.append(rec)
+            if coh:
+                cohorts.append({"book": book, "date": date, "n": len(coh), "avg_ret": sum(x["rlast"] for x in coh) / len(coh),
+                                "avg_alpha": (sum(x["alast"] for x in coh if x["alast"] is not None) / max(1, sum(1 for x in coh if x["alast"] is not None))),
+                                "n_days": coh[0]["n_days"]})
 
     # 候選池前瞻報酬（用於檢驗各因子的預測力，而非只看被選中的股票）
     pool = {}
@@ -108,8 +110,11 @@ def run_tracker(provider) -> dict:
                 day[r["ticker"]] = {k: (round(fw[k], 5) if isnum(fw.get(k)) else None) for k in ("r5", "a5", "r20", "a20", "r60", "a60", "r120", "a120", "rlast", "alast")}
         pool[cj["date"]] = day
     C.save_json(data / "pool_returns.json", pool)
-    perf = {"generated": str(dt.date.today()), "positions": positions, "cohorts": cohorts, "summary": summarize(positions),
-            "by_market": {m: summarize([p for p in positions if p["market"] == m]) for m in ("TW", "US")}}
+    main_pos = [p for p in positions if p["book"] == "main"]
+    emg_pos = [p for p in positions if p["book"] == "emerging"]
+    perf = {"generated": str(dt.date.today()), "positions": positions, "cohorts": cohorts, "summary": summarize(main_pos),
+            "by_market": {m: summarize([p for p in main_pos if p["market"] == m]) for m in ("TW", "US")},
+            "emerging": {"summary": summarize(emg_pos), "n": len(emg_pos)}}
     C.save_json(data / "performance.json", perf)
     print(f"[track] 追蹤 {len(positions)} 筆推薦；候選池 {sum(len(v) for v in pool.values())} 筆觀察。")
     return perf

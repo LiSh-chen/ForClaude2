@@ -56,9 +56,19 @@ def load_universe() -> dict:
             parts = (spec.split("|") + ["", ""])[:3]
             t, name, aliases = parts[0].strip(), parts[1].strip(), [a.strip() for a in parts[2].split(",") if a.strip()]
             stocks[t] = {"ticker": t, "name": name or t, "aliases": aliases, "sector": s["id"], "market": market_of(t)}
+    # 前瞻專區：趨勢標的併入宇宙（已在主宇宙的代號維持原產業；只在趨勢中出現者以趨勢 id 當產業，不參與主榜產業評分）
+    themes = (load_json(CONFIG_DIR / "themes.json") or {}).get("themes", [])
+    for th in themes:
+        th["members"] = []
+        for spec in th["tickers"]:
+            parts = (spec.split("|") + ["", ""])[:3]
+            t, name, aliases = parts[0].strip(), parts[1].strip(), [a.strip() for a in parts[2].split(",") if a.strip()]
+            if t not in stocks:
+                stocks[t] = {"ticker": t, "name": name or t, "aliases": aliases, "sector": th["id"], "market": market_of(t), "emerging_only": True}
+            th["members"].append(t)
     # 同一檔雙重上市（ADR 與本股）：避免同日重複推薦同一家公司
     stocks.get("TSM", {})["dual_of"] = "2330.TW"
-    return {"sectors": raw["sectors"], "stocks": stocks, "benchmarks": raw["benchmarks"], "indices": raw["indices"]}
+    return {"sectors": raw["sectors"], "themes": themes, "stocks": stocks, "benchmarks": raw["benchmarks"], "indices": raw["indices"]}
 
 
 def load_sources() -> dict:

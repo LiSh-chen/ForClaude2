@@ -9,7 +9,7 @@
 
 由本 repo 自己的 workflow 發佈到 GitHub Pages（`https://<帳號>.github.io/<repo>/`）：
 
-- 最新日誌、日誌列表、績效追蹤（含每筆推薦的目標價/現價/報酬/超額報酬）、檢討報告、方法論
+- 最新日誌、**前瞻專區**（尚未被充分報導的結構性趨勢與標的）、日誌列表、績效追蹤（含每筆推薦的目標價/現價/報酬/超額報酬）、檢討報告、方法論
 
 ## 運作方式
 
@@ -43,12 +43,13 @@ python -m pytest tests/test_journal.py
 ```
 config/universe.json      產業與股票宇宙、產業關鍵字、產業風險描述
 config/sources.json       新聞 RSS 來源、情緒詞
-config/params.json        所有可被回饋調整的參數（權重、門檻、估值假設）
+config/params.json        所有可被回饋調整的參數（權重、門檻、估值假設、前瞻專區參數）
+config/themes.json        前瞻專區的結構性趨勢清單（證據級、證據、證偽條件、標的）
 config/params_history.json 每次自動調參的稽核紀錄
 data/picks/               每日推薦（含目標價各方法拆解）
 data/candidates/          每日全宇宙評分（用於檢驗因子預測力）
 data/performance.json     追蹤結果
-journal/  reviews/        研究日誌、檢討報告（Markdown）
+journal/  reviews/  emerging/   研究日誌、檢討報告、前瞻專區報告（Markdown）
 site/                     渲染後的靜態網站
 docs/methodology.md       方法論與已知限制（也會出現在網站上）
 ```

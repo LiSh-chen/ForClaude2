@@ -46,7 +46,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data journal reviews site config
+          git add data journal reviews emerging site config
           git diff --cached --quiet || git commit -m "journal: daily research journal $(date -u +%F)"
           git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push
       - uses: actions/configure-pages@v5
