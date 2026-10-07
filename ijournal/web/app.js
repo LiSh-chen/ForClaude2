@@ -96,8 +96,21 @@ function openDrawer(title, sub, body) {
 function closeDrawer() { dr.classList.remove('on'); ov.classList.remove('on'); hideTip(); if (lastFocus) lastFocus.focus(); }
 ov.addEventListener('click', closeDrawer); document.addEventListener('keydown', e => { if (e.key === 'Escape' && dr.classList.contains('on')) closeDrawer(); });
 const sec = (t, ...k) => h('section', null, h('h4', null, t), ...k);
-const links = arr => arr && arr.length ? h('ul', null, arr.map(n => h('li', null, safeUrl(n.link) ? h('a', {href: n.link, target: '_blank', rel: 'noopener noreferrer'}, n.title) : n.title, h('span', {class: 'muted sm'}, ` ｜${n.source}`)))) : h('p', {class: 'muted sm'}, '近期無相關報導命中。');
+const links = arr => arr && arr.length ? h('ul', null, arr.map(n => h('li', null, safeUrl(n.link) ? h('a', {href: n.link, target: '_blank', rel: 'noopener noreferrer'}, n.title) : n.title, h('span', {class: 'muted sm'}, ` ｜${n.source}${isNum(n.sent) && n.sent >= .3 ? '｜關鍵字判斷偏正面' : isNum(n.sent) && n.sent <= -.3 ? '｜關鍵字判斷偏負面' : ''}`)))) : h('p', {class: 'muted sm'}, '近期無相關報導命中。');
 const kpi = (l, x, tp) => h('div', {class: 'kpi', tip: tp}, h('div', {class: 'l'}, l), h('div', {class: 'x num'}, x));
+
+function newsLinks(a) { return a && a.length ? h('ul', null, a.map(n => h('li', null, safeUrl(n.link) ? h('a', {href: n.link, target: '_blank', rel: 'noopener noreferrer'}, n.title) : n.title, h('span', {class: 'muted sm'}, ` ｜${n.source}`)))) : null; }
+function whyBlock(p) {
+  if (!p.why) return null;
+  return sec('為什麼推薦（利多）', h('p', {class: 'hl'}, p.headline), h('ul', {class: 'why'}, p.why.map(w => h('li', null, h('span', {class: 'badge'}, w.tag), ' ', w.t, w.news ? newsLinks([w.news]) : null))));
+}
+function riskBlock(p) {
+  if (!p.risks_now && !p.risks_watch) return sec('主要風險', h('ul', null, (p.risks || []).map(r => h('li', null, r))));
+  const item = x => h('li', null, x.t, newsLinks(x.news));
+  return h('div', {style: 'display:grid;gap:12px'},
+    h('section', {class: 'riskbox now'}, h('h4', null, h('span', {class: 'tagx now'}, '已出現'), ' 目前資料已經顯示的狀況'), h('ul', null, p.risks_now.length ? p.risks_now.map(item) : [h('li', {class: 'muted'}, '目前資料未顯示明顯警訊。')])),
+    h('section', {class: 'riskbox watch'}, h('h4', null, h('span', {class: 'tagx watch'}, '尚未發生'), ' 未來需留意：只是可能發生的事件，列出供追蹤', p.theme ? '（若發生，代表前瞻論點不成立）' : ''), h('ul', null, p.risks_watch.map(item))));
+}
 
 function stockDrawer(p) {
   const t = p.target, f = p.fin, k = p.tech;
@@ -108,6 +121,7 @@ function stockDrawer(p) {
       h('span', {class: 'badge' + (t.confidence === '低' ? ' lo' : '')}, '估值信心 ' + t.confidence), t.capped && h('span', {class: 'badge lo', tip: `模型原始上檔 ${pct(t.raw_upside, 0)}，已套用上限`}, '已套用上檔上限'),
       p.relaxed && h('span', {class: 'badge lo', tip: '各方法對幅度看法分歧，但方向一致（最保守方法仍高於現價）'}, '幅度分歧・方向一致'), p.also_main && h('span', {class: 'badge'}, '亦入選主榜'),
       h('span', {class: 'badge'}, `風險報酬比 ${nz(t.rr, 2)}`), h('span', {class: 'badge'}, `參考停損 ${px(t.stop)}`), h('span', {class: 'badge', tip: '機率加權期望值（bull/base/bear）'}, `期望值 ${px(t.ev)}（${pct(t.ev_upside)}）`)),
+    whyBlock(p),
     sec('近 120 個交易日收盤價', lineChart(p.series)),
     sec('估值方法（隱含上檔，點擊看計算）', h('div', {style: 'display:grid;gap:6px'}, p.methods.map(m => {
       const w = Math.min(50, Math.abs(m.upside || 0) * 50), pos = (m.upside || 0) >= 0;
@@ -119,7 +133,7 @@ function stockDrawer(p) {
     sec('關鍵指標', h('div', {class: 'kpis'}, kpi('ROE', pct(f.roe, 1, false)), kpi('營業利益率', pct(f.op_margin, 1, false)), kpi('毛利率', pct(f.gross_margin, 1, false)), kpi('營收年增', pct(f.rev_growth)), kpi('獲利年增', pct(f.eps_growth)),
       kpi('預估本益比', nz(f.pe_fwd), `同業中位數 ${nz(t.peer_pe)}`), kpi('同業本益比', nz(t.peer_pe)), kpi('PEG', nz(f.peg, 2)), kpi('負債權益比', nz(f.de, 2)), kpi('Beta', nz(f.beta, 2)), kpi('市值', big(f.market_cap)), kpi('券商目標價', px(f.target_mean), `${f.n_analysts || '—'} 位分析師`),
       kpi('近3月相對大盤', pct(k.rel_3m)), kpi('距200日線', pct(k.dist200)), kpi('距52週高', pct(k.from_high)), kpi('年化波動', pct(k.vol_ann, 0, false)))),
-    sec('主要風險', h('ul', null, p.risks.map(r => h('li', null, r)))),
+    riskBlock(p),
     sec('相關報導', links(p.news)),
     h('details', null, h('summary', null, '研究摘要（完整文字）'), ...p.thesis.split('\n\n').map(x => h('p', {class: 'p'}, x.replace(/\*\*/g, '')))),
   ];
@@ -156,7 +170,7 @@ function themeDrawer(x, e) {
 /* ---------- 卡片 ---------- */
 function pickCard(p) {
   const t = p.target;
-  return h('button', {class: 'pick', type: 'button', on: {click: () => stockDrawer(p)}, 'aria-label': `${p.ticker} ${p.name}，點擊看詳細`},
+  return h('button', {class: 'pick', type: 'button', on: {click: () => stockDrawer(p)}, 'aria-label': `${p.ticker} ${p.name}，點擊看詳細`, tip: p.headline},
     h('div', {class: 'r1'}, h('span', {class: 'rk'}, p.rank), h('span', {class: 'tk'}, p.ticker.replace(/\.(TW|TWO)$/, '')), h('span', {class: 'nm'}, p.name), h('span', {class: 'up2 num', tip: `目標 ${px(t.base)} 相對現價 ${px(p.price)}`}, delta(t.upside))),
     h('div', {class: 'r2'}, h('span', {class: 'muted sm sc2'}, p.theme_name || p.sector_name),
       t.confidence === '低' && h('span', {class: 'badge lo', tip: '各估值方法差距大，信心偏低'}, '信心低'), t.capped && h('span', {class: 'badge lo', tip: '模型原始上檔更高，已套用上限'}, '上限'), p.relaxed && h('span', {class: 'badge lo', tip: '幅度分歧、方向一致'}, '分歧'), p.also_main && h('span', {class: 'badge'}, '亦主榜'),

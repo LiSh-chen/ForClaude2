@@ -195,6 +195,13 @@ def test_dashboard_snapshot_and_site_assets():
         assert sn["shortage"][m]["N"] == 5 and sn["shortage"][m]["n"] == len(sn["picks"][m])
         for p in sn["picks"][m]:
             assert p["target"]["bear"] < p["target"]["base"] < p["target"]["bull"] and p["methods"] and p["series"]["c"] and p["thesis"]
+    allp = [p for m in ("TW", "US") for p in sn["picks"][m]] + [p for m in ("TW", "US") for p in sn["emerging"]["picks"][m]]
+    for p in allp:  # 每檔都要有「為什麼推薦」（一定含估值）與兩組風險（已出現／尚未發生）
+        assert p["headline"] and 1 <= len(p["why"]) <= 5 and any(w["tag"] == "估值" for w in p["why"]), p["ticker"]
+        assert isinstance(p["risks_now"], list) and p["risks_watch"], p["ticker"]
+    assert all(p["risks_watch"][0]["t"].startswith("若出現就代表論點不成立") for m in ("TW", "US") for p in sn["emerging"]["picks"][m])
+    md = (C.path("journal") / f"{d}.md").read_text(encoding="utf-8")
+    assert "**為什麼推薦（利多）**" in md and "**已出現的風險**" in md and "**未來需留意（尚未發生）**" in md
     assert sn["sectors"]["TW"] and sn["emerging"]["themes"] and set(sn["emerging"]["shortage"]) == {"TW", "US"}
     build_site()
     site = C.path("site")
