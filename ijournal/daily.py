@@ -65,7 +65,7 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
     sec_scores = score_sectors(uni, scan_res, feats, funds, {d: h for d, h in nh.items() if d < date}, params)
     rows = score_stocks(uni, feats, funds, sec_scores, scan_res, params)
     sel = pick(rows, sec_scores, params)
-    picks, notes = sel["picks"], sel["notes"]
+    picks, notes, stats = sel["picks"], sel["notes"], sel["stats"]
     if not any(picks.values()):
         print("[daily] 今日沒有任何標的通過篩選；仍會寫入日誌說明。")
 
@@ -78,7 +78,7 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
             break
     perf = C.load_json(data / "performance.json")
     ctx = {
-        "params": params, "uni": uni, "sec_scores": sec_scores, "picks": picks, "notes": notes, "rows": rows, "scan": scan_res,
+        "params": params, "uni": uni, "sec_scores": sec_scores, "picks": picks, "notes": notes, "stats": stats, "rows": rows, "scan": scan_res,
         "fetch_log": provider.fetch_log, "provider": provider.name, "indices": _index_stats(prices, uni), "prev": prev,
         "perf_summary": perf["summary"] if perf and perf.get("summary") else None,
         "param_history": C.load_json(C.history_path(), []), "elig": lambda r: eligible(r, params),

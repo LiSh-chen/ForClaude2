@@ -60,8 +60,11 @@ def eligible(r: dict, p: dict) -> tuple[bool, str]:
     e, m = p["emerging"], r["market"]
     if r["val"] is None:
         return False, "資料不足，無法估值"
-    if r["val"]["spread"] > e["max_method_spread"]:
-        return False, "估值方法分歧過大"
+    v = r["val"]
+    if v["spread"] > e["max_method_spread"]:
+        # 分歧 60%–80%：只有『最保守的方法仍高於現價』（方向一致、只是幅度分歧）才放行，並標示信心偏低
+        if not (v["spread"] <= e["relaxed_spread_max"] and min(m["upside"] for m in v["methods"].values()) >= 0):
+            return False, "估值方法分歧過大"
     if (r["f"].get("market_cap") or 0) < e["min_market_cap"][m]:
         return False, "市值過小"
     if r["pf"]["turnover"] < e["min_avg_turnover"][m]:
@@ -80,7 +83,7 @@ def pick_emerging(themes: list[dict], rows: dict, main_picked: set, p: dict) -> 
     e = p["emerging"]
     picked = {"TW": [], "US": []}
     chosen = set()
-    for t in themes[: e["top_themes"]]:
+    for t in themes[: e["pick_themes"]]:
         cnt = {"TW": 0, "US": 0}
         cands = sorted((rows[x] for x in t["members"] if x in rows and rows[x]["composite"] is not None), key=lambda r: -r["composite"])
         for r in cands:
@@ -139,18 +142,35 @@ def write_report(date: str, themes: list[dict], picked: dict, rows: dict, p: dic
     A("\n證據級：" + "；".join(TIER_DESC[k] for k in ("A", "B", "C")) + "。\n")
 
     A("## 二、推薦標的\n")
-    A("門檻比主榜寬（市值與流動性較低，容許較早期的公司），但仍要求：品質分 ≥ {q}、有可估值的目標價、各估值方法分歧度 ≤ {s:.0%}、獲利為正。同一趨勢最多 {m} 檔。\n".format(
-        q=e["min_quality_score"], s=e["max_method_spread"], m=e["max_per_theme"]))
+    A("門檻比主榜寬（市值、流動性較低，容許較早期的公司），但仍要求：品質分 ≥ {q}、有可估值的目標價（至少 2 種方法交叉驗證）、獲利為正、上檔 ≥ {u:.0%}。"
+      "估值方法分歧度原則上 ≤ {s:.0%}；分歧 {s:.0%}–{r:.0%} 者，只有『最保守的方法仍高於現價』（方向一致、僅幅度分歧）才放行並標註。同一趨勢最多 {m} 檔，台/美各最多 {k} 檔，**合格不足就照實少選**。\n".format(
+        q=e["min_quality_score"], u=e["min_upside"], s=e["max_method_spread"], r=e["relaxed_spread_max"], m=e["max_per_theme"], k=e["picks_per_market"]))
     n = sum(len(v) for v in picked.values())
-    if not n:
-        A("今日沒有標的同時通過所有條件（寧缺勿濫）。\n")
-    else:
+    tally = {"TW": {}, "US": {}}
+    for th in themes[: e["pick_themes"]]:
+        for tk in th["members"]:
+            r = rows.get(tk)
+            if not r:
+                continue
+            ok, why = eligible(r, p)
+            key = "通過" if ok else why
+            tally[r["market"]][key] = tally[r["market"]].get(key, 0) + 1
+    for m in ("TW", "US"):
+        k = len(picked[m])
+        tot = sum(tally[m].values())
+        why = "、".join(f"{w} {c}" for w, c in sorted(((w, c) for w, c in tally[m].items() if w != "通過"), key=lambda x: -x[1]))
+        if k >= e["picks_per_market"]:
+            A(f"- **{MKT[m]}**：{k}／{e['picks_per_market']} 檔（已達名額上限；另有 {tally[m].get('通過', 0) - k} 檔合格但未入選）")
+        else:
+            A(f"- **{MKT[m]}**：**{k}／{e['picks_per_market']} 檔**——合格標的不足，不為湊數放寬門檻。{tot} 檔成分股中未通過的原因：{why or '—'}。")
+    A("")
+    if n:
         A("| 市場 | # | 代號 | 名稱 | 趨勢 | 現價 | base 目標價 | 上檔 | bear / bull | 備註 |")
         A("|---|---|---|---|---|---|---|---|---|---|")
         for m in ("TW", "US"):
             for r in picked[m]:
                 v = r["val"]
-                A(f"| {MKT[m]} | {r['pick_rank']} | {r['ticker']} | {md_escape(r['zh_name'])} | {md_escape(r['theme_name'])} | {num(r['price'])} | **{num(v['base'])}** | {pct(v['upside'], 1, True)} | {num(v['bear'])} / {num(v['bull'])} | {'亦入選主榜' if r['also_main'] else ''}{'・' if r['also_main'] and v['capped'] else ''}{'已套用上檔上限' if v['capped'] else ''} |")
+                A(f"| {MKT[m]} | {r['pick_rank']} | {r['ticker']} | {md_escape(r['zh_name'])} | {md_escape(r['theme_name'])} | {num(r['price'])} | **{num(v['base'])}** | {pct(v['upside'], 1, True)} | {num(v['bear'])} / {num(v['bull'])} | {'・'.join(x for x in (('亦入選主榜' if r['also_main'] else ''), ('已套用上檔上限' if v['capped'] else ''), ('估值幅度分歧、方向一致' if v['spread'] > e['max_method_spread'] else '')) if x)} |")
         A("")
         A("**推薦理由與估值**\n")
         for m in ("TW", "US"):
@@ -162,7 +182,8 @@ def write_report(date: str, themes: list[dict], picked: dict, rows: dict, p: dic
         A("")
 
     A("## 三、各趨勢檢視\n")
-    for t in themes[: e["top_themes"]]:
+    got_themes = {r["theme"] for m in picked for r in picked[m]}
+    for t in [x for x in themes if x["rank"] <= e["top_themes"] or x["id"] in got_themes]:
         A(f"### {t['rank']}. {t['name']}（證據級 {t['tier']}）\n")
         A(f"**論點**：{t['thesis']}\n")
         A("**證據（研究假設，請自行查證）**\n")
