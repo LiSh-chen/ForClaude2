@@ -108,7 +108,7 @@ private fun ProgressRing(steps: Long, goal: Int, progress: Double) {
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(steps.withCommas(), fontSize = 44.sp, fontWeight = FontWeight.Bold)
-            Text("/ ${goal.withCommas()} 步", style = MaterialTheme.typography.bodyMedium)
+            Text("/ ${goal.toLong().withCommas()} 步", style = MaterialTheme.typography.bodyMedium)
             Text("${(progress * 100).roundToInt()}%", style = MaterialTheme.typography.titleMedium)
         }
     }
