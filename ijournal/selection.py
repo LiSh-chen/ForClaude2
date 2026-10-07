@@ -139,39 +139,36 @@ def eligible(r: dict, p: dict) -> tuple[bool, str]:
 
 
 def pick(rows: dict, sec_scores: dict, p: dict) -> dict:
-    """依序挑選：先台股再美股（美股略過已選入台股的雙重上市標的）。回傳 {market: [rows]}，另附 notes。"""
+    """依序挑選：先台股再美股（美股略過已選入台股的雙重上市標的）。
+    只從重點產業挑；合格標的不足就照實少選，不放寬門檻補滿。回傳 picks 與 stats（供日誌清楚標示不足原因）。"""
     s = p["selection"]
     picked: dict[str, list] = {"TW": [], "US": []}
-    notes: dict[str, list] = {"TW": [], "US": []}
+    stats: dict[str, dict] = {"TW": {}, "US": {}}
     chosen = set()
     for m in ("TW", "US"):
         ranked_sectors = sorted(sec_scores[m], key=lambda k: -(sec_scores[m][k]["score"] or 0))
         focus = ranked_sectors[: s["focus_sectors_per_market"]]
-        for pool_name, sectors in (("focus", focus), ("relaxed", ranked_sectors[s["focus_sectors_per_market"]:])):
+        cands = sorted((r for r in rows.values() if r["market"] == m and r["sector"] in focus and r["composite"] is not None),
+                       key=lambda r: -r["composite"])
+        cnt = defaultdict(int)
+        reasons: dict[str, int] = defaultdict(int)
+        for r in cands:
+            ok, why = eligible(r, p)
+            if not ok:
+                reasons[why] += 1
+                continue
             if len(picked[m]) >= s["picks_per_market"]:
-                break
-            cands = sorted((r for r in rows.values() if r["market"] == m and r["sector"] in sectors and r["composite"] is not None),
-                           key=lambda r: -r["composite"])
-            cnt = defaultdict(int)
-            for r in picked[m]:
-                cnt[r["sector"]] += 1
-            for r in cands:
-                if len(picked[m]) >= s["picks_per_market"]:
-                    break
-                ok, why = eligible(r, p)
-                if not ok:
-                    continue
-                if cnt[r["sector"]] >= s["max_per_sector"]:
-                    continue
-                if r["dual_of"] in chosen or r["ticker"] in chosen:
-                    continue
-                r["pick_pool"] = pool_name
+                reasons["合格但名額已滿"] += 1
+            elif cnt[r["sector"]] >= s["max_per_sector"]:
+                reasons[f"合格但同產業已達 {s['max_per_sector']} 檔上限"] += 1
+            elif r["dual_of"] in chosen or r["ticker"] in chosen:
+                reasons["合格但與已選標的為同一公司（雙重上市）"] += 1
+            else:
+                r["pick_pool"] = "focus"
                 picked[m].append(r)
                 cnt[r["sector"]] += 1
                 chosen.add(r["ticker"])
-            if pool_name == "relaxed" and picked[m]:
-                if any(r.get("pick_pool") == "relaxed" for r in picked[m]):
-                    notes[m].append("重點產業內合格標的不足，已放寬至排名較後的產業補足名額。")
         for i, r in enumerate(picked[m], 1):
             r["pick_rank"] = i
-    return {"picks": picked, "notes": notes}
+        stats[m] = {"candidates": len(cands), "reasons": dict(sorted(reasons.items(), key=lambda kv: -kv[1]))}
+    return {"picks": picked, "stats": stats, "notes": {"TW": [], "US": []}}

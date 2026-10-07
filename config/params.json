@@ -90,7 +90,7 @@
   },
   "emerging": {
     "top_themes": 4,
-    "picks_per_market": 3,
+    "picks_per_market": 5,
     "max_per_theme": 2,
     "score_weights": {
       "evidence": 0.3,
@@ -105,15 +105,17 @@
     },
     "min_market_cap": {
       "US": 3000000000,
-      "TW": 20000000000
+      "TW": 10000000000
     },
     "min_avg_turnover": {
       "US": 20000000,
-      "TW": 100000000
+      "TW": 50000000
     },
     "min_quality_score": 40,
     "min_upside": 0.1,
     "max_method_spread": 0.6,
-    "min_members": 3
+    "min_members": 3,
+    "pick_themes": 8,
+    "relaxed_spread_max": 0.8
   }
 }

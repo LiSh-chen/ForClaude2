@@ -152,3 +152,31 @@ def test_emerging_scoring_prefers_low_coverage():
     th = {t["id"]: t for t in score_themes(uni, items, main, src, rows, P)}
     assert th["water_infra"]["coverage_ratio"] > th["pq_security"]["coverage_ratio"]
     assert th["pq_security"]["components"]["low_coverage"] > th["water_infra"]["components"]["low_coverage"]
+
+
+def test_no_padding_when_few_qualify():
+    from ijournal.daily import run_daily
+    from ijournal.selection import pick  # noqa: F401
+    p = C.load_params()
+    p["selection"]["min_upside"] = 5.0  # 幾乎無人能過 → 應該照實少選，而不是放寬或跨產業補位
+    C.save_json(C.params_path(), p)
+    try:
+        d = run_daily(DemoProvider(end=dt.date(2026, 9, 30)), asof="2026-08-03")
+        pj = C.load_json(C.path("data") / "picks" / f"{d}.json")
+        assert len(pj["picks"]) == 0
+        md = (C.path("journal") / f"{d}.md").read_text(encoding="utf-8")
+        assert "合格標的不足，不為湊數放寬門檻" in md and "放寬至排名較後" not in md
+    finally:
+        p["selection"]["min_upside"] = 0.05
+        C.save_json(C.params_path(), p)
+
+
+def test_emerging_spread_rule_direction_consistency():
+    from ijournal.emerging import eligible
+    p = C.load_params()
+    base = {"market": "US", "f": {"market_cap": 5e10, "eps_ttm_px": 5.0}, "pf": {"turnover": 1e9}, "scores": {"quality": 60}}
+    mk = lambda ups, spread: dict(base, val={"upside": 0.3, "spread": spread, "methods": {str(i): {"upside": u} for i, u in enumerate(ups)}})
+    assert eligible(mk([0.1, 0.5], 0.4), p)[0]                       # 分歧小 → 過
+    assert eligible(mk([0.1, 0.7], 0.7), p)[0]                       # 分歧 70% 但方向一致 → 放行
+    assert not eligible(mk([-0.2, 0.7], 0.7), p)[0]                  # 分歧 70% 且有方法看空 → 不放行
+    assert not eligible(mk([0.1, 0.9], 0.9), p)[0]                   # 超過硬上限 → 不放行

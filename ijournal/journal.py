@@ -83,11 +83,14 @@ def write_journal(date: str, ctx: dict) -> str:
             v = r["val"]
             A(f"| {MKT[m]} | {r['pick_rank']} | {r['ticker']} | {md_escape(r['zh_name'])} | {md_escape(secs[r['sector']]['name'])} | {num(r['price'])} | **{num(v['base'])}** | {pct(v['upside'], 1, True)} | {num(v['bear'])} / {num(v['bull'])} | {num(r['composite'], 1)} |")
     A("")
+    N = p["selection"]["picks_per_market"]
     for m in ("TW", "US"):
-        for n in ctx["notes"][m]:
-            A(f"- {MKT[m]}：{n}")
-        if len(picks[m]) < p["selection"]["picks_per_market"]:
-            A(f"- {MKT[m]}：今日僅 {len(picks[m])} 檔通過全部篩選條件（寧缺勿濫，不為湊數放寬品質門檻）。")
+        k, st = len(picks[m]), ctx["stats"][m]
+        if k >= N:
+            A(f"- **{MKT[m]}**：{k}／{N} 檔。")
+        else:
+            why = "、".join(f"{w} {c}" for w, c in st["reasons"].items()) or "—"
+            A(f"- **{MKT[m]}**：**{k}／{N} 檔**——合格標的不足，不為湊數放寬門檻、也不改從其他產業補位。重點產業共 {st['candidates']} 檔候選，未入選原因：{why}。")
     A("")
 
     # 1 大盤
