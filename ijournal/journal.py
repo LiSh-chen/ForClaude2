@@ -33,7 +33,97 @@ def candidate_record(r: dict, picked: set, focus: set) -> dict:
             "upside": round(v["upside"], 4) if v else None, "picked": r["ticker"] in picked, "in_focus": r["sector"] in focus.get(r["market"], set())}
 
 
-def thesis(r: dict, sec: dict, uni_sector: dict) -> tuple[str, list[str]]:
+def _head(h: dict) -> dict:
+    return {"title": h["title"], "link": h.get("link", ""), "source": h["source"]}
+
+
+def analyze(r: dict, sec: dict | None, ctx: dict, sec_heads: list | None = None) -> dict:
+    """由資料推導『為什麼推薦』與風險。風險分兩組，避免混淆：
+      now   已出現：目前的財務/價格/新聞資料已經顯示的狀況
+      watch 待觀察：尚未發生、只是可能發生的事件（產業風險；前瞻專區則是『論點證偽條件』）
+    ctx: {"traits": [...], "watch": [...], "theme": 趨勢名稱或 None, "theme_thesis": str}"""
+    f, pf, v, sc, m = r["f"], r["pf"], r["val"], r["scores"], MKT[r["market"]]
+    why: list[dict] = []
+    short: list[str] = []
+
+    def add(text: str, tag: str, link: dict | None = None):
+        why.append({"t": text, "tag": tag, **({"news": link} if link else {})})
+
+    if ctx.get("theme"):
+        add(f"屬於「{ctx['theme']}」趨勢：{ctx.get('theme_one_liner') or ctx.get('theme_thesis', '')}", "趨勢")
+        short.append(ctx["theme"])
+    if sec and sec["rank"] <= 5:
+        tags = "、".join(sec["tags"]) if sec["tags"] else "熱門"
+        senti = "偏正面" if sec["news"]["sent"] > 0.1 else "偏負面" if sec["news"]["sent"] < -0.1 else "中性"
+        add(f"產業熱度：「{sec['name']}」為{m}今日第 {sec['rank']} 名產業（{tags}），近期相關新聞 {sec['news']['n']} 則、情緒{senti}", "產業")
+        short.append(f"{sec['name']}產業熱度第{sec['rank']}")
+    if r["n_in_sector"] >= 3 and r["rank_in_sector"] <= 2:
+        add(f"龍頭地位：同產業{m}標的中市值第 {r['rank_in_sector']}／{r['n_in_sector']}（{big(f.get('market_cap'))} {f.get('currency') or ''}）", "龍頭")
+    rg, eg = f.get("rev_growth"), f.get("eps_growth")
+    if isnum(rg) and rg >= 0.10:
+        add(f"成長：營收年增 {pct(rg, 1, True)}" + (f"、獲利年增 {pct(eg, 1, True)}" if isnum(eg) else ""), "成長")
+        short.append(f"營收年增{pct(rg, 0, True)}")
+    roe, om = f.get("roe"), f.get("op_margin")
+    if (isnum(roe) and roe >= 0.15) or (isnum(om) and om >= 0.20):
+        add(f"獲利體質：ROE {pct(roe)}、營業利益率 {pct(om)}、品質分 {num(sc['quality'], 0)}", "品質")
+        if len(short) < 2 and isnum(roe) and roe >= 0.15:
+            short.append(f"ROE {pct(roe, 0)}")
+    cons = f.get("target_mean")
+    val = f"估值：模型 base 目標價 {num(v['base'])}（上檔 {pct(v['upside'], 1, True)}）"
+    if isnum(cons) and cons > pf["last"]:
+        val += f"；券商共識目標價 {num(cons)}（{pct(cons / pf['last'] - 1, 1, True)}）"
+    if isnum(f.get("pe_fwd")) and isnum(v.get("peer_pe")) and f["pe_fwd"] < v["peer_pe"] * 0.9:
+        val += f"；預估本益比 {f['pe_fwd']:.1f} 低於同業中位數 {v['peer_pe']:.1f}"
+    add(val, "估值")
+    if isnum(pf.get("rel_3m")) and pf["rel_3m"] > 0.05:
+        add(f"動能：近 3 個月股價強於大盤 {pct(pf['rel_3m'], 1, True)}", "動能")
+    elif isnum(pf.get("rel_6m")) and pf["rel_6m"] < -0.2 and v["upside"] > 0.1:
+        add(f"股價相對低檔：近 6 個月落後大盤 {pct(abs(pf['rel_6m']), 0)}、距 52 週高 {pct(pf['from_high'], 0)}，尚未被市場追價（也可能代表基本面有疑慮，見風險）", "低檔")
+    pos = [h for h in ((r.get("news") or {}).get("heads") or []) if h.get("sent", 0) >= 0.3]
+    if pos:
+        add(f"近期利多報導：{pos[0]['title']}（關鍵字判斷）", "新聞", _head(pos[0]))
+    short.append(f"目標價上檔 {pct(v['upside'], 0, True)}")
+    headline = "、".join(short[:3])
+
+    now: list[dict] = []
+
+    def risk(text: str, news: list | None = None):
+        now.append({"t": text, **({"news": [_head(h) for h in news]} if news else {})})
+
+    if isnum(f.get("pe_fwd")) and f["pe_fwd"] > 35:
+        risk(f"預估本益比 {f['pe_fwd']:.0f} 倍偏高：價格已反映高成長預期，若成長不如預期，評價可能壓縮")
+    if isnum(f.get("de")) and f["de"] > 1.5:
+        risk(f"負債權益比 {f['de']:.1f} 偏高，財務槓桿大")
+    if isnum(f.get("beta")) and f["beta"] > 1.5:
+        risk(f"Beta {f['beta']:.1f}：大盤回檔時此股波動會放大（特性，不是事件）")
+    if pf.get("dist200") is not None and pf["dist200"] > 0.35:
+        risk(f"股價高於 200 日線 {pf['dist200'] * 100:.0f}%，短線追高風險")
+    if isnum(rg) and rg < 0:
+        risk(f"營收年減 {pct(abs(rg), 1)}，成長動能轉弱")
+    if isnum(pf.get("rel_3m")) and pf["rel_3m"] < -0.15:
+        risk(f"近 3 個月落後大盤 {pct(abs(pf['rel_3m']), 0)}：市場目前並不買單，可能已在反映疑慮")
+    if v["capped"]:
+        risk(f"模型原始上檔空間 {v['raw_blend'] / r['price'] - 1:.0%}，已套用上檔上限；估值可能過度樂觀，請與券商共識交叉比對")
+    if v["confidence"] == "低":
+        risk(f"各估值方法差距大（分歧度 {v['spread']:.0%}），目標價可信度偏低")
+    elif v["n_methods"] < 3:
+        risk("可用估值方法少於 3 種，目標價可信度較低")
+    neg = [h for h in ((r.get("news") or {}).get("heads") or []) if h.get("sent", 0) <= -0.3]
+    neg += [h for h in (sec_heads or []) if h.get("sent", 0) <= -0.3 and h["title"] not in {x["title"] for x in neg}]
+    if neg:
+        risk(f"近期已有 {len(neg[:3])} 則偏負面報導（以關鍵字判斷，可能誤判，請點開確認內容）", neg[:3])
+    for x in ctx.get("traits") or []:
+        risk(f"產業特性：{x}")
+
+    watch = [{"t": x} for x in ctx.get("watch") or []]
+    for drop in ("低檔", "動能", "龍頭"):  # 理由最多 5 條：超過時先捨棄次要項目，確保估值與成長一定保留
+        if len(why) > 5:
+            why = [w for w in why if w["tag"] != drop]
+    return {"why": why[:5], "headline": headline, "risks_now": now, "risks_watch": watch}
+
+
+def thesis(r: dict, sec: dict | None, ctx: dict) -> tuple[str, list[str]]:
+    """研究摘要（完整段落，給日誌與側欄『研究摘要』）；風險另由 analyze() 產生。"""
     f, pf, v, sc = r["f"], r["pf"], r["val"], r["scores"]
     parts = []
     if sec:
@@ -45,20 +135,8 @@ def thesis(r: dict, sec: dict, uni_sector: dict) -> tuple[str, list[str]]:
     parts.append(f"**財務體質**（品質分 {num(sc['quality'], 0)}）：" + "、".join(q) + (f"、負債權益比 {num(f.get('de'))}" if isnum(f.get("de")) else "") + "。")
     parts.append(f"**股價結構**：近 3 個月相對大盤 {pct(pf.get('rel_3m'), 1, True)}；距 200 日均線 {pct(pf.get('dist200'), 1, True)}；距 52 週高 {pct(pf['from_high'], 1, True)}。")
     parts.append(f"**估值**：預估本益比 {num(f.get('pe_fwd'), 1)}、同業中位數 {num(v['peer_pe'], 1)}；base 目標價 {num(v['base'])}，隱含 {pct(v['upside'], 1, True)}。")
-    risks = [uni_sector["risk"]]
-    if isnum(f.get("pe_fwd")) and f["pe_fwd"] > 35:
-        risks.append(f"預估本益比 {f['pe_fwd']:.0f} 倍偏高，若成長不如預期，評價壓縮風險大")
-    if isnum(f.get("de")) and f["de"] > 1.5:
-        risks.append(f"負債權益比 {f['de']:.1f} 偏高")
-    if isnum(f.get("beta")) and f["beta"] > 1.5:
-        risks.append(f"Beta {f['beta']:.1f}，大盤回檔時波動放大")
-    if pf.get("dist200") is not None and pf["dist200"] > 0.35:
-        risks.append(f"股價高於 200 日線 {pf['dist200'] * 100:.0f}%，短線追高風險")
-    if v["capped"]:
-        risks.append(f"模型原始上檔空間 {v['raw_blend'] / r['price'] - 1:.0%}，已套用上檔上限，估值可能過度樂觀，請與券商共識交叉比對")
-    if v["n_methods"] < 3:
-        risks.append("可用估值方法少於 3 種，目標價可信度較低")
-    return "\n\n".join(parts), risks
+    a = analyze(r, sec, ctx)
+    return "\n\n".join(parts), [x["t"] for x in a["risks_now"]] + [x["t"] for x in a["risks_watch"]]
 
 
 def write_journal(date: str, ctx: dict) -> str:
@@ -159,11 +237,18 @@ def write_journal(date: str, ctx: dict) -> str:
         for r in picks[m]:
             v, f, pf = r["val"], r["f"], r["pf"]
             sec = sec_scores[m].get(r["sector"])
-            th, risks = thesis(r, sec, secs[r["sector"]])
+            rctx = {"traits": secs[r["sector"]].get("risk_traits"), "watch": secs[r["sector"]].get("risk_watch")}
+            an = analyze(r, sec, rctx, ctx["scan"]["sector"][r["sector"]][m]["heads"])
+            th, _ = thesis(r, sec, rctx)
             A(f"### {MKT[m]} #{r['pick_rank']}　{r['ticker']} {r['zh_name']}\n")
+            A(f"**一句話**：{an['headline']}\n")
+            A("**為什麼推薦（利多）**\n")
+            for w in an["why"]:
+                A(f"- 〔{w['tag']}〕{w['t']}")
+            A("")
             if ctx.get("llm") and ctx["llm"].get("comments", {}).get(r["ticker"]):
                 A(f"> AI 評論：{ctx['llm']['comments'][r['ticker']]}\n")
-            A(th + "\n")
+            A("<details><summary>研究摘要（完整段落）</summary>\n\n" + th + "\n\n</details>\n")
             A("**目標價估算**（12 個月）\n")
             A("| 方法 | 估值 | 權重 | 隱含報酬 | 計算說明 |")
             A("|---|---|---|---|---|")
@@ -179,9 +264,12 @@ def write_journal(date: str, ctx: dict) -> str:
             A(f"- 情境：bull {num(v['bull'])}（{pct(v['bull'] / r['price'] - 1, 0, True)}，機率 {pr['bull']:.0%}）／ base {num(v['base'])}（{pr['base']:.0%}）／ bear {num(v['bear'])}（{pct(v['bear'] / r['price'] - 1, 0, True)}，{pr['bear']:.0%}）→ 機率加權期望值 {num(v['ev'])}（{pct(v['ev_upside'], 1, True)}）")
             A(f"- 風險報酬比（上檔／下檔）：{num(v['rr'], 2) if v['rr'] else '—'}；參考停損價 {num(pr_stop(pf))}（2.5×ATR，限制在 6%–18%）")
             A(f"- 券商共識目標價：{num(f.get('target_mean'))}（{int(f['n_analysts']) if f.get('n_analysts') else '—'} 位）")
-            A("\n**主要風險**\n")
-            for x in risks:
-                A(f"- {x}")
+            A("\n**已出現的風險**（目前的資料已經顯示，不是未來的假設）\n")
+            for x in an["risks_now"] or [{"t": "目前資料未顯示明顯警訊。"}]:
+                A(f"- {x['t']}")
+            A("\n**未來需留意（尚未發生）**——下列是可能發生的事件，目前並沒有發生，列出供追蹤\n")
+            for x in an["risks_watch"]:
+                A(f"- {x['t']}")
             nd = r["news"]
             if nd and nd["heads"]:
                 A("\n**個股相關新聞**\n")

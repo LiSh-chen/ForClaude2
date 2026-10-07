@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from . import emerging as E
-from .journal import thesis
+from .journal import analyze, thesis
 from .selection import eligible
 from .utils import isnum
 
@@ -21,9 +21,10 @@ def series(prices: dict, t: str, n: int = 120) -> dict:
     return {"d": [x.strftime("%y%m%d") for x in c.index], "c": [round(float(v), 2) for v in c]}
 
 
-def stock_obj(r: dict, sec: dict | None, risk_ctx: dict, prices: dict, names: dict, extra: dict | None = None) -> dict:
+def stock_obj(r: dict, sec: dict | None, risk_ctx: dict, prices: dict, names: dict, extra: dict | None = None, sec_heads: list | None = None) -> dict:
     v, f, pf = r["val"], r["f"], r["pf"]
     th, risks = thesis(r, sec, risk_ctx)
+    an = analyze(r, sec, risk_ctx, sec_heads)
     stop = pf["last"] - max(min(2.5 * pf["atr14"], 0.18 * pf["last"]), 0.06 * pf["last"])
     o = {
         "ticker": r["ticker"], "name": r["zh_name"], "market": r["market"], "sector": r["sector"], "sector_name": names.get(r["sector"], r["sector"]),
@@ -36,8 +37,8 @@ def stock_obj(r: dict, sec: dict | None, risk_ctx: dict, prices: dict, names: di
         "dropped": [m["label"] for m in v["dropped"].values()],
         "fin": {k: _r(f.get(k), 4) for k in FIN_KEYS},
         "tech": {k: _r(pf.get(k), 4) for k in ("ret_1m", "ret_3m", "rel_3m", "rel_6m", "dist200", "from_high", "vol_ann")},
-        "thesis": th, "risks": risks,
-        "news": [{"title": h["title"], "link": h["link"], "source": h["source"]} for h in ((r.get("news") or {}).get("heads") or [])[:3]],
+        "thesis": th, "risks": risks, "headline": an["headline"], "why": an["why"], "risks_now": an["risks_now"], "risks_watch": an["risks_watch"],
+        "news": [{"title": h["title"], "link": h["link"], "source": h["source"], "sent": _r(h.get("sent"), 2)} for h in ((r.get("news") or {}).get("heads") or [])[:3]],
         "series": series(prices, r["ticker"]),
     }
     if extra:
@@ -58,7 +59,8 @@ def build(date: str, ctx: dict, emg: dict | None, prices: dict) -> dict:
                      "failed": [x["source"] for x in ctx["fetch_log"] if not x["ok"]]},
             "indices": ctx["indices"]}
     # --- 主榜
-    snap["picks"] = {m: [stock_obj(r, sec_scores[m].get(r["sector"]), sectors_cfg[r["sector"]], prices, names) for r in picks[m]] for m in ("TW", "US")}
+    snap["picks"] = {m: [stock_obj(r, sec_scores[m].get(r["sector"]), {"traits": sectors_cfg[r["sector"]].get("risk_traits"), "watch": sectors_cfg[r["sector"]].get("risk_watch")}, prices, names,
+                                   sec_heads=ctx["scan"]["sector"][r["sector"]][m]["heads"]) for r in picks[m]] for m in ("TW", "US")}
     snap["shortage"] = {m: {"n": len(picks[m]), "N": N, "candidates": ctx["stats"][m]["candidates"], "reasons": ctx["stats"][m]["reasons"]} for m in ("TW", "US")}
     focus_n = p["selection"]["focus_sectors_per_market"]
     snap["sectors"] = {}
@@ -93,7 +95,8 @@ def build(date: str, ctx: dict, emg: dict | None, prices: dict) -> dict:
                         "coverage": _r(t["coverage_ratio"], 2), "n_headlines": t["n_headlines"], "status": t["status"], "rel_6m": _r(t["rel_6m"]), "above200": _r(t["above200"], 2),
                         "thesis": t["thesis"], "evidence": t["evidence"], "falsifiers": t["falsifiers"], "members": mem,
                         "heads": [{"title": h["title"], "link": h["link"], "source": h["source"]} for h in t["heads"]]})
-        picks_e = {m: [stock_obj(r, None, {"risk": "；".join(th_cfg[r["theme"]]["falsifiers"])}, prices, names,
+        picks_e = {m: [stock_obj(r, None, {"theme": r["theme_name"], "theme_thesis": th_cfg[r["theme"]]["thesis"], "theme_one_liner": th_cfg[r["theme"]].get("one_liner"), "traits": [],
+                                       "watch": ["若出現就代表論點不成立：" + x for x in th_cfg[r["theme"]]["falsifiers"]]}, prices, names,
                                  {"theme": r["theme"], "theme_name": r["theme_name"], "also_main": r["also_main"], "relaxed": r["val"]["spread"] > e["max_method_spread"]}) for r in ep[m]] for m in ("TW", "US")}
         snap["emerging"] = {"themes": eth, "picks": picks_e, "shortage": E.shortage_stats(themes, ep, rows, p), "clues": emg.get("clues") or [], "n_scanned": ctx["scan"]["n_used"]}
     return snap
