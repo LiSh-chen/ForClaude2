@@ -2,7 +2,7 @@
   "_doc": "前瞻專區的結構性趨勢清單（人工維護的研究假設，非新聞驅動）。tier: A=驅動力為法規時程/人口結構/已簽約產能等可查證且不可逆的事實；B=採用率或成本曲線已有明確資料，但規模與時程有不確定；C=技術可行但商業化未定。evidence 為研究假設，使用前請自行查證原始來源；falsifiers 為使論點不成立的可觀察條件。tickers 格式同 universe.json。",
   "themes": [
     {
-      "id": "pq_security", "name": "抗量子密碼與硬體安全遷移", "tier": "A",
+      "id": "pq_security", "name": "抗量子密碼與硬體安全遷移", "short": "抗量子密碼", "tier": "A",
       "thesis": "各國政府與標準機構已訂出『現行公鑰密碼要被淘汰』的遷移時程，企業與雲端供應商必須在期限前更換密碼架構與硬體信任根；需求由法規時程驅動，而非景氣。",
       "one_liner": "法規已訂出密碼遷移時程，需求由期限驅動、不看景氣",
       "evidence": ["美國 NIST 已發布首批後量子密碼標準（ML-KEM、ML-DSA、SLH-DSA）", "美國國安體系與聯邦機構已公布 2030 年代前完成遷移的時程要求", "主流雲端與 CDN 業者已在流量層導入混合式後量子金鑰交換"],
@@ -11,7 +11,7 @@
       "tickers": ["IBM|IBM|", "NET|Cloudflare|", "AKAM|Akamai|", "PANW|Palo Alto Networks|", "6214.TW|精誠|", "6690.TW|安碁資訊|"]
     },
     {
-      "id": "process_control", "name": "先進製程量測、檢測與可靠度驗證", "tier": "B",
+      "id": "process_control", "name": "先進製程量測、檢測與可靠度驗證", "short": "量測檢測", "tier": "B",
       "thesis": "製程微縮（GAA、背面供電）與 HBM/先進封裝的 3D 堆疊讓每片晶圓的量測、檢測與驗證步驟數增加，且良率成本隨複雜度上升，量測檢測支出占比結構性提高。",
       "one_liner": "製程越複雜，量測檢測的支出占比越高",
       "evidence": ["先進節點與 HBM 堆疊的良率挑戰是業界公開討論的瓶頸", "量測/檢測設備營收成長長期高於整體晶圓設備", "晶片設計複雜化推升失效分析與可靠度驗證的外包需求"],
@@ -20,7 +20,7 @@
       "tickers": ["ONTO|Onto Innovation|", "CAMT|Camtek|", "NVMI|Nova|", "KLAC|KLA|", "3587.TWO|閎康|", "3289.TWO|宜特|", "6830.TWO|汎銓|"]
     },
     {
-      "id": "adv_packaging_supply", "name": "先進封裝測試介面與材料", "tier": "B",
+      "id": "adv_packaging_supply", "name": "先進封裝測試介面與材料", "short": "先進封裝介面", "tier": "B",
       "thesis": "AI 加速器的瓶頸已從晶圓製造延伸到封裝與測試；探針卡、測試座、先進封裝材料與載板的單位價值隨 chiplet 與大尺寸封裝上升。",
       "one_liner": "AI 瓶頸移到封裝測試，測試介面與材料單價上升",
       "evidence": ["主要晶圓代工與封測廠公開擴增先進封裝產能", "晶片尺寸與接腳數增加使測試介面（探針卡、測試座）規格與單價提高", "ABF 載板與玻璃基板等新材料列入多家廠商的技術藍圖"],
@@ -29,7 +29,7 @@
       "tickers": ["AMKR|Amkor|", "ENTG|Entegris|", "FORM|FormFactor|", "COHU|Cohu|", "6223.TWO|旺矽|", "6510.TWO|精測|", "3374.TWO|精材|", "3189.TW|景碩|"]
     },
     {
-      "id": "grid_hardware", "name": "高壓電纜與電網互連硬體", "tier": "A",
+      "id": "grid_hardware", "name": "高壓電纜與電網互連硬體", "short": "電網硬體", "tier": "A",
       "thesis": "電網互連排隊、輸電線路老化汰換與再生能源併網需要大量高壓電纜、開關設備與配電硬體，專案以多年期合約與監管核准推進，能見度高。",
       "one_liner": "電網互連與老舊線路汰換，帶來多年期訂單",
       "evidence": ["美歐電網業者公布多年期輸配電資本支出計畫", "高壓電纜與變電設備交期已拉長至數年，產能擴張需要時間", "電力需求在數十年來首度轉為成長（電動化、資料中心、製造回流）"],
@@ -38,7 +38,7 @@
       "tickers": ["HUBB|Hubbell|", "POWL|Powell Industries|", "ATKR|Atkore|", "1609.TW|大亞|", "1605.TW|華新|", "1608.TW|華榮|", "1618.TW|合機|"]
     },
     {
-      "id": "power_semis", "name": "高壓功率半導體（SiC / GaN）", "tier": "B",
+      "id": "power_semis", "name": "高壓功率半導體（SiC / GaN）", "short": "SiC/GaN", "tier": "B",
       "thesis": "資料中心高壓直流供電、電動車與工業電源朝更高電壓與效率發展，碳化矽與氮化鎵元件的採用率隨成本下降而擴大。",
       "one_liner": "資料中心與電動車朝高壓高效率，SiC/GaN 滲透率提高",
       "evidence": ["資料中心機櫃功率密度快速上升，供電架構朝更高電壓演進", "SiC/GaN 晶圓尺寸與良率持續改善、成本下降", "多家電源與車用供應鏈廠商公布 SiC/GaN 設計導入"],
@@ -47,7 +47,7 @@
       "tickers": ["ON|onsemi|", "NVTS|Navitas|", "MPWR|Monolithic Power|", "AEIS|Advanced Energy|", "3016.TW|嘉晶|", "6415.TW|矽力-KY|", "6488.TWO|環球晶|", "2481.TW|強茂|"]
     },
     {
-      "id": "edge_ai_industrial", "name": "工業邊緣 AI 與嵌入式運算", "tier": "B",
+      "id": "edge_ai_industrial", "name": "工業邊緣 AI 與嵌入式運算", "short": "邊緣AI", "tier": "B",
       "thesis": "AI 推論從雲端下沉到工廠、零售與車輛等邊緣場景，需要低功耗、可長期供貨且通過工規認證的嵌入式運算與感測平台。",
       "one_liner": "AI 推論從雲端下沉到工廠與裝置端",
       "evidence": ["工業電腦與嵌入式平台廠商持續推出整合 NPU/GPU 的邊緣 AI 產品", "邊緣推論晶片與模組出貨在多個應用領域成長", "資料主權與延遲要求使部分推論留在本地端"],
@@ -56,7 +56,7 @@
       "tickers": ["QCOM|Qualcomm|", "ARM|Arm Holdings|", "LSCC|Lattice|", "ADI|Analog Devices|", "2395.TW|研華|", "6166.TW|凌華|", "3088.TW|艾訊|", "6579.TWO|研揚|"]
     },
     {
-      "id": "aging_care", "name": "高齡化與慢性病照護設備", "tier": "A",
+      "id": "aging_care", "name": "高齡化與慢性病照護設備", "short": "高齡照護", "tier": "A",
       "thesis": "人口老化是已知且不可逆的人口結構；糖尿病、睡眠呼吸中止、洗腎與視力矯正等慢性病的長期照護需求持續增加，且多為經常性耗材收入。",
       "one_liner": "人口老化不可逆，慢性病設備為經常性耗材收入",
       "evidence": ["美、日、台、韓的老年人口占比逐年上升（官方人口統計與推估）", "連續血糖監測、睡眠呼吸治療等設備的滲透率仍低於潛在族群", "慢性病設備多為訂閱式耗材，營收可預測性高"],
@@ -65,7 +65,7 @@
       "tickers": ["RMD|ResMed|", "DXCM|Dexcom|", "PODD|Insulet|", "SYK|Stryker|", "4104.TW|佳醫|", "6491.TWO|晶碩|", "1565.TWO|精華|"]
     },
     {
-      "id": "water_infra", "name": "水資源與超純水處理", "tier": "B",
+      "id": "water_infra", "name": "水資源與超純水處理", "short": "水資源", "tier": "B",
       "thesis": "半導體晶圓廠與資料中心用水量大，缺水與水質法規收緊使水處理、回收與管網更新成為剛性支出。",
       "one_liner": "缺水與水質法規收緊，水處理成為剛性支出",
       "evidence": ["晶圓製造與資料中心冷卻的用水量被產業與主管機關公開關注", "多地發生乾旱並推動水回收與限水政策", "水利基礎建設老化汰換計畫由公用事業費率案支撐"],

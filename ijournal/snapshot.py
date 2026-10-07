@@ -37,7 +37,7 @@ def stock_obj(r: dict, sec: dict | None, risk_ctx: dict, prices: dict, names: di
         "dropped": [m["label"] for m in v["dropped"].values()],
         "fin": {k: _r(f.get(k), 4) for k in FIN_KEYS},
         "tech": {k: _r(pf.get(k), 4) for k in ("ret_1m", "ret_3m", "rel_3m", "rel_6m", "dist200", "from_high", "vol_ann")},
-        "thesis": th, "risks": risks, "headline": an["headline"], "why": an["why"], "risks_now": an["risks_now"], "risks_watch": an["risks_watch"],
+        "thesis": th, "risks": risks, "headline": an["headline"], "highlights": an["highlights"], "why": an["why"], "risks_now": an["risks_now"], "risks_watch": an["risks_watch"],
         "news": [{"title": h["title"], "link": h["link"], "source": h["source"], "sent": _r(h.get("sent"), 2)} for h in ((r.get("news") or {}).get("heads") or [])[:3]],
         "series": series(prices, r["ticker"]),
     }
@@ -91,12 +91,12 @@ def build(date: str, ctx: dict, emg: dict | None, prices: dict) -> dict:
                     continue
                 ok, why = E.eligible(r, p)
                 mem.append({"t": tk, "n": r["zh_name"], "c": _r(r["composite"], 1), "s": "入選" if tk in got else ("合格未入選" if ok else why)})
-            eth.append({"id": t["id"], "name": t["name"], "tier": t["tier"], "rank": t["rank"], "score": _r(t["score"], 1), "parts": {k: _r(x, 0) for k, x in t["components"].items()},
+            eth.append({"id": t["id"], "name": t["name"], "short": th_cfg[t["id"]].get("short"), "tier": t["tier"], "rank": t["rank"], "score": _r(t["score"], 1), "parts": {k: _r(x, 0) for k, x in t["components"].items()},
                         "coverage": _r(t["coverage_ratio"], 2), "n_headlines": t["n_headlines"], "status": t["status"], "rel_6m": _r(t["rel_6m"]), "above200": _r(t["above200"], 2),
                         "thesis": t["thesis"], "evidence": t["evidence"], "falsifiers": t["falsifiers"], "members": mem,
                         "heads": [{"title": h["title"], "link": h["link"], "source": h["source"]} for h in t["heads"]]})
-        picks_e = {m: [stock_obj(r, None, {"theme": r["theme_name"], "theme_thesis": th_cfg[r["theme"]]["thesis"], "theme_one_liner": th_cfg[r["theme"]].get("one_liner"), "traits": [],
+        picks_e = {m: [stock_obj(r, None, {"theme": r["theme_name"], "theme_thesis": th_cfg[r["theme"]]["thesis"], "theme_one_liner": th_cfg[r["theme"]].get("one_liner"), "theme_short": th_cfg[r["theme"]].get("short"), "traits": [],
                                        "watch": ["若出現就代表論點不成立：" + x for x in th_cfg[r["theme"]]["falsifiers"]]}, prices, names,
-                                 {"theme": r["theme"], "theme_name": r["theme_name"], "also_main": r["also_main"], "relaxed": r["val"]["spread"] > e["max_method_spread"]}) for r in ep[m]] for m in ("TW", "US")}
-        snap["emerging"] = {"themes": eth, "picks": picks_e, "shortage": E.shortage_stats(themes, ep, rows, p), "clues": emg.get("clues") or [], "n_scanned": ctx["scan"]["n_used"]}
+                                 {"theme": r["theme"], "theme_name": r["theme_name"], "theme_short": th_cfg[r["theme"]].get("short"), "also_main": r["also_main"], "relaxed": r["val"]["spread"] > e["max_method_spread"]}) for r in ep[m]] for m in ("TW", "US")}
+        snap["emerging"] = {"top_n": e["top_themes"], "themes": eth, "picks": picks_e, "shortage": E.shortage_stats(themes, ep, rows, p), "clues": emg.get("clues") or [], "n_scanned": ctx["scan"]["n_used"]}
     return snap

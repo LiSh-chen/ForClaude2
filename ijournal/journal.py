@@ -116,10 +116,28 @@ def analyze(r: dict, sec: dict | None, ctx: dict, sec_heads: list | None = None)
         risk(f"產業特性：{x}")
 
     watch = [{"t": x} for x in ctx.get("watch") or []]
+    # 亮點標籤（卡片上最多 3 個、依重要性）：只放真正突出的事實，沒有就不放
+    hl: list[dict] = []
+    if ctx.get("theme"):
+        hl.append({"t": ctx.get("theme_short") or ctx["theme"], "k": "theme"})
+    if sec and sec["rank"] <= 2:
+        hl.append({"t": f"產業熱度第{sec['rank']}", "k": "sector"})
+    if isnum(rg) and rg >= 0.25:
+        hl.append({"t": f"營收年增{pct(rg, 0, True)}", "k": "growth"})
+    if isnum(roe) and roe >= 0.25:
+        hl.append({"t": f"ROE {pct(roe, 0)}", "k": "quality"})
+    if r["n_in_sector"] >= 3 and r["rank_in_sector"] == 1:
+        hl.append({"t": "產業龍頭", "k": "leader"})
+    if isnum(f.get("pe_fwd")) and isnum(v.get("peer_pe")) and f["pe_fwd"] < v["peer_pe"] * 0.85:
+        hl.append({"t": "本益比低於同業", "k": "value"})
+    if isnum(cons) and cons / pf["last"] - 1 >= 0.25:
+        hl.append({"t": f"券商共識{pct(cons / pf['last'] - 1, 0, True)}", "k": "consensus"})
+    if isnum(pf.get("rel_3m")) and pf["rel_3m"] >= 0.15:
+        hl.append({"t": "動能強", "k": "momentum"})
     for drop in ("低檔", "動能", "龍頭"):  # 理由最多 5 條：超過時先捨棄次要項目，確保估值與成長一定保留
         if len(why) > 5:
             why = [w for w in why if w["tag"] != drop]
-    return {"why": why[:5], "headline": headline, "risks_now": now, "risks_watch": watch}
+    return {"why": why[:5], "highlights": hl[:3], "headline": headline, "risks_now": now, "risks_watch": watch}
 
 
 def thesis(r: dict, sec: dict | None, ctx: dict) -> tuple[str, list[str]]:
