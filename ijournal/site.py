@@ -26,7 +26,7 @@ ul.arch{list-style:none;padding:0}ul.arch li{padding:6px 0;border-bottom:1px sol
 svg text{fill:var(--fg);font-size:11px}
 footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);font-size:12.5px}
 """
-NAV = [("index.html", "最新日誌"), ("emerging.html", "前瞻專區"), ("archive.html", "日誌列表"), ("performance.html", "績效追蹤"), ("reviews.html", "檢討報告"), ("methodology.html", "方法論")]
+NAV = [("index.html", "儀表板"), ("archive.html", "日誌"), ("reviews.html", "檢討"), ("methodology.html", "方法論")]
 
 
 def md2html(text: str) -> str:
@@ -60,6 +60,24 @@ def _bar_svg(items: list[tuple[str, float]], w=900, h=220) -> str:
     return "".join(out)
 
 
+def write_dashboard(out: Path, data: Path) -> None:
+    """複製前端檔案，並輸出儀表板用的資料（每日快照、日期索引、績效）。"""
+    import shutil
+    web = Path(__file__).parent / "web"
+    for f in ("index.html", "app.js", "style.css"):
+        shutil.copyfile(web / f, out / f)
+    (out / "data" / "snap").mkdir(parents=True, exist_ok=True)
+    dates = []
+    for f in sorted((data / "snapshots").glob("*.json"), reverse=True) if (data / "snapshots").exists() else []:
+        sn = C.load_json(f)
+        shutil.copyfile(f, out / "data" / "snap" / f.name)
+        dates.append({"date": f.stem, "tw": len(sn["picks"]["TW"]), "us": len(sn["picks"]["US"]),
+                      "em": sum(len(v) for v in (sn.get("emerging") or {"picks": {}})["picks"].values())})
+    C.save_json(out / "data" / "index.json", {"dates": dates})
+    perf = C.load_json(data / "performance.json")
+    C.save_json(out / "data" / "performance.json", perf if perf else {"positions": [], "cohorts": [], "summary": {}})
+
+
 def build_site() -> None:
     out = C.path("site")
     jdir, rdir, data = C.path("journal"), C.path("reviews"), C.path("data")
@@ -78,18 +96,7 @@ def build_site() -> None:
         (out / "reviews" / f"{f.stem}.html").write_text(page(f.stem, md2html(f.read_text(encoding="utf-8")), "../"), encoding="utf-8")
     for f in emerging:
         (out / "emerging" / f"{f.stem}.html").write_text(page("前瞻專區 " + f.stem, md2html(f.read_text(encoding="utf-8")), "../"), encoding="utf-8")
-    if emerging:
-        older = "".join(f'<li><a href="emerging/{f.stem}.html">{f.stem}</a></li>' for f in emerging[1:30])
-        body = md2html(emerging[0].read_text(encoding="utf-8")) + (f'<h2>過往前瞻報告</h2><ul class="arch">{older}</ul>' if older else "")
-    else:
-        body = "<h1>前瞻專區</h1><p>第一份前瞻報告將在下次日誌產生時出現。</p>"
-    (out / "emerging.html").write_text(page("前瞻專區", body), encoding="utf-8")
-    # 首頁
-    if journals:
-        latest = journals[0]
-        (out / "index.html").write_text(page("最新日誌", md2html(latest.read_text(encoding="utf-8"))), encoding="utf-8")
-    else:
-        (out / "index.html").write_text(page("最新日誌", "<h1>尚無日誌</h1><p>第一份日誌將在排程首次執行後出現。</p>"), encoding="utf-8")
+    write_dashboard(out, data)
     # 列表
     rows = []
     for f in journals:
@@ -99,37 +106,9 @@ def build_site() -> None:
     (out / "archive.html").write_text(page("日誌列表", f'<h1>日誌列表</h1><ul class="arch">{"".join(rows) or "<li>尚無</li>"}</ul>'), encoding="utf-8")
     rrows = [f'<li><a href="reviews/{f.stem}.html"><b>{f.stem}</b></a></li>' for f in reviews]
     (out / "reviews.html").write_text(page("檢討報告", f'<h1>檢討報告</h1><p class="muted">每週追蹤績效、每月檢討並在樣本足夠時回饋參數。</p><ul class="arch">{"".join(rrows) or "<li>尚無</li>"}</ul>'), encoding="utf-8")
-    # 績效
-    perf = C.load_json(data / "performance.json") or {}
-    body = ["<h1>績效追蹤</h1>"]
-    if perf.get("positions"):
-        summ = perf["summary"]
-        t = ['<div class="tw"><table><tr><th>持有期</th><th>到期檔數</th><th>平均報酬</th><th>平均超額報酬</th><th>勝率</th><th>贏大盤比例</th></tr>']
-        for h, s in summ.items():
-            if s["n"]:
-                t.append(f"<tr><td>{h} 日</td><td>{s['n']}</td><td>{pct(s['avg_ret'], 1, True)}</td><td>{pct(s['avg_alpha'], 1, True)}</td><td>{pct(s['win'], 0)}</td><td>{pct(s['win_alpha'], 0)}</td></tr>")
-        t.append("</table></div>")
-        body += ["<h2>到期績效</h2>", "".join(t)]
-        coh = sorted([c for c in perf["cohorts"] if c.get("book", "main") == "main"], key=lambda c: c["date"])
-        body += ["<h2>各期推薦批次迄今平均超額報酬</h2>", _bar_svg([(c["date"], c["avg_alpha"]) for c in coh[-40:] if isnum(c["avg_alpha"])])]
-        t = ['<h2>全部推薦明細</h2><div class="tw"><table><tr><th>推薦日</th><th>代號</th><th>名稱</th><th>進場價</th><th>目標價</th><th>現價</th><th>報酬</th><th>超額</th><th>天數</th><th>狀態</th></tr>']
-        for p in sorted([p for p in perf["positions"] if p.get("book", "main") == "main"], key=lambda p: (p["date"], p["ticker"]), reverse=True):
-            st = "達標" if p["target_hit"] else "觸停損" if p["stop_hit"] else "持有"
-            t.append(f"<tr><td>{p['date']}</td><td>{p['ticker']}</td><td>{html.escape(p['name'])}</td><td>{p['entry']:.2f}</td><td>{p['target']:.2f}</td><td>{p['last_price']:.2f}</td><td>{pct(p['rlast'], 1, True)}</td><td>{pct(p['alast'], 1, True)}</td><td>{p['n_days']}</td><td>{st}</td></tr>")
-        t.append("</table></div>")
-        body.append("".join(t))
-        es = (perf.get("emerging") or {}).get("summary", {})
-        if any(s["n"] for s in es.values()):
-            t = ['<h2>前瞻專區（獨立追蹤）</h2><div class="tw"><table><tr><th>持有期</th><th>到期檔數</th><th>平均報酬</th><th>平均超額報酬</th><th>贏大盤比例</th></tr>']
-            for h, s in es.items():
-                if s["n"]:
-                    t.append(f"<tr><td>{h} 日</td><td>{s['n']}</td><td>{pct(s['avg_ret'], 1, True)}</td><td>{pct(s['avg_alpha'], 1, True)}</td><td>{pct(s['win_alpha'], 0)}</td></tr>")
-            t.append("</table></div>")
-            body.append("".join(t))
-        body.append(f'<p class="muted">更新於 {perf["generated"]}。報酬以推薦日收盤價為進場價，未計成本。</p>')
-    else:
-        body.append("<p>尚無追蹤資料。</p>")
-    (out / "performance.html").write_text(page("績效追蹤", "".join(body)), encoding="utf-8")
+    # 舊網址導向儀表板分頁
+    for old, tab in (("performance.html", "perf"), ("emerging.html", "emerging")):
+        (out / old).write_text(f'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=index.html#{tab}"><a href="index.html#{tab}">前往儀表板</a>', encoding="utf-8")
     # 方法論
     mp = C.ROOT / "docs" / "methodology.md"
     (out / "methodology.html").write_text(page("方法論", md2html(mp.read_text(encoding="utf-8")) if mp.exists() else "<p>—</p>"), encoding="utf-8")

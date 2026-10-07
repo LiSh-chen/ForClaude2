@@ -8,6 +8,7 @@ import pandas as pd
 from . import config as C
 from . import llm
 from . import emerging as E
+from . import snapshot
 from .features import norm_fundamentals, price_features
 from .journal import candidate_record, pick_record, write_journal
 from .news import scan
@@ -22,7 +23,7 @@ def _index_stats(prices, uni):
         if df is None or len(df) < 70:
             continue
         c = df["Close"]
-        out.append({"name": ix["name"], "last": float(c.iloc[-1]), "ret_1d": float(c.iloc[-1] / c.iloc[-2] - 1),
+        out.append({"name": ix["name"], "series": [round(float(v), 2) for v in c.tail(60)], "last": float(c.iloc[-1]), "ret_1d": float(c.iloc[-1] / c.iloc[-2] - 1),
                     "ret_1m": float(c.iloc[-1] / c.iloc[-22] - 1), "ret_3m": float(c.iloc[-1] / c.iloc[-64] - 1)})
     return out
 
@@ -94,6 +95,7 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
         })
 
     # 前瞻專區（失敗不得影響主日誌）
+    emg = None
     try:
         themes = E.score_themes(uni, items, scan_res, src, rows, params)
         e_picked = E.pick_emerging(themes, rows, {r["ticker"] for m in picks for r in picks[m]}, params)
@@ -103,12 +105,19 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
         edir.mkdir(exist_ok=True)
         C.save_json(edir / f"{date}.json", E.record(e_picked, themes, date, params, clues))
         ctx["emerging_top"] = [(t["name"], t["status"]) for t in themes[:3]]
+        emg = {"themes": themes, "picked": e_picked, "clues": clues}
         print(f"[daily] 前瞻專區：趨勢 {len(themes)} 個，推薦 {sum(len(v) for v in e_picked.values())} 檔")
     except Exception as ex:  # noqa: BLE001
         print(f"[daily] 前瞻專區產生失敗（略過）：{ex!r}")
 
     md = write_journal(date, ctx)
     jpath.write_text(md, encoding="utf-8")
+    try:
+        sdir = C.path("data") / "snapshots"
+        sdir.mkdir(exist_ok=True)
+        C.save_json(sdir / f"{date}.json", snapshot.build(date, ctx, emg, prices))
+    except Exception as ex:  # noqa: BLE001
+        print(f"[daily] 儀表板快照產生失敗（略過）：{ex!r}")
     pdir = data / "picks"
     pdir.mkdir(exist_ok=True)
     C.save_json(pdir / f"{date}.json", {
