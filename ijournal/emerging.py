@@ -120,6 +120,26 @@ def discover(items, uni) -> list[dict] | None:
     return llm.discover(titles) if titles else None
 
 
+def shortage_stats(themes: list[dict], picked: dict, rows: dict, p: dict) -> dict:
+    e = p["emerging"]
+    out = {m: {"n": len(picked[m]), "N": e["picks_per_market"], "candidates": 0, "reasons": {}, "qualified": 0} for m in ("TW", "US")}
+    for th in themes[: e["pick_themes"]]:
+        for tk in th["members"]:
+            r = rows.get(tk)
+            if not r:
+                continue
+            ok, why = eligible(r, p)
+            o = out[r["market"]]
+            o["candidates"] += 1
+            if ok:
+                o["qualified"] += 1
+            else:
+                o["reasons"][why] = o["reasons"].get(why, 0) + 1
+    for o in out.values():
+        o["reasons"] = dict(sorted(o["reasons"].items(), key=lambda kv: -kv[1]))
+    return out
+
+
 def write_report(date: str, themes: list[dict], picked: dict, rows: dict, p: dict, clues, provider: str, n_scanned: int = 0) -> str:
     e = p["emerging"]
     L, A = [], None

@@ -180,3 +180,29 @@ def test_emerging_spread_rule_direction_consistency():
     assert eligible(mk([0.1, 0.7], 0.7), p)[0]                       # 分歧 70% 但方向一致 → 放行
     assert not eligible(mk([-0.2, 0.7], 0.7), p)[0]                  # 分歧 70% 且有方法看空 → 不放行
     assert not eligible(mk([0.1, 0.9], 0.9), p)[0]                   # 超過硬上限 → 不放行
+
+
+def test_dashboard_snapshot_and_site_assets():
+    import shutil
+    import subprocess
+    from ijournal.daily import run_daily
+    from ijournal.site import build_site
+    d = run_daily(DemoProvider(end=dt.date(2026, 9, 30)), asof="2026-07-13")
+    sn = C.load_json(C.path("data") / "snapshots" / f"{d}.json")
+    assert {"date", "indices", "picks", "shortage", "sectors", "emerging", "news"} <= set(sn)
+    assert all(len(x["series"]) > 1 for x in sn["indices"])
+    for m in ("TW", "US"):
+        assert sn["shortage"][m]["N"] == 5 and sn["shortage"][m]["n"] == len(sn["picks"][m])
+        for p in sn["picks"][m]:
+            assert p["target"]["bear"] < p["target"]["base"] < p["target"]["bull"] and p["methods"] and p["series"]["c"] and p["thesis"]
+    assert sn["sectors"]["TW"] and sn["emerging"]["themes"] and set(sn["emerging"]["shortage"]) == {"TW", "US"}
+    build_site()
+    site = C.path("site")
+    for f in ("index.html", "app.js", "style.css", "data/index.json", "data/performance.json", f"data/snap/{d}.json", "performance.html", "emerging.html"):
+        assert (site / f).exists(), f
+    assert C.load_json(site / "data" / "index.json")["dates"][0]["date"] == max(x["date"] for x in C.load_json(site / "data" / "index.json")["dates"])
+    # 舊網址導向儀表板；儀表板不可用 innerHTML 渲染資料（新聞標題來自外部 RSS）
+    assert "index.html#perf" in (site / "performance.html").read_text(encoding="utf-8")
+    assert "innerHTML" not in (site / "app.js").read_text(encoding="utf-8")
+    if shutil.which("node"):
+        assert subprocess.run(["node", "--check", str(site / "app.js")], capture_output=True).returncode == 0

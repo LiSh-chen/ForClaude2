@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>投資研究儀表板</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <span class="brand">📒 投資研究儀表板</span>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="主要分頁"></nav>
+  <div class="ctl"><span class="chip" id="srcchip" title=""></span><select id="date" aria-label="選擇日期"></select><button id="theme" type="button" aria-label="切換明暗主題" title="切換明暗主題">明／暗</button></div>
+</div></header>
+<div id="demo" class="demo" hidden>⚠ DEMO 合成資料，非真實行情</div>
+<main class="wrap" id="view"><p class="muted">載入中…</p></main>
+<div class="ov" id="ov"></div>
+<aside class="dr" id="dr" role="dialog" aria-modal="true" aria-labelledby="drt"></aside>
+<div id="tip" role="tooltip"></div>
+<script src="app.js"></script>
+<noscript>此儀表板需要 JavaScript。完整日誌請見「日誌」頁。</noscript>
+</body>
+</html>
