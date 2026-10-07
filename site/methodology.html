@@ -14,7 +14,7 @@ code{background:var(--card);padding:1px 4px;border-radius:4px}.muted{color:var(-
 ul.arch{list-style:none;padding:0}ul.arch li{padding:6px 0;border-bottom:1px solid var(--line)}
 svg text{fill:var(--fg);font-size:11px}
 footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);font-size:12.5px}
-</style></head><body><header><nav><b>📒 投資研究日誌</b><a href="index.html">最新日誌</a><a href="archive.html">日誌列表</a><a href="performance.html">績效追蹤</a><a href="reviews.html">檢討報告</a><a href="methodology.html">方法論</a></nav></header><main><h1>方法論</h1>
+</style></head><body><header><nav><b>📒 投資研究日誌</b><a href="index.html">最新日誌</a><a href="emerging.html">前瞻專區</a><a href="archive.html">日誌列表</a><a href="performance.html">績效追蹤</a><a href="reviews.html">檢討報告</a><a href="methodology.html">方法論</a></nav></header><main><h1>方法論</h1>
 <p>本系統每天自動完成「讀新聞 → 找產業 → 找龍頭/績優股 → 估目標價 → 寫日誌」，並定期「驗證過往預測 → 檢討 → 回饋參數」。以下說明每一步怎麼做、為什麼這樣做、已知限制。</p>
 <blockquote>
 <p>免責：本站為研究與教育用途，<strong>不構成投資建議</strong>。所有目標價都是模型估算，一定有誤差；本站公開追蹤並檢討這些誤差。</p>
@@ -163,4 +163,44 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <li><strong>未計交易成本、稅費、滑價</strong>，且以收盤價成交為假設；實際績效會較差。</li>
 <li><strong>股票宇宙是人工維護的清單</strong>（<code>config/universe.json</code>，約 150 檔、17 個產業），可能遺漏新興題材與個股；清單本身的選擇也帶有偏誤。</li>
 <li>估值模型是啟發式，不能取代對公司的深入研究。</li>
+</ul>
+<h2>9. 前瞻專區：尚未被充分報導的結構性趨勢</h2>
+<p>主榜追逐「現在被市場與新聞關注」的產業；前瞻專區反過來，找<strong>驅動力已有證據、但新聞尚未充分報導、股價尚未被擠進去</strong>的趨勢。</p>
+<p><strong>「確定」的定義</strong>：只指驅動力（人口結構、法規時程、物理/成本限制、已簽約產能）有可查證的證據，<strong>不代表股價必漲</strong>；時間點與誰受益仍不確定。因此每個趨勢都附證據級（A/B/C）與「論點不成立的條件」（證偽條件）。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>訊號</th>
+<th>內容</th>
+<th>預設權重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>證據 evidence</td>
+<td>人工維護於 <code>config/themes.json</code> 的證據級：A=不可逆驅動力（法規時程、人口結構），B=採用率/成本曲線已有資料，C=技術可行但商業化未定</td>
+<td>30%</td>
+</tr>
+<tr>
+<td>低覆蓋 low_coverage</td>
+<td>該趨勢近 48 小時新聞命中數 ÷ 主流產業中位數，越低分越高</td>
+<td>25%</td>
+</tr>
+<tr>
+<td>基本面 fundamental</td>
+<td>成分股營收與獲利年增率、成長為正的比例</td>
+<td>25%</td>
+</tr>
+<tr>
+<td>未擁擠 not_crowded</td>
+<td>成分股近 6 個月相對大盤漲幅越低越好（60%）＋ 200 日線之上的比例（40%，排除破壞性下跌）</td>
+<td>20%</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>推薦標的</strong>：在綜合分前 4 的趨勢內，用與主榜相同的估值方法（本頁第 5 節）計算目標價，門檻比主榜寬（市值、流動性較低），但仍要求品質分 ≥ 40、上檔 ≥ 10%、估值方法分歧度 ≤ 60%、獲利為正；每趨勢最多 2 檔，台/美各最多 3 檔。</li>
+<li><strong>獨立追蹤</strong>：前瞻推薦的績效與主榜分開計算（績效頁、檢討報告「前瞻專區」）。若長期沒有超額報酬，代表「冷門趨勢」篩選沒有附加價值，應下修或停用。</li>
+<li><strong>AI 線索（選用）</strong>：設定 <code>ANTHROPIC_API_KEY</code> 時，LLM 會從「沒有命中任何已知產業/趨勢關鍵字」的標題歸納候選主題，標示為<strong>未驗證的線索</strong>，不會進入推薦。</li>
+<li><strong>限制</strong>：趨勢清單是人工研究假設，可能遺漏更早期的題材；覆蓋度只反映本系統的約 20 個來源與關鍵字，0 則不等於沒人報導；冷門不等於會漲。新增/修改趨勢請編輯 <code>config/themes.json</code>（附上可查證的證據與證偽條件）。</li>
 </ul></main><footer>本站內容由系統自動產生，僅供研究與教育用途，不構成投資建議；目標價為模型估算，投資有風險。</footer></body></html>

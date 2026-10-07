@@ -1,0 +1,292 @@
+{
+ "date": "2026-10-07",
+ "params_version": 1,
+ "themes": [
+  {
+   "id": "grid_hardware",
+   "name": "高壓電纜與電網互連硬體",
+   "tier": "A",
+   "score": 86.461,
+   "coverage_ratio": 0.0,
+   "n_headlines": 0,
+   "status": "尚未被充分報導",
+   "rank": 1,
+   "components": {
+    "evidence": 100,
+    "low_coverage": 100.0,
+    "fundamental": 59.6,
+    "not_crowded": 82.9
+   }
+  },
+  {
+   "id": "aging_care",
+   "name": "高齡化與慢性病照護設備",
+   "tier": "A",
+   "score": 85.35,
+   "coverage_ratio": 0.0,
+   "n_headlines": 0,
+   "status": "尚未被充分報導",
+   "rank": 2,
+   "components": {
+    "evidence": 100,
+    "low_coverage": 100.0,
+    "fundamental": 68.1,
+    "not_crowded": 66.7
+   }
+  },
+  {
+   "id": "pq_security",
+   "name": "抗量子密碼與硬體安全遷移",
+   "tier": "A",
+   "score": 82.798,
+   "coverage_ratio": 0.0,
+   "n_headlines": 0,
+   "status": "尚未被充分報導",
+   "rank": 3,
+   "components": {
+    "evidence": 100,
+    "low_coverage": 100.0,
+    "fundamental": 76.4,
+    "not_crowded": 43.4
+   }
+  },
+  {
+   "id": "adv_packaging_supply",
+   "name": "先進封裝測試介面與材料",
+   "tier": "B",
+   "score": 75.719,
+   "coverage_ratio": 0.142,
+   "n_headlines": 3,
+   "status": "尚未被充分報導",
+   "rank": 4,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 85.8,
+    "fundamental": 97.1,
+    "not_crowded": 37.4
+   }
+  },
+  {
+   "id": "edge_ai_industrial",
+   "name": "工業邊緣 AI 與嵌入式運算",
+   "tier": "B",
+   "score": 74.251,
+   "coverage_ratio": 0.089,
+   "n_headlines": 1,
+   "status": "尚未被充分報導",
+   "rank": 5,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 91.1,
+    "fundamental": 82.2,
+    "not_crowded": 42.1
+   }
+  },
+  {
+   "id": "power_semis",
+   "name": "高壓功率半導體（SiC / GaN）",
+   "tier": "B",
+   "score": 72.792,
+   "coverage_ratio": 0.0,
+   "n_headlines": 0,
+   "status": "尚未被充分報導",
+   "rank": 6,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 100.0,
+    "fundamental": 74.8,
+    "not_crowded": 33.0
+   }
+  },
+  {
+   "id": "water_infra",
+   "name": "水資源與超純水處理",
+   "tier": "B",
+   "score": 72.046,
+   "coverage_ratio": 0.127,
+   "n_headlines": 1,
+   "status": "尚未被充分報導",
+   "rank": 7,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 87.3,
+    "fundamental": 46.9,
+    "not_crowded": 80.0
+   }
+  },
+  {
+   "id": "process_control",
+   "name": "先進製程量測、檢測與可靠度驗證",
+   "tier": "B",
+   "score": 70.14,
+   "coverage_ratio": 0.218,
+   "n_headlines": 4,
+   "status": "尚未被充分報導",
+   "rank": 8,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 78.2,
+    "fundamental": 53.7,
+    "not_crowded": 73.3
+   }
+  }
+ ],
+ "picks": [
+  {
+   "ticker": "SYK",
+   "name": "Stryker Corporation",
+   "zh_name": "Stryker",
+   "market": "US",
+   "sector": "aging_care",
+   "rank": 1,
+   "entry_price": 278.2,
+   "entry_date": "2026-10-06",
+   "composite": 69.54,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 83.9,
+    "growth": 70.6,
+    "valuation": 90.7,
+    "momentum": 6.7,
+    "news": 40.0
+   },
+   "target": {
+    "base": 388.46,
+    "bull": 541.63,
+    "bear": 158.71,
+    "ev": 361.65,
+    "confidence": "中",
+    "upside": 0.3963,
+    "ev_upside": 0.3,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 293.48,
+      "weight": 0.4,
+      "upside": 0.0549
+     },
+     "peg": {
+      "value": 543.36,
+      "weight": 0.15,
+      "upside": 0.9531
+     },
+     "dcf": {
+      "value": 489.07,
+      "weight": 0.2,
+      "upside": 0.758
+     },
+     "consensus": {
+      "value": 367.0,
+      "weight": 0.25,
+      "upside": 0.3192
+     }
+    }
+   },
+   "stop": 261.51,
+   "fundamentals": {
+    "market_cap": 106710032384,
+    "pe_ttm": 28.829,
+    "pe_fwd": 16.6399,
+    "peg": 1.29,
+    "roe": 0.1651,
+    "gross_margin": 0.6559,
+    "op_margin": 0.2702,
+    "net_margin": 0.1443,
+    "rev_growth": 0.094,
+    "eps_growth": 0.441,
+    "de": 0.6439,
+    "beta": 0.781,
+    "target_mean": 367.0,
+    "n_analysts": 25,
+    "fcf_margin": 0.159
+   },
+   "tech": {
+    "ret_1m": -0.07933559882394858,
+    "ret_3m": -0.1461496615154979,
+    "rel_3m": -0.19108260915063846,
+    "dist200": -0.1505946210266953,
+    "vol_ann": 0.3963195018857298
+   },
+   "theme": "aging_care",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
+   "ticker": "AMKR",
+   "name": "Amkor Technology, Inc.",
+   "zh_name": "Amkor",
+   "market": "US",
+   "sector": "adv_packaging_supply",
+   "rank": 2,
+   "entry_price": 53.39,
+   "entry_date": "2026-10-06",
+   "composite": 60.06,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 44.6,
+    "growth": 93.7,
+    "valuation": 100.0,
+    "momentum": 22.1,
+    "news": 40.0
+   },
+   "target": {
+    "base": 79.03,
+    "bull": 103.83,
+    "bear": 41.83,
+    "ev": 74.69,
+    "confidence": "高",
+    "upside": 0.4802,
+    "ev_upside": 0.3989,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 76.1,
+      "weight": 0.5,
+      "upside": 0.4254
+     },
+     "peg": {
+      "value": 91.21,
+      "weight": 0.187,
+      "upside": 0.7083
+     },
+     "consensus": {
+      "value": 76.4,
+      "weight": 0.312,
+      "upside": 0.431
+     }
+    }
+   },
+   "stop": 47.41,
+   "fundamentals": {
+    "market_cap": 13233912832,
+    "pe_ttm": 24.4908,
+    "pe_fwd": 19.0247,
+    "peg": 0.76,
+    "roe": 0.1251,
+    "gross_margin": 0.1551,
+    "op_margin": 0.1053,
+    "net_margin": 0.0745,
+    "rev_growth": 0.256,
+    "eps_growth": 2.182,
+    "de": 0.5705,
+    "beta": 2.224,
+    "target_mean": 76.4,
+    "n_analysts": 10,
+    "fcf_margin": -0.0508
+   },
+   "tech": {
+    "ret_1m": 0.11764703533661769,
+    "ret_3m": -0.20059406542304825,
+    "rel_3m": -0.2455270130581888,
+    "dist200": -0.06765166471249495,
+    "vol_ann": 0.883430025762641
+   },
+   "theme": "adv_packaging_supply",
+   "book": "emerging",
+   "also_main": false
+  }
+ ],
+ "clues": []
+}
