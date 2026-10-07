@@ -157,7 +157,7 @@
    "rank": 1,
    "entry_price": 239.24,
    "entry_date": "2026-10-06",
-   "composite": 92.43,
+   "composite": 92.42,
    "scores": {
     "sector": 91.9,
     "leader": 100.0,
@@ -165,22 +165,22 @@
     "growth": 100.0,
     "valuation": 100.0,
     "momentum": 74.5,
-    "news": 84.5
+    "news": 84.4
    },
    "target": {
     "base": 382.78,
-    "bull": 506.06,
-    "bear": 197.87,
-    "ev": 361.21,
+    "bull": 506.16,
+    "bear": 197.72,
+    "ev": 361.19,
     "confidence": "中",
     "upside": 0.6,
     "ev_upside": 0.5098,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 369.66,
+      "value": 368.24,
       "weight": 0.5,
-      "upside": 0.5451
+      "upside": 0.5392
      },
      "peg": {
       "value": 513.47,
@@ -216,7 +216,7 @@
     "ret_1m": 0.03971048008690192,
     "ret_3m": 0.17336720685489038,
     "rel_3m": 0.12843425921974982,
-    "dist200": 0.19006786846645674,
+    "dist200": 0.19006787072469478,
     "vol_ann": 0.3734231847968207
    }
   },
@@ -229,30 +229,30 @@
    "rank": 2,
    "entry_price": 1660.46,
    "entry_date": "2026-10-06",
-   "composite": 85.48,
+   "composite": 86.26,
    "scores": {
-    "sector": 75.0,
+    "sector": 79.4,
     "leader": 66.7,
     "quality": 99.9,
     "growth": 100.0,
-    "valuation": 97.3,
+    "valuation": 96.6,
     "momentum": 69.3,
     "news": 74.2
    },
    "target": {
-    "base": 2301.9,
-    "bull": 3222.65,
-    "bear": 920.76,
-    "ev": 2140.76,
+    "base": 2296.55,
+    "bull": 3215.18,
+    "bear": 918.62,
+    "ev": 2135.8,
     "confidence": "高",
-    "upside": 0.3863,
-    "ev_upside": 0.2893,
+    "upside": 0.3831,
+    "ev_upside": 0.2863,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 2544.74,
+      "value": 2533.39,
       "weight": 0.471,
-      "upside": 0.5326
+      "upside": 0.5257
      },
      "dcf": {
       "value": 1977.33,
@@ -270,7 +270,7 @@
    "fundamentals": {
     "market_cap": 243122896896,
     "pe_ttm": 22.5117,
-    "pe_fwd": 6.2602,
+    "pe_fwd": 6.3019,
     "peg": null,
     "roe": 0.9164,
     "gross_margin": 0.7147,
@@ -301,30 +301,30 @@
    "rank": 3,
    "entry_price": 482.3,
    "entry_date": "2026-10-06",
-   "composite": 85.3,
+   "composite": 85.72,
    "scores": {
     "sector": 91.9,
     "leader": 75.0,
     "quality": 95.7,
     "growth": 100.0,
-    "valuation": 77.6,
+    "valuation": 77.3,
     "momentum": 72.0,
-    "news": 65.3
+    "news": 71.0
    },
    "target": {
-    "base": 593.94,
-    "bull": 719.63,
-    "bear": 405.39,
-    "ev": 571.94,
+    "base": 592.95,
+    "bull": 718.52,
+    "bear": 404.59,
+    "ev": 570.97,
     "confidence": "高",
-    "upside": 0.2315,
-    "ev_upside": 0.1859,
+    "upside": 0.2294,
+    "ev_upside": 0.1839,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 573.78,
+      "value": 571.8,
       "weight": 0.5,
-      "upside": 0.1897
+      "upside": 0.1856
      },
      "peg": {
       "value": 712.57,
@@ -360,7 +360,7 @@
     "ret_1m": 0.127494913290509,
     "ret_3m": 0.10667273548472944,
     "rel_3m": 0.06173978784958889,
-    "dist200": 0.2447860152216319,
+    "dist200": 0.24478601179008264,
     "vol_ann": 0.33314119698166333
    }
   },
@@ -373,33 +373,33 @@
    "rank": 4,
    "entry_price": 529.3,
    "entry_date": "2026-10-06",
-   "composite": 78.42,
+   "composite": 77.89,
    "scores": {
-    "sector": 69.7,
+    "sector": 67.5,
     "leader": 100.0,
     "quality": 74.4,
     "growth": 74.1,
-    "valuation": 70.0,
+    "valuation": 69.7,
     "momentum": 92.3,
-    "news": 86.3
+    "news": 85.6
    },
    "target": {
-    "base": 681.67,
-    "bull": 841.25,
-    "bear": 442.31,
-    "ev": 653.74,
+    "base": 680.5,
+    "bull": 839.91,
+    "bear": 441.38,
+    "ev": 652.6,
     "confidence": "高",
-    "upside": 0.2879,
-    "ev_upside": 0.2351,
+    "upside": 0.2857,
+    "ev_upside": 0.2329,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 708.77,
+      "value": 706.41,
       "weight": 0.5,
-      "upside": 0.3391
+      "upside": 0.3346
      },
      "peg": {
-      "value": 769.5,
+      "value": 769.51,
       "weight": 0.187,
       "upside": 0.4538
      },
@@ -413,8 +413,8 @@
    "stop": 497.54,
    "fundamentals": {
     "market_cap": 3930341244928,
-    "pe_ttm": 29.4875,
-    "pe_fwd": 22.355,
+    "pe_ttm": 29.2593,
+    "pe_fwd": 22.3547,
     "peg": 1.71,
     "roe": 0.3404,
     "gross_margin": 0.6794,
@@ -432,7 +432,7 @@
     "ret_1m": 0.05923549102030812,
     "ret_3m": 0.38335783413889146,
     "rel_3m": 0.3384248865037509,
-    "dist200": 0.22524391531901378,
+    "dist200": 0.2252439174828944,
     "vol_ann": 0.401797865528204
    }
   },
@@ -445,9 +445,9 @@
    "rank": 5,
    "entry_price": 144.77,
    "entry_date": "2026-10-06",
-   "composite": 67.2,
+   "composite": 66.77,
    "scores": {
-    "sector": 69.7,
+    "sector": 67.5,
     "leader": 75.0,
     "quality": 55.2,
     "growth": 99.4,
@@ -504,7 +504,7 @@
     "ret_1m": -0.08823526019993067,
     "ret_3m": 0.034049707511514926,
     "rel_3m": -0.010883240123625626,
-    "dist200": -0.1054031653967793,
+    "dist200": -0.10540316581854003,
     "vol_ann": 0.5413318718733573
    }
   }
