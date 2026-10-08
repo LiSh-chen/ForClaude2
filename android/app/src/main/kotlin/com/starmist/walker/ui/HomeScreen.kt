@@ -44,12 +44,11 @@ fun HomeScreen(
     onRequestPermission: () -> Unit,
     onOpenAppSettings: () -> Unit,
 ) {
-    val row by vm.todayRow.collectAsStateWithLifecycle()
+    val steps by vm.todaySteps.collectAsStateWithLifecycle()
     val granted by vm.permissionGranted.collectAsStateWithLifecycle()
     val hasCounter by vm.hasHardwareCounter.collectAsStateWithLifecycle()
     val lastSnapshot by vm.lastSnapshotAt.collectAsStateWithLifecycle()
 
-    val steps = row?.total ?: 0L
     val profile = settings.profile
     val km = BodyMetrics.distanceKm(steps, profile)
     val kcal = BodyMetrics.kcal(steps, profile)

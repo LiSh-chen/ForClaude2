@@ -118,6 +118,72 @@ class StepCounterReader(context: Context) {
         awaitClose { sensorManager.unregisterListener(listener) }
     }
 
+    /**
+     * One "tick" per step, as soon as the step detector reports it. Used only to make the number on
+     * screen move with every step; the cumulative counter stays the source of truth.
+     */
+    fun stepTicks(): Flow<Unit> = callbackFlow {
+        val detector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+        if (detector == null) {
+            close()
+            return@callbackFlow
+        }
+        val listener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent) {
+                trySend(Unit)
+            }
+
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
+        }
+        val registered = try {
+            sensorManager.registerListener(listener, detector, SensorManager.SENSOR_DELAY_UI)
+        } catch (e: SecurityException) {
+            false
+        }
+        if (!registered) close()
+        awaitClose { sensorManager.unregisterListener(listener) }
+    }
+
+    /** A long-lived listener whose batching can be changed while it is running. */
+    fun openSession(onValue: (Long) -> Unit): LiveSession = LiveSession(onValue)
+
+    inner class LiveSession(private val onValue: (Long) -> Unit) {
+        private var registered = false
+        private val listener = object : SensorEventListener2 {
+            override fun onSensorChanged(event: SensorEvent) {
+                onValue(event.values[0].toLong())
+            }
+
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
+
+            override fun onFlushCompleted(sensor: Sensor?) = Unit
+        }
+
+        /** (Re)registers with the given batching; 0 means deliver every event immediately. */
+        fun start(maxReportLatencyUs: Int): Boolean {
+            val sensor = sensor ?: return false
+            stop()
+            registered = try {
+                sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_UI, maxReportLatencyUs)
+            } catch (e: SecurityException) {
+                false
+            }
+            return registered
+        }
+
+        /** Asks the sensor to hand over whatever it is holding right now. */
+        fun flush() {
+            if (registered) sensorManager.flush(listener)
+        }
+
+        fun stop() {
+            if (registered) {
+                sensorManager.unregisterListener(listener)
+                registered = false
+            }
+        }
+    }
+
     private companion object {
         const val DEFAULT_TIMEOUT_MS = 6_000L
         const val BATCH_LATENCY_US = 5_000_000

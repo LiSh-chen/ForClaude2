@@ -109,14 +109,47 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     // ---- live feed -------------------------------------------------------------------------
 
     private var liveJob: Job? = null
+    private var tickJob: Job? = null
+
+    /**
+     * Steps the step detector has seen that the cumulative counter has not reported yet. They make
+     * the number move with every step; once the counter catches up they are taken off again, so the
+     * shown total never counts a step twice and never goes backwards.
+     */
+    private val pendingTicks = MutableStateFlow(0L)
+
+    /** Today's steps for display: stored total plus the not-yet-confirmed ticks. */
+    val todaySteps: StateFlow<Long> = combine(todayRow, pendingTicks) { row, ticks -> (row?.total ?: 0L) + ticks }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+
+    init {
+        viewModelScope.launch {
+            var previous: Long? = null
+            todayRow.collect { row ->
+                val total = row?.total ?: 0L
+                val before = previous
+                if (before != null && total > before) {
+                    val confirmed = total - before
+                    pendingTicks.update { (it - confirmed).coerceAtLeast(0L) }
+                }
+                previous = total
+            }
+        }
+    }
 
     /** While the app is on screen, follow the counter so new steps show up right away. */
     fun startLive() {
-        if (liveJob?.isActive == true) return
-        liveJob = viewModelScope.launch {
-            repository.reader.liveCounter().conflate().collect { counter ->
-                repository.ingestLive(counter)
-                delay(LIVE_MIN_INTERVAL_MS) // conflate keeps only the newest value meanwhile
+        if (liveJob?.isActive != true) {
+            liveJob = viewModelScope.launch {
+                repository.reader.liveCounter().conflate().collect { counter ->
+                    repository.ingestLive(counter)
+                    delay(LIVE_MIN_INTERVAL_MS) // conflate keeps only the newest value meanwhile
+                }
+            }
+        }
+        if (tickJob?.isActive != true) {
+            tickJob = viewModelScope.launch {
+                repository.reader.stepTicks().collect { pendingTicks.update { ticks -> minOf(ticks + 1, MAX_PENDING_TICKS) } }
             }
         }
     }
@@ -124,6 +157,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun stopLive() {
         liveJob?.cancel()
         liveJob = null
+        tickJob?.cancel()
+        tickJob = null
+        pendingTicks.value = 0L
     }
 
     val lastRead = repository.lastRead
@@ -162,6 +198,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun setStableMode(on: Boolean) = updateSettings { it.copy(stableMode = on) }
 
     private companion object {
-        const val LIVE_MIN_INTERVAL_MS = 2_000L
+        const val LIVE_MIN_INTERVAL_MS = 300L
+
+        /** Caps how far the detector may run ahead of the counter, so a false positive cannot pile up. */
+        const val MAX_PENDING_TICKS = 15L
     }
 }
