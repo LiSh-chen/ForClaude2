@@ -12,6 +12,7 @@ import com.starmist.walker.data.DailyStepsEntity
 import com.starmist.walker.data.DiagnosticsInfo
 import com.starmist.walker.data.SnapshotResult
 import com.starmist.walker.data.UserSettings
+import com.starmist.walker.tracking.StepService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -152,7 +153,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         _message.value = "已還原 $date 的感測器數值"
     }
 
-    suspend fun loadDiagnostics(): DiagnosticsInfo = repository.diagnostics()
+    suspend fun loadDiagnostics(): DiagnosticsInfo =
+        repository.diagnostics(
+            serviceExpected = settings.value?.stableMode == true,
+            serviceRunning = StepService.running.value,
+        )
+
+    fun setStableMode(on: Boolean) = updateSettings { it.copy(stableMode = on) }
 
     private companion object {
         const val LIVE_MIN_INTERVAL_MS = 2_000L

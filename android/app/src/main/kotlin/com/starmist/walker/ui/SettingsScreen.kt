@@ -16,9 +16,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +45,7 @@ fun SettingsScreen(
     padding: PaddingValues,
     onOpenDiagnostics: () -> Unit,
 ) {
+    val context = LocalContext.current
     var showCalibration by remember { mutableStateOf(false) }
     var showAdjust by remember { mutableStateOf(false) }
     var showStride by remember { mutableStateOf(false) }
@@ -72,6 +77,27 @@ fun SettingsScreen(
                 }
             }
             Text("性別只用來估算步長。", style = MaterialTheme.typography.labelSmall)
+        }
+
+        Section("穩定計步模式") {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text("螢幕關閉時也持續計步", Modifier.weight(1f), fontWeight = FontWeight.SemiBold)
+                Switch(checked = settings.stableMode, onCheckedChange = { vm.setStableMode(it) })
+            }
+            Text(
+                "許多手機的計步器只在有程式監聽時才累計。開啟後，本 App 會用一個低調的常駐通知保持監聽；" +
+                    "感測器會把步數累積一小段時間再一起交給 App，CPU 大部分時間不用醒來，不持有喚醒鎖，耗電很低。" +
+                    "關閉後，螢幕關閉期間的步數在多數手機上將無法記錄。",
+                style = MaterialTheme.typography.labelSmall,
+            )
+            Text(OemHints.forThisDevice(), style = MaterialTheme.typography.labelSmall)
+            OutlinedButton(
+                onClick = { context.startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) },
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text("開啟電池最佳化設定") }
         }
 
         Section("計步微調") {

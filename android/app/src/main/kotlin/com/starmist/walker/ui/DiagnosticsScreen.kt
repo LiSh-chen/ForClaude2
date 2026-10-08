@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.starmist.core.diagnostics.Issue
 import com.starmist.walker.data.DiagnosticsInfo
+import com.starmist.walker.tracking.StepService
 import kotlinx.coroutines.launch
 
 private fun Issue.describe(): String = when (this) {
@@ -39,11 +40,14 @@ private fun Issue.describe(): String = when (this) {
         "這台裝置沒有硬體計步器，目前版本無法計步。"
     Issue.NEVER_READ ->
         "還沒有成功讀取過計步器。按下「立即讀取」試試。"
+    Issue.SERVICE_NOT_RUNNING ->
+        "穩定計步模式已開啟，但背景服務目前沒有在執行，螢幕關閉時可能計不到步。開啟本 App 會嘗試重新啟動它；" +
+            "如果常常被關掉，請依下方的提示調整省電設定。"
     Issue.STALE_SNAPSHOT ->
         "超過 6 小時沒有讀取，系統可能限制了背景工作。步數不會遺失（計步器會持續累計），開啟 App 後會自動補上；" +
             "如果經常發生，請檢查電池設定。"
     Issue.BATTERY_RESTRICTED ->
-        "系統套用了電池最佳化，可能延後背景讀取。步數仍會在下次讀取時補齊；若發現常常晚才更新，可把本 App 設為「不限制」。"
+        "系統套用了電池最佳化，可能在背景關閉計步服務。若發現螢幕關閉時漏記步數，請把本 App 設為「不限制」。"
 }
 
 @Composable
@@ -54,6 +58,8 @@ fun DiagnosticsScreen(vm: AppViewModel, padding: PaddingValues, onOpenAppSetting
     var version by remember { mutableIntStateOf(0) }
     val multiplier = vm.settings.collectAsStateWithLifecycle().value?.multiplier
     val lastRead = vm.lastRead.collectAsStateWithLifecycle().value
+    val serviceRunning = StepService.running.collectAsStateWithLifecycle().value
+    val stableMode = vm.settings.collectAsStateWithLifecycle().value?.stableMode
 
     LaunchedEffect(version) { info = vm.loadDiagnostics() }
 
@@ -76,6 +82,7 @@ fun DiagnosticsScreen(vm: AppViewModel, padding: PaddingValues, onOpenAppSetting
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text("硬體計步器：${if (d.hasHardwareCounter) "有" else "沒有"}")
                 Text("動作與健身權限：${if (d.permissionGranted) "已授予" else "未授予"}")
+                Text("穩定計步模式：${if (stableMode == true) "開啟" else "關閉"}，背景服務${if (serviceRunning) "執行中" else "未執行"}")
                 Text("最近一次讀取：${d.lastSnapshotAtMillis?.let(::formatTime) ?: "從未"}")
                 multiplier?.let { Text("修正係數：×${String.format(java.util.Locale.getDefault(), "%.2f", it)}") }
                 Text(
@@ -118,11 +125,11 @@ fun DiagnosticsScreen(vm: AppViewModel, padding: PaddingValues, onOpenAppSetting
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text("常見的背景限制", fontWeight = FontWeight.SemiBold)
                 Text(
-                    "部分廠牌（小米、OPPO、vivo、三星等）會在背景強力清理 App。本 App 不靠常駐運作：" +
-                        "計步器由硬體持續累計，即使 App 被清掉，下次開啟或背景讀取時也會補上。" +
-                        "若仍想更即時，可在系統設定中允許本 App「自啟動」並將電池設為「不限制」。",
+                    "許多手機的計步器只在有程式監聽時才累計，所以本 App 用前景服務保持監聽。" +
+                        "部分廠牌會在背景強力清理 App，造成服務被關掉、螢幕關閉時漏記。",
                     style = MaterialTheme.typography.bodyMedium,
                 )
+                Text(OemHints.forThisDevice(), style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

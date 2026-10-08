@@ -2,6 +2,7 @@ package com.starmist.walker.data
 
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -24,6 +25,12 @@ data class UserSettings(
     val multiplier: Double = 1.0,
     val strideOverrideM: Double? = null,
     val filterLevel: FilterLevel = FilterLevel.STANDARD,
+    /**
+     * Keep a foreground service running so the step sensor stays registered. On many phones the
+     * hardware counter only counts while something is listening, so this is what makes counting
+     * work with the screen off.
+     */
+    val stableMode: Boolean = true,
 ) {
     val profile: Profile
         get() = Profile(heightCm, weightKg, sex, strideOverrideM)
@@ -48,6 +55,7 @@ class SettingsStore(private val context: Context) {
             val stride = updated.strideOverrideM
             if (stride == null) prefs.remove(STRIDE) else prefs[STRIDE] = stride
             prefs[FILTER] = updated.filterLevel.name
+            prefs[STABLE] = updated.stableMode
         }
     }
 
@@ -61,6 +69,7 @@ class SettingsStore(private val context: Context) {
             multiplier = StepScaler.clampMultiplier(this[MULTIPLIER] ?: d.multiplier),
             strideOverrideM = this[STRIDE],
             filterLevel = this[FILTER]?.let { runCatching { FilterLevel.valueOf(it) }.getOrNull() } ?: d.filterLevel,
+            stableMode = this[STABLE] ?: d.stableMode,
         )
     }
 
@@ -72,5 +81,6 @@ class SettingsStore(private val context: Context) {
         val MULTIPLIER = doublePreferencesKey("multiplier")
         val STRIDE = doublePreferencesKey("stride_override_m")
         val FILTER = stringPreferencesKey("filter_level")
+        val STABLE = booleanPreferencesKey("stable_mode")
     }
 }

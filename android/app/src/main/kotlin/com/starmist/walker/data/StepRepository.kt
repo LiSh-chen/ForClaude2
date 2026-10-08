@@ -145,7 +145,7 @@ class StepRepository(
         if (dao.getDay(key) != null) dao.setManualAdjust(key, 0)
     }
 
-    suspend fun diagnostics(): DiagnosticsInfo {
+    suspend fun diagnostics(serviceExpected: Boolean, serviceRunning: Boolean): DiagnosticsInfo {
         val state = dao.getState()
         val permission = hasPermission()
         val hasCounter = reader.hasHardwareCounter
@@ -158,6 +158,8 @@ class StepRepository(
                 lastSnapshotAtMillis = state?.takenAtMillis,
                 nowMillis = System.currentTimeMillis(),
                 batteryRestricted = restricted,
+                serviceExpected = serviceExpected,
+                serviceRunning = serviceRunning,
             ),
         )
         return DiagnosticsInfo(

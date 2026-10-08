@@ -2,6 +2,8 @@ package com.starmist.walker.ui
 
 import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -34,6 +36,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+import com.starmist.walker.tracking.StepService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -64,6 +68,31 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
         context.startActivity(
             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)),
         )
+    }
+
+    val permissionGranted by vm.permissionGranted.collectAsStateWithLifecycle()
+    var askedNotifications by rememberSaveable { mutableStateOf(false) }
+    val notificationLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        // Counting works even if the notification is hidden, so start either way.
+        StepService.start(context)
+    }
+
+    // Stable mode: keep the foreground service in step with the setting and the permission.
+    LaunchedEffect(settings?.stableMode, permissionGranted) {
+        val stable = settings?.stableMode ?: return@LaunchedEffect
+        if (stable && permissionGranted) {
+            val needsNotificationPermission = Build.VERSION.SDK_INT >= 33 &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+            if (needsNotificationPermission && !askedNotifications) {
+                askedNotifications = true
+                notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                StepService.start(context)
+            }
+        } else {
+            StepService.stop(context)
+        }
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.refresh() }

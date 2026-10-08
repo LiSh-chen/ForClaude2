@@ -108,6 +108,20 @@ class AggregatorAndHealthTest {
     }
 
     @Test
+    fun `stable mode expected but service not running is reported`() {
+        val running = HealthInput(true, true, now - 60_000, now, false, serviceExpected = true, serviceRunning = true)
+        val stopped = running.copy(serviceRunning = false)
+        assertTrue(SnapshotHealth.evaluate(running).isEmpty())
+        assertEquals(listOf(Issue.SERVICE_NOT_RUNNING), SnapshotHealth.evaluate(stopped))
+    }
+
+    @Test
+    fun `service that is not expected is never reported`() {
+        val off = HealthInput(true, true, now - 60_000, now, false, serviceExpected = false, serviceRunning = false)
+        assertTrue(SnapshotHealth.evaluate(off).isEmpty())
+    }
+
+    @Test
     fun `never read is reported`() {
         assertEquals(listOf(Issue.NEVER_READ), SnapshotHealth.evaluate(input(last = null)))
     }

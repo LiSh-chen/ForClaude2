@@ -7,6 +7,8 @@ enum class Issue {
     NO_HARDWARE_COUNTER,
     /** No reading has ever been taken. */
     NEVER_READ,
+    /** Stable mode is on but its foreground service is not running (killed by the system, or never started). */
+    SERVICE_NOT_RUNNING,
     /** The last reading is older than expected, so the system probably limits background work. */
     STALE_SNAPSHOT,
     /** The app is subject to battery optimisation, which can delay background readings. */
@@ -19,6 +21,9 @@ data class HealthInput(
     val lastSnapshotAtMillis: Long?,
     val nowMillis: Long,
     val batteryRestricted: Boolean,
+    /** The user has stable mode switched on. */
+    val serviceExpected: Boolean = false,
+    val serviceRunning: Boolean = false,
     /** How old a reading may get before it is suspicious. */
     val staleAfterMillis: Long = DEFAULT_STALE_AFTER_MS,
 ) {
@@ -34,6 +39,7 @@ object SnapshotHealth {
         if (!input.hasHardwareCounter) add(Issue.NO_HARDWARE_COUNTER)
         val last = input.lastSnapshotAtMillis
         if (input.permissionGranted && input.hasHardwareCounter) {
+            if (input.serviceExpected && !input.serviceRunning) add(Issue.SERVICE_NOT_RUNNING)
             if (last == null) add(Issue.NEVER_READ)
             else if (input.nowMillis - last > input.staleAfterMillis) add(Issue.STALE_SNAPSHOT)
         }

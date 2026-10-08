@@ -92,8 +92,11 @@ class StepCounterReader(context: Context) {
     /**
      * Live counter values while collected. Only collect while the app is on screen; stopping the
      * collection unregisters the listener, so nothing keeps running in the background.
+     *
+     * @param maxReportLatencyUs how long the sensor hub may hold events before waking the CPU to
+     *   deliver them; a long value keeps the CPU asleep while walking. 0 delivers immediately.
      */
-    fun liveCounter(): Flow<Long> = callbackFlow {
+    fun liveCounter(maxReportLatencyUs: Int = 0): Flow<Long> = callbackFlow {
         val sensor = sensor
         if (sensor == null) {
             close()
@@ -107,7 +110,7 @@ class StepCounterReader(context: Context) {
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
         }
         val registered = try {
-            sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_UI)
+            sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_UI, maxReportLatencyUs)
         } catch (e: SecurityException) {
             false
         }

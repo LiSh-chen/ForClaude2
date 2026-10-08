@@ -5,6 +5,11 @@
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <!-- Lets us take a first reading right after the phone restarts (the counter resets then). -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Stable counting mode: a foreground service keeps the step sensor registered (health type). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
+    <!-- Only asked for when the user turns stable mode on; counting works without it, the notification is just hidden. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-feature
         android:name="android.hardware.sensor.stepcounter"
@@ -25,6 +30,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".tracking.StepService"
+            android:exported="false"
+            android:foregroundServiceType="health" />
 
         <receiver
             android:name=".work.BootReceiver"
