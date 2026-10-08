@@ -270,4 +270,131 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <td>最新一期標示數值</td>
 </tr>
 </tbody>
-</table></div></main><footer>本站內容由系統自動產生，僅供研究與教育用途，不構成投資建議；目標價為模型估算，投資有風險。</footer></body></html>
+</table></div>
+<h2>13. 資料更新時間與資料時效</h2>
+<p><strong>設計原則：不賭排程準時，而是在每個市場「收盤後一段時間」就更新。</strong> GitHub 排程常延遲（實測曾晚 3 小時以上），若只排在開盤前，一延遲就錯過；改成收盤後更新，延遲了結果也早就備好。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>更新</th>
+<th>時間（台灣，週一至週五觸發）</th>
+<th>內容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 台股收盤後</td>
+<td>15:07（備援 16:37）</td>
+<td>台股收盤價最新、美股為前一日收盤</td>
+</tr>
+<tr>
+<td>② 美股收盤後</td>
+<td>隔天 05:37／06:07／06:37／07:07（週二至週六早晨）</td>
+<td>兩邊都最新，<strong>覆蓋 ①</strong></td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>同一基準日更新兩次</strong>：基準日＝兩個市場最新收盤日中較晚的那天；只有「某市場的收盤日比上次更新」才覆蓋，否則自動略過（排程重複觸發時約 1 分鐘）。</li>
+<li><strong>台股開盤前 1.2 小時（≈07:48）一定有資料</strong>：② 最晚 07:07 觸發；即使 ② 被延遲，① 在前一天下午就已產生（只有美股部分是前一日收盤）。單一流程同時服務台股盤前與美股盤前（美股盤前本來就使用前一個美股收盤）。</li>
+<li><strong>只用已收盤資料</strong>（<code>sessions.py</code>）：交易所尚在盤中時，自動剔除當日未完成的 K 線（台股 13:30、美股 16:00 ET，各加 20 分鐘寬限；外匯不處理），避免把盤中即時價當成收盤價。</li>
+<li><strong>行情基準日用參考標的判斷</strong>（台股用 2330.TW、美股用 S&amp;P 500）：Yahoo 的台灣加權指數（^TWII）常比個股慢一天更新。</li>
+<li><strong>更新時間顯示</strong>：儀表板右上角「更新 MM/DD HH:MM」（台灣時間）；滑過可看台股/美股各自截至哪一天收盤。</li>
+</ul>
+<p><strong>已知限制</strong>
+- GitHub 排程無法保證準時；若需要精準觸發，可改由外部排程器呼叫 workflow_dispatch。
+- 資料來源與校正見下一節。</p>
+<h2>14. 資料來源與校正（Yahoo 較慢時的替代方案）</h2>
+<p>實測發現 Yahoo Finance 有兩個時效問題，因此以更新或官方的來源補上：</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>問題（實測）</th>
+<th>影響</th>
+<th>修補</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>台灣加權指數（^TWII）日線比個股慢一天</td>
+<td>大盤相對強弱、「市場」方塊的台股指數落後</td>
+<td>改取<strong>證交所「市場成交資訊」</strong>的官方收盤指數（<code>www.twse.com.tw</code>）</td>
+</tr>
+<tr>
+<td><strong>美股個股當日日線在收盤後數小時內是 OHLC 全為 NaN 的佔位列</strong>（只有部分成交量）</td>
+<td>原本會被當成無效資料丟掉，<strong>美股個股實際用到的是前一個交易日的收盤價</strong>（例：TSM 差 2%）</td>
+<td>用 Yahoo chart 的 <code>regularMarketPrice</code> 補上：其時間戳為紐約 16:00＝正式收盤時的最後成交價。標示為「<strong>暫定</strong>」，Yahoo 日線定案後下次更新會換成正式資料</td>
+</tr>
+<tr>
+<td>台股個股</td>
+<td>Yahoo 本來就準（實測 8 檔收盤與官方完全一致）</td>
+<td>仍以<strong>證交所（上市）／櫃買中心（上櫃）官方日收盤</strong>校正：補上 Yahoo 缺漏的最新一日、修正差異；官方資料收盤後約 1 小時內發布</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>行情基準日</strong>改由「各市場個股最後一根日期的眾數」判斷（不看指數，因為指數與個股的更新時間不同）。</li>
+<li><strong>任何來源失敗都只記錄、不中斷</strong>；沒有修補到就維持 Yahoo 原值。修補結果（補了幾檔、是否有暫定、來源問題）寫入每日快照，儀表板右上角「更新」標籤滑過即可看到。</li>
+<li><strong>評估過但不採用的來源</strong>：Stooq（以 JavaScript 驗證擋掉自動化請求；原本的 ForClaude repo 也曾遇到全數查無資料）、FRED（連線不穩且指數慢一天）、<code>openapi.twse.com.tw</code> 的部分端點（安全性擋頁、連線常被重置，改用較穩定的 <code>www.twse.com.tw</code>）、Alpha Vantage／Polygon／Tiingo 等（需要 API key）。</li>
+<li><strong>仍未解決</strong>：美股成交量在收盤後數小時內可能偏低（只影響流動性門檻，且為 20 日平均的其中一天）；暫定收盤價與正式收盤可能相差幾分錢。</li>
+</ul>
+<h2>15. 資料品質關卡（自動確認資料可信）</h2>
+<p>每次產生日誌前自動檢查，<strong>結果寫入每日快照與 <code>data/quality_log.json</code></strong>，並顯示在儀表板（右上角「資料品質」標籤，點開看每項檢查的實際結果）。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>檢查</th>
+<th>警示（warn）</th>
+<th>嚴重（bad）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>價格涵蓋率（台股、美股分開）</td>
+<td>&lt; 90%</td>
+<td>&lt; 65%</td>
+</tr>
+<tr>
+<td>行情新鮮度（對照『現在應已收盤的最近交易日』）</td>
+<td>某市場落後 ≥ 1 個工作日（可能是休市）</td>
+<td><strong>兩個市場都</strong>落後 ≥ 3 個工作日（單一市場長假不算）</td>
+</tr>
+<tr>
+<td>台股官方資料與 Yahoo 的差異率</td>
+<td>&gt; 5%；官方來源不可用；官方查無 &gt; 30%</td>
+<td>&gt; 25%</td>
+</tr>
+<tr>
+<td>股票清單代號（上市／上櫃別是否與官方相符）</td>
+<td>有不符（Yahoo 會查不到）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>美股最新收盤補值失敗比例</td>
+<td>&gt; 20%</td>
+<td>—</td>
+</tr>
+<tr>
+<td>價格異常跳動（單日 ±35%，可能是分割或資料錯誤）</td>
+<td>≥ 6 檔</td>
+<td>超過 15% 的標的</td>
+</tr>
+<tr>
+<td>財報可估值比例</td>
+<td>&lt; 75%</td>
+<td>&lt; 40%</td>
+</tr>
+<tr>
+<td>新聞來源成功比例</td>
+<td>&lt; 70%</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>行為</strong>
+- <strong>ok</strong>：正常發佈。
+- <strong>warn</strong>：照常發佈，但儀表板頂端顯示「資料品質警示」橫幅並寫明原因（可點開看全部檢查）。
+- <strong>bad</strong>：<strong>不發佈、不覆蓋上一份通過檢查的日誌</strong>；儀表板顯示紅色橫幅「本次更新未發佈」；workflow 在提交狀態並重建網站後標示失敗（GitHub 會通知），結果與原因保留在 <code>data/pipeline_status.json</code>。
+- 門檻在 <code>config/params.json</code> 的 <code>quality</code> 區塊，可調整。回補（<code>--asof</code>）與示範模式略過『新鮮度』檢查。</p>
+<p><strong>這道關卡抓到的實際問題</strong>：股票清單裡 5 檔台股的上市／上櫃別寫錯（例如安碁資訊是上櫃，應為 <code>.TWO</code>），導致 Yahoo 一直查不到、涵蓋率只有 95%；現在由官方清單自動核對，已修正並會在未來自動偵測同類錯誤。</p>
+<p><strong>局限</strong>：關卡只能抓到「看得出來的異常」。美股只有 Yahoo 一個價格來源，若 Yahoo 回傳「看起來合理但其實錯誤」的價格，系統無法獨立驗證（這是需要第二個美股來源才能解決的問題）。</p></main><footer>本站內容由系統自動產生，僅供研究與教育用途，不構成投資建議；目標價為模型估算，投資有風險。</footer></body></html>

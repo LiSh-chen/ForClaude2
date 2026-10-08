@@ -3,7 +3,7 @@
 const NS = 'http://www.w3.org/2000/svg';
 const MK = {TW: '台股', US: '美股'};
 const FACTORS = [['sector', '產業'], ['leader', '龍頭'], ['quality', '品質'], ['growth', '成長'], ['valuation', '估值'], ['momentum', '動能'], ['news', '新聞']];
-const S = {idx: [], date: null, snap: null, perf: null, tab: 'overview', hm: 'TW', pm: 'main'};
+const S = {idx: [], date: null, snap: null, perf: null, status: null, tab: 'overview', hm: 'TW', pm: 'main'};
 
 /* ---------- 小工具 ---------- */
 function add(e, kids) { for (const k of kids.flat(Infinity)) { if (k == null || k === false) continue; e.append(k.nodeType ? k : document.createTextNode(String(k))); } }
@@ -298,14 +298,43 @@ function perfView() {
   return root;
 }
 
+/* ---------- 資料品質 ---------- */
+const QL = {ok: ['✓', '正常'], warn: ['⚠', '警示'], bad: ['✕', '未發佈']};
+const fmtTime = iso => iso ? new Date(iso).toLocaleString('zh-TW', {timeZone: 'Asia/Taipei', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false}) : '—';
+function qualityDrawer(q, st) {
+  const body = [];
+  if (st && st.level === 'bad' && !st.published) body.push(h('div', {class: 'qbanner bad inline'}, `最近一次更新（${fmtTime(st.attempt_at)}）因資料品質不合格而未發佈；畫面上顯示的是上一份通過檢查的日誌，沒有被覆蓋。`));
+  body.push(h('p', {class: 'p'}, '每次產生日誌前，系統都會自動檢查資料是否可信。輕微異常：照常發佈並顯示警示；嚴重異常：不發佈、不覆蓋上一份好的日誌。門檻設定在 config/params.json 的 quality 區塊。'));
+  body.push(h('table', {class: 't'}, h('thead', null, h('tr', null, h('th', null, '檢查'), h('th', null, '結果'), h('th', null, '說明'))),
+    h('tbody', null, (q.checks || []).map(c => h('tr', null, h('td', null, c.label), h('td', {style: 'white-space:nowrap;font-weight:650'}, `${QL[c.level][0]} ${QL[c.level][1] === '未發佈' ? '嚴重' : QL[c.level][1]}`), h('td', null, c.msg))))));
+  openDrawer('資料品質檢查', `整體：${QL[q.level][0]} ${q.level === 'bad' ? '嚴重異常' : QL[q.level][1]}`, body);
+}
+function renderQuality() {
+  const sn = S.snap, st = S.status && S.status.attempt_at ? S.status : null, q = sn && sn.quality;
+  const qc = document.getElementById('qchip'), qb = document.getElementById('qbanner');
+  const failed = st && st.level === 'bad' && !st.published && (!sn || !sn.generated_at || st.attempt_at > sn.generated_at);
+  const level = failed ? 'bad' : q ? q.level : null;
+  if (!level) { qc.hidden = true; qb.hidden = true; return; }
+  qc.hidden = false; qc.className = 'chip btn q-' + level; qc.textContent = `資料品質 ${QL[level][0]} ${QL[level][1]}`; qc.onclick = () => qualityDrawer(failed ? st : q, st);
+  const issues = (failed ? st.issues : q.issues) || [];
+  if (level === 'ok') { qb.hidden = true; return; }
+  qb.hidden = false; qb.className = 'qbanner ' + level;
+  qb.replaceChildren(h('b', null, failed ? '⚠ 本次更新未發佈（資料品質不合格）' : '⚠ 資料品質警示'),
+    failed ? ` 最近一次更新（${fmtTime(st.attempt_at)}）檢查未通過，畫面顯示的是 ${sn ? sn.date : '—'} 通過檢查的日誌。` : ' 本日誌已發佈，但下列項目請留意：', h('ul', null, issues.slice(0, 3).map(i => h('li', null, `${i.label}：${i.msg}`))),
+    h('button', {type: 'button', class: 'linkbtn', on: {click: () => qualityDrawer(failed ? st : q, st)}}, '查看全部檢查'));
+}
+
 /* ---------- 框架 ---------- */
 const TABS = [['overview', '總覽'], ['emerging', '前瞻專區'], ['perf', '績效']];
 function go(t) { S.tab = t; history.replaceState(null, '', '#' + t); render(); window.scrollTo(0, 0); }
 function renderTabs() { const el = document.getElementById('tabs'); el.replaceChildren(...TABS.map(([k, l]) => h('button', {type: 'button', role: 'tab', 'aria-selected': S.tab === k, on: {click: () => go(k)}}, l))); }
 function render() {
   const v = document.getElementById('view'); renderTabs(); hideTip();
+  renderQuality();
   if (!S.snap) { v.replaceChildren(h('div', {class: 'empty'}, '尚無資料。第一份日誌會在排程首次執行後出現。')); return; }
   const sn = S.snap, ch = document.getElementById('srcchip');
+  const uc = document.getElementById('updchip');
+  if (sn.generated_at) { const d = new Date(sn.generated_at); uc.hidden = false; uc.textContent = '更新 ' + d.toLocaleString('zh-TW', {timeZone: 'Asia/Taipei', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false}); uc.title = `產生時間（台灣時間）。行情截至：台股 ${sn.basis ? sn.basis.TW : '—'} 收盤、美股 ${sn.basis ? sn.basis.US : '—'} 收盤` + ((sn.data_notes || []).length ? '\n' + sn.data_notes.join('\n') : ''); } else uc.hidden = true;
   ch.textContent = `新聞 ${sn.news.ok}/${sn.news.total} 來源`; ch.title = sn.news.failed.length ? '失敗：' + sn.news.failed.join('、') : '全部來源正常';
   document.getElementById('demo').hidden = sn.provider !== 'demo';
   const body = S.tab === 'emerging' ? emergingView() : S.tab === 'perf' ? perfView() : overview();
@@ -321,6 +350,7 @@ async function init() {
   const hash = location.hash.slice(1); if (TABS.some(t => t[0] === hash)) S.tab = hash;
   try { S.idx = (await getJSON('data/index.json')).dates; } catch (e) { document.getElementById('view').replaceChildren(h('div', {class: 'empty'}, location.protocol === 'file:' ? '請透過網址（http/https）開啟，直接開檔無法載入資料。' : '尚無資料。第一份日誌會在排程首次執行後出現。')); renderTabs(); return; }
   try { S.perf = await getJSON('data/performance.json'); } catch (e) { S.perf = null; }
+  try { S.status = await getJSON('data/status.json'); } catch (e) { S.status = null; }
   const sel = document.getElementById('date'); sel.replaceChildren(...S.idx.map(x => h('option', {value: x.date}, x.date))); sel.addEventListener('change', () => loadDate(sel.value));
   if (S.idx.length) await loadDate(S.idx[0].date); else render();
 }
