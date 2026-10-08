@@ -176,3 +176,12 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
         }
     }
 }
+
+private val navColors
+    @Composable get() = androidx.compose.material3.NavigationBarItemDefaults.colors(
+        selectedIconColor = Vintage.ink,
+        selectedTextColor = Vintage.parchmentLight,
+        indicatorColor = Vintage.brassLight,
+        unselectedIconColor = Vintage.parchmentLight,
+        unselectedTextColor = Vintage.parchmentLight,
+    )
