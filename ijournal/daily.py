@@ -30,7 +30,7 @@ def _index_stats(prices, uni):
 
 def run_daily(provider, force: bool = False, asof: str | None = None) -> str | None:
     uni, params, src = C.load_universe(), C.load_params(), C.load_sources()
-    tickers = list(uni["stocks"]) + [i["t"] for i in uni["indices"]] + list(uni["benchmarks"].values())
+    tickers = list(uni["stocks"]) + [i["t"] for i in uni["indices"]] + list(uni["benchmarks"].values()) + list(uni["reference"].values())
     tickers = list(dict.fromkeys(tickers))
     print(f"[daily] 抓取 {len(tickers)} 檔價格…")
     prices = provider.prices(tickers)
@@ -41,14 +41,21 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
     if asof:
         cut = pd.Timestamp(asof)
         prices = {t: d[d.index <= cut] for t, d in prices.items()}
-    bdates = [prices[b].index[-1] for b in uni["benchmarks"].values() if b in prices and len(prices[b])]
-    if not bdates:
-        raise SystemExit("取不到大盤價格，無法決定資料基準日（請檢查網路/資料來源）。")
-    date = str(max(bdates).date())
+    # 行情基準日：各市場以「參考標的」的最新收盤日判斷（台股用 2330.TW，因 Yahoo 的 ^TWII 常慢一天）
+    basis = {m: str(prices[r].index[-1].date()) for m, r in uni["reference"].items() if r in prices and len(prices[r])}
+    if not basis:
+        raise SystemExit("取不到參考標的價格，無法決定資料基準日（請檢查網路/資料來源）。")
+    date = max(basis.values())
+    bdates = [pd.Timestamp(date)]
     jpath = C.path("journal") / f"{date}.md"
     if jpath.exists() and not force:
-        print(f"[daily] {date} 的日誌已存在，略過（用 --force 重跑）。")
-        return None
+        # 同一基準日會被更新兩次：台股收盤後（美股仍是前一日）→ 美股收盤後（兩邊都最新）。
+        # 只有『某市場的收盤日比上次更新』才覆蓋；否則略過（排程重複觸發時不浪費時間）。
+        old = (C.load_json(C.path("data") / "snapshots" / f"{date}.json") or {}).get("basis") or {}
+        if not any((basis.get(m) or "") > (old.get(m) or "") for m in basis):
+            print(f"[daily] {date} 的日誌已存在且沒有更新的行情（台股 {basis.get('TW')}、美股 {basis.get('US')}），略過。")
+            return None
+        print(f"[daily] {date} 的日誌已存在，但有更新的行情（原 {old}，現 {basis}）→ 覆蓋更新。")
 
     feats = {}
     for t, st in uni["stocks"].items():
@@ -86,7 +93,7 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
         "params": params, "uni": uni, "sec_scores": sec_scores, "picks": picks, "notes": notes, "stats": stats, "rows": rows, "scan": scan_res,
         "fetch_log": provider.fetch_log, "provider": provider.name, "indices": _index_stats(prices, uni), "prev": prev,
         "perf_summary": perf["summary"] if perf and perf.get("summary") else None,
-        "param_history": C.load_json(C.history_path(), []), "elig": lambda r: eligible(r, params),
+        "param_history": C.load_json(C.history_path(), []), "elig": lambda r: eligible(r, params), "basis": basis,
     }
     # 選用 LLM 評論
     if llm.available():

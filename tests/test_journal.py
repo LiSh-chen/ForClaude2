@@ -240,3 +240,30 @@ def test_strip_partial_bars_only_uses_completed_sessions():
     out, n = strip_partial(prices, dt.datetime(2026, 10, 7, 23, 0, tzinfo=tw))
     assert len(out["NVDA"]) == 1 and len(out["2330.TW"]) == 2
     assert exchange_of("TWD=X") is None and exchange_of("^TWII") == "TW" and exchange_of("8299.TWO") == "TW" and exchange_of("BRK-B") == "US"
+
+
+def test_two_updates_per_day_newer_close_overwrites_and_duplicates_skip():
+    from ijournal.daily import run_daily
+    from ijournal.utils import market_of
+
+    class UsLagging(DemoProvider):
+        """模擬台股收盤後（美股仍是前一日收盤）的資料。"""
+        def prices(self, tickers, days=800):
+            return {t: (d.iloc[:-1] if market_of(t) == "US" else d) for t, d in super().prices(tickers, days).items()}
+
+    snaps = C.path("data") / "snapshots"
+    end = dt.date(2026, 9, 30)  # 週三
+    # ① 台股收盤後：台股 9/30、美股 9/29 → 基準日 9/30
+    d1 = run_daily(UsLagging(end=end))
+    assert d1 == "2026-09-30"
+    b1 = C.load_json(snaps / f"{d1}.json")["basis"]
+    assert b1["TW"] == "2026-09-30" and b1["US"] == "2026-09-29"
+    # ② 美股收盤後：兩邊都 9/30 → 同一基準日，美股收盤日更新 → 覆蓋
+    d2 = run_daily(DemoProvider(end=end))
+    assert d2 == "2026-09-30"
+    assert C.load_json(snaps / f"{d2}.json")["basis"] == {"US": "2026-09-30", "TW": "2026-09-30"}
+    # ③ 排程重複觸發（資料沒有更新）→ 略過
+    assert run_daily(DemoProvider(end=end)) is None
+    # 台股收盤後的『舊』資料（美股較舊）不可覆蓋較新的結果
+    assert run_daily(UsLagging(end=end)) is None
+    assert C.load_json(snaps / f"{d2}.json")["basis"]["US"] == "2026-09-30"

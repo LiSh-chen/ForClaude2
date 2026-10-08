@@ -55,9 +55,8 @@ def build(date: str, ctx: dict, emg: dict | None, prices: dict) -> dict:
     picked = {r["ticker"] for m in picks for r in picks[m]}
     N = p["selection"]["picks_per_market"]
 
-    last = lambda tk: str(prices[tk].index[-1].date()) if tk in prices and len(prices[tk]) else None
     snap = {"date": date, "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-            "basis": {"TW": last("^TWII"), "US": last("^GSPC")}, "params_version": p["version"], "provider": ctx["provider"], "llm": bool(ctx.get("llm")),
+            "basis": ctx["basis"], "params_version": p["version"], "provider": ctx["provider"], "llm": bool(ctx.get("llm")),
             "summary": (ctx.get("llm") or {}).get("summary"),
             "news": {"ok": sum(1 for x in ctx["fetch_log"] if x["ok"]), "total": len(ctx["fetch_log"]), "items": ctx["scan"]["n_items"], "used": ctx["scan"]["n_used"],
                      "failed": [x["source"] for x in ctx["fetch_log"] if not x["ok"]]},

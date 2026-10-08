@@ -1,6 +1,8 @@
 {
   "_doc": "tickers 格式: 代號|名稱|別名(逗號分隔)。.TW=上市, .TWO=上櫃, 其餘視為美股。龍頭股由『同產業同市場的市值排名』動態判定，不在此硬編。",
   "benchmarks": {"US": "^GSPC", "TW": "^TWII"},
+  "reference": {"US": "^GSPC", "TW": "2330.TW"},
+  "_reference_doc": "決定『行情基準日』用的參考標的。台灣加權指數（^TWII）在 Yahoo 常比個股慢一天更新，所以台股改用 2330.TW 判斷最新收盤日。",
   "indices": [
     {"t": "^GSPC", "name": "S&P 500"},
     {"t": "^IXIC", "name": "Nasdaq 綜合"},
