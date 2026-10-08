@@ -307,7 +307,7 @@ function render() {
   if (!S.snap) { v.replaceChildren(h('div', {class: 'empty'}, '尚無資料。第一份日誌會在排程首次執行後出現。')); return; }
   const sn = S.snap, ch = document.getElementById('srcchip');
   const uc = document.getElementById('updchip');
-  if (sn.generated_at) { const d = new Date(sn.generated_at); uc.hidden = false; uc.textContent = '更新 ' + d.toLocaleString('zh-TW', {timeZone: 'Asia/Taipei', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false}); uc.title = `產生時間（台灣時間）。行情截至：台股 ${sn.basis ? sn.basis.TW : '—'} 收盤、美股 ${sn.basis ? sn.basis.US : '—'} 收盤`; } else uc.hidden = true;
+  if (sn.generated_at) { const d = new Date(sn.generated_at); uc.hidden = false; uc.textContent = '更新 ' + d.toLocaleString('zh-TW', {timeZone: 'Asia/Taipei', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false}); uc.title = `產生時間（台灣時間）。行情截至：台股 ${sn.basis ? sn.basis.TW : '—'} 收盤、美股 ${sn.basis ? sn.basis.US : '—'} 收盤` + ((sn.data_notes || []).length ? '\n' + sn.data_notes.join('\n') : ''); } else uc.hidden = true;
   ch.textContent = `新聞 ${sn.news.ok}/${sn.news.total} 來源`; ch.title = sn.news.failed.length ? '失敗：' + sn.news.failed.join('、') : '全部來源正常';
   document.getElementById('demo').hidden = sn.provider !== 'demo';
   const body = S.tab === 'emerging' ? emergingView() : S.tab === 'perf' ? perfView() : overview();

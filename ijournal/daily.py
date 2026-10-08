@@ -8,7 +8,7 @@ import pandas as pd
 from . import config as C
 from . import llm
 from . import emerging as E
-from . import sessions, snapshot
+from . import datafix, sessions, snapshot
 from .features import norm_fundamentals, price_features
 from .journal import candidate_record, pick_record, write_journal
 from .news import scan
@@ -38,13 +38,19 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
         prices, n_part = sessions.strip_partial(prices)
         if n_part:
             print(f"[daily] 交易所尚在盤中：已剔除 {n_part} 檔『未完成的當日 K 線』，只使用已收盤資料。")
+    data_report = None
+    if provider.name == "live" and not asof:
+        # 以官方／較新的來源補上 Yahoo 較慢或缺漏的最新收盤（台股：證交所/櫃買；美股：收盤後最後成交價，標示暫定）
+        prices, data_report = datafix.apply_all(prices, list(uni["stocks"]))
+        for n in datafix.notes(data_report):
+            print("[daily] 資料來源：" + n)
     if asof:
         cut = pd.Timestamp(asof)
         prices = {t: d[d.index <= cut] for t, d in prices.items()}
-    # 行情基準日：各市場以「參考標的」的最新收盤日判斷（台股用 2330.TW，因 Yahoo 的 ^TWII 常慢一天）
-    basis = {m: str(prices[r].index[-1].date()) for m, r in uni["reference"].items() if r in prices and len(prices[r])}
+    # 行情基準日：各市場以「該市場個股最後一根日期的眾數」判斷（不看指數：指數與個股的更新時間不同，例如 Yahoo 的 ^TWII 常慢一天）
+    basis = datafix.market_basis(prices, list(uni["stocks"]))
     if not basis:
-        raise SystemExit("取不到參考標的價格，無法決定資料基準日（請檢查網路/資料來源）。")
+        raise SystemExit("取不到個股價格，無法決定資料基準日（請檢查網路/資料來源）。")
     date = max(basis.values())
     bdates = [pd.Timestamp(date)]
     jpath = C.path("journal") / f"{date}.md"
@@ -93,7 +99,7 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
         "params": params, "uni": uni, "sec_scores": sec_scores, "picks": picks, "notes": notes, "stats": stats, "rows": rows, "scan": scan_res,
         "fetch_log": provider.fetch_log, "provider": provider.name, "indices": _index_stats(prices, uni), "prev": prev,
         "perf_summary": perf["summary"] if perf and perf.get("summary") else None,
-        "param_history": C.load_json(C.history_path(), []), "elig": lambda r: eligible(r, params), "basis": basis,
+        "param_history": C.load_json(C.history_path(), []), "elig": lambda r: eligible(r, params), "basis": basis, "data_notes": datafix.notes(data_report) if data_report else [],
     }
     # 選用 LLM 評論
     if llm.available():

@@ -267,3 +267,63 @@ def test_two_updates_per_day_newer_close_overwrites_and_duplicates_skip():
     # 台股收盤後的『舊』資料（美股較舊）不可覆蓋較新的結果
     assert run_daily(UsLagging(end=end)) is None
     assert C.load_json(snaps / f"{d2}.json")["basis"]["US"] == "2026-09-30"
+
+
+# ---- 資料修補（樣本取自 2026-10-07 證交所／櫃買中心實際回傳格式）
+TWSE_CSV = '''"日期","證券代號","證券名稱","成交股數","成交金額","開盤價","最高價","最低價","收盤價","漲跌價差","成交筆數"
+"1151007","2330","台積電","14466183","37400000000","2565.00","2585.00","2560.00","2585.00","0.0000","20000"
+"1151007","2383","台光電","2600543","15500000000","6015.00","6325.00","5950.00","5950.00","-45.0000","9000"
+"1151007","1234","停牌股","0","0","--","--","--","--","0.0000","0"
+備註：測試用說明列,
+'''
+TPEX_JSON = '[{"Date":"1151007","SecuritiesCompanyCode":"8299","CompanyName":"群聯","Close":"2060.00","Change":"+10","Open":"2050.00","High":"2070.00","Low":"2040.00","TradingShares":"1000000"}]'
+FMTQIK = '{"stat":"OK","data":[["115/10/06","10,889,677,530","1,026,204,771,139","4,923,225","49,822.55","110.51"],["115/10/07","10,357,959,027","986,280,041,197","4,929,172","49,806.37","-16.18"]]}'
+
+
+def test_datafix_parsers_use_real_formats():
+    from ijournal.datafix import parse_fmtqik, parse_tpex_json, parse_twse_csv, roc_date
+    assert roc_date("1151007") == dt.date(2026, 10, 7) and roc_date("115/10/07") == dt.date(2026, 10, 7) and roc_date("abc") is None
+    day, d = parse_twse_csv(TWSE_CSV)
+    assert day == dt.date(2026, 10, 7) and d["2330"]["Close"] == 2585.0 and d["2383"]["Volume"] == 2600543.0 and "1234" not in d  # 停牌（無成交）略過
+    day, d = parse_tpex_json(TPEX_JSON)
+    assert day == dt.date(2026, 10, 7) and d["8299"]["Close"] == 2060.0
+    f = parse_fmtqik(FMTQIK)
+    assert f[dt.date(2026, 10, 7)]["Close"] == 49806.37
+
+
+def _frame(last: str, close: float, n: int = 3):
+    idx = pd.bdate_range(end=last, periods=n)
+    return pd.DataFrame({"Open": close, "High": close, "Low": close, "Close": close, "Volume": 1000.0}, index=idx)
+
+
+def test_datafix_tw_appends_missing_day_overrides_diff_and_fixes_twii():
+    from ijournal import datafix
+    prices = {"2330.TW": _frame("2026-10-06", 2585.0), "2383.TW": _frame("2026-10-07", 5900.0), "8299.TWO": _frame("2026-10-07", 2060.0), "^TWII": _frame("2026-10-06", 49822.55)}
+    fetch = lambda url: {datafix.TWSE_ALL_URL: TWSE_CSV, datafix.TPEX_ALL_URL: TPEX_JSON}.get(url, FMTQIK)
+    rep = datafix.patch_tw(prices, ["2330.TW", "2383.TW", "8299.TWO"], fetch=fetch)
+    assert rep["appended"] == 1 and rep["overridden"] == 1 and rep["agree"] == 1 and rep["twii_appended"] == 1 and not rep["errors"]
+    assert prices["2330.TW"].index[-1] == pd.Timestamp("2026-10-07") and prices["2330.TW"]["Close"].iloc[-1] == 2585.0
+    assert prices["2383.TW"]["Close"].iloc[-1] == 5950.0 and len(prices["2383.TW"]) == 3   # 差異以官方值修正、不新增列
+    assert prices["^TWII"]["Close"].iloc[-1] == 49806.37
+    # 來源失敗 → 只記錄、不中斷、維持 Yahoo 原值
+    p2 = {"2330.TW": _frame("2026-10-06", 2585.0), "^TWII": _frame("2026-10-06", 1.0)}
+    def boom(url): raise RuntimeError("down")
+    rep2 = datafix.patch_tw(p2, ["2330.TW"], fetch=boom)
+    assert rep2["errors"] and len(p2["2330.TW"]) == 3
+
+
+def test_datafix_us_provisional_close_only_for_matching_session():
+    from ijournal import datafix
+    prices = {"NVDA": _frame("2026-10-06", 239.24), "MSFT": _frame("2026-10-07", 529.5), "AAPL": _frame("2026-10-06", 333.6), "AMD": _frame("2026-10-06", 100.0)}
+    ny = "America/New_York"
+    metas = {"NVDA": {"regularMarketPrice": 237.47, "regularMarketDayHigh": 239.08, "regularMarketDayLow": 236.39, "regularMarketVolume": 81e6, "regularMarketTime": pd.Timestamp("2026-10-07 16:00", tz=ny)},
+             "AAPL": {"regularMarketPrice": 336.67, "regularMarketTime": pd.Timestamp("2026-10-06 16:00", tz=ny)},  # 報價日期不符（前一日）→ 不補
+             "AMD": None}  # 取不到
+    rep = datafix.patch_us(prices, ["NVDA", "MSFT", "AAPL", "AMD"], dt.date(2026, 10, 7), fetch_meta=lambda t: metas.get(t))
+    assert rep["provisional"] == ["NVDA"] and rep["failed"] == 2
+    assert prices["NVDA"].index[-1] == pd.Timestamp("2026-10-07") and prices["NVDA"]["Close"].iloc[-1] == 237.47
+    assert len(prices["AAPL"]) == 3 and len(prices["MSFT"]) == 3
+    assert any("暫定" in n for n in datafix.notes({"tw": None, "us": rep, "errors": []}))
+    # 基準日：各市場個股最後一根日期的眾數（不看指數）
+    prices["^TWII"] = _frame("2026-10-01", 1.0)
+    assert datafix.market_basis(prices, ["NVDA", "MSFT", "AAPL", "AMD"]) == {"US": "2026-10-07"}
