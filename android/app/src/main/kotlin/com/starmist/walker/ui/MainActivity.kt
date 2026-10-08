@@ -67,6 +67,8 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.refresh() }
+    LifecycleEventEffect(Lifecycle.Event.ON_START) { vm.startLive() }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { vm.stopLive() }
     LaunchedEffect(message) {
         message?.let {
             snackbar.showSnackbar(it)

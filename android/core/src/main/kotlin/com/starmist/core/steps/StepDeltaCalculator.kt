@@ -14,6 +14,12 @@ data class StepDelta(
     val toMillis: Long,
     /** True when [steps] is 0 only because there was no earlier reading to compare against. */
     val isBaseline: Boolean = false,
+    /**
+     * True when the reading is lower than the previous one without a reboot. The system can replay an
+     * old sensor value when a listener registers; such a reading carries no information and must not
+     * replace the stored one.
+     */
+    val isStale: Boolean = false,
 )
 
 object StepDeltaCalculator {
@@ -29,9 +35,12 @@ object StepDeltaCalculator {
             return StepDelta(0, false, current.takenAtMillis, current.takenAtMillis, isBaseline = true)
         }
 
-        val bootChanged = abs(current.bootTimeMillis - previous.bootTimeMillis) > BOOT_TOLERANCE_MS
-        val counterWentBack = current.counter < previous.counter
-        val rebooted = bootChanged || counterWentBack
+        // Only the boot time decides whether the counter restarted. A lower value on the same boot is
+        // an out-of-date reading, not a reboot (see StepDelta.isStale).
+        val rebooted = abs(current.bootTimeMillis - previous.bootTimeMillis) > BOOT_TOLERANCE_MS
+        if (!rebooted && current.counter < previous.counter) {
+            return StepDelta(0, false, previous.takenAtMillis, current.takenAtMillis, isStale = true)
+        }
 
         return if (rebooted) {
             // The counter restarted from 0 at boot, so everything on it belongs to the time since

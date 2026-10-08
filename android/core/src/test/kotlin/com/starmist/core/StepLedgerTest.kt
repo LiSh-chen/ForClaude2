@@ -53,6 +53,29 @@ class StepLedgerTest {
     }
 
     @Test
+    fun `lower counter on the same boot is a stale reading, not a reboot`() {
+        val prev = snap(5_000, millis(2026, 10, 7, 9))
+        val stale = snap(4_200, millis(2026, 10, 7, 10)) // same boot: an old value replayed by the system
+        val delta = StepDeltaCalculator.compute(prev, stale)
+        assertEquals(0, delta.steps)
+        assertTrue(delta.isStale)
+        assertFalse(delta.rebooted)
+    }
+
+    @Test
+    fun `ledger ignores a stale reading and keeps its state`() {
+        val ledger = StepLedger(zone)
+        val first = ledger.process(LedgerState(), snap(5_000, millis(2026, 10, 7, 9)), 1.0).state
+        val update = ledger.process(first, snap(4_200, millis(2026, 10, 7, 10)), 1.0)
+        assertTrue(update.isStale)
+        assertTrue(update.rawByDay.isEmpty())
+        assertEquals(first, update.state)
+        // The next real reading is measured against the kept state, so no steps are lost or doubled.
+        val next = ledger.process(update.state, snap(5_300, millis(2026, 10, 7, 11)), 1.0)
+        assertEquals(300L, next.rawByDay.values.sum())
+    }
+
+    @Test
     fun `reboot is detected by boot time even if the counter grew past the old value`() {
         val prev = snap(500, millis(2026, 10, 7, 6))
         val newBoot = millis(2026, 10, 7, 6, 30)

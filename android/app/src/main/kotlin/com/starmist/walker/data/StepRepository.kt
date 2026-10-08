@@ -13,8 +13,11 @@ import com.starmist.core.diagnostics.SnapshotHealth
 import com.starmist.core.steps.CounterSnapshot
 import com.starmist.core.steps.LedgerState
 import com.starmist.core.steps.StepLedger
+import com.starmist.walker.sensor.CounterReading
 import com.starmist.walker.sensor.StepCounterReader
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
@@ -52,14 +55,29 @@ class StepRepository(
         ContextCompat.checkSelfPermission(context, Manifest.permission.ACTIVITY_RECOGNITION) ==
             PackageManager.PERMISSION_GRANTED
 
-    /** Reads the counter and books the steps since the previous reading onto the right days. */
-    suspend fun takeSnapshot(): SnapshotResult = snapshotLock.withLock {
-        if (!reader.hasHardwareCounter) return@withLock SnapshotResult.NoSensor
-        if (!hasPermission()) return@withLock SnapshotResult.NoPermission
-        val counter = reader.readOnce() ?: return@withLock SnapshotResult.NoReading
+    private val _lastRead = MutableStateFlow<CounterReading?>(null)
 
+    /** The most recent hardware read, for the diagnostics screen. */
+    val lastRead: StateFlow<CounterReading?> = _lastRead
+
+    /** Reads the counter and books the steps since the previous reading onto the right days. */
+    suspend fun takeSnapshot(): SnapshotResult {
+        if (!reader.hasHardwareCounter) return SnapshotResult.NoSensor
+        if (!hasPermission()) return SnapshotResult.NoPermission
+        val reading = reader.read() ?: return SnapshotResult.NoReading
+        _lastRead.value = reading
+        return ingest(reading.value)
+    }
+
+    /** Books a counter value that arrived from the live feed while the app is on screen. */
+    suspend fun ingestLive(counter: Long): SnapshotResult {
+        if (!hasPermission()) return SnapshotResult.NoPermission
+        return ingest(counter)
+    }
+
+    private suspend fun ingest(counter: Long): SnapshotResult = snapshotLock.withLock {
         val now = System.currentTimeMillis()
-        val reading = CounterSnapshot(
+        val snapshot = CounterSnapshot(
             counter = counter,
             takenAtMillis = now,
             bootTimeMillis = now - SystemClock.elapsedRealtime(),
@@ -70,7 +88,10 @@ class StepRepository(
         database.withTransaction {
             val stored = dao.getState()
             val state = LedgerState(stored?.toSnapshot(), stored?.carry ?: 0.0)
-            val update = ledger.process(state, reading, multiplier)
+            val update = ledger.process(state, snapshot, multiplier)
+            if (update.isStale) {
+                return@withTransaction SnapshotResult.Success(addedSteps = 0, rebooted = false, baseline = false)
+            }
 
             for ((day, raw) in update.rawByDay) {
                 val key = day.toString()
@@ -79,9 +100,9 @@ class StepRepository(
             }
             dao.putState(
                 SnapshotStateEntity(
-                    counter = reading.counter,
-                    takenAtMillis = reading.takenAtMillis,
-                    bootTimeMillis = reading.bootTimeMillis,
+                    counter = snapshot.counter,
+                    takenAtMillis = snapshot.takenAtMillis,
+                    bootTimeMillis = snapshot.bootTimeMillis,
                     carry = update.state.carry,
                 ),
             )

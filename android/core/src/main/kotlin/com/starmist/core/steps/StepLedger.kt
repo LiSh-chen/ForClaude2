@@ -18,6 +18,8 @@ data class LedgerUpdate(
     val scaledByDay: Map<LocalDate, Long>,
     val rebooted: Boolean,
     val isBaseline: Boolean,
+    /** The reading was out of date and ignored; [state] is unchanged. */
+    val isStale: Boolean = false,
 )
 
 /**
@@ -28,6 +30,9 @@ class StepLedger(private val zone: ZoneId) {
 
     fun process(state: LedgerState, reading: CounterSnapshot, multiplier: Double): LedgerUpdate {
         val delta = StepDeltaCalculator.compute(state.lastSnapshot, reading)
+        if (delta.isStale) {
+            return LedgerUpdate(state, emptyMap(), emptyMap(), rebooted = false, isBaseline = false, isStale = true)
+        }
         val rawByDay = DaySplitter.split(delta.steps, delta.fromMillis, delta.toMillis, zone)
 
         var carry = state.carry

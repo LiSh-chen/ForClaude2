@@ -53,6 +53,7 @@ fun DiagnosticsScreen(vm: AppViewModel, padding: PaddingValues, onOpenAppSetting
     var info by remember { mutableStateOf<DiagnosticsInfo?>(null) }
     var version by remember { mutableIntStateOf(0) }
     val multiplier = vm.settings.collectAsStateWithLifecycle().value?.multiplier
+    val lastRead = vm.lastRead.collectAsStateWithLifecycle().value
 
     LaunchedEffect(version) { info = vm.loadDiagnostics() }
 
@@ -77,6 +78,11 @@ fun DiagnosticsScreen(vm: AppViewModel, padding: PaddingValues, onOpenAppSetting
                 Text("動作與健身權限：${if (d.permissionGranted) "已授予" else "未授予"}")
                 Text("最近一次讀取：${d.lastSnapshotAtMillis?.let(::formatTime) ?: "從未"}")
                 multiplier?.let { Text("修正係數：×${String.format(java.util.Locale.getDefault(), "%.2f", it)}") }
+                Text(
+                    if (lastRead == null) "最近一次硬體讀取：尚無" else
+                        "最近一次硬體讀取：計步器累計 ${lastRead.value} 步，收到 ${lastRead.events} 筆事件，" +
+                            "排空緩衝${if (lastRead.flushCompleted) "完成" else "未完成"}（${formatTime(lastRead.atMillis)}）",
+                )
                 Text(
                     "最近偵測到的重新開機：" +
                         if (d.recentReboots.isEmpty()) "無" else d.recentReboots.joinToString("、") { formatTime(it.atMillis) },

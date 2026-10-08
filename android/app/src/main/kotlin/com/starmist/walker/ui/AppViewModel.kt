@@ -14,7 +14,9 @@ import com.starmist.walker.data.SnapshotResult
 import com.starmist.walker.data.UserSettings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -103,6 +105,28 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
+    // ---- live feed -------------------------------------------------------------------------
+
+    private var liveJob: Job? = null
+
+    /** While the app is on screen, follow the counter so new steps show up right away. */
+    fun startLive() {
+        if (liveJob?.isActive == true) return
+        liveJob = viewModelScope.launch {
+            repository.reader.liveCounter().conflate().collect { counter ->
+                repository.ingestLive(counter)
+                delay(LIVE_MIN_INTERVAL_MS) // conflate keeps only the newest value meanwhile
+            }
+        }
+    }
+
+    fun stopLive() {
+        liveJob?.cancel()
+        liveJob = null
+    }
+
+    val lastRead = repository.lastRead
+
     // ---- tuning ----------------------------------------------------------------------------
 
     fun updateSettings(transform: (UserSettings) -> UserSettings) {
@@ -129,4 +153,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     suspend fun loadDiagnostics(): DiagnosticsInfo = repository.diagnostics()
+
+    private companion object {
+        const val LIVE_MIN_INTERVAL_MS = 2_000L
+    }
 }

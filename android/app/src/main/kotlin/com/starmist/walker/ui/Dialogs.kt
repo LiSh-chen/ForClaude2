@@ -87,7 +87,7 @@ fun CalibrationDialog(vm: AppViewModel, currentMultiplier: Double, onDismiss: ()
                     scope.launch {
                         busy = true
                         error = null
-                        delay(2_500) // the hardware counter reports in small batches
+                        delay(1_000) // let the last steps register before reading
                         val c = vm.readRawCounter()
                         busy = false
                         when {
