@@ -45,6 +45,18 @@ _由程式產生，不需要 AI 圖。_
 
 _由程式產生，不需要 AI 圖。_
 
+### `paper_page` — 整頁羊皮紙（摺痕、纖維、污漬、手寫筆記）
+
+- 用在：全 App 背景（取代平鋪底紋）
+- 最終尺寸：1080×2160　Gemini 比例：9:16　背景：一般圖，不用去背
+- 注意：由 tools/make_paper_page.py（紙）＋svg/paper_notes.svg（手寫筆記與素描）合成；tools/compose_pages.py 輸出 generated/paper_page.png。
+
+_已有 SVG 手繪版可當備案；要用 Gemini 版的話用下面這段。_
+
+```
+Create an image with aspect ratio 9:16. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. 
+```
+
 ## ui
 
 ### `compass_case` — 黃銅羅盤外殼（中空）
@@ -156,6 +168,18 @@ _建議跳過：由 Claude 以 SVG／程式繪製（可無縫平鋪）。_
 - 注意：左右邊緣需可無縫接合。 需要左右可無縫平鋪，Gemini 沒有 4:1 比例也很難接縫，建議不要用 AI 做，由 Claude 以 SVG／程式繪製。
 
 _建議跳過：由 Claude 以 SVG／程式繪製（可無縫平鋪）。_
+
+### `hero_scene` — 首頁插圖（蕨類、百合與旅人）
+
+- 用在：首頁最上方的場景
+- 最終尺寸：1080×560　Gemini 比例：16:9　背景：純白（匯出去背）
+- 注意：由 tools/make_scenes.py 產生 svg/hero_scene.svg，再用 render_svg.mjs 渲染。
+
+_已有 SVG 手繪版可當備案；要用 Gemini 版的話用下面這段。_
+
+```
+Create an image with aspect ratio 16:9. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. 
+```
 
 ## character
 

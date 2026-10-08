@@ -468,6 +468,34 @@
       "source": "ai",
       "prompt": "An antique brass pocket compass seen from above with a small green sprout growing from the top ring, simple bold shapes, centered and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
       "notes": "重要內容限制在中央 60% 以內（安全區）。"
+    },
+    {
+      "id": "paper_page",
+      "category": "texture",
+      "title": "整頁羊皮紙（摺痕、纖維、污漬、手寫筆記）",
+      "usedIn": "全 App 背景（取代平鋪底紋）",
+      "size": [
+        1080,
+        2160
+      ],
+      "alpha": false,
+      "source": "svg",
+      "prompt": "",
+      "notes": "由 tools/make_paper_page.py（紙）＋svg/paper_notes.svg（手寫筆記與素描）合成；tools/compose_pages.py 輸出 generated/paper_page.png。"
+    },
+    {
+      "id": "hero_scene",
+      "category": "scene",
+      "title": "首頁插圖（蕨類、百合與旅人）",
+      "usedIn": "首頁最上方的場景",
+      "size": [
+        1080,
+        560
+      ],
+      "alpha": true,
+      "source": "svg",
+      "prompt": "",
+      "notes": "由 tools/make_scenes.py 產生 svg/hero_scene.svg，再用 render_svg.mjs 渲染。"
     }
   ]
 }

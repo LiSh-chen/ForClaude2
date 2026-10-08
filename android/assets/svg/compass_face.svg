@@ -3,19 +3,19 @@
 <g stroke-linecap="round" stroke-linejoin="round">
   <circle cx="512" cy="512" r="508" fill="url(#paperFace)"/>
   <g filter="url(#wash)"><circle cx="512" cy="512" r="470" fill="#E8C98A" opacity=".25"/></g>
-  <g filter="url(#ink)" fill="none" stroke="#3B2A1A">
-    <circle cx="512" cy="512" r="500" stroke-width="6" opacity=".8"/>
-    <circle cx="512" cy="512" r="440" stroke-width="3" opacity=".55"/>
-    <circle cx="512" cy="512" r="420" stroke-width="2" opacity=".4"/>
-    <g id="ticks" stroke-width="3" opacity=".7"></g>
+  <g filter="url(#inkFine)" fill="none" stroke="#3B2A1A">
+    <circle cx="512" cy="512" r="500" stroke-width="3.4" opacity=".8"/>
+    <circle cx="512" cy="512" r="440" stroke-width="1.8" opacity=".55"/>
+    <circle cx="512" cy="512" r="420" stroke-width="1.2" opacity=".4"/>
+    <g id="ticks" stroke-width="1.7" opacity=".75"></g>
     <!-- eight-point rose -->
     <g id="rose" opacity=".55"></g>
     <circle cx="512" cy="512" r="30" stroke-width="5"/>
   </g>
   <g filter="url(#wash)">
-    <circle cx="512" cy="512" r="30" fill="#B8892D" opacity=".85"/>
+    <circle cx="512" cy="512" r="30" fill="#8E6E36" opacity=".9"/>
   </g>
-  <g filter="url(#ink)" fill="#3B2A1A" font-family="serif" font-weight="bold" font-size="64" text-anchor="middle">
+  <g filter="url(#inkFine)" fill="#3B2A1A" font-family="serif" font-weight="bold" font-size="64" text-anchor="middle">
     <text x="512" y="130">N</text><text x="896" y="532">E</text><text x="512" y="935">S</text><text x="128" y="532">W</text>
   </g>
 </g>
@@ -34,8 +34,8 @@
   const spokes = [[0, 345, 36], [90, 345, 36], [180, 345, 36], [270, 345, 36], [45, 230, 28], [135, 230, 28], [225, 230, 28], [315, 230, 28]];
   spokes.forEach(([deg, len, w], i) => {
     const tip = point(deg, len), left = point(deg - w, 60), right = point(deg + w, 60);
-    make('path', { d: `M${tip} L${left} L512,512 Z`, fill: '#B8892D', opacity: i < 4 ? .85 : .55, 'stroke-width': 3 }, rose);
-    make('path', { d: `M${tip} L${right} L512,512 Z`, fill: '#F6E3A0', opacity: i < 4 ? .9 : .7, 'stroke-width': 3 }, rose);
+    make('path', { d: `M${tip} L${left} L512,512 Z`, fill: '#9C7A3E', opacity: i < 4 ? .85 : .55, 'stroke-width': 1.7 }, rose);
+    make('path', { d: `M${tip} L${right} L512,512 Z`, fill: '#EAD7A0', opacity: i < 4 ? .9 : .7, 'stroke-width': 1.7 }, rose);
   });
 ]]></script>
 </svg>

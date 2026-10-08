@@ -11,23 +11,26 @@ INK = "#3B2A1A"
 
 
 class Canvas:
-    def __init__(self):
+    def __init__(self, k=1.0, ink="ink"):
         self.defs, self.body, self._n = [], [], 0
+        self.k, self.ink = k, ink
 
     def part(self, d, fill, ink=True, width=5, extra_fill_opacity=0.95):
+        width = width * self.k
         """One shape: a washed fill and (optionally) a pen outline on top."""
         self._n += 1
         pid = f"p{self._n}"
         self.defs.append(f'<path id="{pid}" d="{d}"/>')
         self.body.append(f'<g filter="url(#wash)"><use href="#{pid}" fill="{fill}" opacity="{extra_fill_opacity}"/></g>')
         if ink:
-            self.body.append(f'<g filter="url(#ink)"><use href="#{pid}" fill="none" stroke="{INK}" stroke-width="{width}" stroke-linejoin="round" stroke-linecap="round"/></g>')
+            self.body.append(f'<g filter="url(#{self.ink})"><use href="#{pid}" fill="none" stroke="{INK}" stroke-width="{width}" stroke-linejoin="round" stroke-linecap="round"/></g>')
 
     def line(self, d, color=INK, width=5, opacity=1.0):
-        self.body.append(f'<g filter="url(#ink)"><path d="{d}" fill="none" stroke="{color}" stroke-width="{width}" stroke-linecap="round" stroke-linejoin="round" opacity="{opacity}"/></g>')
+        width = width * (self.k if color == INK else max(self.k, 0.8))
+        self.body.append(f'<g filter="url(#{self.ink})"><path d="{d}" fill="none" stroke="{color}" stroke-width="{width}" stroke-linecap="round" stroke-linejoin="round" opacity="{opacity}"/></g>')
 
     def dot(self, cx, cy, r, fill=INK):
-        self.body.append(f'<g filter="url(#ink)"><circle cx="{cx}" cy="{cy}" r="{r}" fill="{fill}"/></g>')
+        self.body.append(f'<g filter="url(#{self.ink})"><circle cx="{cx}" cy="{cy}" r="{r}" fill="{fill}"/></g>')
 
     def raw(self, text):
         self.body.append(text)
@@ -37,14 +40,14 @@ class Canvas:
                 '<defs>' + "".join(self.defs) + '</defs>\n' + "\n".join(self.body) + '\n</svg>\n')
 
 
-def traveller(kind: str, coat: str, trousers: str, scarf: str, face: str, accent: str) -> str:
-    c = Canvas()
+def traveller(kind: str, coat: str, trousers: str, scarf: str, face: str, accent: str, fine: bool = False) -> str:
+    c = Canvas(k=0.5 if fine else 1.0, ink="inkFine" if fine else "ink")
     # ground shadow
     c.raw('<ellipse cx="270" cy="738" rx="130" ry="12" fill="#3B2A1A" opacity=".16"/>')
 
     # tails and capes sit behind everything
     if kind == "fox":
-        c.part("M205,505 C118,530 62,445 96,350 C108,310 150,300 172,332 C148,385 162,435 218,440 Z", coat)
+        c.part("M205,505 C118,530 62,445 96,350 C108,310 150,300 172,332 C148,385 162,435 218,440 Z", accent)
         c.part("M96,350 C108,310 150,300 172,332 C145,332 120,340 96,350 Z", "#FFF1DC", ink=False)
         c.line("M96,350 C108,310 150,300 172,332", width=4)
     if kind == "cat":
@@ -88,12 +91,12 @@ def traveller(kind: str, coat: str, trousers: str, scarf: str, face: str, accent
     # --- heads
     hx, hy = 275, 232
     if kind == "fox":
-        c.part("M215,190 L206,92 L268,150 Z", coat)           # ears behind the head
-        c.part("M286,148 L338,86 L346,176 Z", coat)
+        c.part("M215,190 L206,92 L268,150 Z", accent)           # ears behind the head
+        c.part("M286,148 L338,86 L346,176 Z", accent)
         c.part("M222,150 L218,118 L248,146 Z", "#D3A6BC", ink=False)
         c.part("M300,140 L330,112 L334,150 Z", "#D3A6BC", ink=False)
         c.part("M196,222 C190,170 250,142 306,152 C346,160 372,210 404,262 C384,282 350,296 330,318 C282,336 220,310 196,222 Z", "#FFF1DC")
-        c.part("M196,222 C190,170 250,142 306,152 C300,190 262,214 248,262 C232,280 210,262 196,222 Z", coat, ink=False)
+        c.part("M196,222 C190,170 250,142 306,152 C300,190 262,214 248,262 C232,280 210,262 196,222 Z", accent, ink=False)
         c.dot(398, 262, 12)                                      # nose
         c.dot(332, 232, 8)                                       # eye
         c.dot(335, 229, 2.5, "#FFF1DC")
@@ -130,6 +133,14 @@ def traveller(kind: str, coat: str, trousers: str, scarf: str, face: str, accent
         c.part("M205,194 C208,120 342,116 346,192 C300,206 250,206 205,194 Z", "#D9C79A")
         c.part("M207,184 C260,196 296,196 344,182 L346,198 C296,210 252,210 205,198 Z", accent, ink=False)
     return c.svg()
+
+
+def traveller_fragment(kind: str, x: float, y: float, width: float, **colours) -> str:
+    """The traveller as a nested <svg>, ready to place inside a larger scene (fine pen lines)."""
+    doc = traveller(kind, fine=True, **colours)
+    inner = doc.split("<!--DEFS-->", 1)[1].rsplit("</svg>", 1)[0]
+    height = width * 768 / 512
+    return f'<svg x="{x}" y="{y}" width="{width}" height="{height}" viewBox="0 0 512 768">{inner}</svg>'
 
 
 KINDS = {

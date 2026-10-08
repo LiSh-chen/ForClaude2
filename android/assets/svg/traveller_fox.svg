@@ -3,50 +3,50 @@
 <defs><path id="p1" d="M205,505 C118,530 62,445 96,350 C108,310 150,300 172,332 C148,385 162,435 218,440 Z"/><path id="p2" d="M96,350 C108,310 150,300 172,332 C145,332 120,340 96,350 Z"/><path id="p3" d="M214,520 L258,520 L234,708 L194,708 Z"/><path id="p4" d="M190,702 L242,702 L248,734 L172,734 Q172,716 190,702 Z"/><path id="p5" d="M262,520 L306,520 L342,700 L300,710 Z"/><path id="p6" d="M298,700 L346,692 Q376,712 382,734 L294,736 Z"/><path id="p7" d="M392,332 m-16,0 a16,16 0 1,0 32,0 a16,16 0 1,0 -32,0"/><path id="p8" d="M148,395 Q148,385 160,385 L232,385 Q244,385 244,397 L244,486 Q244,498 232,498 L160,498 Q148,498 148,486 Z"/><path id="p9" d="M206,338 C206,318 322,318 326,340 L350,548 C300,570 226,570 178,552 Z"/><path id="p10" d="M208,336 C230,358 304,358 326,336 C326,318 208,318 208,336 Z"/><path id="p11" d="M300,345 C316,370 320,400 322,420 L296,424 C294,398 288,372 276,356 Z"/><path id="p12" d="M292,350 C330,362 354,410 362,456 L336,474 C328,430 306,398 280,376 Z"/><path id="p13" d="M371,470 m-19,0 a19,19 0 1,0 38,0 a19,19 0 1,0 -38,0"/><path id="p14" d="M215,190 L206,92 L268,150 Z"/><path id="p15" d="M286,148 L338,86 L346,176 Z"/><path id="p16" d="M222,150 L218,118 L248,146 Z"/><path id="p17" d="M300,140 L330,112 L334,150 Z"/><path id="p18" d="M196,222 C190,170 250,142 306,152 C346,160 372,210 404,262 C384,282 350,296 330,318 C282,336 220,310 196,222 Z"/><path id="p19" d="M196,222 C190,170 250,142 306,152 C300,190 262,214 248,262 C232,280 210,262 196,222 Z"/><path id="p20" d="M300,276 m-16,0 a16,10 0 1,0 32,0 a16,10 0 1,0 -32,0"/></defs>
 <ellipse cx="270" cy="738" rx="130" ry="12" fill="#3B2A1A" opacity=".16"/>
 <g filter="url(#wash)"><use href="#p1" fill="#E0A064" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p1" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p1" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p2" fill="#FFF1DC" opacity="0.95"/></g>
-<g filter="url(#ink)"><path d="M96,350 C108,310 150,300 172,332" fill="none" stroke="#3B2A1A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1.0"/></g>
+<g filter="url(#ink)"><path d="M96,350 C108,310 150,300 172,332" fill="none" stroke="#3B2A1A" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round" opacity="1.0"/></g>
 <g filter="url(#wash)"><use href="#p3" fill="#8A6B4A" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p3" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p3" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p4" fill="#5E4128" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p4" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p4" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p5" fill="#8A6B4A" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p5" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p5" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p6" fill="#5E4128" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p6" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
-<g filter="url(#ink)"><path d="M392,346 L338,736" fill="none" stroke="#7A5230" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="1.0"/></g>
-<g filter="url(#ink)"><path d="M392,346 L338,736" fill="none" stroke="#3B2A1A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/></g>
+<g filter="url(#ink)"><use href="#p6" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><path d="M392,346 L338,736" fill="none" stroke="#7A5230" stroke-width="14.0" stroke-linecap="round" stroke-linejoin="round" opacity="1.0"/></g>
+<g filter="url(#ink)"><path d="M392,346 L338,736" fill="none" stroke="#3B2A1A" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/></g>
 <g filter="url(#wash)"><use href="#p7" fill="#D3A94A" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p7" fill="none" stroke="#3B2A1A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p7" fill="none" stroke="#3B2A1A" stroke-width="4.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p8" fill="#A97B4A" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p8" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
-<g filter="url(#ink)"><path d="M152,420 L240,420" fill="none" stroke="#3B2A1A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/></g>
+<g filter="url(#ink)"><use href="#p8" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><path d="M152,420 L240,420" fill="none" stroke="#3B2A1A" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/></g>
 <g filter="url(#ink)"><circle cx="196" cy="428" r="7" fill="#D3A94A"/></g>
 <g filter="url(#wash)"><use href="#p9" fill="#E0A064" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p9" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
-<g filter="url(#ink)"><path d="M190,520 C250,540 310,540 342,522" fill="none" stroke="#3B2A1A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/></g>
+<g filter="url(#ink)"><use href="#p9" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><path d="M190,520 C250,540 310,540 342,522" fill="none" stroke="#3B2A1A" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/></g>
 <g filter="url(#ink)"><circle cx="262" cy="400" r="5" fill="#7C5A1B"/></g>
 <g filter="url(#ink)"><circle cx="262" cy="450" r="5" fill="#7C5A1B"/></g>
 <g filter="url(#wash)"><use href="#p10" fill="#D3A6BC" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p10" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p10" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p11" fill="#D3A6BC" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p11" fill="none" stroke="#3B2A1A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p11" fill="none" stroke="#3B2A1A" stroke-width="4.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p12" fill="#E0A064" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p12" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p12" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p13" fill="#FFF1DC" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p13" fill="none" stroke="#3B2A1A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p13" fill="none" stroke="#3B2A1A" stroke-width="4.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p14" fill="#E0A064" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p14" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p14" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p15" fill="#E0A064" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p15" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p15" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p16" fill="#D3A6BC" opacity="0.95"/></g>
 <g filter="url(#wash)"><use href="#p17" fill="#D3A6BC" opacity="0.95"/></g>
 <g filter="url(#wash)"><use href="#p18" fill="#FFF1DC" opacity="0.95"/></g>
-<g filter="url(#ink)"><use href="#p18" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g filter="url(#ink)"><use href="#p18" fill="none" stroke="#3B2A1A" stroke-width="5.0" stroke-linejoin="round" stroke-linecap="round"/></g>
 <g filter="url(#wash)"><use href="#p19" fill="#E0A064" opacity="0.95"/></g>
 <g filter="url(#ink)"><circle cx="398" cy="262" r="12" fill="#3B2A1A"/></g>
 <g filter="url(#ink)"><circle cx="332" cy="232" r="8" fill="#3B2A1A"/></g>
 <g filter="url(#ink)"><circle cx="335" cy="229" r="2.5" fill="#FFF1DC"/></g>
 <g filter="url(#wash)"><use href="#p20" fill="#D3A6BC" opacity="0.7"/></g>
-<g filter="url(#ink)"><path d="M350,285 Q372,280 388,284" fill="none" stroke="#3B2A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="1.0"/></g>
+<g filter="url(#ink)"><path d="M350,285 Q372,280 388,284" fill="none" stroke="#3B2A1A" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round" opacity="1.0"/></g>
 </svg>
