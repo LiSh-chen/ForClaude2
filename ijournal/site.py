@@ -72,7 +72,8 @@ def write_dashboard(out: Path, data: Path) -> None:
         sn = C.load_json(f)
         shutil.copyfile(f, out / "data" / "snap" / f.name)
         dates.append({"date": f.stem, "tw": len(sn["picks"]["TW"]), "us": len(sn["picks"]["US"]),
-                      "em": sum(len(v) for v in (sn.get("emerging") or {"picks": {}})["picks"].values())})
+                      "em": sum(len(v) for v in (sn.get("emerging") or {"picks": {}})["picks"].values()),
+                      "ba": sum(len(v) for v in (sn.get("bargain") or {"picks": {}})["picks"].values())})
     C.save_json(out / "data" / "index.json", {"dates": dates})
     st = C.load_json(data / "pipeline_status.json")
     C.save_json(out / "data" / "status.json", st if st else {})
@@ -87,6 +88,10 @@ def build_site() -> None:
     (out / "reviews").mkdir(exist_ok=True)
     edir = C.path("emerging")
     (out / "emerging").mkdir(exist_ok=True)
+    bdir = C.path("bargain")
+    (out / "bargain").mkdir(exist_ok=True)
+    for f in sorted(bdir.glob("*.md"), reverse=True):
+        (out / "bargain" / f"{f.stem}.html").write_text(page("便宜好貨專區 " + f.stem, md2html(f.read_text(encoding="utf-8")), "../"), encoding="utf-8")
     journals = sorted(jdir.glob("*.md"), reverse=True)
     emerging = sorted(edir.glob("*.md"), reverse=True)
     reviews = sorted(rdir.glob("*.md"), reverse=True)

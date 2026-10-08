@@ -76,6 +76,7 @@ def run_review(period: str, tune: bool = False, date: str | None = None, min_dat
     perf = d["perf"]
     pos = [p for p in perf.get("positions", []) if p.get("book", "main") == "main"]
     emg = [p for p in perf.get("positions", []) if p.get("book") == "emerging"]
+    bar = [p for p in perf.get("positions", []) if p.get("book") == "bargain"]
     L, A = [], None
     A = L.append
     label = "週" if period == "weekly" else "月"
@@ -175,6 +176,19 @@ def run_review(period: str, tune: bool = False, date: str | None = None, min_dat
         A("")
     else:
         A(f"已追蹤 {len(emg)} 筆，尚無到期樣本。\n" if emg else "尚無前瞻專區推薦紀錄。\n")
+    # 便宜好貨專區
+    A("## 六之三、便宜好貨專區績效（獨立追蹤）\n")
+    bs = perf.get("bargain", {}).get("summary", {})
+    if bar and any(x["n"] for x in bs.values()):
+        A("| 持有期 | 到期檔數 | 平均報酬 | 平均超額報酬 | 勝率（贏大盤） |")
+        A("|---|---|---|---|---|")
+        for h in HORIZONS:
+            x = bs.get(str(h))
+            if x and x["n"]:
+                A(f"| {h} 日 | {x['n']} | {pct(x['avg_ret'], 1, True)} | {pct(x['avg_alpha'], 1, True)} | {pct(x['win_alpha'], 0)} |")
+        A("\n若長期沒有超額報酬，代表『低基期』篩選只是撿到價值陷阱，應收緊止跌與成長條件或停用此專區。\n")
+    else:
+        A(f"已追蹤 {len(bar)} 筆，尚無到期樣本。\n" if bar else "尚無便宜好貨專區推薦紀錄。\n")
     # 7 診斷
     A("## 七、診斷與改進行動\n")
     acts = []
