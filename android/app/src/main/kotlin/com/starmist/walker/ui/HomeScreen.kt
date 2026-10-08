@@ -67,14 +67,19 @@ fun HomeScreen(
         if (!granted) PermissionCard(onRequestPermission, onOpenAppSettings)
         if (!hasCounter) NoticeCard("這台裝置沒有硬體計步器，目前版本無法計步。")
 
+        Text(
+            "星霧大陸",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.ExtraBold,
+            color = Vintage.ink,
+        )
         WorldScene(
             regionId = journey?.let { vm.engine.regionAt(it.position)?.id },
             characterId = settings.characterId,
             walking = walking,
         )
-        Spacer(Modifier.height(16.dp))
-        ProgressRing(steps = steps, goal = settings.dailyGoal, progress = progress)
-        Spacer(Modifier.height(16.dp))
+        CompassDial(steps = steps, goal = settings.dailyGoal, progress = progress)
+        Spacer(Modifier.height(8.dp))
 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             StatCard("距離", "${km.twoDecimals()} 公里", Modifier.weight(1f))
@@ -95,28 +100,6 @@ fun HomeScreen(
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.padding(top = 4.dp),
         )
-    }
-}
-
-@Composable
-private fun ProgressRing(steps: Long, goal: Int, progress: Double) {
-    val animated by animateFloatAsState(progress.coerceIn(0.0, 1.0).toFloat(), label = "ring")
-    val track = MaterialTheme.colorScheme.surfaceVariant
-    val bar = MaterialTheme.colorScheme.primary
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(240.dp)) {
-        Canvas(Modifier.size(240.dp)) {
-            val stroke = 22.dp.toPx()
-            val inset = stroke / 2
-            val arcSize = Size(size.width - stroke, size.height - stroke)
-            val topLeft = Offset(inset, inset)
-            drawArc(track, 0f, 360f, false, topLeft, arcSize, style = Stroke(stroke))
-            drawArc(bar, -90f, 360f * animated, false, topLeft, arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
-        }
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(steps.withCommas(), fontSize = 44.sp, fontWeight = FontWeight.Bold)
-            Text("/ ${goal.toLong().withCommas()} 步", style = MaterialTheme.typography.bodyMedium)
-            Text("${(progress * 100).roundToInt()}%", style = MaterialTheme.typography.titleMedium)
-        }
     }
 }
 

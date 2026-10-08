@@ -128,6 +128,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
 
     init {
+        viewModelScope.launch { container.settings.migrateDefaults() }
         viewModelScope.launch {
             var previous: Long? = null
             todayRow.collect { row ->

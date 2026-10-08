@@ -30,7 +30,6 @@ import com.starmist.walker.data.UserSettings
 @Composable
 fun JourneyScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues) {
     val journey by vm.journey.collectAsStateWithLifecycle()
-    val walking by vm.walking.collectAsStateWithLifecycle()
     val engine = vm.engine
 
     // Entering the page brings the journey up to date.
@@ -46,12 +45,17 @@ fun JourneyScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValu
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        WorldScene(progress?.region?.id, settings.characterId, walking)
-
+        Text("世界地圖", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
         if (state == null || progress == null) {
+            WorldMapView(regionIndex = 0, fraction = 0.0, finished = false)
             Text("旅程會在你走路後開始。", style = MaterialTheme.typography.bodyMedium)
             return@Column
         }
+        WorldMapView(progress.regionIndex, progress.regionFraction, progress.finished)
+        Text(
+            "走過的地方會留下足跡，迷霧也隨之散去；沒去過的地方還藏在霧裡。",
+            style = MaterialTheme.typography.labelSmall,
+        )
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -88,7 +92,7 @@ fun JourneyScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValu
                 Text("背包", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 val shown = ItemType.entries.filter { state.count(it) > 0 }
                 if (shown.isEmpty()) {
-                    Text("還沒有撿到東西。每走約 2,000 步，路上會有新的發現。", style = MaterialTheme.typography.bodyMedium)
+                    Text("還沒有撿到東西。每走約 3,500～5,500 步，路上會有新的發現。", style = MaterialTheme.typography.bodyMedium)
                 } else {
                     shown.forEach { Text("${it.displayName} × ${state.count(it)}") }
                     Text(

@@ -20,7 +20,7 @@ data class UserSettings(
     val heightCm: Double = 170.0,
     val weightKg: Double = 65.0,
     val sex: Sex = Sex.OTHER,
-    val dailyGoal: Int = 8_000,
+    val dailyGoal: Int = 9_000,
     /** Correction factor applied to newly counted steps (1.0 = trust the sensor). */
     val multiplier: Double = 1.0,
     val strideOverrideM: Double? = null,
@@ -45,6 +45,19 @@ class SettingsStore(private val context: Context) {
     val flow: Flow<UserSettings> = context.settingsDataStore.data.map { it.toSettings() }
 
     suspend fun current(): UserSettings = flow.first()
+
+    /**
+     * The default goal moved from 8,000 to 9,000. Installs that never picked a goal have 8,000 stored
+     * (every settings write saves all values), so move those once; anything else is left alone.
+     */
+    suspend fun migrateDefaults() {
+        context.settingsDataStore.edit { prefs ->
+            if (prefs[GOAL_DEFAULT_MOVED] == true) return@edit
+            val stored = prefs[GOAL]
+            if (stored != null && stored == OLD_DEFAULT_GOAL) prefs[GOAL] = 9_000
+            prefs[GOAL_DEFAULT_MOVED] = true
+        }
+    }
 
     suspend fun update(transform: (UserSettings) -> UserSettings) {
         context.settingsDataStore.edit { prefs ->
@@ -87,6 +100,8 @@ class SettingsStore(private val context: Context) {
         val FILTER = stringPreferencesKey("filter_level")
         val STABLE = booleanPreferencesKey("stable_mode")
         val CHARACTER = intPreferencesKey("character_id")
+        val GOAL_DEFAULT_MOVED = booleanPreferencesKey("goal_default_moved_to_9000")
+        const val OLD_DEFAULT_GOAL = 8_000
         const val CHARACTER_COUNT = 4
     }
 }
