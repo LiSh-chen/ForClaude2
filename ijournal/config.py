@@ -68,7 +68,7 @@ def load_universe() -> dict:
             th["members"].append(t)
     # 同一檔雙重上市（ADR 與本股）：避免同日重複推薦同一家公司
     stocks.get("TSM", {})["dual_of"] = "2330.TW"
-    return {"sectors": raw["sectors"], "themes": themes, "stocks": stocks, "benchmarks": raw["benchmarks"], "indices": raw["indices"]}
+    return {"sectors": raw["sectors"], "themes": themes, "stocks": stocks, "benchmarks": raw["benchmarks"], "reference": raw["reference"], "indices": raw["indices"]}
 
 
 def load_sources() -> dict:

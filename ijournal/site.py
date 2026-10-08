@@ -74,6 +74,8 @@ def write_dashboard(out: Path, data: Path) -> None:
         dates.append({"date": f.stem, "tw": len(sn["picks"]["TW"]), "us": len(sn["picks"]["US"]),
                       "em": sum(len(v) for v in (sn.get("emerging") or {"picks": {}})["picks"].values())})
     C.save_json(out / "data" / "index.json", {"dates": dates})
+    st = C.load_json(data / "pipeline_status.json")
+    C.save_json(out / "data" / "status.json", st if st else {})
     perf = C.load_json(data / "performance.json")
     C.save_json(out / "data" / "performance.json", perf if perf else {"positions": [], "cohorts": [], "summary": {}})
 

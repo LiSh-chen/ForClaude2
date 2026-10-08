@@ -189,7 +189,8 @@ def test_dashboard_snapshot_and_site_assets():
     from ijournal.site import build_site
     d = run_daily(DemoProvider(end=dt.date(2026, 9, 30)), asof="2026-07-13")
     sn = C.load_json(C.path("data") / "snapshots" / f"{d}.json")
-    assert {"date", "indices", "picks", "shortage", "sectors", "emerging", "news"} <= set(sn)
+    assert {"date", "indices", "picks", "shortage", "sectors", "emerging", "news", "generated_at", "basis"} <= set(sn)
+    assert sn["generated_at"].endswith("+00:00") and sn["basis"]["TW"] and sn["basis"]["US"]
     assert all(len(x["series"]) > 1 for x in sn["indices"])
     for m in ("TW", "US"):
         assert sn["shortage"][m]["N"] == 5 and sn["shortage"][m]["n"] == len(sn["picks"][m])
@@ -216,3 +217,196 @@ def test_dashboard_snapshot_and_site_assets():
     assert "innerHTML" not in (site / "app.js").read_text(encoding="utf-8")
     if shutil.which("node"):
         assert subprocess.run(["node", "--check", str(site / "app.js")], capture_output=True).returncode == 0
+
+
+def test_strip_partial_bars_only_uses_completed_sessions():
+    import numpy as np
+    from zoneinfo import ZoneInfo
+    from ijournal.sessions import exchange_of, strip_partial
+    idx = pd.to_datetime(["2026-10-06", "2026-10-07"])
+    mk = lambda: pd.DataFrame({"Close": np.array([1.0, 2.0])}, index=idx)
+    prices = {"2330.TW": mk(), "^TWII": mk(), "NVDA": mk(), "TWD=X": mk()}
+    tw = ZoneInfo("Asia/Taipei")
+    # 台灣 10/07 10:00：台股盤中 → 台股當日（未完成）K 線剔除；外匯不處理
+    out, n = strip_partial(prices, dt.datetime(2026, 10, 7, 10, 0, tzinfo=tw))
+    assert len(out["2330.TW"]) == 1 and len(out["^TWII"]) == 1 and len(out["TWD=X"]) == 2
+    # 台灣 10/07 14:30：台股已收盤（13:30+寬限）→ 保留
+    out, n = strip_partial(prices, dt.datetime(2026, 10, 7, 14, 30, tzinfo=tw))
+    assert len(out["2330.TW"]) == 2 and len(out["^TWII"]) == 2
+    # 台灣 10/08 07:48（排程目標時間）：台股前一日 K 線完整、美股 10/07 已收盤 → 全部保留
+    out, n = strip_partial(prices, dt.datetime(2026, 10, 8, 7, 48, tzinfo=tw))
+    assert n == 0 and all(len(v) == 2 for v in out.values())
+    # 美股盤中（台灣 10/07 23:00 = 紐約 10/07 11:00）：美股當日 K 線剔除
+    out, n = strip_partial(prices, dt.datetime(2026, 10, 7, 23, 0, tzinfo=tw))
+    assert len(out["NVDA"]) == 1 and len(out["2330.TW"]) == 2
+    assert exchange_of("TWD=X") is None and exchange_of("^TWII") == "TW" and exchange_of("8299.TWO") == "TW" and exchange_of("BRK-B") == "US"
+
+
+def test_two_updates_per_day_newer_close_overwrites_and_duplicates_skip():
+    from ijournal.daily import run_daily
+    from ijournal.utils import market_of
+
+    class UsLagging(DemoProvider):
+        """模擬台股收盤後（美股仍是前一日收盤）的資料。"""
+        def prices(self, tickers, days=800):
+            return {t: (d.iloc[:-1] if market_of(t) == "US" else d) for t, d in super().prices(tickers, days).items()}
+
+    snaps = C.path("data") / "snapshots"
+    end = dt.date(2026, 9, 30)  # 週三
+    # ① 台股收盤後：台股 9/30、美股 9/29 → 基準日 9/30
+    d1 = run_daily(UsLagging(end=end))
+    assert d1 == "2026-09-30"
+    b1 = C.load_json(snaps / f"{d1}.json")["basis"]
+    assert b1["TW"] == "2026-09-30" and b1["US"] == "2026-09-29"
+    # ② 美股收盤後：兩邊都 9/30 → 同一基準日，美股收盤日更新 → 覆蓋
+    d2 = run_daily(DemoProvider(end=end))
+    assert d2 == "2026-09-30"
+    assert C.load_json(snaps / f"{d2}.json")["basis"] == {"US": "2026-09-30", "TW": "2026-09-30"}
+    # ③ 排程重複觸發（資料沒有更新）→ 略過
+    assert run_daily(DemoProvider(end=end)) is None
+    # 台股收盤後的『舊』資料（美股較舊）不可覆蓋較新的結果
+    assert run_daily(UsLagging(end=end)) is None
+    assert C.load_json(snaps / f"{d2}.json")["basis"]["US"] == "2026-09-30"
+
+
+# ---- 資料修補（樣本取自 2026-10-07 證交所／櫃買中心實際回傳格式）
+TWSE_CSV = '''"日期","證券代號","證券名稱","成交股數","成交金額","開盤價","最高價","最低價","收盤價","漲跌價差","成交筆數"
+"1151007","2330","台積電","14466183","37400000000","2565.00","2585.00","2560.00","2585.00","0.0000","20000"
+"1151007","2383","台光電","2600543","15500000000","6015.00","6325.00","5950.00","5950.00","-45.0000","9000"
+"1151007","1234","停牌股","0","0","--","--","--","--","0.0000","0"
+備註：測試用說明列,
+'''
+TPEX_JSON = '[{"Date":"1151007","SecuritiesCompanyCode":"8299","CompanyName":"群聯","Close":"2060.00","Change":"+10","Open":"2050.00","High":"2070.00","Low":"2040.00","TradingShares":"1000000"}]'
+FMTQIK = '{"stat":"OK","data":[["115/10/06","10,889,677,530","1,026,204,771,139","4,923,225","49,822.55","110.51"],["115/10/07","10,357,959,027","986,280,041,197","4,929,172","49,806.37","-16.18"]]}'
+
+
+def test_datafix_parsers_use_real_formats():
+    from ijournal.datafix import parse_fmtqik, parse_tpex_json, parse_twse_csv, roc_date
+    assert roc_date("1151007") == dt.date(2026, 10, 7) and roc_date("115/10/07") == dt.date(2026, 10, 7) and roc_date("abc") is None
+    day, d = parse_twse_csv(TWSE_CSV)
+    assert day == dt.date(2026, 10, 7) and d["2330"]["Close"] == 2585.0 and d["2383"]["Volume"] == 2600543.0 and "1234" not in d  # 停牌（無成交）略過
+    day, d = parse_tpex_json(TPEX_JSON)
+    assert day == dt.date(2026, 10, 7) and d["8299"]["Close"] == 2060.0
+    f = parse_fmtqik(FMTQIK)
+    assert f[dt.date(2026, 10, 7)]["Close"] == 49806.37
+
+
+def _frame(last: str, close: float, n: int = 3):
+    idx = pd.bdate_range(end=last, periods=n)
+    return pd.DataFrame({"Open": close, "High": close, "Low": close, "Close": close, "Volume": 1000.0}, index=idx)
+
+
+def test_datafix_tw_appends_missing_day_overrides_diff_and_fixes_twii():
+    from ijournal import datafix
+    prices = {"2330.TW": _frame("2026-10-06", 2585.0), "2383.TW": _frame("2026-10-07", 5900.0), "8299.TWO": _frame("2026-10-07", 2060.0), "^TWII": _frame("2026-10-06", 49822.55)}
+    fetch = lambda url: {datafix.TWSE_ALL_URL: TWSE_CSV, datafix.TPEX_ALL_URL: TPEX_JSON}.get(url, FMTQIK)
+    rep = datafix.patch_tw(prices, ["2330.TW", "2383.TW", "8299.TWO"], fetch=fetch)
+    assert rep["appended"] == 1 and rep["overridden"] == 1 and rep["agree"] == 1 and rep["twii_appended"] == 1 and not rep["errors"]
+    assert prices["2330.TW"].index[-1] == pd.Timestamp("2026-10-07") and prices["2330.TW"]["Close"].iloc[-1] == 2585.0
+    assert prices["2383.TW"]["Close"].iloc[-1] == 5950.0 and len(prices["2383.TW"]) == 3   # 差異以官方值修正、不新增列
+    assert prices["^TWII"]["Close"].iloc[-1] == 49806.37
+    # 清單中的上市／上櫃別與官方不符 → 偵測並回報（Yahoo 對錯誤後綴查不到）
+    p3 = {"^TWII": _frame("2026-10-06", 49822.55)}
+    rep3 = datafix.patch_tw(p3, ["2383.TWO", "8299.TW"], fetch=fetch)
+    assert sorted(rep3["wrong_suffix"]) == ["2383.TWO→2383.TW", "8299.TW→8299.TWO"]
+    # 來源失敗 → 只記錄、不中斷、維持 Yahoo 原值
+    p2 = {"2330.TW": _frame("2026-10-06", 2585.0), "^TWII": _frame("2026-10-06", 1.0)}
+    def boom(url): raise RuntimeError("down")
+    rep2 = datafix.patch_tw(p2, ["2330.TW"], fetch=boom)
+    assert rep2["errors"] and len(p2["2330.TW"]) == 3
+
+
+def test_datafix_us_provisional_close_only_for_matching_session():
+    from ijournal import datafix
+    prices = {"NVDA": _frame("2026-10-06", 239.24), "MSFT": _frame("2026-10-07", 529.5), "AAPL": _frame("2026-10-06", 333.6), "AMD": _frame("2026-10-06", 100.0)}
+    ny = "America/New_York"
+    metas = {"NVDA": {"regularMarketPrice": 237.47, "regularMarketDayHigh": 239.08, "regularMarketDayLow": 236.39, "regularMarketVolume": 81e6, "regularMarketTime": pd.Timestamp("2026-10-07 16:00", tz=ny)},
+             "AAPL": {"regularMarketPrice": 336.67, "regularMarketTime": pd.Timestamp("2026-10-06 16:00", tz=ny)},  # 報價日期不符（前一日）→ 不補
+             "AMD": None}  # 取不到
+    rep = datafix.patch_us(prices, ["NVDA", "MSFT", "AAPL", "AMD"], dt.date(2026, 10, 7), fetch_meta=lambda t: metas.get(t))
+    assert rep["provisional"] == ["NVDA"] and rep["failed"] == 2
+    assert prices["NVDA"].index[-1] == pd.Timestamp("2026-10-07") and prices["NVDA"]["Close"].iloc[-1] == 237.47
+    assert len(prices["AAPL"]) == 3 and len(prices["MSFT"]) == 3
+    assert any("暫定" in n for n in datafix.notes({"tw": None, "us": rep, "errors": []}))
+    # 基準日：各市場個股最後一根日期的眾數（不看指數）
+    prices["^TWII"] = _frame("2026-10-01", 1.0)
+    assert datafix.market_basis(prices, ["NVDA", "MSFT", "AAPL", "AMD"]) == {"US": "2026-10-07"}
+
+
+# ---- 資料品質關卡
+def _qctx(**kw):
+    """建立一組『全部正常』的品質檢查輸入；測試時覆寫其中一項。"""
+    tick = [f"{i:04d}.TW" for i in range(10)] + [f"US{i}" for i in range(10)]
+    prices = {t: _frame("2026-10-07", 100.0, 5) for t in tick}
+    base = dict(universe={t: {} for t in tick}, feats={t: {} for t in tick}, basis={"TW": "2026-10-07", "US": "2026-10-07"},
+                rows={t: {"val": {"x": 1}} for t in tick}, prices=prices, news_log=[{"ok": True}] * 10,
+                data_report={"tw": {"date": "2026-10-07", "agree": 9, "overridden": 0, "appended": 0, "missing": 1, "errors": []}, "us": {"provisional": ["US0"], "failed": 0}, "errors": []},
+                params=C.load_params(), now=dt.datetime(2026, 10, 7, 22, 0, tzinfo=dt.timezone.utc))
+    base.update(kw)
+    return base
+
+
+def test_quality_expected_session_dates_and_lag():
+    from zoneinfo import ZoneInfo
+    from ijournal.quality import expected_session_date as ex, lag_bdays
+    tw = ZoneInfo("Asia/Taipei")
+    assert ex("TW", dt.datetime(2026, 10, 7, 10, 0, tzinfo=tw)) == dt.date(2026, 10, 6)     # 盤中 → 前一個交易日
+    assert ex("TW", dt.datetime(2026, 10, 7, 14, 30, tzinfo=tw)) == dt.date(2026, 10, 7)    # 收盤後
+    assert ex("TW", dt.datetime(2026, 10, 10, 9, 0, tzinfo=tw)) == dt.date(2026, 10, 9)     # 週六 → 週五
+    assert ex("US", dt.datetime(2026, 10, 8, 7, 37, tzinfo=tw)) == dt.date(2026, 10, 7)     # 台灣早晨：美股前一日已收盤
+    assert lag_bdays(dt.date(2026, 10, 7), dt.date(2026, 10, 7)) == 0 and lag_bdays(dt.date(2026, 10, 2), dt.date(2026, 10, 7)) == 3
+
+
+def test_quality_levels_for_each_failure_mode():
+    from ijournal.quality import assess
+    assert assess(**_qctx())["level"] == "ok"
+    # 涵蓋率：台股只剩 5/10 → bad
+    c = _qctx(); c["feats"] = {t: {} for t in c["universe"] if not (t.endswith(".TW") and int(t[:4]) >= 5)}
+    r = assess(**c); assert r["level"] == "bad" and any(i["code"] == "coverage_TW" for i in r["issues"])
+    # 新鮮度：只有美股落後 1 日 → warn；長假（台股落後 4 日、美股最新）→ 只 warn；兩邊都落後 ≥3 日 → bad
+    assert assess(**_qctx(basis={"TW": "2026-10-07", "US": "2026-10-06"}))["level"] == "warn"
+    assert assess(**_qctx(basis={"TW": "2026-10-01", "US": "2026-10-07"}))["level"] == "warn"
+    assert assess(**_qctx(basis={"TW": "2026-10-01", "US": "2026-10-01"}))["level"] == "bad"
+    assert assess(**_qctx(now=None, basis={"TW": "2026-01-01", "US": "2026-01-01"}))["level"] == "ok"      # 回補／示範模式略過新鮮度
+    # 官方與 Yahoo 差異：30% → bad；官方來源失敗 → warn
+    tw = {"date": "2026-10-07", "agree": 7, "overridden": 3, "appended": 0, "missing": 0, "errors": [], "wrong_suffix": []}
+    assert assess(**_qctx(data_report={"tw": tw, "us": None, "errors": []}))["level"] == "bad"
+    assert assess(**_qctx(data_report={"tw": {"errors": ["連線逾時"]}, "us": None, "errors": []}))["level"] == "warn"
+    ws = {"date": "2026-10-07", "agree": 9, "overridden": 0, "appended": 0, "missing": 1, "errors": [], "wrong_suffix": ["6690.TW→6690.TWO"]}
+    r = assess(**_qctx(data_report={"tw": ws, "us": None, "errors": []})); assert r["level"] == "warn" and any(i["code"] == "universe_suffix" for i in r["issues"])
+    # 價格異常跳動：大量標的單日 ±50% → bad
+    c = _qctx()
+    for t in list(c["prices"])[:6]:
+        c["prices"][t] = c["prices"][t].copy(); c["prices"][t].iloc[-1, c["prices"][t].columns.get_loc("Close")] = 160.0
+    r = assess(**c); assert r["level"] == "bad" and any(i["code"] == "jumps" for i in r["issues"])
+    # 可估值比例過低 → bad；新聞來源多數失敗 → warn
+    c = _qctx(); c["rows"] = {t: {"val": (None if i < 14 else {"x": 1})} for i, t in enumerate(c["rows"])}
+    assert assess(**c)["level"] == "bad"
+    assert assess(**_qctx(news_log=[{"ok": True}] * 3 + [{"ok": False}] * 7))["level"] == "warn"
+
+
+def test_bad_quality_blocks_publishing_and_keeps_last_good_journal():
+    from ijournal.daily import run_daily
+    from ijournal.quality import DataQualityError
+
+    class FewPrices(DemoProvider):
+        """只回傳約兩成標的的價格（模擬來源大量失效）。"""
+        def prices(self, tickers, days=800):
+            full = super().prices(tickers, days)
+            keep = {t for i, t in enumerate(sorted(full)) if i % 5 == 0} | {"^GSPC", "^TWII", "2330.TW"}
+            return {t: d for t, d in full.items() if t in keep}
+
+    end = dt.date(2026, 9, 28)
+    d = run_daily(DemoProvider(end=end))
+    jp = C.path("journal") / f"{d}.md"
+    before = jp.read_text(encoding="utf-8")
+    assert C.load_json(C.path("data") / "pipeline_status.json")["published"] is True
+    with pytest.raises(DataQualityError):
+        run_daily(FewPrices(end=end), force=True)
+    st = C.load_json(C.path("data") / "pipeline_status.json")
+    assert st["level"] == "bad" and st["published"] is False and st["issues"]
+    assert jp.read_text(encoding="utf-8") == before                      # 上一份好日誌未被覆蓋
+    log = C.load_json(C.path("data") / "quality_log.json")
+    assert log[-1]["level"] == "bad" and log[-1]["published"] is False
+    sn = C.load_json(C.path("data") / "snapshots" / f"{d}.json")
+    assert sn["quality"]["level"] in ("ok", "warn") and sn["quality"]["checks"]

@@ -117,5 +117,21 @@
     "min_members": 3,
     "pick_themes": 8,
     "relaxed_spread_max": 0.8
+  },
+  "quality": {
+    "coverage_warn": 0.9,
+    "coverage_bad": 0.65,
+    "valuation_warn": 0.75,
+    "valuation_bad": 0.4,
+    "tw_diff_warn": 0.05,
+    "tw_diff_bad": 0.25,
+    "tw_missing_warn": 0.3,
+    "us_patch_fail_warn": 0.2,
+    "jump_ret": 0.35,
+    "jump_count_warn": 6,
+    "jump_share_bad": 0.15,
+    "news_ok_warn": 0.7,
+    "lag_warn_bdays": 1,
+    "lag_bad_bdays": 3
   }
 }

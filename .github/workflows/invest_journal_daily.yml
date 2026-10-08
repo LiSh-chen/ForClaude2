@@ -6,7 +6,18 @@ name: Invest Journal Daily
 
 on:
   schedule:
-    - cron: "30 22 * * 1-5"   # 22:30 UTC：美股收盤後（夏/冬令皆已收盤）、台股隔天開盤前
+    # 設計：不賭「排程剛好在開盤前準時跑」（GitHub 排程常延遲，實測曾晚 3 小時以上），
+    # 而是在每個市場『收盤後一段時間』就更新，延遲了也早就備好：
+    #   ① 台股收盤後（13:30）≈ 台灣 15:07 / 16:37：台股收盤價最新、美股為前一日收盤
+    #   ② 美股收盤後（04:00／冬令 05:00）≈ 台灣 05:37 / 06:07 / 06:37 / 07:07：兩邊都最新，覆蓋①
+    # 同一基準日只有在『某市場的收盤日比上次更新』才會覆蓋，否則自動略過（約 1 分鐘）。
+    # 時間用奇數分鐘以避開整點壅塞。④ 的最後一個機會（07:07）仍比台股開盤前 1.2 小時（07:48）早。
+    - cron: "7 7 * * 1-5"     # ① 台灣 15:07（週一至週五）
+    - cron: "37 8 * * 1-5"    # ① 台灣 16:37（①的備援）
+    - cron: "37 21 * * 1-5"   # ② 台灣 05:37（週二至週六早晨）
+    - cron: "7 22 * * 1-5"    # ② 台灣 06:07
+    - cron: "37 22 * * 1-5"   # ② 台灣 06:37
+    - cron: "7 23 * * 1-5"    # ② 台灣 07:07
   workflow_dispatch:
     inputs:
       force:
@@ -39,6 +50,8 @@ jobs:
       - name: Update tracking of past picks (so today's journal quotes fresh performance)
         run: python -m ijournal track
       - name: Write today's journal
+        id: daily
+        continue-on-error: true   # 品質不合格（exit 2）時仍要提交狀態、重建網站，最後再讓 job 失敗
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m ijournal daily ${{ inputs.force && '--force' || '' }}
@@ -54,3 +67,8 @@ jobs:
         with: { path: site }
       - id: deploy
         uses: actions/deploy-pages@v4
+      - name: Fail the job if the journal was not published (data-quality gate or error)
+        if: steps.daily.outcome == 'failure'
+        run: |
+          echo "::error::日誌未發佈：資料品質不合格或執行錯誤，請看『Write today's journal』步驟的 [quality] 訊息。網站已顯示警示橫幅，上一份好的日誌仍保留。"
+          exit 1

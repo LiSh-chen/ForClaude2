@@ -8,7 +8,7 @@
       "evidence": ["美國 NIST 已發布首批後量子密碼標準（ML-KEM、ML-DSA、SLH-DSA）", "美國國安體系與聯邦機構已公布 2030 年代前完成遷移的時程要求", "主流雲端與 CDN 業者已在流量層導入混合式後量子金鑰交換"],
       "falsifiers": ["遷移時程被大幅延後或取消", "標準被證實有可實用的破解攻擊且無替代方案"],
       "keywords_zh": ["後量子", "抗量子", "量子安全", "量子密碼"], "keywords_en": ["post-quantum", "quantum-safe", "quantum-resistant", "PQC", "harvest now decrypt later"],
-      "tickers": ["IBM|IBM|", "NET|Cloudflare|", "AKAM|Akamai|", "PANW|Palo Alto Networks|", "6214.TW|精誠|", "6690.TW|安碁資訊|"]
+      "tickers": ["IBM|IBM|", "NET|Cloudflare|", "AKAM|Akamai|", "PANW|Palo Alto Networks|", "6214.TW|精誠|", "6690.TWO|安碁資訊|"]
     },
     {
       "id": "process_control", "name": "先進製程量測、檢測與可靠度驗證", "short": "量測檢測", "tier": "B",
@@ -17,7 +17,7 @@
       "evidence": ["先進節點與 HBM 堆疊的良率挑戰是業界公開討論的瓶頸", "量測/檢測設備營收成長長期高於整體晶圓設備", "晶片設計複雜化推升失效分析與可靠度驗證的外包需求"],
       "falsifiers": ["先進製程資本支出大幅縮減", "AI 加速器需求顯著下滑導致先進封裝擴產中止"],
       "keywords_zh": ["量測", "檢測設備", "失效分析", "可靠度", "良率"], "keywords_en": ["metrology", "inspection", "process control", "yield", "failure analysis"],
-      "tickers": ["ONTO|Onto Innovation|", "CAMT|Camtek|", "NVMI|Nova|", "KLAC|KLA|", "3587.TWO|閎康|", "3289.TWO|宜特|", "6830.TWO|汎銓|"]
+      "tickers": ["ONTO|Onto Innovation|", "CAMT|Camtek|", "NVMI|Nova|", "KLAC|KLA|", "3587.TWO|閎康|", "3289.TWO|宜特|", "6830.TW|汎銓|"]
     },
     {
       "id": "adv_packaging_supply", "name": "先進封裝測試介面與材料", "short": "先進封裝介面", "tier": "B",
@@ -53,7 +53,7 @@
       "evidence": ["工業電腦與嵌入式平台廠商持續推出整合 NPU/GPU 的邊緣 AI 產品", "邊緣推論晶片與模組出貨在多個應用領域成長", "資料主權與延遲要求使部分推論留在本地端"],
       "falsifiers": ["邊緣推論需求被雲端 API 完全取代", "工業資本支出長期低迷"],
       "keywords_zh": ["邊緣AI", "邊緣運算", "工業電腦", "嵌入式", "實體AI"], "keywords_en": ["edge AI", "edge computing", "embedded", "industrial PC", "physical AI", "on-device AI"],
-      "tickers": ["QCOM|Qualcomm|", "ARM|Arm Holdings|", "LSCC|Lattice|", "ADI|Analog Devices|", "2395.TW|研華|", "6166.TW|凌華|", "3088.TW|艾訊|", "6579.TWO|研揚|"]
+      "tickers": ["QCOM|Qualcomm|", "ARM|Arm Holdings|", "LSCC|Lattice|", "ADI|Analog Devices|", "2395.TW|研華|", "6166.TW|凌華|", "3088.TWO|艾訊|", "6579.TW|研揚|"]
     },
     {
       "id": "aging_care", "name": "高齡化與慢性病照護設備", "short": "高齡照護", "tier": "A",
@@ -62,7 +62,7 @@
       "evidence": ["美、日、台、韓的老年人口占比逐年上升（官方人口統計與推估）", "連續血糖監測、睡眠呼吸治療等設備的滲透率仍低於潛在族群", "慢性病設備多為訂閱式耗材，營收可預測性高"],
       "falsifiers": ["給付制度或藥價改革大幅壓縮設備與耗材報酬", "替代療法（如新藥）顯著降低器材需求"],
       "keywords_zh": ["高齡化", "長照", "連續血糖", "睡眠呼吸", "洗腎", "慢性病"], "keywords_en": ["aging population", "continuous glucose", "sleep apnea", "dialysis", "chronic disease", "elder care"],
-      "tickers": ["RMD|ResMed|", "DXCM|Dexcom|", "PODD|Insulet|", "SYK|Stryker|", "4104.TW|佳醫|", "6491.TWO|晶碩|", "1565.TWO|精華|"]
+      "tickers": ["RMD|ResMed|", "DXCM|Dexcom|", "PODD|Insulet|", "SYK|Stryker|", "4104.TW|佳醫|", "6491.TW|晶碩|", "1565.TWO|精華|"]
     },
     {
       "id": "water_infra", "name": "水資源與超純水處理", "short": "水資源", "tier": "B",
