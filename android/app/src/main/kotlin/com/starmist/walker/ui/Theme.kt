@@ -1,5 +1,6 @@
 package com.starmist.walker.ui
 
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -14,7 +15,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
@@ -81,11 +81,24 @@ private val typography = Typography().let {
     )
 }
 
-/** A rectangle whose edges are slightly ragged, like a torn scrap of paper. Same seed, same tear. */
-class TornShape(private val seed: Int, private val jag: Dp) : Shape {
-    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
-        val amplitude = with(density) { jag.toPx() }
-        val spacing = with(density) { 14.dp.toPx() }
+/**
+ * A rectangle whose edges are slightly ragged, like a torn scrap of paper. Same seed, same tear.
+ * Material's [Shapes] only accepts corner-based shapes, so the "corner size" is used as the depth of
+ * the tear.
+ */
+class TornShape(private val seed: Int, jag: CornerSize) : CornerBasedShape(jag, jag, jag, jag) {
+    constructor(seed: Int, jag: Dp) : this(seed, CornerSize(jag))
+
+    override fun createOutline(
+        size: Size,
+        topStart: Float,
+        topEnd: Float,
+        bottomEnd: Float,
+        bottomStart: Float,
+        layoutDirection: LayoutDirection,
+    ): Outline {
+        val amplitude = topStart
+        val spacing = (amplitude * 4.5f).coerceAtLeast(24f)
         val random = Random(seed)
         val path = Path()
         val corners = listOf(
@@ -98,20 +111,25 @@ class TornShape(private val seed: Int, private val jag: Dp) : Shape {
             val dx = to.x - from.x
             val dy = to.y - from.y
             val length = hypot(dx, dy)
-            val parts = (length / spacing).toInt().coerceAtLeast(1)
-            // Clockwise edges: the inward normal is the direction rotated a quarter turn.
-            val nx = -dy / length
-            val ny = dx / length
-            for (k in 1 until parts) {
-                val t = k.toFloat() / parts
-                val bite = random.nextFloat() * amplitude
-                path.lineTo(from.x + dx * t + nx * bite, from.y + dy * t + ny * bite)
+            if (length > 0f) {
+                val parts = (length / spacing).toInt().coerceAtLeast(1)
+                // Clockwise edges: the inward normal is the direction rotated a quarter turn.
+                val nx = -dy / length
+                val ny = dx / length
+                for (k in 1 until parts) {
+                    val t = k.toFloat() / parts
+                    val bite = random.nextFloat() * amplitude
+                    path.lineTo(from.x + dx * t + nx * bite, from.y + dy * t + ny * bite)
+                }
             }
             path.lineTo(to.x, to.y)
         }
         path.close()
         return Outline.Generic(path)
     }
+
+    override fun copy(topStart: CornerSize, topEnd: CornerSize, bottomEnd: CornerSize, bottomStart: CornerSize): CornerBasedShape =
+        TornShape(seed, topStart)
 }
 
 private val shapes = Shapes(
