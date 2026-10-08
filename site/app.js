@@ -231,6 +231,9 @@ function overview() {
     root.append(h('div', {class: 'sec'}, h('h2', null, '前瞻雷達'), h('button', {class: 'chip btn', type: 'button', on: {click: () => go('emerging')}}, '進入前瞻專區 →')),
       h('div', {class: 'grid g2'}, h('div', {class: 'card'}, barRows(top.map(x => ({label: x.name, v: x.score, text: nz(x.score, 0), tip: `${x.name}｜證據級${x.tier}｜${x.status}`})), true)),
         h('div', {class: 'card sm'}, '主榜追逐「現在被關注」的產業；前瞻專區找「證據已具備、但新聞尚未充分報導、股價尚未被擠進去」的結構性趨勢。', h('br'), h('span', {class: 'muted'}, `今日前瞻推薦：台股 ${sn.emerging.shortage.TW.n} 檔、美股 ${sn.emerging.shortage.US.n} 檔`)))); }
+  if (sn.bargain) { const all = ['TW', 'US'].flatMap(m => sn.bargain.picks[m]).slice(0, 6);
+    root.append(h('div', {class: 'sec'}, h('h2', null, '便宜好貨'), h('button', {class: 'chip btn', type: 'button', on: {click: () => go('bargain')}}, '進入便宜好貨專區 →')),
+      all.length ? h('div', {class: 'grid g2'}, ['TW', 'US'].map(m => h('div', null, h('div', {class: 'mh'}, h('h3', null, MK[m]), h('span', {class: 'cnt num'}, `${sn.bargain.shortage[m].n}／${sn.bargain.shortage[m].N} 檔`)), sn.bargain.picks[m].slice(0, 2).map(pickCard)))) : h('div', {class: 'empty'}, '今日沒有標的同時通過低基期、品質、成長與止跌四道關卡。')); }
   return root;
 }
 function radar(themes, topN) {
@@ -270,10 +273,34 @@ function emergingView() {
   if (em.clues && em.clues.length) root.append(h('div', {class: 'sec'}, h('h2', null, 'AI 新興線索'), h('span', {class: 'sub'}, '未經驗證，不在推薦中')), h('div', {class: 'card'}, h('ul', null, em.clues.map(c => h('li', null, h('b', null, c.topic), '：' + c.why)))));
   return root;
 }
+function bargainView() {
+  const ba = S.snap.bargain, root = h('div');
+  if (!ba) return h('div', {class: 'empty'}, '此日期沒有便宜好貨專區資料。');
+  const r = ba.rules;
+  root.append(h('div', {class: 'note'}, '找「股價已被打到低基期，但公司沒有壞掉、獲利有轉強條件」的標的。', h('b', null, '便宜不等於好貨'), '：股價低常是因為基本面惡化（價值陷阱），所以要同時通過四道關卡，且不保證反彈。',
+    h('div', {class: 'gates'}, [['① 低基期', `距52週高回檔 ≥ ${pct(r.drawdown, 0, false)}、位於區間下 ${pct(r.pos52, 0, false)}`], ['② 便宜', `目標價上檔 ≥ ${pct(r.upside, 0, false)}`], ['③ 好貨', `品質分 ≥ ${r.quality}、獲利為正、營收未衰退`], ['④ 有轉機', `成長分 ≥ ${r.growth}、自20日低點回升 ≥ ${pct(r.bounce, 0, false)}`]].map(([a, b]) => h('span', {class: 'gate'}, h('b', null, a), ' ', b)))));
+  root.append(h('div', {class: 'sec'}, h('h2', null, '便宜好貨推薦'), h('span', {class: 'sub'}, '依「便宜、品質、爆發、轉機」加權排序；合格不足就照實少選；點卡片看估值、風險與走勢')),
+    h('div', {class: 'grid g2'}, marketCol('TW', ba.picks.TW, ba.shortage.TW, '（便宜好貨）'), marketCol('US', ba.picks.US, ba.shortage.US, '（便宜好貨）')));
+  const all = ['TW', 'US'].flatMap(m => ba.picks[m]);
+  if (all.length) root.append(h('div', {class: 'sec'}, h('h2', null, '低基期位置'), h('span', {class: 'sub'}, '橫軸＝距52週高點回檔幅度，縱軸＝目標價上檔；愈右上愈「便宜」；點圓點看詳細')), h('div', {class: 'card'}, h('div', {style: 'max-width:680px'}, scatterBargain(all))));
+  return root;
+}
+function scatterBargain(list) {
+  const W = 560, H = 260, L = 44, R = 14, T = 14, B = 34, xs = list.map(p => -p.bargain.facts.from_high), ys = list.map(p => p.target.upside);
+  const xm = Math.max(.5, ...xs) * 1.05, ym = Math.max(.4, ...ys) * 1.1, X = v => L + (W - L - R) * v / xm, Y = v => H - B - (H - T - B) * v / ym;
+  const svg = s('svg', {viewBox: `0 0 ${W} ${H}`, width: '100%', role: 'img', 'aria-label': '低基期位置與目標價上檔'});
+  for (let i = 0; i <= 4; i++) { const v = ym * i / 4; svg.append(s('line', {x1: L, x2: W - R, y1: Y(v), y2: Y(v), style: 'stroke:var(--grid)'}), s('text', {x: L - 5, y: Y(v) + 4, 'text-anchor': 'end'}, (v * 100).toFixed(0) + '%')); }
+  for (let i = 0; i <= 5; i++) { const v = xm * i / 5; svg.append(s('text', {x: X(v), y: H - 14, 'text-anchor': 'middle'}, '-' + (v * 100).toFixed(0) + '%')); }
+  svg.append(s('text', {x: (L + W - R) / 2, y: H - 1, 'text-anchor': 'middle'}, '距52週高點回檔'));
+  list.forEach(p => { const top = p.rank === 1, c = s('circle', {cx: X(-p.bargain.facts.from_high), cy: Y(p.target.upside), r: top ? 9 : 6, tabindex: 0, role: 'button', style: `fill:var(--up);opacity:${top ? 1 : .75};cursor:pointer`, 'data-tip': `${p.ticker} ${p.name}\n距高點 ${pct(p.bargain.facts.from_high, 0)}｜上檔 ${pct(p.target.upside, 0)}｜總分 ${nz(p.bargain.score, 0)}`, 'aria-label': `${p.ticker} ${p.name}`});
+    c.addEventListener('click', () => stockDrawer(p)); c.addEventListener('keydown', e => { if (e.key === 'Enter') stockDrawer(p); }); svg.append(c);
+    svg.append(s('text', {x: X(-p.bargain.facts.from_high) + 9, y: Y(p.target.upside) - 8, style: 'font-size:10px'}, p.ticker.replace(/\.(TW|TWO)$/, ''))); });
+  return svg;
+}
 function perfView() {
   const P = S.perf, root = h('div');
-  const pos = (P && P.positions || []).filter(p => (p.book || 'main') === S.pm), summ = S.pm === 'main' ? (P && P.summary) : (P && P.emerging && P.emerging.summary);
-  const seg = h('div', {class: 'seg', role: 'group', 'aria-label': '範圍'}, [['main', '主榜'], ['emerging', '前瞻專區']].map(([k, l]) => h('button', {type: 'button', 'aria-pressed': S.pm === k, on: {click: () => { S.pm = k; render(); }}}, l)));
+  const pos = (P && P.positions || []).filter(p => (p.book || 'main') === S.pm), summ = S.pm === 'main' ? (P && P.summary) : (P && P[S.pm] && P[S.pm].summary);
+  const seg = h('div', {class: 'seg', role: 'group', 'aria-label': '範圍'}, [['main', '主榜'], ['emerging', '前瞻專區'], ['bargain', '便宜好貨']].map(([k, l]) => h('button', {type: 'button', 'aria-pressed': S.pm === k, on: {click: () => { S.pm = k; render(); }}}, l)));
   root.append(h('div', {class: 'sec'}, h('h2', null, '績效追蹤'), seg, h('span', {class: 'sub'}, '進場價＝推薦日收盤；報酬未計成本；基準＝台股加權／S&P 500')));
   if (!pos.length) { root.append(h('div', {class: 'empty'}, '尚無追蹤資料：推薦後需累積交易日才會出現績效。')); return root; }
   const done = h => summ && summ[h] && summ[h].n ? summ[h] : null, s5 = done('5'), s20 = done('20'), s60 = done('60');
@@ -325,7 +352,7 @@ function renderQuality() {
 }
 
 /* ---------- 框架 ---------- */
-const TABS = [['overview', '總覽'], ['emerging', '前瞻專區'], ['perf', '績效']];
+const TABS = [['overview', '總覽'], ['emerging', '前瞻專區'], ['bargain', '便宜好貨'], ['perf', '績效']];
 function go(t) { S.tab = t; history.replaceState(null, '', '#' + t); render(); window.scrollTo(0, 0); }
 function renderTabs() { const el = document.getElementById('tabs'); el.replaceChildren(...TABS.map(([k, l]) => h('button', {type: 'button', role: 'tab', 'aria-selected': S.tab === k, on: {click: () => go(k)}}, l))); }
 function render() {
@@ -337,8 +364,8 @@ function render() {
   if (sn.generated_at) { const d = new Date(sn.generated_at); uc.hidden = false; uc.textContent = '更新 ' + d.toLocaleString('zh-TW', {timeZone: 'Asia/Taipei', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false}); uc.title = `產生時間（台灣時間）。行情截至：台股 ${sn.basis ? sn.basis.TW : '—'} 收盤、美股 ${sn.basis ? sn.basis.US : '—'} 收盤` + ((sn.data_notes || []).length ? '\n' + sn.data_notes.join('\n') : ''); } else uc.hidden = true;
   ch.textContent = `新聞 ${sn.news.ok}/${sn.news.total} 來源`; ch.title = sn.news.failed.length ? '失敗：' + sn.news.failed.join('、') : '全部來源正常';
   document.getElementById('demo').hidden = sn.provider !== 'demo';
-  const body = S.tab === 'emerging' ? emergingView() : S.tab === 'perf' ? perfView() : overview();
-  const d = sn.date, foot = h('div', {class: 'foot'}, h('a', {href: `journal/${d}.html`}, '完整研究日誌'), sn.emerging && h('a', {href: `emerging/${d}.html`}, '完整前瞻報告'), h('a', {href: 'archive.html'}, '歷史日誌'), h('a', {href: 'reviews.html'}, '檢討報告'), h('a', {href: 'methodology.html'}, '方法論'),
+  const body = S.tab === 'emerging' ? emergingView() : S.tab === 'bargain' ? bargainView() : S.tab === 'perf' ? perfView() : overview();
+  const d = sn.date, foot = h('div', {class: 'foot'}, h('a', {href: `journal/${d}.html`}, '完整研究日誌'), sn.emerging && h('a', {href: `emerging/${d}.html`}, '完整前瞻報告'), sn.bargain && h('a', {href: `bargain/${d}.html`}, '完整便宜好貨報告'), h('a', {href: 'archive.html'}, '歷史日誌'), h('a', {href: 'reviews.html'}, '檢討報告'), h('a', {href: 'methodology.html'}, '方法論'),
     h('span', null, `參數 v${sn.params_version}｜漲跌：紅▲漲、藍▼跌（色盲友善）｜僅供研究，不構成投資建議`));
   v.replaceChildren(body, foot);
 }
