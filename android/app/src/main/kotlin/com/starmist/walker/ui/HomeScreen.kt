@@ -45,6 +45,8 @@ fun HomeScreen(
     onOpenAppSettings: () -> Unit,
 ) {
     val steps by vm.todaySteps.collectAsStateWithLifecycle()
+    val journey by vm.journey.collectAsStateWithLifecycle()
+    val walking by vm.walking.collectAsStateWithLifecycle()
     val granted by vm.permissionGranted.collectAsStateWithLifecycle()
     val hasCounter by vm.hasHardwareCounter.collectAsStateWithLifecycle()
     val lastSnapshot by vm.lastSnapshotAt.collectAsStateWithLifecycle()
@@ -65,7 +67,12 @@ fun HomeScreen(
         if (!granted) PermissionCard(onRequestPermission, onOpenAppSettings)
         if (!hasCounter) NoticeCard("這台裝置沒有硬體計步器，目前版本無法計步。")
 
-        Spacer(Modifier.height(8.dp))
+        WorldScene(
+            regionId = journey?.let { vm.engine.regionAt(it.position)?.id },
+            characterId = settings.characterId,
+            walking = walking,
+        )
+        Spacer(Modifier.height(16.dp))
         ProgressRing(steps = steps, goal = settings.dailyGoal, progress = progress)
         Spacer(Modifier.height(16.dp))
 

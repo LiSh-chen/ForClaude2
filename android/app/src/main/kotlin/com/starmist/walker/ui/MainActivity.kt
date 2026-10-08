@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -112,6 +113,18 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
         return
     }
 
+    val replay by vm.replay.collectAsStateWithLifecycle()
+    val journey by vm.journey.collectAsStateWithLifecycle()
+    replay?.let { summary ->
+        ReplayDialog(
+            vm = vm,
+            settings = current,
+            summary = summary,
+            regionId = journey?.let { vm.engine.regionAt(it.position)?.id },
+            onDismiss = { vm.dismissReplay() },
+        )
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },
         bottomBar = {
@@ -121,6 +134,12 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
                     onClick = { tab = 0; showDiagnostics = false },
                     icon = { Icon(Icons.Filled.Home, contentDescription = null) },
                     label = { Text("今日") },
+                )
+                NavigationBarItem(
+                    selected = tab == 3 && !showDiagnostics,
+                    onClick = { tab = 3; showDiagnostics = false },
+                    icon = { Icon(Icons.Filled.Place, contentDescription = null) },
+                    label = { Text("旅程") },
                 )
                 NavigationBarItem(
                     selected = tab == 1 && !showDiagnostics,
@@ -141,6 +160,7 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
             showDiagnostics -> DiagnosticsScreen(vm, padding, openAppSettings)
             tab == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings)
             tab == 1 -> StatsScreen(vm, current, padding)
+            tab == 3 -> JourneyScreen(vm, current, padding)
             else -> SettingsScreen(vm, current, padding, onOpenDiagnostics = { showDiagnostics = true })
         }
     }

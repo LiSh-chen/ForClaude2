@@ -127,6 +127,8 @@ class StepRepository(
 
     fun observeLastSnapshotAt(): Flow<Long?> = dao.observeState().map { it?.takenAtMillis }
 
+    suspend fun allTimeTotal(): Long = dao.allTimeTotal()
+
     suspend fun getDay(date: LocalDate): DailyStepsEntity? = dao.getDay(date.toString())
 
     /** Makes the day's total equal [desiredTotal] by storing the difference as a manual adjustment. */

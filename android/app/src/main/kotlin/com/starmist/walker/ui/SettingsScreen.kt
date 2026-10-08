@@ -79,6 +79,19 @@ fun SettingsScreen(
             Text("性別只用來估算步長。", style = MaterialTheme.typography.labelSmall)
         }
 
+        Section("旅人外型") {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Characters.all.forEachIndexed { index, character ->
+                    FilterChip(
+                        selected = settings.characterId == index,
+                        onClick = { vm.updateSettings { it.copy(characterId = index) } },
+                        label = { Text(character.name) },
+                    )
+                }
+            }
+            Text("外型只影響畫面，不影響玩法。", style = MaterialTheme.typography.labelSmall)
+        }
+
         Section("穩定計步模式") {
             Row(
                 Modifier.fillMaxWidth(),

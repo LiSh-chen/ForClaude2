@@ -11,6 +11,10 @@ interface StepDao {
     @Query("SELECT * FROM daily_steps WHERE date BETWEEN :from AND :to")
     fun observeRange(from: String, to: String): Flow<List<DailyStepsEntity>>
 
+    /** Sum of every day's total (corrected steps plus manual adjustment, never below zero per day). */
+    @Query("SELECT COALESCE(SUM(MAX(0, scaledSteps + manualAdjust)), 0) FROM daily_steps")
+    suspend fun allTimeTotal(): Long
+
     @Query("SELECT * FROM daily_steps WHERE date = :date")
     suspend fun getDay(date: String): DailyStepsEntity?
 

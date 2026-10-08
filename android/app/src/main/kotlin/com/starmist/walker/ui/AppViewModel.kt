@@ -4,6 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.starmist.core.stats.Aggregator
+import com.starmist.core.world.ItemType
+import com.starmist.core.world.JourneyEngine
+import com.starmist.core.world.JourneyEvent
+import com.starmist.core.world.JourneyState
 import com.starmist.core.stats.Period
 import com.starmist.core.stats.PeriodSummary
 import com.starmist.core.steps.StepScaler
@@ -92,6 +96,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             _today.value = LocalDate.now()
             _permissionGranted.value = repository.hasPermission()
             val result = repository.takeSnapshot()
+            settleJourney()
             if (announce) {
                 _message.value = when (result) {
                     is SnapshotResult.Success -> when {
@@ -149,7 +154,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
         if (tickJob?.isActive != true) {
             tickJob = viewModelScope.launch {
-                repository.reader.stepTicks().collect { pendingTicks.update { ticks -> minOf(ticks + 1, MAX_PENDING_TICKS) } }
+                repository.reader.stepTicks().collect {
+                    pendingTicks.update { ticks -> minOf(ticks + 1, MAX_PENDING_TICKS) }
+                    markWalking()
+                }
             }
         }
     }
@@ -163,6 +171,64 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     val lastRead = repository.lastRead
+
+    // ---- world -----------------------------------------------------------------------------
+
+    val engine = JourneyEngine()
+
+    /** Null until the first journey has been started. */
+    val journey: StateFlow<JourneyState?> = container.journey.flow
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    private val _replay = MutableStateFlow<ReplaySummary?>(null)
+
+    /** What happened on the road since the app was last opened; shown once, then dismissed. */
+    val replay: StateFlow<ReplaySummary?> = _replay
+    fun dismissReplay() { _replay.value = null }
+
+    private val _walking = MutableStateFlow(false)
+    private var walkingTimeout: Job? = null
+
+    /** True while steps are being taken, so the scene keeps scrolling. */
+    val walking: StateFlow<Boolean> = _walking
+
+    private fun markWalking() {
+        _walking.value = true
+        walkingTimeout?.cancel()
+        walkingTimeout = viewModelScope.launch {
+            delay(WALKING_HOLD_MS)
+            _walking.value = false
+        }
+    }
+
+    /** Converts steps counted since the last time into travel along the route. */
+    fun settleJourney() {
+        viewModelScope.launch {
+            val result = container.journey.settle(engine, repository.allTimeTotal())
+            if (result.events.isNotEmpty()) {
+                _replay.value = ReplaySummary(
+                    stepsWalked = result.stepsWalked,
+                    events = result.events,
+                    itemsFound = result.events.mapNotNull {
+                        when (it) {
+                            is JourneyEvent.Found -> it.item
+                            is JourneyEvent.ChoiceAppeared -> it.item
+                            else -> null
+                        }
+                    }.groupingBy { it }.eachCount(),
+                )
+            }
+        }
+    }
+
+    fun resolveCard(encounterIndex: Int, chooseA: Boolean) {
+        viewModelScope.launch {
+            val resolution = container.journey.resolve(engine, encounterIndex, chooseA)
+            if (resolution != null) {
+                _message.value = "${resolution.option.result}（獲得 ${resolution.option.bonus.item.displayName}）"
+            }
+        }
+    }
 
     // ---- tuning ----------------------------------------------------------------------------
 
@@ -202,5 +268,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
         /** Caps how far the detector may run ahead of the counter, so a false positive cannot pile up. */
         const val MAX_PENDING_TICKS = 15L
+
+        const val WALKING_HOLD_MS = 2_500L
     }
 }
+
+/** The road since the last time the app was opened. */
+data class ReplaySummary(
+    val stepsWalked: Long,
+    val events: List<JourneyEvent>,
+    val itemsFound: Map<ItemType, Int>,
+)
