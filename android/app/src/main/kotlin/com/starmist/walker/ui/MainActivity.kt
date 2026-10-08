@@ -135,29 +135,33 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
         containerColor = androidx.compose.ui.graphics.Color.Transparent,
         snackbarHost = { SnackbarHost(snackbar) },
         bottomBar = {
-            NavigationBar(containerColor = Vintage.parchmentDark.copy(alpha = 0.92f)) {
+            NavigationBar(containerColor = Vintage.teal, contentColor = Vintage.parchmentLight) {
                 NavigationBarItem(
                     selected = tab == 0 && !showDiagnostics,
                     onClick = { tab = 0; showDiagnostics = false },
                     icon = { Icon(Icons.Filled.Home, contentDescription = null) },
+                    colors = navColors,
                     label = { Text("今日") },
                 )
                 NavigationBarItem(
                     selected = tab == 3 && !showDiagnostics,
                     onClick = { tab = 3; showDiagnostics = false },
                     icon = { Icon(Icons.Filled.Place, contentDescription = null) },
+                    colors = navColors,
                     label = { Text("旅程") },
                 )
                 NavigationBarItem(
                     selected = tab == 1 && !showDiagnostics,
                     onClick = { tab = 1; showDiagnostics = false },
                     icon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
+                    colors = navColors,
                     label = { Text("統計") },
                 )
                 NavigationBarItem(
                     selected = tab == 2 || showDiagnostics,
                     onClick = { tab = 2; showDiagnostics = false },
                     icon = { Icon(Icons.Filled.Settings, contentDescription = null) },
+                    colors = navColors,
                     label = { Text("設定") },
                 )
             }

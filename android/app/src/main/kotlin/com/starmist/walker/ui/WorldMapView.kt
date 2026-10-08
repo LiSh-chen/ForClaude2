@@ -60,7 +60,7 @@ fun WorldMapView(regionIndex: Int, fraction: Double, finished: Boolean, modifier
         modifier
             .fillMaxWidth()
             .aspectRatio(0.78f)
-            .clip(TornShape(5, 3.dp))
+            .clip(androidx.compose.foundation.shape.RoundedCornerShape(14.dp))
             .background(Vintage.parchmentLight),
     ) {
         val w = size.width

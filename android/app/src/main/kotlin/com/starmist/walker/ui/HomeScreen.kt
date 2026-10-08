@@ -105,7 +105,7 @@ fun HomeScreen(
 
 @Composable
 private fun StatCard(label: String, value: String, modifier: Modifier = Modifier) {
-    Card(modifier, colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+    Card(modifier, colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(4.dp)) {
         Column(Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(label, style = MaterialTheme.typography.labelMedium)
             Text(value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
@@ -136,5 +136,5 @@ private fun PermissionCard(onRequest: () -> Unit, onOpenSettings: () -> Unit) {
 
 @Composable
 private fun NoticeCard(text: String) {
-    Card(Modifier.fillMaxWidth()) { Text(text, Modifier.padding(16.dp)) }
+    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight)) { Text(text, Modifier.padding(16.dp)) }
 }
