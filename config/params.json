@@ -133,5 +133,25 @@
     "news_ok_warn": 0.7,
     "lag_warn_bdays": 1,
     "lag_bad_bdays": 3
+  },
+  "bargain": {
+    "picks_per_market": 5,
+    "max_per_sector": 2,
+    "min_score": 50,
+    "min_drawdown": 0.2,
+    "max_pos52": 0.4,
+    "min_upside": 0.2,
+    "max_method_spread": 0.6,
+    "min_quality_score": 50,
+    "min_growth_score": 45,
+    "min_rev_growth": -0.02,
+    "max_ret_1m_drop": -0.12,
+    "min_bounce20": 0.03,
+    "score_weights": {
+      "cheap": 0.35,
+      "quality": 0.25,
+      "explosive": 0.25,
+      "turn": 0.15
+    }
   }
 }

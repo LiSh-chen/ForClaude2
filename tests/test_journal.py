@@ -128,7 +128,7 @@ def test_emerging_zone_pipeline():
     main = C.load_json(C.path("data") / "picks" / f"{d}.json")
     assert not ({p["ticker"] for p in main["picks"]} & {s["ticker"] for s in uni["stocks"].values() if s.get("emerging_only")})
     perf = run_tracker(prov)
-    assert "emerging" in perf and all(p["book"] in ("main", "emerging") for p in perf["positions"])
+    assert "emerging" in perf and all(p["book"] in ("main", "emerging", "bargain") for p in perf["positions"])
     assert perf["summary"]["5"]["n"] == len([p for p in perf["positions"] if p["book"] == "main" and p.get("r5") is not None])
 
 
@@ -410,3 +410,45 @@ def test_bad_quality_blocks_publishing_and_keeps_last_good_journal():
     assert log[-1]["level"] == "bad" and log[-1]["published"] is False
     sn = C.load_json(C.path("data") / "snapshots" / f"{d}.json")
     assert sn["quality"]["level"] in ("ok", "warn") and sn["quality"]["checks"]
+
+
+def _bargain_row(**over):
+    pf = {"last": 70.0, "from_high": -0.35, "pos52": 0.15, "bounce20": 0.08, "ret_1m": 0.02, "dist200": -0.10, "turnover": 5e8}
+    f = {"market_cap": 5e11, "eps_ttm_px": 3.0, "eps_fwd_px": 4.0, "rev_growth": 0.12, "pe_fwd": 15.0, "roe": 0.2}
+    v = {"upside": 0.4, "spread": 0.2, "peer_pe": 22.0, "confidence": "高", "methods": {}}
+    r = {"market": "US", "sector": "x", "ticker": "T", "composite": 60.0, "pf": pf, "f": f, "val": v, "scores": {"quality": 70.0, "growth": 65.0}}
+    for k, x in over.items():
+        r[k].update(x)
+    return r
+
+
+def test_bargain_eligibility_gates_block_value_traps():
+    from ijournal import bargain as B
+    assert B.eligible(_bargain_row(), P)[0]
+    assert B.eligible(_bargain_row(pf={"from_high": -0.05, "pos52": 0.9}), P)[1] == "股價不在低基期"
+    assert "價值陷阱" in B.eligible(_bargain_row(f={"rev_growth": -0.2}), P)[1]
+    assert "價值陷阱" in B.eligible(_bargain_row(scores={"quality": 30.0}), P)[1]
+    assert "落下的刀" in B.eligible(_bargain_row(pf={"ret_1m": -0.3}), P)[1]
+    assert "止跌" in B.eligible(_bargain_row(pf={"bounce20": 0.0}), P)[1]
+    assert B.eligible(_bargain_row(val={"upside": 0.05}), P)[1] == "目標價上檔空間不足"
+    sc = B.score(_bargain_row(), P)
+    assert 50 <= sc <= 100
+
+
+def test_bargain_zone_pipeline_and_no_padding():
+    from ijournal.daily import run_daily
+    from ijournal.tracker import run_tracker
+    d = run_daily(DemoProvider(end=dt.date(2026, 9, 30)), asof="2026-07-20")
+    md = (C.path("bargain") / f"{d}.md").read_text(encoding="utf-8")
+    assert "便宜好貨專區" in md and "便宜不等於好貨" in md
+    rec = C.load_json(C.path("data") / "bargain" / f"{d}.json")
+    assert all(p["book"] == "bargain" and p["facts"]["from_high"] <= -P["bargain"]["min_drawdown"] for p in rec["picks"])
+    assert len(rec["picks"]) <= 2 * P["bargain"]["picks_per_market"]
+    sn = C.load_json(C.path("data") / "snapshots" / f"{d}.json")
+    ba = sn["bargain"]
+    assert set(ba["shortage"]) == {"TW", "US"} and ba["rules"]["drawdown"] == P["bargain"]["min_drawdown"]
+    for m in ("TW", "US"):
+        for p in ba["picks"][m]:
+            assert p["risks_watch"][0]["t"].startswith("價值陷阱") and p["why"][0]["tag"] == "低基期" and p["highlights"]
+    perf = run_tracker(DemoProvider(end=dt.date(2026, 9, 30)))
+    assert "bargain" in perf and all(p["book"] in ("main", "emerging", "bargain") for p in perf["positions"])

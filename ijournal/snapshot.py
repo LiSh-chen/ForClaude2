@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import datetime as dt
 
+from . import bargain as B
 from . import emerging as E
 from .journal import analyze, thesis
 from .selection import eligible
@@ -48,7 +49,7 @@ def stock_obj(r: dict, sec: dict | None, risk_ctx: dict, prices: dict, names: di
     return o
 
 
-def build(date: str, ctx: dict, emg: dict | None, prices: dict) -> dict:
+def build(date: str, ctx: dict, emg: dict | None, prices: dict, bar: dict | None = None) -> dict:
     p, uni, sec_scores, picks, rows = ctx["params"], ctx["uni"], ctx["sec_scores"], ctx["picks"], ctx["rows"]
     names = {s["id"]: s["name"] for s in uni["sectors"]} | {t["id"]: t["name"] for t in uni["themes"]}
     sectors_cfg = {s["id"]: s for s in uni["sectors"]}
@@ -102,4 +103,20 @@ def build(date: str, ctx: dict, emg: dict | None, prices: dict) -> dict:
                                        "watch": ["若出現就代表論點不成立：" + x for x in th_cfg[r["theme"]]["falsifiers"]]}, prices, names,
                                  {"theme": r["theme"], "theme_name": r["theme_name"], "theme_short": th_cfg[r["theme"]].get("short"), "also_main": r["also_main"], "relaxed": r["val"]["spread"] > e["max_method_spread"]}) for r in ep[m]] for m in ("TW", "US")}
         snap["emerging"] = {"top_n": e["top_themes"], "themes": eth, "picks": picks_e, "shortage": E.shortage_stats(themes, ep, rows, p), "clues": emg.get("clues") or [], "n_scanned": ctx["scan"]["n_used"]}
+    # --- 便宜好貨專區
+    if bar:
+        bp = bar["picked"]
+        bcfg = p["bargain"]
+
+        def bobj(r):
+            o = stock_obj(r, None, {"traits": sectors_cfg.get(r["sector"], {}).get("risk_traits"), "watch": sectors_cfg.get(r["sector"], {}).get("risk_watch")}, prices, names, {"also_main": r["also_main"]})
+            o["bargain"] = {"score": _r(r["bargain_score"], 1), "parts": {k: _r(x, 0) for k, x in r["bargain_parts"].items()}, "facts": {k: _r(x) for k, x in B.facts(r).items()}}
+            o["why"] = B.why(r) + o["why"][:2]
+            o["highlights"] = B.chips(r)
+            o["headline"] = f"低基期（距高點 {B.facts(r)['from_high'] * 100:.0f}%）＋ 目標價上檔 {B.facts(r)['upside'] * 100:+.0f}%，獲利轉強"
+            o["risks_now"] = B.risks_now(r) + o["risks_now"]
+            o["risks_watch"] = [B.TRAP] + o["risks_watch"]
+            return o
+        snap["bargain"] = {"picks": {m: [bobj(r) for r in bp[m]] for m in ("TW", "US")}, "shortage": B.shortage_stats(rows, bp, p),
+                           "rules": {"drawdown": bcfg["min_drawdown"], "pos52": bcfg["max_pos52"], "upside": bcfg["min_upside"], "quality": bcfg["min_quality_score"], "growth": bcfg["min_growth_score"], "bounce": bcfg["min_bounce20"]}}
     return snap

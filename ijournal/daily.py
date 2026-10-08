@@ -7,6 +7,7 @@ import pandas as pd
 
 from . import config as C
 from . import llm
+from . import bargain as B
 from . import emerging as E
 from . import datafix, quality, sessions, snapshot
 from .features import norm_fundamentals, price_features
@@ -148,12 +149,25 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
     except Exception as ex:  # noqa: BLE001
         print(f"[daily] 前瞻專區產生失敗（略過）：{ex!r}")
 
+    # 便宜好貨專區（失敗不得影響主日誌）
+    bar = None
+    try:
+        b_picked = B.pick_bargain(rows, {r["ticker"] for m in picks for r in picks[m]}, params)
+        (C.path("bargain") / f"{date}.md").write_text(B.write_report(date, b_picked, rows, params, provider.name), encoding="utf-8")
+        bdir = C.path("data") / "bargain"
+        bdir.mkdir(exist_ok=True)
+        C.save_json(bdir / f"{date}.json", B.record(b_picked, date, params))
+        bar = {"picked": b_picked}
+        print(f"[daily] 便宜好貨專區：推薦 {sum(len(v) for v in b_picked.values())} 檔")
+    except Exception as ex:  # noqa: BLE001
+        print(f"[daily] 便宜好貨專區產生失敗（略過）：{ex!r}")
+
     md = write_journal(date, ctx)
     jpath.write_text(md, encoding="utf-8")
     try:
         sdir = C.path("data") / "snapshots"
         sdir.mkdir(exist_ok=True)
-        C.save_json(sdir / f"{date}.json", snapshot.build(date, ctx, emg, prices))
+        C.save_json(sdir / f"{date}.json", snapshot.build(date, ctx, emg, prices, bar))
     except Exception as ex:  # noqa: BLE001
         print(f"[daily] 儀表板快照產生失敗（略過）：{ex!r}")
     pdir = data / "picks"

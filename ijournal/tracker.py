@@ -60,11 +60,13 @@ def run_tracker(provider) -> dict:
     data = C.path("data")
     pick_files = sorted((data / "picks").glob("*.json"))
     emerging_files = sorted((data / "emerging").glob("*.json")) if (data / "emerging").exists() else []
-    if not pick_files and not emerging_files:
+    bargain_files = sorted((data / "bargain").glob("*.json")) if (data / "bargain").exists() else []
+    if not pick_files and not emerging_files and not bargain_files:
         print("[track] 還沒有任何推薦紀錄。")
         C.save_json(data / "performance.json", {"generated": str(dt.date.today()), "positions": [], "summary": {}, "cohorts": []})
         return {}
-    books = {"main": {f.stem: C.load_json(f) for f in pick_files}, "emerging": {f.stem: C.load_json(f) for f in emerging_files}}
+    books = {"main": {f.stem: C.load_json(f) for f in pick_files}, "emerging": {f.stem: C.load_json(f) for f in emerging_files},
+             "bargain": {f.stem: C.load_json(f) for f in bargain_files}}
     tickers = {p["ticker"] for b in books.values() for pj in b.values() for p in pj["picks"]}
     for f in sorted((data / "candidates").glob("*.json")) if (data / "candidates").exists() else []:
         tickers |= {r["ticker"] for r in C.load_json(f)["rows"]}
@@ -112,9 +114,11 @@ def run_tracker(provider) -> dict:
     C.save_json(data / "pool_returns.json", pool)
     main_pos = [p for p in positions if p["book"] == "main"]
     emg_pos = [p for p in positions if p["book"] == "emerging"]
+    bar_pos = [p for p in positions if p["book"] == "bargain"]
     perf = {"generated": str(dt.date.today()), "positions": positions, "cohorts": cohorts, "summary": summarize(main_pos),
             "by_market": {m: summarize([p for p in main_pos if p["market"] == m]) for m in ("TW", "US")},
-            "emerging": {"summary": summarize(emg_pos), "n": len(emg_pos)}}
+            "emerging": {"summary": summarize(emg_pos), "n": len(emg_pos)},
+            "bargain": {"summary": summarize(bar_pos), "n": len(bar_pos)}}
     C.save_json(data / "performance.json", perf)
     print(f"[track] 追蹤 {len(positions)} 筆推薦；候選池 {sum(len(v) for v in pool.values())} 筆觀察。")
     return perf

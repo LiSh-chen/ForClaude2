@@ -21,6 +21,9 @@ def price_features(df: pd.DataFrame, bench: pd.DataFrame | None) -> dict | None:
     f["dist200"] = last / f["ma200"] - 1 if f["ma200"] else None
     f["high52"] = float(c.tail(252).max())
     f["from_high"] = last / f["high52"] - 1
+    f["low52"] = float(c.tail(252).min())
+    f["pos52"] = (last - f["low52"]) / (f["high52"] - f["low52"]) if f["high52"] > f["low52"] else 0.5
+    f["bounce20"] = last / float(c.tail(20).min()) - 1
     hl = df[["High", "Low", "Close"]].dropna()
     pc = hl["Close"].shift(1)
     tr = pd.concat([hl["High"] - hl["Low"], (hl["High"] - pc).abs(), (hl["Low"] - pc).abs()], axis=1).max(axis=1)
