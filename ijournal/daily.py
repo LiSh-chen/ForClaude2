@@ -8,7 +8,7 @@ import pandas as pd
 from . import config as C
 from . import llm
 from . import emerging as E
-from . import snapshot
+from . import sessions, snapshot
 from .features import norm_fundamentals, price_features
 from .journal import candidate_record, pick_record, write_journal
 from .news import scan
@@ -34,6 +34,10 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
     tickers = list(dict.fromkeys(tickers))
     print(f"[daily] 抓取 {len(tickers)} 檔價格…")
     prices = provider.prices(tickers)
+    if provider.name == "live" and not asof:
+        prices, n_part = sessions.strip_partial(prices)
+        if n_part:
+            print(f"[daily] 交易所尚在盤中：已剔除 {n_part} 檔『未完成的當日 K 線』，只使用已收盤資料。")
     if asof:
         cut = pd.Timestamp(asof)
         prices = {t: d[d.index <= cut] for t, d in prices.items()}

@@ -189,7 +189,8 @@ def test_dashboard_snapshot_and_site_assets():
     from ijournal.site import build_site
     d = run_daily(DemoProvider(end=dt.date(2026, 9, 30)), asof="2026-07-13")
     sn = C.load_json(C.path("data") / "snapshots" / f"{d}.json")
-    assert {"date", "indices", "picks", "shortage", "sectors", "emerging", "news"} <= set(sn)
+    assert {"date", "indices", "picks", "shortage", "sectors", "emerging", "news", "generated_at", "basis"} <= set(sn)
+    assert sn["generated_at"].endswith("+00:00") and sn["basis"]["TW"] and sn["basis"]["US"]
     assert all(len(x["series"]) > 1 for x in sn["indices"])
     for m in ("TW", "US"):
         assert sn["shortage"][m]["N"] == 5 and sn["shortage"][m]["n"] == len(sn["picks"][m])
@@ -216,3 +217,26 @@ def test_dashboard_snapshot_and_site_assets():
     assert "innerHTML" not in (site / "app.js").read_text(encoding="utf-8")
     if shutil.which("node"):
         assert subprocess.run(["node", "--check", str(site / "app.js")], capture_output=True).returncode == 0
+
+
+def test_strip_partial_bars_only_uses_completed_sessions():
+    import numpy as np
+    from zoneinfo import ZoneInfo
+    from ijournal.sessions import exchange_of, strip_partial
+    idx = pd.to_datetime(["2026-10-06", "2026-10-07"])
+    mk = lambda: pd.DataFrame({"Close": np.array([1.0, 2.0])}, index=idx)
+    prices = {"2330.TW": mk(), "^TWII": mk(), "NVDA": mk(), "TWD=X": mk()}
+    tw = ZoneInfo("Asia/Taipei")
+    # 台灣 10/07 10:00：台股盤中 → 台股當日（未完成）K 線剔除；外匯不處理
+    out, n = strip_partial(prices, dt.datetime(2026, 10, 7, 10, 0, tzinfo=tw))
+    assert len(out["2330.TW"]) == 1 and len(out["^TWII"]) == 1 and len(out["TWD=X"]) == 2
+    # 台灣 10/07 14:30：台股已收盤（13:30+寬限）→ 保留
+    out, n = strip_partial(prices, dt.datetime(2026, 10, 7, 14, 30, tzinfo=tw))
+    assert len(out["2330.TW"]) == 2 and len(out["^TWII"]) == 2
+    # 台灣 10/08 07:48（排程目標時間）：台股前一日 K 線完整、美股 10/07 已收盤 → 全部保留
+    out, n = strip_partial(prices, dt.datetime(2026, 10, 8, 7, 48, tzinfo=tw))
+    assert n == 0 and all(len(v) == 2 for v in out.values())
+    # 美股盤中（台灣 10/07 23:00 = 紐約 10/07 11:00）：美股當日 K 線剔除
+    out, n = strip_partial(prices, dt.datetime(2026, 10, 7, 23, 0, tzinfo=tw))
+    assert len(out["NVDA"]) == 1 and len(out["2330.TW"]) == 2
+    assert exchange_of("TWD=X") is None and exchange_of("^TWII") == "TW" and exchange_of("8299.TWO") == "TW" and exchange_of("BRK-B") == "US"
