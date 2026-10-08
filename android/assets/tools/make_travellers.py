@@ -11,9 +11,9 @@ INK = "#3B2A1A"
 
 
 class Canvas:
-    def __init__(self, k=1.0, ink="ink"):
+    def __init__(self, k=1.0, ink="ink", wash="wash", outline=True):
         self.defs, self.body, self._n = [], [], 0
-        self.k, self.ink = k, ink
+        self.k, self.ink, self.wash, self.outline = k, ink, wash, outline
 
     def part(self, d, fill, ink=True, width=5, extra_fill_opacity=0.95):
         width = width * self.k
@@ -21,11 +21,14 @@ class Canvas:
         self._n += 1
         pid = f"p{self._n}"
         self.defs.append(f'<path id="{pid}" d="{d}"/>')
-        self.body.append(f'<g filter="url(#wash)"><use href="#{pid}" fill="{fill}" opacity="{extra_fill_opacity}"/></g>')
-        if ink:
+        use = f'<use href="#{pid}" fill="{fill}" opacity="{extra_fill_opacity}"/>'
+        self.body.append(f'<g filter="url(#{self.wash})">{use}</g>' if self.wash else use)
+        if ink and self.outline:
             self.body.append(f'<g filter="url(#{self.ink})"><use href="#{pid}" fill="none" stroke="{INK}" stroke-width="{width}" stroke-linejoin="round" stroke-linecap="round"/></g>')
 
     def line(self, d, color=INK, width=5, opacity=1.0):
+        if color == INK and not self.outline:
+            return
         width = width * (self.k if color == INK else max(self.k, 0.8))
         self.body.append(f'<g filter="url(#{self.ink})"><path d="{d}" fill="none" stroke="{color}" stroke-width="{width}" stroke-linecap="round" stroke-linejoin="round" opacity="{opacity}"/></g>')
 
@@ -40,8 +43,9 @@ class Canvas:
                 '<defs>' + "".join(self.defs) + '</defs>\n' + "\n".join(self.body) + '\n</svg>\n')
 
 
-def traveller(kind: str, coat: str, trousers: str, scarf: str, face: str, accent: str, fine: bool = False) -> str:
-    c = Canvas(k=0.5 if fine else 1.0, ink="inkFine" if fine else "ink")
+def traveller(kind: str, coat: str, trousers: str, scarf: str, face: str, accent: str, fine: bool = False,
+              wash: str = "wash", outline: bool = True, ink: str = "", k: float = 0.0) -> str:
+    c = Canvas(k=k or (0.5 if fine else 1.0), ink=ink or ("inkFine" if fine else "ink"), wash=wash or None, outline=outline)
     # ground shadow
     c.raw('<ellipse cx="270" cy="738" rx="130" ry="12" fill="#3B2A1A" opacity=".16"/>')
 
@@ -135,9 +139,9 @@ def traveller(kind: str, coat: str, trousers: str, scarf: str, face: str, accent
     return c.svg()
 
 
-def traveller_fragment(kind: str, x: float, y: float, width: float, **colours) -> str:
-    """The traveller as a nested <svg>, ready to place inside a larger scene (fine pen lines)."""
-    doc = traveller(kind, fine=True, **colours)
+def traveller_fragment(kind: str, x: float, y: float, width: float, fine: bool = True, **colours) -> str:
+    """The traveller as a nested <svg>, ready to place inside a larger scene."""
+    doc = traveller(kind, fine=fine, **colours)
     inner = doc.split("<!--DEFS-->", 1)[1].rsplit("</svg>", 1)[0]
     height = width * 768 / 512
     return f'<svg x="{x}" y="{y}" width="{width}" height="{height}" viewBox="0 0 512 768">{inner}</svg>'
