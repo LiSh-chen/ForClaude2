@@ -3,9 +3,11 @@
 星霧大陸需要的所有插圖與貼圖都列在 [`manifest.json`](manifest.json)：共 33 項，每項有用途、尺寸、是否透明、完整的 AI 提示詞。
 
 ## 目前狀態
-- **程式產生（已完成）**：羊皮紙底紋、迷霧團、圖示底。由 `tools/make_procedural.py` 產生，已匯出進 App。
-- **需要 AI 繪圖（待生成）**：其餘 30 項（羅盤、場景前景、旅人、地圖與地標、背包素材、圖示前景）。
-  開發環境裡沒有圖像生成模型可用，所以這部分要用外部的圖像 AI（ChatGPT／Gemini／Midjourney／Stable Diffusion 等）生成，再放進來。
+- **程式產生（已完成）**：羊皮紙底紋、迷霧團、圖示底。由 `tools/make_procedural.py` 產生。
+- **SVG 手繪（已完成）**：羅盤外殼與表盤、四種旅人。Claude 直接寫 SVG（`svg/*.svg`），用 `node tools/render_svg.mjs` 以 Chromium 渲染成透明 PNG，
+  墨線的手抖感與水彩暈染來自共用的 SVG 濾鏡（`svg/_defs.inc`）。旅人由 `tools/make_travellers.py` 產生。
+- **其餘（待做）**：場景前景、世界地圖與地標、背包素材、圖示前景。可以由 Claude 以同樣方式畫，或用外部圖像 AI（ChatGPT／Gemini／Midjourney 等）生成後放進 `generated/`。
+  開發環境裡沒有圖像生成模型，所以 AI 繪圖要在外部做。
   App 找不到圖時會自動用內建的程式繪圖，所以可以一張一張補。
 
 ## 流程
@@ -17,7 +19,7 @@ python3 tools/build_assets.py check     # 看哪些到了、尺寸／比例有�
 python3 tools/build_assets.py export    # 去背、縮到規格、轉 WebP，寫進 app/src/main/res/drawable-nodpi/art_<id>.webp
 python3 tools/build_assets.py sheet     # 產生 preview.png 總覽
 ```
-需要 Python 3、Pillow、numpy。
+需要 Python 3、Pillow、numpy；渲染 SVG 需要 Node 與 Playwright（沙盒裡已有）。
 
 ## 生成時的重點
 1. **風格一致**：每個提示詞都帶同一段「共同風格」。同一批素材盡量用同一個工具、同一組設定生成。

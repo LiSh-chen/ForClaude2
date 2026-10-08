@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+<!--DEFS-->
+<g stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="512" cy="512" r="508" fill="url(#paperFace)"/>
+  <g filter="url(#wash)"><circle cx="512" cy="512" r="470" fill="#E8C98A" opacity=".25"/></g>
+  <g filter="url(#ink)" fill="none" stroke="#3B2A1A">
+    <circle cx="512" cy="512" r="500" stroke-width="6" opacity=".8"/>
+    <circle cx="512" cy="512" r="440" stroke-width="3" opacity=".55"/>
+    <circle cx="512" cy="512" r="420" stroke-width="2" opacity=".4"/>
+    <g id="ticks" stroke-width="3" opacity=".7"></g>
+    <!-- eight-point rose -->
+    <g id="rose" opacity=".55"></g>
+    <circle cx="512" cy="512" r="30" stroke-width="5"/>
+  </g>
+  <g filter="url(#wash)">
+    <circle cx="512" cy="512" r="30" fill="#B8892D" opacity=".85"/>
+  </g>
+  <g filter="url(#ink)" fill="#3B2A1A" font-family="serif" font-weight="bold" font-size="64" text-anchor="middle">
+    <text x="512" y="130">N</text><text x="896" y="532">E</text><text x="512" y="935">S</text><text x="128" y="532">W</text>
+  </g>
+</g>
+<script type="text/javascript"><![CDATA[
+  const NS = 'http://www.w3.org/2000/svg';
+  const make = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+  const ticks = document.getElementById('ticks');
+  for (let i = 0; i < 120; i++) {
+    const a = i * Math.PI / 60, major = i % 10 === 0, mid = i % 5 === 0;
+    const r1 = major ? 400 : mid ? 410 : 420, r2 = 438;
+    make('line', { x1: 512 + Math.sin(a) * r1, y1: 512 - Math.cos(a) * r1, x2: 512 + Math.sin(a) * r2, y2: 512 - Math.cos(a) * r2 }, ticks);
+  }
+  const rose = document.getElementById('rose');
+  const point = (deg, r) => { const a = deg * Math.PI / 180; return [512 + Math.sin(a) * r, 512 - Math.cos(a) * r]; };
+  // long cardinal points and shorter diagonal points, each split into a light and a dark half like an engraving
+  const spokes = [[0, 345, 36], [90, 345, 36], [180, 345, 36], [270, 345, 36], [45, 230, 28], [135, 230, 28], [225, 230, 28], [315, 230, 28]];
+  spokes.forEach(([deg, len, w], i) => {
+    const tip = point(deg, len), left = point(deg - w, 60), right = point(deg + w, 60);
+    make('path', { d: `M${tip} L${left} L512,512 Z`, fill: '#B8892D', opacity: i < 4 ? .85 : .55, 'stroke-width': 3 }, rose);
+    make('path', { d: `M${tip} L${right} L512,512 Z`, fill: '#F6E3A0', opacity: i < 4 ? .9 : .7, 'stroke-width': 3 }, rose);
+  });
+]]></script>
+</svg>

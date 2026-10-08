@@ -42,7 +42,9 @@ _由程式產生，不需要 AI 圖。_
 
 - 用在：首頁步數羅盤的外框
 - 尺寸：1024×1120　透明背景：是（用純白底生成，匯出時去背）
-- 注意：表盤開口直徑約為寬度的 56%，圓心在 (50%, 57%)；吊環在最上方。
+- 注意：表盤開口直徑約為寬度的 56%，圓心在 (50%, 57%)；吊環在最上方。 中央開口需要透明，所以去背時連內部的純白也一起去掉（keyInterior）。 已由 SVG 手繪完成（svg/compass_case.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/compass_case.png。
+
+_已有 SVG 手繪版；下面的提示詞是想改用 AI 圖時才需要。_
 
 ```
 Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Top-down view of an antique brass pocket compass case with a small hanging ring at the top, a thick riveted brass rim with worn patina, and green vines with small leaves winding around the outer edge on both sides. The big circular opening in the middle must be EMPTY and plain white so a dial can be placed behind it. Perfectly symmetrical, centered. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
@@ -52,7 +54,9 @@ Vintage botanical field-guide illustration: fine pen-and-ink linework in dark se
 
 - 用在：放在外殼後面，進度弧線畫在上面
 - 尺寸：1024×1024　透明背景：是（用純白底生成，匯出時去背）
-- 注意：圓形填滿整張圖；中心保持淡，因為會疊上步數。
+- 注意：圓形填滿整張圖；中心保持淡，因為會疊上步數。 已由 SVG 手繪完成（svg/compass_face.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/compass_face.png。
+
+_已有 SVG 手繪版；下面的提示詞是想改用 AI 圖時才需要。_
 
 ```
 Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A flat circular antique compass dial face seen from above, aged parchment yellow with a faint engraved compass rose, a fine tick-mark ring near the edge and only the four letters N, E, S, W. The circle fills the whole frame edge to edge. Leave the centre fairly empty and light so a number can be written over it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
@@ -156,7 +160,9 @@ Vintage botanical field-guide illustration: fine pen-and-ink linework in dark se
 
 - 用在：首頁／回顧視窗的角色
 - 尺寸：512×768　透明背景：是（用純白底生成，匯出時去背）
-- 注意：面向右；腳貼底邊；全身。
+- 注意：面向右；腳貼底邊；全身。 已由 SVG 手繪完成（svg/traveller_fox.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/traveller_fox.png。
+
+_已有 SVG 手繪版；下面的提示詞是想改用 AI 圖時才需要。_
 
 ```
 Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, with fox ears, a wide-brimmed hat tucked behind them, a warm orange wash coat, and a small leather satchel on the back. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
@@ -166,7 +172,9 @@ Vintage botanical field-guide illustration: fine pen-and-ink linework in dark se
 
 - 用在：首頁／回顧視窗的角色
 - 尺寸：512×768　透明背景：是（用純白底生成，匯出時去背）
-- 注意：面向右；腳貼底邊；全身。
+- 注意：面向右；腳貼底邊；全身。 已由 SVG 手繪完成（svg/traveller_elf.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/traveller_elf.png。
+
+_已有 SVG 手繪版；下面的提示詞是想改用 AI 圖時才需要。_
 
 ```
 Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, a forest sprite with pointed leaf-shaped ears and a green leaf cap, a sage green wash cloak, and a small satchel. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
@@ -176,7 +184,9 @@ Vintage botanical field-guide illustration: fine pen-and-ink linework in dark se
 
 - 用在：首頁／回顧視窗的角色
 - 尺寸：512×768　透明背景：是（用純白底生成，匯出時去背）
-- 注意：面向右；腳貼底邊；全身。
+- 注意：面向右；腳貼底邊；全身。 已由 SVG 手繪完成（svg/traveller_cat.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/traveller_cat.png。
+
+_已有 SVG 手繪版；下面的提示詞是想改用 AI 圖時才需要。_
 
 ```
 Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, with soft grey cat ears and a long tail, a dusty rose scarf, a pale grey-lavender wash jacket, and a small satchel. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
@@ -186,7 +196,9 @@ Vintage botanical field-guide illustration: fine pen-and-ink linework in dark se
 
 - 用在：首頁／回顧視窗的角色
 - 尺寸：512×768　透明背景：是（用純白底生成，匯出時去背）
-- 注意：面向右；腳貼底邊；全身。
+- 注意：面向右；腳貼底邊；全身。 已由 SVG 手繪完成（svg/traveller_cape.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/traveller_cape.png。
+
+_已有 SVG 手繪版；下面的提示詞是想改用 AI 圖時才需要。_
 
 ```
 Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, wearing a wide-brimmed explorer's hat, a flowing muted red cape, a pale blue wash tunic, and a rolled map on the backpack. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.

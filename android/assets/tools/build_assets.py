@@ -128,6 +128,8 @@ def cmd_prompts():
             if a["source"] == "procedural":
                 lines += ["_由程式產生，不需要 AI 圖。_", ""]
             else:
+                if a["source"] == "svg":
+                    lines += ["_已有 SVG 手繪版；下面的提示詞是想改用 AI 圖時才需要。_", ""]
                 lines += ["```", MANIFEST["baseStyle"] + " " + a["prompt"], "```", ""]
     (ROOT / "PROMPTS.md").write_text("\n".join(lines), encoding="utf-8")
     print("wrote PROMPTS.md")

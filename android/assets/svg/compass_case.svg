@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1120">
+<!--DEFS-->
+<g stroke-linecap="round" stroke-linejoin="round">
+  <!-- hanging loop and stem -->
+  <g filter="url(#ink)">
+    <circle cx="512" cy="132" r="64" fill="none" stroke="url(#brassRev)" stroke-width="30"/>
+    <circle cx="512" cy="132" r="64" fill="none" stroke="#3B2A1A" stroke-width="3" opacity=".55"/>
+    <rect x="478" y="186" width="68" height="90" rx="12" fill="url(#brass)" stroke="#3B2A1A" stroke-width="5"/>
+    <rect x="470" y="262" width="84" height="36" rx="10" fill="url(#brassRev)" stroke="#3B2A1A" stroke-width="5"/>
+  </g>
+
+  <!-- the case: outer disc with an empty round opening (even-odd so it is truly transparent) -->
+  <g filter="url(#ink)">
+    <path fill="url(#brass)" fill-rule="evenodd" stroke="#3B2A1A" stroke-width="7"
+      d="M512,205 a435,435 0 1,0 0.01,0 Z M512,350 a290,290 0 1,1 -0.01,0 Z"/>
+    <!-- bevels -->
+    <circle cx="512" cy="640" r="402" fill="none" stroke="#3B2A1A" stroke-width="3" opacity=".5"/>
+    <circle cx="512" cy="640" r="318" fill="none" stroke="#3B2A1A" stroke-width="4" opacity=".6"/>
+    <circle cx="512" cy="640" r="300" fill="none" stroke="#F6E3A0" stroke-width="6" opacity=".7"/>
+    <circle cx="512" cy="640" r="290" fill="none" stroke="#3B2A1A" stroke-width="6"/>
+  </g>
+  <!-- light catching the upper left of the rim -->
+  <path d="M170,470 A380,380 0 0 1 430,290" fill="none" stroke="#FFF3C4" stroke-width="22" opacity=".55" filter="url(#ink)"/>
+  <path d="M868,860 A380,380 0 0 1 610,1010" fill="none" stroke="#5A3F12" stroke-width="22" opacity=".28" filter="url(#ink)"/>
+  <!-- engraved ticks on the rim -->
+  <g filter="url(#ink)" stroke="#3B2A1A" stroke-width="3" opacity=".7">
+    <g id="ticks"></g>
+  </g>
+  <!-- rivets -->
+  <g filter="url(#ink)">
+    <g fill="url(#brassRev)" stroke="#3B2A1A" stroke-width="4">
+      <circle cx="512" cy="305" r="13"/><circle cx="512" cy="975" r="13"/>
+      <circle cx="177" cy="640" r="13"/><circle cx="847" cy="640" r="13"/>
+      <circle cx="275" cy="403" r="11"/><circle cx="749" cy="403" r="11"/>
+      <circle cx="275" cy="877" r="11"/><circle cx="749" cy="877" r="11"/>
+    </g>
+  </g>
+
+  <!-- vines wrapping the case on both sides -->
+  <g filter="url(#ink)" fill="none">
+    <path d="M150,980 C60,900 40,760 110,660 C170,570 90,470 130,380 C160,320 230,300 250,250" stroke="#3E6B3A" stroke-width="9"/>
+    <path d="M880,990 C990,900 1000,780 930,690 C870,610 950,520 905,430 C880,375 820,350 800,300" stroke="#3E6B3A" stroke-width="9"/>
+  </g>
+  <g id="leaves" filter="url(#wash)"></g>
+  <g id="leafInk" filter="url(#ink)" fill="none" stroke="#3B2A1A" stroke-width="3"></g>
+</g>
+<script type="text/javascript"><![CDATA[
+  const NS = 'http://www.w3.org/2000/svg';
+  // ticks around the rim
+  const ticks = document.getElementById('ticks');
+  for (let i = 0; i < 72; i++) {
+    const a = i * Math.PI / 36, long = i % 6 === 0;
+    const r1 = long ? 330 : 340, r2 = 362;
+    const l = document.createElementNS(NS, 'line');
+    l.setAttribute('x1', 512 + Math.sin(a) * r1); l.setAttribute('y1', 640 - Math.cos(a) * r1);
+    l.setAttribute('x2', 512 + Math.sin(a) * r2); l.setAttribute('y2', 640 - Math.cos(a) * r2);
+    ticks.appendChild(l);
+  }
+  // leaves along both vines (positions picked by hand along the curves)
+  const leafSpots = [
+    [112,945,-150],[88,860,-120],[72,780,-100],[100,700,-70],[130,630,-130],[118,540,-95],[110,455,-60],[140,385,-110],[190,320,-70],[240,262,-45],
+    [905,950,-30],[950,860,-60],[968,775,-80],[925,690,-110],[890,640,-50],[905,555,-85],[918,460,-120],[880,400,-70],[835,335,-100],[795,290,-130],
+  ];
+  const leaves = document.getElementById('leaves'), leafInk = document.getElementById('leafInk');
+  leafSpots.forEach(([x, y, rot], i) => {
+    const s = 0.8 + (i % 3) * 0.18;
+    const d = `M0,0 C18,-22 52,-24 78,0 C52,24 18,22 0,0 Z`;
+    const mk = (parent, attrs) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d);
+      p.setAttribute('transform', `translate(${x} ${y}) rotate(${rot}) scale(${s})`);
+      for (const k in attrs) p.setAttribute(k, attrs[k]); parent.appendChild(p); };
+    mk(leaves, { fill: i % 2 ? '#8DB584' : '#6FA06A', opacity: .92 });
+    mk(leafInk, {});
+    const vein = document.createElementNS(NS, 'path'); vein.setAttribute('d', 'M4,0 C28,-3 50,-2 70,0');
+    vein.setAttribute('transform', `translate(${x} ${y}) rotate(${rot}) scale(${s})`); vein.setAttribute('stroke-width', 2);
+    leafInk.appendChild(vein);
+  });
+]]></script>
+</svg>
