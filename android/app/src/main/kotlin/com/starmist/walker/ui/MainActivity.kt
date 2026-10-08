@@ -131,7 +131,7 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
     }
 
     Scaffold(
-        modifier = Modifier.parchmentTexture(),
+        modifier = Modifier.parchmentTexture(rememberArt("parchment_tile")),
         containerColor = androidx.compose.ui.graphics.Color.Transparent,
         snackbarHost = { SnackbarHost(snackbar) },
         bottomBar = {

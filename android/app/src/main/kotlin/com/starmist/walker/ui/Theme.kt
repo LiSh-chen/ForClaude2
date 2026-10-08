@@ -12,6 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.ImageShader
+import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
@@ -140,7 +144,7 @@ private val shapes = Shapes(
 )
 
 /** Old paper under everything: warm base, stains, speckles and darker edges. Drawn once per size. */
-fun Modifier.parchmentTexture(): Modifier = drawWithCache {
+fun Modifier.parchmentTexture(tile: ImageBitmap? = null): Modifier = drawWithCache {
     val random = Random(7)
     val width = size.width
     val height = size.height
@@ -155,10 +159,16 @@ fun Modifier.parchmentTexture(): Modifier = drawWithCache {
         center = Offset(width / 2, height / 2),
         radius = hypot(width, height) / 2,
     )
+    // A painted paper tile from the asset library, if there is one; otherwise draw the texture in code.
+    val paper = tile?.let { ShaderBrush(ImageShader(it, TileMode.Repeated, TileMode.Repeated)) }
     onDrawBehind {
-        drawRect(Vintage.parchment)
-        stains.forEach { (center, radius, alpha) -> drawCircle(Vintage.stain.copy(alpha = alpha), radius, center) }
-        specks.forEach { (center, radius, alpha) -> drawCircle(Vintage.ink.copy(alpha = alpha), radius, center) }
+        if (paper != null) {
+            drawRect(paper)
+        } else {
+            drawRect(Vintage.parchment)
+            stains.forEach { (center, radius, alpha) -> drawCircle(Vintage.stain.copy(alpha = alpha), radius, center) }
+            specks.forEach { (center, radius, alpha) -> drawCircle(Vintage.ink.copy(alpha = alpha), radius, center) }
+        }
         drawRect(vignette)
     }
 }

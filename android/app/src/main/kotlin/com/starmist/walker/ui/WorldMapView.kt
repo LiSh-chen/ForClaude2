@@ -51,6 +51,7 @@ fun WorldMapView(regionIndex: Int, fraction: Double, finished: Boolean, modifier
     val walked = remember(key) { WorldMap.walkedPoints(regionIndex, fraction, finished) }
     val traveller = remember(key) { WorldMap.pointAt(regionIndex, if (finished) 1.0 else fraction) }
     val puffs = remember(key) { fogPuffs(walked) }
+    val fogArt = rememberArt("fog_puff")
     val measurer = rememberTextMeasurer()
     val label = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Vintage.ink)
     val sublabel = TextStyle(fontFamily = FontFamily.Serif, fontSize = 10.sp, color = Vintage.inkSoft)
@@ -110,6 +111,17 @@ fun WorldMapView(regionIndex: Int, fraction: Double, finished: Boolean, modifier
         val radius = w / FOG_COLUMNS * 1.15f
         puffs.forEach { puff ->
             val center = puff.at.px()
+            if (fogArt != null) {
+                // The painted puff is soft-edged, so draw it a little larger than the grid spacing.
+                val side = (radius * 2.6f).toInt()
+                drawImage(
+                    fogArt,
+                    dstOffset = androidx.compose.ui.unit.IntOffset((center.x - side / 2f).toInt(), (center.y - side / 2f).toInt()),
+                    dstSize = androidx.compose.ui.unit.IntSize(side, side),
+                    alpha = puff.alpha,
+                )
+                return@forEach
+            }
             drawCircle(
                 brush = Brush.radialGradient(
                     0f to Vintage.fog.copy(alpha = puff.alpha),

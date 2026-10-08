@@ -1,0 +1,470 @@
+{
+  "version": 1,
+  "baseStyle": "Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures.",
+  "negativePrompt": "text, letters, numbers, watermark, signature, logo, photo-realistic, 3d render, glossy plastic, neon colors, harsh black outlines, cartoon outline, blurry, low resolution, cropped, frame, border (unless asked), multiple variations in one image (unless asked)",
+  "assets": [
+    {
+      "id": "parchment_tile",
+      "category": "texture",
+      "title": "羊皮紙底紋（可無縫平鋪）",
+      "usedIn": "全 App 背景",
+      "size": [
+        768,
+        768
+      ],
+      "alpha": false,
+      "source": "procedural",
+      "prompt": "",
+      "notes": "由 tools/make_procedural.py 產生；若想換成 AI 圖，必須是可無縫平鋪的紙張紋理。"
+    },
+    {
+      "id": "fog_puff",
+      "category": "texture",
+      "title": "迷霧團",
+      "usedIn": "世界地圖上蓋住未探索處",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "procedural",
+      "prompt": "",
+      "notes": "由 tools/make_procedural.py 產生。中心不透明、邊緣漸透明的柔和霧團。"
+    },
+    {
+      "id": "icon_background",
+      "category": "texture",
+      "title": "App 圖示底（紙張）",
+      "usedIn": "自適應圖示背景",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": false,
+      "source": "procedural",
+      "prompt": "",
+      "notes": "由 tools/make_procedural.py 產生。"
+    },
+    {
+      "id": "compass_case",
+      "category": "ui",
+      "title": "黃銅羅盤外殼（中空）",
+      "usedIn": "首頁步數羅盤的外框",
+      "size": [
+        1024,
+        1120
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "Top-down view of an antique brass pocket compass case with a small hanging ring at the top, a thick riveted brass rim with worn patina, and green vines with small leaves winding around the outer edge on both sides. The big circular opening in the middle must be EMPTY and plain white so a dial can be placed behind it. Perfectly symmetrical, centered. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "表盤開口直徑約為寬度的 56%，圓心在 (50%, 57%)；吊環在最上方。 中央開口需要透明，所以去背時連內部的純白也一起去掉（keyInterior）。",
+      "keyInterior": true
+    },
+    {
+      "id": "compass_face",
+      "category": "ui",
+      "title": "羅盤表盤",
+      "usedIn": "放在外殼後面，進度弧線畫在上面",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A flat circular antique compass dial face seen from above, aged parchment yellow with a faint engraved compass rose, a fine tick-mark ring near the edge and only the four letters N, E, S, W. The circle fills the whole frame edge to edge. Leave the centre fairly empty and light so a number can be written over it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "圓形填滿整張圖；中心保持淡，因為會疊上步數。"
+    },
+    {
+      "id": "fern_a",
+      "category": "scene",
+      "title": "蕨類叢 A",
+      "usedIn": "首頁場景左側前景",
+      "size": [
+        1024,
+        768
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A cluster of three graceful fern fronds curving to the right, fine ink veins, pale green wash, a few small grass blades at the base. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "底部置中對齊地面。"
+    },
+    {
+      "id": "fern_b",
+      "category": "scene",
+      "title": "蕨類叢 B",
+      "usedIn": "首頁場景前景變化",
+      "size": [
+        1024,
+        768
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A cluster of two large fern fronds and one small unfurling fiddlehead, curving to the left, fine ink veins, pale green wash. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "底部置中對齊地面。"
+    },
+    {
+      "id": "lily_a",
+      "category": "scene",
+      "title": "百合花叢 A",
+      "usedIn": "首頁場景右側前景",
+      "size": [
+        768,
+        1024
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A tall lily-like flower with a dusty rose wash on a slender curved stem, two long basal leaves, stamens with tiny brass dots, plus a small bud on a second stem. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "底部置中對齊地面。"
+    },
+    {
+      "id": "lily_b",
+      "category": "scene",
+      "title": "百合花叢 B",
+      "usedIn": "首頁場景前景變化",
+      "size": [
+        768,
+        1024
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "Two bell-shaped wildflowers in pale green-white with a touch of rose, on thin curved stems with narrow leaves, a few round seed pods. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "底部置中對齊地面。"
+    },
+    {
+      "id": "reed_a",
+      "category": "scene",
+      "title": "蘆葦與貝殼叢",
+      "usedIn": "月光海岸場景前景",
+      "size": [
+        1024,
+        768
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A clump of reeds with brown cattail heads, a few narrow leaves, and two small spiral shells lying at the base, pale blue-green wash. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "底部置中對齊地面。"
+    },
+    {
+      "id": "shells",
+      "category": "scene",
+      "title": "貝殼組",
+      "usedIn": "海岸場景地面點綴（4 個排成一列）",
+      "size": [
+        1024,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "Four different small seashells in a horizontal row with space between them: a spiral snail shell, a scallop, a conch, a tiny cone shell. Rose and cream wash. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "四個等寬格子。"
+    },
+    {
+      "id": "far_trees",
+      "category": "scene",
+      "title": "遠景樹林帶（可橫向平鋪）",
+      "usedIn": "首頁場景遠景",
+      "size": [
+        2048,
+        512
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A horizontal band of distant round-crowned trees and low hills in very faint, light sepia ink with a whisper of pale green wash, soft and low-contrast, like background scenery in an old engraving. The left and right edges must match so it tiles seamlessly sideways. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "左右邊緣需可無縫接合；整體低對比。"
+    },
+    {
+      "id": "waves",
+      "category": "scene",
+      "title": "海浪帶（可橫向平鋪）",
+      "usedIn": "海岸場景遠景",
+      "size": [
+        2048,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A horizontal band of gentle hand-drawn wave lines in thin sepia ink with a faint blue-grey wash, calm sea, the left and right edges match so it tiles seamlessly sideways. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "左右邊緣需可無縫接合。"
+    },
+    {
+      "id": "ground_path",
+      "category": "scene",
+      "title": "地面小徑（可橫向平鋪）",
+      "usedIn": "場景地面",
+      "size": [
+        2048,
+        128
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A thin horizontal dotted ink line like a trail drawn on a map, with a few small pebbles and tiny tufts of grass, the left and right edges match so it tiles seamlessly sideways. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "左右邊緣需可無縫接合。"
+    },
+    {
+      "id": "traveller_fox",
+      "category": "character",
+      "title": "旅人：小狐",
+      "usedIn": "首頁／回顧視窗的角色",
+      "size": [
+        512,
+        768
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, with fox ears, a wide-brimmed hat tucked behind them, a warm orange wash coat, and a small leather satchel on the back. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "面向右；腳貼底邊；全身。"
+    },
+    {
+      "id": "traveller_elf",
+      "category": "character",
+      "title": "旅人：森林精靈",
+      "usedIn": "首頁／回顧視窗的角色",
+      "size": [
+        512,
+        768
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, a forest sprite with pointed leaf-shaped ears and a green leaf cap, a sage green wash cloak, and a small satchel. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "面向右；腳貼底邊；全身。"
+    },
+    {
+      "id": "traveller_cat",
+      "category": "character",
+      "title": "旅人：貓耳",
+      "usedIn": "首頁／回顧視窗的角色",
+      "size": [
+        512,
+        768
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, with soft grey cat ears and a long tail, a dusty rose scarf, a pale grey-lavender wash jacket, and a small satchel. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "面向右；腳貼底邊；全身。"
+    },
+    {
+      "id": "traveller_cape",
+      "category": "character",
+      "title": "旅人：披風旅人",
+      "usedIn": "首頁／回顧視窗的角色",
+      "size": [
+        512,
+        768
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, wearing a wide-brimmed explorer's hat, a flowing muted red cape, a pale blue wash tunic, and a rolled map on the backpack. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "面向右；腳貼底邊；全身。"
+    },
+    {
+      "id": "world_map_base",
+      "category": "map",
+      "title": "世界地圖底圖（無地名、無地標）",
+      "usedIn": "旅程頁世界地圖",
+      "size": [
+        1024,
+        1312
+      ],
+      "alpha": false,
+      "source": "ai",
+      "prompt": "A fantasy island map on aged cream parchment drawn in ink and watercolor, portrait orientation: one large irregular landmass with a winding coastline, pale green-beige wash on the land, the sea around it shown with fine horizontal hatching and a few small wave marks, a small ornamental compass rose in the lower-left corner, and a thin ornate hand-drawn border. The land itself is left mostly plain, with only a few faint hills and tiny grass marks. NO place names, NO labels, NO icons for forests, towns or mountains, NO route lines — those are added separately.",
+      "notes": "陸地輪廓請大致落在整張圖的 4%–97% 範圍內，以便地標座標對得上；地標與路線由 App 疊上。"
+    },
+    {
+      "id": "landmark_forest",
+      "category": "map",
+      "title": "地標：低語森林",
+      "usedIn": "世界地圖上的地點圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A tiny sketch of three round-crowned trees close together with mushrooms at their feet, green wash. Centered, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "landmark_coast",
+      "category": "map",
+      "title": "地標：月光海岸",
+      "usedIn": "世界地圖上的地點圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A tiny sketch of a curved sandy bay with three wave lines and a small spiral shell, blue wash and a faint crescent moon. Centered, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "landmark_coral",
+      "category": "map",
+      "title": "地標：珊瑚群島",
+      "usedIn": "世界地圖上的地點圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A tiny sketch of a small island with branching pink coral and two palm-like plants, turquoise wash. Centered, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "landmark_swamp",
+      "category": "map",
+      "title": "地標：霧中沼澤",
+      "usedIn": "世界地圖上的地點圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A tiny sketch of reeds with cattails over a pool of still water with ripples, with a firefly or two, grey-green wash. Centered, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "landmark_dunes",
+      "category": "map",
+      "title": "地標：星砂沙丘",
+      "usedIn": "世界地圖上的地點圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A tiny sketch of three rolling sand dunes with a small star above, warm sand wash. Centered, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "landmark_ruins",
+      "category": "map",
+      "title": "地標：浮空遺跡",
+      "usedIn": "世界地圖上的地點圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A tiny sketch of a floating chunk of rock with a broken stone arch standing on it and a small cloud beside it, cream and grey wash. Centered, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "landmark_tree",
+      "category": "map",
+      "title": "地標：世界之樹",
+      "usedIn": "世界地圖上的地點圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A tiny sketch of one enormous ancient tree with a wide crown and spiralling roots, faint gold light in the leaves, green wash. Centered, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "item_life_seed",
+      "category": "item",
+      "title": "素材：生命之種",
+      "usedIn": "背包與回顧視窗的圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A single glowing seed with a tiny green sprout and two leaves, resting in a small curled leaf, soft golden glow. Centered icon, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "item_moon_dew",
+      "category": "item",
+      "title": "素材：月光露",
+      "usedIn": "背包與回顧視窗的圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A single round dewdrop on a leaf tip, silvery-blue with a tiny crescent moon reflected in it, soft glow. Centered icon, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "item_tide_pearl",
+      "category": "item",
+      "title": "素材：潮汐珠",
+      "usedIn": "背包與回顧視窗的圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A round pearl with a faint swirling wave pattern inside, resting in an open scallop shell, soft blue-white glow. Centered icon, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "item_rainbow_coral",
+      "category": "item",
+      "title": "素材：彩虹珊瑚芽",
+      "usedIn": "背包與回顧視窗的圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A small branching coral sprout with tips fading from pink to orange to teal. Centered icon, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "item_wind_feather",
+      "category": "item",
+      "title": "素材：風之羽",
+      "usedIn": "背包與回顧視窗的圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A single long pale-blue feather with swirling wind lines around it. Centered icon, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "item_rune_shard",
+      "category": "item",
+      "title": "素材：符文碎片",
+      "usedIn": "背包與回顧視窗的圖示",
+      "size": [
+        256,
+        256
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "A small broken fragment of a stone tablet carved with a glowing rune, warm amber light in the grooves. Centered icon, simple, readable at a small size. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "置中；小尺寸也要看得清。"
+    },
+    {
+      "id": "icon_foreground",
+      "category": "icon",
+      "title": "App 圖示前景",
+      "usedIn": "自適應圖示（桌面圖示）",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "source": "ai",
+      "prompt": "An antique brass pocket compass seen from above with a small green sprout growing from the top ring, simple bold shapes, centered and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "重要內容限制在中央 60% 以內（安全區）。"
+    }
+  ]
+}
