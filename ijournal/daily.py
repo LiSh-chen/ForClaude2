@@ -8,7 +8,7 @@ import pandas as pd
 from . import config as C
 from . import llm
 from . import emerging as E
-from . import datafix, sessions, snapshot
+from . import datafix, quality, sessions, snapshot
 from .features import norm_fundamentals, price_features
 from .journal import candidate_record, pick_record, write_journal
 from .news import scan
@@ -26,6 +26,17 @@ def _index_stats(prices, uni):
         out.append({"name": ix["name"], "series": [round(float(v), 2) for v in c.tail(60)], "last": float(c.iloc[-1]), "ret_1d": float(c.iloc[-1] / c.iloc[-2] - 1),
                     "ret_1m": float(c.iloc[-1] / c.iloc[-22] - 1), "ret_3m": float(c.iloc[-1] / c.iloc[-64] - 1)})
     return out
+
+
+def _record_status(date: str, q: dict, published: bool) -> None:
+    """記錄本次嘗試的資料品質（供儀表板顯示橫幅）與歷史（稽核用）。"""
+    data = C.path("data")
+    now = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+    entry = {"attempt_at": now, "date": date, "level": q["level"], "published": published, "issues": q["issues"], "checks": q["checks"]}
+    C.save_json(data / "pipeline_status.json", entry)
+    log = C.load_json(data / "quality_log.json", [])
+    log.append({k: entry[k] for k in ("attempt_at", "date", "level", "published")} | {"issues": [i["msg"] for i in q["issues"]]})
+    C.save_json(data / "quality_log.json", log[-300:])
 
 
 def run_daily(provider, force: bool = False, asof: str | None = None) -> str | None:
@@ -82,6 +93,16 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
     nh = C.load_json(nh_path, {})
     sec_scores = score_sectors(uni, scan_res, feats, funds, {d: h for d, h in nh.items() if d < date}, params)
     rows = score_stocks(uni, feats, funds, sec_scores, scan_res, params)
+    # ---- 資料品質關卡：不合格就不發佈、不覆蓋上一份好的日誌
+    live_now = dt.datetime.now(dt.timezone.utc) if (provider.name == "live" and not asof) else None
+    q = quality.assess(universe=uni["stocks"], feats=feats, basis=basis, rows=rows, prices=prices, news_log=provider.fetch_log, data_report=data_report, params=params, now=live_now)
+    _record_status(date, q, published=(q["level"] != "bad"))
+    for c in q["checks"]:
+        if c["level"] != "ok":
+            print(f"[quality] {'⚠' if c['level'] == 'warn' else '✕'} {c['label']}：{c['msg']}")
+    print(f"[quality] 資料品質：{q['level']}")
+    if q["level"] == "bad":
+        raise quality.DataQualityError(q)
     sel = pick(rows, sec_scores, params)
     picks, notes, stats = sel["picks"], sel["notes"], sel["stats"]
     if not any(picks.values()):
@@ -99,7 +120,7 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
         "params": params, "uni": uni, "sec_scores": sec_scores, "picks": picks, "notes": notes, "stats": stats, "rows": rows, "scan": scan_res,
         "fetch_log": provider.fetch_log, "provider": provider.name, "indices": _index_stats(prices, uni), "prev": prev,
         "perf_summary": perf["summary"] if perf and perf.get("summary") else None,
-        "param_history": C.load_json(C.history_path(), []), "elig": lambda r: eligible(r, params), "basis": basis, "data_notes": datafix.notes(data_report) if data_report else [],
+        "param_history": C.load_json(C.history_path(), []), "elig": lambda r: eligible(r, params), "basis": basis, "quality": q, "data_notes": datafix.notes(data_report) if data_report else [],
     }
     # 選用 LLM 評論
     if llm.available():

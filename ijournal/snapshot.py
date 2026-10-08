@@ -56,7 +56,7 @@ def build(date: str, ctx: dict, emg: dict | None, prices: dict) -> dict:
     N = p["selection"]["picks_per_market"]
 
     snap = {"date": date, "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-            "basis": ctx["basis"], "data_notes": ctx.get("data_notes") or [], "params_version": p["version"], "provider": ctx["provider"], "llm": bool(ctx.get("llm")),
+            "basis": ctx["basis"], "data_notes": ctx.get("data_notes") or [], "quality": ctx.get("quality"), "params_version": p["version"], "provider": ctx["provider"], "llm": bool(ctx.get("llm")),
             "summary": (ctx.get("llm") or {}).get("summary"),
             "news": {"ok": sum(1 for x in ctx["fetch_log"] if x["ok"]), "total": len(ctx["fetch_log"]), "items": ctx["scan"]["n_items"], "used": ctx["scan"]["n_used"],
                      "failed": [x["source"] for x in ctx["fetch_log"] if not x["ok"]]},

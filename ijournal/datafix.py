@@ -133,13 +133,13 @@ def _append(df: pd.DataFrame, day: dt.date, bar: dict) -> pd.DataFrame:
 
 
 def patch_tw(prices: dict, tickers: list[str], fetch=fetch_text) -> dict:
-    rep = {"date": None, "appended": 0, "overridden": 0, "agree": 0, "missing": 0, "twii_appended": 0, "errors": []}
+    rep = {"date": None, "appended": 0, "overridden": 0, "agree": 0, "missing": 0, "twii_appended": 0, "errors": [], "wrong_suffix": []}
     official: dict[str, dict] = {}
-    for name, url, parse in (("證交所", TWSE_ALL_URL, parse_twse_csv), ("櫃買中心", TPEX_ALL_URL, parse_tpex_json)):
+    for name, url, parse, suffix in (("證交所", TWSE_ALL_URL, parse_twse_csv, ".TW"), ("櫃買中心", TPEX_ALL_URL, parse_tpex_json, ".TWO")):
         try:
             day, d = parse(fetch(url))
             if day:
-                official.update({k: dict(v, _day=day) for k, v in d.items()})
+                official.update({k: dict(v, _day=day, _suffix=suffix) for k, v in d.items()})
                 rep["date"] = max(filter(None, [rep["date"], day]))
         except Exception as e:  # noqa: BLE001
             rep["errors"].append(f"{name}：{str(e)[:90]}")
@@ -147,6 +147,8 @@ def patch_tw(prices: dict, tickers: list[str], fetch=fetch_text) -> dict:
         df = prices.get(t)
         code = t.split(".")[0]
         o = official.get(code)
+        if o is not None and "." + t.split(".")[1] != o["_suffix"]:
+            rep["wrong_suffix"].append(f"{t}→{code}{o['_suffix']}")  # 清單中的上市／上櫃別與官方不符（Yahoo 會查不到）
         if df is None or not len(df):
             continue
         if o is None:

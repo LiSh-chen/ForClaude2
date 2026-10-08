@@ -26,8 +26,14 @@ def main():
         from .daily import run_daily
         from .providers import DemoProvider, LiveProvider
         prov = DemoProvider(end=dt.date.today()) if a.demo else LiveProvider()
-        run_daily(prov, force=a.force, asof=a.asof)
+        from .quality import DataQualityError
         from .site import build_site
+        try:
+            run_daily(prov, force=a.force, asof=a.asof)
+        except DataQualityError as e:
+            print(f"[daily] ✕ {e}")
+            build_site()  # 仍重建網站，讓儀表板顯示『本次更新未發佈』橫幅（保留上一份好的日誌）
+            raise SystemExit(2)
         build_site()
     elif a.cmd == "track":
         from .providers import DemoProvider, LiveProvider

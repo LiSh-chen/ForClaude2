@@ -204,3 +204,13 @@ ul.why li ul{margin-top:2px}
 .hx.dim{opacity:1;filter:saturate(.25)}
 .hx.dim:hover{filter:none}
 main{padding-top:20px}
+
+/* ---- 資料品質 ---- */
+.qbanner{padding:9px 16px;font-size:13px;border-left:5px solid var(--warn);background:var(--warn-wash)}
+.qbanner.bad{border-left-color:#d03b3b;background:rgba(208,59,59,.13)}
+.qbanner.inline{border-radius:8px}
+.qbanner ul{margin:4px 0 2px;padding-left:18px}
+.linkbtn{color:var(--accent);text-decoration:underline;font-size:12.5px}
+.chip.q-ok{color:var(--ink2)}
+.chip.q-warn{background:var(--warn-wash);color:var(--ink);border-color:transparent;font-weight:650}
+.chip.q-bad{background:#d03b3b;color:#fff;border-color:transparent;font-weight:650}

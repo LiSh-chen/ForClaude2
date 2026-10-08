@@ -50,6 +50,8 @@ jobs:
       - name: Update tracking of past picks (so today's journal quotes fresh performance)
         run: python -m ijournal track
       - name: Write today's journal
+        id: daily
+        continue-on-error: true   # 品質不合格（exit 2）時仍要提交狀態、重建網站，最後再讓 job 失敗
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m ijournal daily ${{ inputs.force && '--force' || '' }}
@@ -65,3 +67,8 @@ jobs:
         with: { path: site }
       - id: deploy
         uses: actions/deploy-pages@v4
+      - name: Fail the job if the journal was not published (data-quality gate or error)
+        if: steps.daily.outcome == 'failure'
+        run: |
+          echo "::error::日誌未發佈：資料品質不合格或執行錯誤，請看『Write today's journal』步驟的 [quality] 訊息。網站已顯示警示橫幅，上一份好的日誌仍保留。"
+          exit 1
