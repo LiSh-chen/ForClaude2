@@ -1,7 +1,5 @@
 package com.starmist.core
 
-import com.starmist.core.world.ChoiceOption
-import com.starmist.core.world.EncounterDef
 import com.starmist.core.world.ItemType
 import com.starmist.core.world.JourneyConfig
 import com.starmist.core.world.JourneyEngine
@@ -11,6 +9,7 @@ import com.starmist.core.world.JourneyStateCodec
 import com.starmist.core.world.PendingChoice
 import com.starmist.core.world.Prologue
 import com.starmist.core.world.Region
+import com.starmist.core.world.WorldMap
 import com.starmist.core.world.Reward
 import com.starmist.core.world.Rng
 import kotlin.test.Test
@@ -20,7 +19,12 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class JourneyEngineTest {
-    private val engine = JourneyEngine()
+    /** Fixed 2,000-step gaps keep the arithmetic in most tests simple; variable gaps have their own tests. */
+    private fun config(choicePercent: Int = 40, pendingCap: Int = 8, pityLimit: Int = 4) = JourneyConfig(
+        minInterval = 2_000, maxInterval = 2_000, pityLimit = pityLimit, pendingCap = pendingCap, choicePercent = choicePercent,
+    )
+
+    private val engine = JourneyEngine(config = config())
     private val start = JourneyState.start(seed = 42, allTimeSteps = 10_000)
 
     @Test
@@ -97,7 +101,7 @@ class JourneyEngineTest {
             lootWeights = mapOf(ItemType.MOON_DEW to 1),
             foundLines = listOf("line"), clearedText = "",
         )
-        val pityEngine = JourneyEngine(listOf(region), emptyList(), JourneyConfig(pityLimit = 4, choicePercent = 0))
+        val pityEngine = JourneyEngine(listOf(region), emptyList(), config(choicePercent = 0))
         val result = pityEngine.advance(JourneyState.start(1, 0), 2_000L * 10)
         // Pattern: 4 misses, then a forced key item, repeating: 10 encounters -> 2 key items.
         assertEquals(2, result.state.count(ItemType.LIFE_SEED))
@@ -167,8 +171,7 @@ class JourneyEngineTest {
 
     @Test
     fun `choice cards go to the inbox and can be answered`() {
-        val config = JourneyConfig(choicePercent = 100)
-        val choiceEngine = JourneyEngine(config = config)
+        val choiceEngine = JourneyEngine(config = config(choicePercent = 100))
         val result = choiceEngine.advance(start, 10_000 + 4_000)
         assertEquals(2, result.state.pending.size)
         val card = result.state.pending.first()
@@ -184,7 +187,7 @@ class JourneyEngineTest {
 
     @Test
     fun `the inbox is capped by answering the oldest cards automatically`() {
-        val choiceEngine = JourneyEngine(config = JourneyConfig(choicePercent = 100, pendingCap = 3))
+        val choiceEngine = JourneyEngine(config = config(choicePercent = 100, pendingCap = 3))
         val result = choiceEngine.advance(start, 10_000 + 20_000) // 10 cards
         assertEquals(3, result.state.pending.size)
         // The newest three are the ones left.
@@ -219,7 +222,7 @@ class JourneyEngineTest {
 
     @Test
     fun `state survives a round trip through text`() {
-        val result = JourneyEngine(config = JourneyConfig(choicePercent = 60)).advance(start, 10_000 + 70_000)
+        val result = JourneyEngine(config = config(choicePercent = 60)).advance(start, 10_000 + 70_000)
         val decoded = JourneyStateCodec.decode(JourneyStateCodec.encode(result.state))
         assertEquals(result.state, decoded)
     }
@@ -229,18 +232,144 @@ class JourneyEngineTest {
         assertNull(JourneyStateCodec.decode(null))
         assertNull(JourneyStateCodec.decode(""))
         assertNull(JourneyStateCodec.decode("v1|oops"))
-        assertNull(JourneyStateCodec.decode("v2|1|2|3|4|5|||"))
+        assertNull(JourneyStateCodec.decode("v3|1|2|3|4|5|6|||"))
         assertNull(JourneyStateCodec.decode("v1|1|2|3|4|5|NOT_AN_ITEM=1||"))
+        assertNull(JourneyStateCodec.decode("v2|1|2|3|4|5|6|NOT_AN_ITEM=1||"))
     }
 
     @Test
     fun `codec keeps pending cards and cleared regions`() {
         val state = JourneyState(
-            seed = -5, consumed = 123, position = 456, encountersDone = 7, missesSinceKey = 2,
+            seed = -5, consumed = 123, position = 456, nextEncounterAt = 900, encountersDone = 7, missesSinceKey = 2,
             inventory = mapOf(ItemType.LIFE_SEED to 3, ItemType.MOON_DEW to 1),
             pending = listOf(PendingChoice(3, "forest_fawn"), PendingChoice(5, "coast_whale")),
             clearedRegions = setOf("whispering_forest"),
         )
         assertEquals(state, JourneyStateCodec.decode(JourneyStateCodec.encode(state)))
+    }
+
+    // ---- variable gaps between encounters ----------------------------------------------------
+
+    private val variable = JourneyEngine() // default config: 3,500 to 5,500 steps
+
+    @Test
+    fun `gaps between encounters stay within the configured range and actually vary`() {
+        var state = JourneyState.start(seed = 11, allTimeSteps = 0)
+        var total = 0L
+        var lastEncounterPosition = 0L
+        val gaps = ArrayList<Long>()
+        while (gaps.size < 30) {
+            total += 50
+            val before = state.encountersDone
+            state = variable.advance(state, total).state
+            if (state.encountersDone > before) {
+                gaps += state.position - lastEncounterPosition
+                lastEncounterPosition = state.position
+            }
+        }
+        // Positions are sampled every 50 steps, so allow that much slack on each side.
+        assertTrue(gaps.all { it in 3_450..5_600 }, gaps.toString())
+        assertTrue(gaps.toSet().size > 10, "gaps should differ: $gaps")
+        val average = gaps.average()
+        assertTrue(average in 4_000.0..5_000.0, "average gap was $average")
+    }
+
+    @Test
+    fun `variable gaps do not depend on how steps are batched`() {
+        val oneGo = variable.advance(start, 10_000 + 60_000)
+        var piecewise = start
+        var total = 10_000L
+        repeat(120) {
+            total += 500
+            piecewise = variable.advance(piecewise, total).state
+        }
+        assertEquals(oneGo.state, piecewise)
+        assertTrue(oneGo.state.encountersDone in 10..20, "got ${oneGo.state.encountersDone}")
+    }
+
+    @Test
+    fun `gaps differ between journeys but are repeatable for one seed`() {
+        fun firstPositions(seed: Long): Long =
+            variable.advance(JourneyState.start(seed, 0), 0).state.let {
+                // The first encounter is due at nextEncounterAt once the engine has drawn it.
+                variable.advance(JourneyState.start(seed, 0), 6_000).state.nextEncounterAt
+            }
+        assertEquals(firstPositions(3), firstPositions(3))
+        val distinct = (1L..12L).map { firstPositions(it) }.toSet()
+        assertTrue(distinct.size > 3, distinct.toString())
+    }
+
+    @Test
+    fun `old saved journeys without a next encounter are upgraded`() {
+        val old = "v1|9|100|5000|3|1|MOON_DEW=2||whispering_forest"
+        val decoded = assertNotNull(JourneyStateCodec.decode(old))
+        assertEquals(-1, decoded.nextEncounterAt)
+        assertEquals(5_000, decoded.position)
+        assertEquals(3, decoded.encountersDone)
+        // The engine draws the missing gap when it next runs, and carries on from there.
+        val next = variable.advance(decoded, 100 + 10_000)
+        assertTrue(next.state.nextEncounterAt > next.state.position)
+    }
+
+    @Test
+    fun `an encounter on the last step of a region is announced before the region clears`() {
+        val region = Region(
+            "r", "R", 4_000, ItemType.LIFE_SEED, mapOf(ItemType.LIFE_SEED to 1),
+            foundLines = listOf("line"), clearedText = "",
+        )
+        val small = JourneyEngine(listOf(region), emptyList(), config(choicePercent = 0))
+        val result = small.advance(JourneyState.start(1, 0), 10_000)
+        val kinds = result.events.map { it::class.simpleName }
+        assertEquals(listOf("Found", "Found", "RegionCleared", "RouteEnd"), kinds)
+    }
+
+    // ---- the world map and its fog -----------------------------------------------------------
+
+    @Test
+    fun `every playable region has a place on the map in the same order`() {
+        val ids = Prologue.regions.map { it.id }
+        assertEquals(ids, WorldMap.nodes.take(ids.size).map { it.id })
+        assertTrue(WorldMap.nodes.take(ids.size).all { it.available })
+        assertTrue(WorldMap.nodes.drop(ids.size).none { it.available })
+        assertTrue(WorldMap.nodes.all { it.at.x in 0.0..1.0 && it.at.y in 0.0..1.0 })
+    }
+
+    @Test
+    fun `at the start only the first region is in view`() {
+        val walked = WorldMap.walkedPoints(regionIndex = 0, fraction = 0.0, finished = false)
+        assertTrue(WorldMap.isRevealed(WorldMap.start, walked))
+        assertTrue(!WorldMap.isRevealed(WorldMap.nodes[3].at, walked))
+        assertTrue(!WorldMap.isRevealed(WorldMap.nodes.last().at, walked))
+    }
+
+    @Test
+    fun `walking reveals the way and finished regions stay revealed`() {
+        val early = WorldMap.walkedPoints(0, 0.1, false)
+        val later = WorldMap.walkedPoints(1, 0.5, false)
+        assertTrue(!WorldMap.isRevealed(WorldMap.nodes[1].at, early))
+        assertTrue(WorldMap.isRevealed(WorldMap.nodes[1].at, later))
+        assertTrue(WorldMap.isRevealed(WorldMap.nodes[0].at, later), "the first region stays visible")
+    }
+
+    @Test
+    fun `after the last open region the next place is glimpsed but not the far end`() {
+        val engine = JourneyEngine()
+        val progress = engine.progress(engine.totalSteps)
+        val walked = WorldMap.walkedPoints(progress.regionIndex, progress.regionFraction, progress.finished)
+        assertTrue(WorldMap.isRevealed(WorldMap.nodes[2].at, walked), "coral isles are in sight")
+        assertTrue(!WorldMap.isRevealed(WorldMap.nodes.last().at, walked))
+    }
+
+    @Test
+    fun `the traveller moves continuously along each region`() {
+        var last = WorldMap.pointAt(0, 0.0)
+        for (k in 0 until WorldMap.nodes.size) {
+            for (i in 1..20) {
+                val p = WorldMap.pointAt(k, i / 20.0)
+                assertTrue(p.distanceTo(last) < 0.25, "jump at region $k step $i")
+                last = p
+            }
+        }
+        assertEquals(WorldMap.nodes.last().at.x, last.x, 1e-9)
     }
 }

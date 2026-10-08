@@ -35,8 +35,10 @@ data class RouteProgress(
 data class Resolution(val state: JourneyState, val def: EncounterDef, val option: ChoiceOption)
 
 data class JourneyConfig(
-    /** Steps between encounters. */
-    val encounterInterval: Long = 2_000,
+    /** Fewest steps between two encounters. */
+    val minInterval: Long = 3_500,
+    /** Most steps between two encounters; each gap is drawn between the two. */
+    val maxInterval: Long = 5_500,
     /** After this many encounters without the key item, the next one is guaranteed to drop it. */
     val pityLimit: Int = 4,
     /** How many unanswered cards the inbox holds; older ones are answered automatically. */
@@ -45,12 +47,33 @@ data class JourneyConfig(
     val choicePercent: Int = 40,
 )
 
+private const val INTERVAL_SALT = 0x5DEECE66DL
+
 class JourneyEngine(
     private val route: List<Region> = Prologue.regions,
     private val encounters: List<EncounterDef> = Prologue.encounters,
     private val config: JourneyConfig = JourneyConfig(),
 ) {
     val totalSteps: Long = route.sumOf { it.lengthSteps }
+
+    init {
+        require(config.minInterval in 1..config.maxInterval) { "invalid encounter interval range" }
+    }
+
+    /** Steps from one encounter to the next: varies, but is fixed for a given seed and encounter number. */
+    private fun drawInterval(seed: Long, index: Int): Long {
+        val span = (config.maxInterval - config.minInterval + 1).toInt()
+        return config.minInterval + Rng.forEvent(seed xor INTERVAL_SALT, index).nextInt(span)
+    }
+
+    private fun nextRegionEnd(position: Long): Long {
+        var end = 0L
+        for (region in route) {
+            end += region.lengthSteps
+            if (position < end) return end
+        }
+        return end
+    }
 
     fun definition(id: String): EncounterDef? = encounters.firstOrNull { it.id == id }
 
@@ -92,21 +115,30 @@ class JourneyEngine(
         val base = minOf(state.consumed, allTimeSteps)
         var consumed = base
         var current = state.copy(consumed = base)
+        if (current.nextEncounterAt < 0) {
+            current = current.copy(nextEncounterAt = current.position + drawInterval(current.seed, current.encountersDone))
+        }
         val available = allTimeSteps - base
         var budget = minOf(available, (totalSteps - current.position).coerceAtLeast(0))
         val events = ArrayList<JourneyEvent>()
         var walked = 0L
 
         while (budget > 0) {
-            val sinceEncounter = current.position % config.encounterInterval
-            val toNext = config.encounterInterval - sinceEncounter
-            val segment = minOf(budget, toNext)
+            val toEncounter = (current.nextEncounterAt - current.position).coerceAtLeast(1)
+            val toRegionEnd = (nextRegionEnd(current.position) - current.position).coerceAtLeast(1)
+            // Stop at region ends too, so "cleared" is announced exactly where it happens.
+            val segment = minOf(budget, toEncounter, toRegionEnd)
             current = current.copy(position = current.position + segment)
             consumed += segment
             budget -= segment
             walked += segment
 
-            if (segment == toNext) current = encounter(current, events)
+            if (current.position >= current.nextEncounterAt) {
+                current = encounter(current, events)
+                current = current.copy(
+                    nextEncounterAt = current.position + drawInterval(current.seed, current.encountersDone),
+                )
+            }
             current = clearRegions(current, events)
         }
         return AdvanceResult(current.copy(consumed = consumed), events, walked)
