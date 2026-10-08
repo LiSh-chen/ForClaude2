@@ -170,7 +170,8 @@
       "alpha": true,
       "source": "ai",
       "prompt": "A horizontal band of distant round-crowned trees and low hills in very faint, light sepia ink with a whisper of pale green wash, soft and low-contrast, like background scenery in an old engraving. The left and right edges must match so it tiles seamlessly sideways. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
-      "notes": "左右邊緣需可無縫接合；整體低對比。"
+      "notes": "左右邊緣需可無縫接合；整體低對比。 需要左右可無縫平鋪，Gemini 沒有 4:1 比例也很難接縫，建議不要用 AI 做，由 Claude 以 SVG／程式繪製。",
+      "skipForAI": true
     },
     {
       "id": "waves",
@@ -184,7 +185,8 @@
       "alpha": true,
       "source": "ai",
       "prompt": "A horizontal band of gentle hand-drawn wave lines in thin sepia ink with a faint blue-grey wash, calm sea, the left and right edges match so it tiles seamlessly sideways. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
-      "notes": "左右邊緣需可無縫接合。"
+      "notes": "左右邊緣需可無縫接合。 需要左右可無縫平鋪，Gemini 沒有 4:1 比例也很難接縫，建議不要用 AI 做，由 Claude 以 SVG／程式繪製。",
+      "skipForAI": true
     },
     {
       "id": "ground_path",
@@ -198,7 +200,8 @@
       "alpha": true,
       "source": "ai",
       "prompt": "A thin horizontal dotted ink line like a trail drawn on a map, with a few small pebbles and tiny tufts of grass, the left and right edges match so it tiles seamlessly sideways. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
-      "notes": "左右邊緣需可無縫接合。"
+      "notes": "左右邊緣需可無縫接合。 需要左右可無縫平鋪，Gemini 沒有 4:1 比例也很難接縫，建議不要用 AI 做，由 Claude 以 SVG／程式繪製。",
+      "skipForAI": true
     },
     {
       "id": "traveller_fox",

@@ -110,27 +110,50 @@ def cmd_check():
     print(f"\n{present}/{len(MANIFEST['assets'])} present")
 
 
+GEMINI_RATIOS = {"1:1": 1.0, "3:4": 3 / 4, "4:3": 4 / 3, "9:16": 9 / 16, "16:9": 16 / 9}
+
+
+def nearest_ratio(size) -> str:
+    target = size[0] / size[1]
+    return min(GEMINI_RATIOS, key=lambda name: abs(GEMINI_RATIOS[name] - target))
+
+
 def cmd_prompts():
-    lines = ["# 素材提示詞（可直接貼給圖像 AI）", "",
-             "每個素材的完整提示詞 = 共同風格 + 該素材描述。生成後存成 `generated/<id>.png`，再執行 `export`。", "",
-             "**共同風格**", "", MANIFEST["baseStyle"], "", "**負面提示詞（支援的工具才填）**", "", MANIFEST["negativePrompt"], ""]
+    lines = [
+        "# 素材提示詞（給 Gemini 等圖像 AI 使用）", "",
+        "## 怎麼用", "",
+        "1. **先做 3 張試風格**：`compass_case`、`compass_face`、`traveller_fox`。風格滿意後，再把這張當「風格參考圖」一起上傳，生成其他素材，才會一致。",
+        "2. **每張單獨生成**：把該素材的整段提示詞貼進去。提示詞開頭已經寫了比例；Gemini 支援的比例是 1:1、3:4、4:3、9:16、16:9，**匯出時會自動裁成規格尺寸**。",
+        "3. **一律要純白底**（提示詞已寫）。Gemini 不會輸出透明背景，匯出工具會把與邊緣相連的白底去掉。",
+        "4. **不要有文字**：地名、數字都由 App 畫。圖裡如果出現字，請重生成。",
+        "5. **存檔**：存成 `android/assets/generated/<id>.png`（檔名就是下面標題裡的 id）。完成後執行 `python3 tools/build_assets.py check` 檢查、`export` 匯出；或把圖直接傳給 Claude 處理。",
+        "6. 不滿意就用同一個提示詞再生成，或在對話裡說明要改什麼（例如「線條再細一點」「顏色更淡」）。", "",
+        "## 共同風格（已經包含在每個提示詞裡，不用另外貼）", "", MANIFEST["baseStyle"], "",
+        "## 負面提示詞", "",
+        "Gemini 沒有獨立的負面提示詞欄位；提示詞裡已用「no text、no watermark…」表達。其他工具（Midjourney `--no`、Stable Diffusion）可用：", "",
+        MANIFEST["negativePrompt"], "",
+    ]
     for category in dict.fromkeys(a["category"] for a in MANIFEST["assets"]):
         lines += [f"## {category}", ""]
         for a in MANIFEST["assets"]:
             if a["category"] != category:
                 continue
             w, h = a["size"]
+            ratio = nearest_ratio(a["size"])
             lines += [f"### `{a['id']}` — {a['title']}", "",
-                      f"- 用在：{a['usedIn']}", f"- 尺寸：{w}×{h}　透明背景：{'是（用純白底生成，匯出時去背）' if a['alpha'] else '否'}"]
+                      f"- 用在：{a['usedIn']}", f"- 最終尺寸：{w}×{h}　Gemini 比例：{ratio}　背景：{'純白（匯出去背）' if a['alpha'] else '一般圖，不用去背'}"]
             if a["notes"]:
                 lines.append(f"- 注意：{a['notes']}")
             lines.append("")
             if a["source"] == "procedural":
                 lines += ["_由程式產生，不需要 AI 圖。_", ""]
+            elif a.get("skipForAI"):
+                lines += ["_建議跳過：由 Claude 以 SVG／程式繪製（可無縫平鋪）。_", ""]
             else:
                 if a["source"] == "svg":
-                    lines += ["_已有 SVG 手繪版；下面的提示詞是想改用 AI 圖時才需要。_", ""]
-                lines += ["```", MANIFEST["baseStyle"] + " " + a["prompt"], "```", ""]
+                    lines += ["_已有 SVG 手繪版可當備案；要用 Gemini 版的話用下面這段。_", ""]
+                prompt = f"Create an image with aspect ratio {ratio}. " + MANIFEST["baseStyle"] + " " + a["prompt"]
+                lines += ["```", prompt, "```", ""]
     (ROOT / "PROMPTS.md").write_text("\n".join(lines), encoding="utf-8")
     print("wrote PROMPTS.md")
 
