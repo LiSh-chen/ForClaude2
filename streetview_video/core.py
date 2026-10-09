@@ -7,7 +7,8 @@ from pathlib import Path
 
 import requests
 
-OSRM = "https://router.project-osrm.org/route/v1"
+OSRM = "https://routing.openstreetmap.de/{}/route/v1/driving"
+ROUTERS = {"driving": "routed-car", "cycling": "routed-bike", "walking": "routed-foot"}
 GRAPH = "https://graph.mapillary.com/images"
 NOMINATIM = "https://nominatim.openstreetmap.org/search"
 USER_AGENT = "streetview-video/0.1 (personal use)"
@@ -60,7 +61,7 @@ def get_route(start, end, profile="driving"):
     """Return (polyline [(lat, lon)], distance_m)."""
     if profile not in ("driving", "walking", "cycling"):
         raise PipelineError(f"unknown profile: {profile}")
-    url = f"{OSRM}/{profile}/{start[1]},{start[0]};{end[1]},{end[0]}"
+    url = f"{OSRM.format(ROUTERS[profile])}/{start[1]},{start[0]};{end[1]},{end[0]}"
     try:
         r = requests.get(
             url,
