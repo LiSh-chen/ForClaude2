@@ -77,6 +77,7 @@ fun HomeScreen(
             regionId = journey?.let { vm.engine.regionAt(it.position)?.id },
             characterId = settings.characterId,
             walking = walking,
+            pickups = vm.pickups,
         )
         CompassDial(steps = steps, goal = settings.dailyGoal, progress = progress)
         Spacer(Modifier.height(8.dp))

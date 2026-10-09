@@ -137,6 +137,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 if (before != null && total > before) {
                     val confirmed = total - before
                     pendingTicks.update { (it - confirmed).coerceAtLeast(0L) }
+                    if (liveJob?.isActive == true) markWalking()
                 }
                 previous = total
             }
@@ -149,6 +150,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             liveJob = viewModelScope.launch {
                 repository.reader.liveCounter().conflate().collect { counter ->
                     repository.ingestLive(counter)
+                    settleJourney(live = true)
                     delay(LIVE_MIN_INTERVAL_MS) // conflate keeps only the newest value meanwhile
                 }
             }
@@ -187,6 +189,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val replay: StateFlow<ReplaySummary?> = _replay
     fun dismissReplay() { _replay.value = null }
 
+    private val _pickups = kotlinx.coroutines.flow.MutableSharedFlow<Pickup>(extraBufferCapacity = 16)
+
+    /** Items found while the app is open; the scene plays a small animation for each. */
+    val pickups: kotlinx.coroutines.flow.SharedFlow<Pickup> = _pickups
+
     private val _walking = MutableStateFlow(false)
     private var walkingTimeout: Job? = null
 
@@ -203,9 +210,20 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /** Converts steps counted since the last time into travel along the route. */
-    fun settleJourney() {
+    fun settleJourney(live: Boolean = false) {
         viewModelScope.launch {
             val result = container.journey.settle(engine, repository.allTimeTotal())
+            if (live) {
+                // Steps taken with the app open: show each find as it happens instead of a summary.
+                result.events.forEach {
+                    when (it) {
+                        is JourneyEvent.Found -> _pickups.tryEmit(Pickup(it.item, it.line))
+                        is JourneyEvent.ChoiceAppeared -> _pickups.tryEmit(Pickup(it.item, null))
+                        else -> Unit
+                    }
+                }
+                return@launch
+            }
             if (result.events.isNotEmpty()) {
                 _replay.value = ReplaySummary(
                     stepsWalked = result.stepsWalked,
@@ -280,3 +298,6 @@ data class ReplaySummary(
     val events: List<JourneyEvent>,
     val itemsFound: Map<ItemType, Int>,
 )
+
+/** Something just picked up on the road. [line] is the story line, if there is one. */
+data class Pickup(val item: ItemType, val line: String?)

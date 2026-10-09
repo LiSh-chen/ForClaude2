@@ -1,6 +1,24 @@
 package com.starmist.walker.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -49,6 +67,7 @@ fun WorldScene(
     characterId: Int,
     walking: Boolean,
     modifier: Modifier = Modifier,
+    pickups: kotlinx.coroutines.flow.SharedFlow<Pickup>? = null,
 ) {
     val hour = remember { LocalTime.now().hour }
     val night = hour < 6 || hour >= 19
@@ -67,7 +86,35 @@ fun WorldScene(
         }
     }
 
-    Canvas(modifier.fillMaxWidth().height(190.dp)) {
+    val art = rememberArt(
+        when (character.look) {
+            Look.FOX -> "traveller_fox"
+            Look.ELF -> "traveller_elf"
+            Look.CAT -> "traveller_cat"
+            Look.CAPE -> "traveller_cape"
+        },
+    )
+
+    // A slow breathing clock so the traveller is never frozen, even when standing still.
+    val idle by rememberInfiniteTransition(label = "idle").animateFloat(
+        0f, (2 * Math.PI).toFloat(),
+        infiniteRepeatable(tween(2800, easing = LinearEasing)), label = "idle",
+    )
+
+    // Finds: each one plays a short pop-up, hop and fly-to-bag animation, one after another.
+    var found by remember { mutableStateOf<Pickup?>(null) }
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(pickups) {
+        pickups?.collect { pickup ->
+            found = pickup
+            progress.snapTo(0f)
+            progress.animateTo(1f, tween(PICKUP_MS, easing = LinearEasing))
+            found = null
+        }
+    }
+
+    Box(modifier.fillMaxWidth().height(190.dp)) {
+    Canvas(Modifier.fillMaxSize()) {
         val w = size.width
         val h = size.height
         val groundY = h * 0.80f
@@ -92,7 +139,119 @@ fun WorldScene(
             drawOval(Vintage.ink.copy(alpha = 0.25f), Offset(x, y), Size(7.dp.toPx(), 3.dp.toPx()))
         }
 
-        drawTraveller(character, w * 0.4f, groundY, h, walking, offset)
+        val t = if (found != null) progress.value else -1f
+        // The traveller hops with delight while the find hovers overhead.
+        val lift = if (t in 0.2f..0.55f) sin((t - 0.2f) / 0.35f * Math.PI.toFloat()) * h * 0.09f else 0f
+        if (art != null) drawTravellerArt(art, w * 0.4f, groundY, h, walking, offset, idle, lift)
+        else drawTraveller(character, w * 0.4f, groundY - lift, h, walking, offset)
+
+        found?.let { drawPickup(it.item, t, Offset(w * 0.4f, groundY), h, Offset(w - 22.dp.toPx(), 22.dp.toPx())) }
+    }
+    found?.let { pickup ->
+        val t = progress.value
+        val alpha = when {
+            t < 0.15f -> 0f
+            t < 0.3f -> (t - 0.15f) / 0.15f
+            t > 0.85f -> (1f - t) / 0.15f
+            else -> 1f
+        }
+        Text(
+            pickup.line ?: "遇見了什麼……",
+            Modifier.align(Alignment.TopCenter).padding(top = 8.dp, start = 12.dp, end = 12.dp).graphicsLayer { this.alpha = alpha },
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.Bold,
+            color = Vintage.ink,
+        )
+        Text(
+            "獲得 ${pickup.item.displayName}",
+            Modifier.align(Alignment.BottomCenter).padding(bottom = 4.dp).graphicsLayer { this.alpha = alpha },
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            color = Vintage.brassDark,
+        )
+    }
+    }
+}
+
+private const val PICKUP_MS = 2200
+
+/**
+ * The find pops out of the ground ahead of the traveller, hovers with a sparkle while the traveller
+ * hops, then arcs up into the bag in the corner. [t] runs 0..1 over the whole animation.
+ */
+private fun DrawScope.drawPickup(item: com.starmist.core.world.ItemType, t: Float, feet: Offset, h: Float, bag: Offset) {
+    val start = Offset(feet.x + h * 0.32f, feet.y - h * 0.04f)
+    val hover = Offset(feet.x + h * 0.10f, feet.y - h * 0.62f)
+    val r = h * 0.085f
+    val pos: Offset
+    val scale: Float
+    var alpha = 1f
+    when {
+        t < 0.2f -> { // pop out of the ground
+            val k = t / 0.2f
+            pos = Offset(start.x, start.y - k * h * 0.14f)
+            scale = k * 1.25f
+        }
+        t < 0.6f -> { // rise to hover and bob
+            val k = ((t - 0.2f) / 0.4f).coerceIn(0f, 1f)
+            val ease = 1f - (1f - k) * (1f - k)
+            pos = Offset(start.x + (hover.x - start.x) * ease, start.y - h * 0.14f + (hover.y - (start.y - h * 0.14f)) * ease + sin(k * 12f) * h * 0.012f)
+            scale = 1.25f - 0.25f * ease
+        }
+        else -> { // fly to the bag
+            val k = ((t - 0.6f) / 0.4f).coerceIn(0f, 1f)
+            val ease = k * k
+            pos = Offset(hover.x + (bag.x - hover.x) * ease, hover.y + (bag.y - hover.y) * ease - sin(k * Math.PI.toFloat()) * h * 0.15f)
+            scale = 1f - 0.65f * ease
+            alpha = 1f - 0.4f * k
+        }
+    }
+    // Glow and sparkles around it while it hovers.
+    if (t in 0.1f..0.65f) {
+        val glow = sin(((t - 0.1f) / 0.55f) * Math.PI.toFloat())
+        drawCircle(Vintage.brassLight.copy(alpha = 0.55f * glow), r * 2.1f * scale, pos)
+        for (i in 0 until 6) {
+            val a = i * Math.PI.toFloat() / 3f + t * 9f
+            val d = r * (1.5f + 0.5f * sin(t * 20f + i))
+            val p = Offset(pos.x + kotlin.math.cos(a) * d, pos.y + sin(a) * d)
+            drawCircle(Vintage.brass.copy(alpha = glow), r * 0.12f, p)
+        }
+    }
+    drawItemIcon(item, pos, r * scale.coerceAtLeast(0.01f))
+    if (alpha < 1f) drawCircle(Vintage.parchment.copy(alpha = 1f - alpha), r * scale, pos) // fades into the page
+}
+
+/** The painted traveller, bobbing and leaning as it walks and breathing when it stands. */
+private fun DrawScope.drawTravellerArt(
+    art: androidx.compose.ui.graphics.ImageBitmap,
+    x: Float,
+    groundY: Float,
+    h: Float,
+    walking: Boolean,
+    offset: Float,
+    idle: Float,
+    lift: Float,
+) {
+    val height = h * 0.68f
+    val width = height * art.width / art.height
+    val phase = sin(offset * 0.14f)
+    val bob = if (walking) abs(phase) * h * 0.035f else 0f
+    val tilt = if (walking) phase * 3.5f else sin(idle) * 0.8f
+    val squash = if (walking) 1f - abs(phase) * 0.03f else 1f + sin(idle) * 0.012f
+    val feet = Offset(x, groundY)
+
+    val shadowW = width * (0.55f - (bob + lift) / h * 1.2f)
+    drawOval(Color.Black.copy(alpha = 0.16f), Offset(x - shadowW / 2f, groundY - 3.dp.toPx()), Size(shadowW, 7.dp.toPx()))
+    translate(0f, -(bob + lift)) {
+        rotate(tilt, feet) {
+            scale(1f, squash, feet) {
+                drawImage(
+                    art,
+                    dstOffset = androidx.compose.ui.unit.IntOffset((x - width / 2f).toInt(), (groundY - height + 4.dp.toPx()).toInt()),
+                    dstSize = androidx.compose.ui.unit.IntSize(width.toInt(), height.toInt()),
+                )
+            }
+        }
     }
 }
 
