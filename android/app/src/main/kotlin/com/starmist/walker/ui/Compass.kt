@@ -4,7 +4,13 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +45,37 @@ fun CompassDial(steps: Long, goal: Int, progress: Double, modifier: Modifier = M
     val animated by animateFloatAsState(progress.coerceIn(0.0, 1.0).toFloat(), label = "compass")
     val measurer = rememberTextMeasurer()
     val letterStyle = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Vintage.ink.copy(alpha = 0.75f))
+
+    val caseArt = rememberArt("compass_case")
+    val faceArt = rememberArt("compass_face")
+    if (caseArt != null && faceArt != null) {
+        // Painted brass case over a painted dial; the progress arc runs in the ring between them.
+        Box(modifier.width(300.dp).height(300.dp * 1120f / 1024f), contentAlignment = Alignment.TopCenter) {
+            Canvas(Modifier.fillMaxSize()) {
+                val k = size.width / 1024f
+                val center = Offset(512f * k, 638.4f * k)
+                val faceSide = (590f * k).toInt()
+                drawImage(
+                    faceArt,
+                    dstOffset = IntOffset((center.x - faceSide / 2f).toInt(), (center.y - faceSide / 2f).toInt()),
+                    dstSize = IntSize(faceSide, faceSide),
+                )
+                val track = 270f * k
+                val stroke = 20f * k
+                val topLeft = Offset(center.x - track, center.y - track)
+                val arcSize = Size(track * 2, track * 2)
+                drawArc(Vintage.brassDark.copy(alpha = 0.2f), 0f, 360f, false, topLeft, arcSize, style = Stroke(stroke))
+                if (animated > 0f) drawArc(Vintage.moss, -90f, 360f * animated, false, topLeft, arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
+                drawImage(caseArt, dstSize = IntSize(size.width.toInt(), size.height.toInt()))
+            }
+            Column(Modifier.padding(top = 300.dp * 0.57f * 1120f / 1024f - 44.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(steps.withCommas(), fontSize = 38.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, color = Vintage.ink)
+                Text("/ ${goal.toLong().withCommas()} 步", style = MaterialTheme.typography.bodyMedium)
+                Text("${(progress * 100).roundToInt()}%", style = MaterialTheme.typography.titleMedium)
+            }
+        }
+        return
+    }
 
     Box(modifier.size(300.dp), contentAlignment = Alignment.Center) {
         Canvas(Modifier.size(300.dp)) {

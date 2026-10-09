@@ -160,10 +160,18 @@ fun Modifier.parchmentTexture(tile: ImageBitmap? = null): Modifier = drawWithCac
         radius = hypot(width, height) / 2,
     )
     // A painted paper tile from the asset library, if there is one; otherwise draw the texture in code.
-    val paper = tile?.let { ShaderBrush(ImageShader(it, TileMode.Repeated, TileMode.Repeated)) }
     onDrawBehind {
-        if (paper != null) {
-            drawRect(paper)
+        if (tile != null) {
+            // A painted full-page paper: scale to cover the screen and crop the overflow.
+            val scale = maxOf(width / tile.width, height / tile.height)
+            val srcW = (width / scale).toInt().coerceAtMost(tile.width)
+            val srcH = (height / scale).toInt().coerceAtMost(tile.height)
+            drawImage(
+                tile,
+                srcOffset = androidx.compose.ui.unit.IntOffset((tile.width - srcW) / 2, (tile.height - srcH) / 2),
+                srcSize = androidx.compose.ui.unit.IntSize(srcW, srcH),
+                dstSize = androidx.compose.ui.unit.IntSize(width.toInt(), height.toInt()),
+            )
         } else {
             drawRect(Vintage.parchment)
             stains.forEach { (center, radius, alpha) -> drawCircle(Vintage.stain.copy(alpha = alpha), radius, center) }
