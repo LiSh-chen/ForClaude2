@@ -1,7 +1,7 @@
 # 路線街景影片系統
 
-## 最簡單：純網頁版（`site/streetview/index.html`）
-單一 HTML 檔，不需要 Python 或 ffmpeg。線上版：https://lish-chen.github.io/ForClaude2/streetview/ （合併到 main 後由 GitHub Pages 發佈），也可下載檔案直接開啟：
+## 最簡單：純網頁版（`web/index.html`）
+單一 HTML 檔，不需要 Python 或 ffmpeg，下載後直接用瀏覽器開啟即可（此專案正在搬到 ForClaude3 repo）：
 
 1. 填入 Mapillary API token
 2. 在地圖點選或搜尋地址，設定起點與終點
