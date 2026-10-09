@@ -1,16 +1,9 @@
 {
- "attempt_at": "2026-10-08T08:36:23+00:00",
+ "attempt_at": "2026-10-09T01:23:31+00:00",
  "date": "2026-10-08",
- "level": "warn",
+ "level": "ok",
  "published": true,
- "issues": [
-  {
-   "code": "tw_cross",
-   "label": "台股官方資料校正",
-   "level": "warn",
-   "msg": "官方 2026-10-08：與 Yahoo 一致 80 檔、修正 0 檔（差異率 0%）、補缺 0 檔、官方查無 17 檔；來源問題：櫃買中心：https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes 取得失敗：Response ended p"
-  }
- ],
+ "issues": [],
  "checks": [
   {
    "code": "coverage_TW",
@@ -34,19 +27,19 @@
    "code": "fresh_US",
    "label": "美股行情新鮮度",
    "level": "ok",
-   "msg": "行情截至 2026-10-07，已是最新收盤"
+   "msg": "行情截至 2026-10-08，已是最新收盤"
   },
   {
    "code": "tw_cross",
    "label": "台股官方資料校正",
-   "level": "warn",
-   "msg": "官方 2026-10-08：與 Yahoo 一致 80 檔、修正 0 檔（差異率 0%）、補缺 0 檔、官方查無 17 檔；來源問題：櫃買中心：https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes 取得失敗：Response ended p"
+   "level": "ok",
+   "msg": "官方 2026-10-08：與 Yahoo 一致 97 檔、修正 0 檔（差異率 0%）、補缺 0 檔、官方查無 0 檔"
   },
   {
    "code": "us_patch",
    "label": "美股最新收盤補值",
    "level": "ok",
-   "msg": "暫定補上 0 檔、失敗 0 檔"
+   "msg": "暫定補上 61 檔、失敗 0 檔"
   },
   {
    "code": "jumps",
@@ -58,7 +51,7 @@
    "code": "valuation",
    "label": "財報可估值比例",
    "level": "ok",
-   "msg": "94% 的標的取得足夠財報與預估資料，可估算目標價"
+   "msg": "93% 的標的取得足夠財報與預估資料，可估算目標價"
   },
   {
    "code": "news",

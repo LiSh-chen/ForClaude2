@@ -3,89 +3,185 @@
  "params_version": 1,
  "picks": [
   {
-   "ticker": "ORCL",
-   "name": "Oracle Corporation",
-   "zh_name": "Oracle",
+   "ticker": "ON",
+   "name": "ON Semiconductor Corporation",
+   "zh_name": "onsemi",
    "market": "US",
-   "sector": "cloud_software",
+   "sector": "power_semis",
    "rank": 1,
-   "entry_price": 143.56,
-   "entry_date": "2026-10-07",
-   "composite": 64.67,
+   "entry_price": 79.41,
+   "entry_date": "2026-10-08",
+   "composite": 63.44,
    "scores": {
-    "sector": 63.1,
-    "leader": 75.0,
-    "quality": 55.2,
-    "growth": 99.4,
-    "valuation": 99.8,
-    "momentum": 22.0,
+    "sector": null,
+    "leader": 66.7,
+    "quality": 71.9,
+    "growth": 66.9,
+    "valuation": 87.1,
+    "momentum": 26.3,
     "news": 40.0
    },
    "target": {
-    "base": 229.7,
-    "bull": 307.34,
-    "bear": 113.24,
-    "ev": 216.11,
+    "base": 102.66,
+    "bull": 143.73,
+    "bear": 41.07,
+    "ev": 95.48,
     "confidence": "中",
-    "upside": 0.6,
-    "ev_upside": 0.5054,
+    "upside": 0.2928,
+    "ev_upside": 0.2023,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 285.26,
-      "weight": 0.5,
-      "upside": 0.987
+      "value": 88.17,
+      "weight": 0.4,
+      "upside": 0.1103
      },
      "peg": {
-      "value": 357.41,
-      "weight": 0.187,
-      "upside": 1.4896
+      "value": 147.19,
+      "weight": 0.15,
+      "upside": 0.8535
+     },
+     "dcf": {
+      "value": 96.02,
+      "weight": 0.2,
+      "upside": 0.2092
      },
      "consensus": {
-      "value": 237.97,
-      "weight": 0.312,
-      "upside": 0.6577
+      "value": 104.46,
+      "weight": 0.25,
+      "upside": 0.3155
      }
     }
    },
-   "stop": 129.33,
+   "stop": 71.2,
    "fundamentals": {
-    "market_cap": 435202293760,
-    "pe_ttm": 22.6793,
-    "pe_fwd": 13.0542,
-    "peg": 0.81,
-    "roe": 0.4119,
-    "gross_margin": 0.6396,
-    "op_margin": 0.3563,
-    "net_margin": 0.2636,
-    "rev_growth": 0.296,
-    "eps_growth": 0.545,
-    "de": 2.5172,
-    "beta": 1.77,
-    "target_mean": 237.9742,
-    "n_analysts": 41,
-    "fcf_margin": -0.6388
+    "market_cap": 30915792896,
+    "pe_ttm": 51.2323,
+    "pe_fwd": 17.5344,
+    "peg": 0.18,
+    "roe": 0.0831,
+    "gross_margin": 0.4278,
+    "op_margin": 0.1953,
+    "net_margin": 0.1017,
+    "rev_growth": 0.092,
+    "eps_growth": 0.366,
+    "de": 0.6506,
+    "beta": 2.052,
+    "target_mean": 104.4615,
+    "n_analysts": 26,
+    "fcf_margin": 0.2673
    },
    "tech": {
-    "ret_1m": -0.11666260285153074,
-    "ret_3m": -0.0011133012854882551,
-    "rel_3m": -0.035331513996358366,
-    "dist200": -0.11192681714540187,
-    "vol_ann": 0.5382954948938037
+    "ret_1m": 0.1187658482176206,
+    "ret_3m": -0.17246764881473664,
+    "rel_3m": -0.19754486901514523,
+    "dist200": -0.020095341155725643,
+    "vol_ann": 0.5457245403912471
    },
    "book": "bargain",
-   "also_main": true,
-   "bargain_score": 76.0,
+   "also_main": false,
+   "bargain_score": 72.4,
    "facts": {
-    "from_high": -0.5369,
-    "pos52": 0.1465,
-    "bounce20": 0.0827,
-    "ret_1m": -0.1167,
-    "dist200": -0.1119,
-    "pe_discount": 0.6638,
-    "eps_up": 0.7373,
-    "rev_growth": 0.296,
-    "upside": 0.6
+    "from_high": -0.4071,
+    "pos52": 0.3876,
+    "bounce20": 0.1923,
+    "ret_1m": 0.1188,
+    "dist200": -0.0201,
+    "pe_discount": 0.1807,
+    "eps_up": 1.9218,
+    "rev_growth": 0.092,
+    "upside": 0.2928
+   }
+  },
+  {
+   "ticker": "SYK",
+   "name": "Stryker Corporation",
+   "zh_name": "Stryker",
+   "market": "US",
+   "sector": "aging_care",
+   "rank": 2,
+   "entry_price": 276.97,
+   "entry_date": "2026-10-08",
+   "composite": 69.73,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 83.9,
+    "growth": 70.6,
+    "valuation": 91.1,
+    "momentum": 7.4,
+    "news": 40.0
+   },
+   "target": {
+    "base": 388.07,
+    "bull": 538.98,
+    "bear": 161.7,
+    "ev": 361.66,
+    "confidence": "中",
+    "upside": 0.4011,
+    "ev_upside": 0.3058,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 293.27,
+      "weight": 0.4,
+      "upside": 0.0588
+     },
+     "peg": {
+      "value": 542.73,
+      "weight": 0.15,
+      "upside": 0.9595
+     },
+     "dcf": {
+      "value": 489.07,
+      "weight": 0.2,
+      "upside": 0.7658
+     },
+     "consensus": {
+      "value": 366.15,
+      "weight": 0.25,
+      "upside": 0.322
+     }
+    }
+   },
+   "stop": 260.35,
+   "fundamentals": {
+    "market_cap": 106238230528,
+    "pe_ttm": 28.7016,
+    "pe_fwd": 16.5858,
+    "peg": 1.29,
+    "roe": 0.1651,
+    "gross_margin": 0.6559,
+    "op_margin": 0.2702,
+    "net_margin": 0.1443,
+    "rev_growth": 0.094,
+    "eps_growth": 0.441,
+    "de": 0.6439,
+    "beta": 0.781,
+    "target_mean": 366.1538,
+    "n_analysts": 26,
+    "fcf_margin": 0.159
+   },
+   "tech": {
+    "ret_1m": 0.008922133681596556,
+    "ret_3m": -0.1574774656685467,
+    "rel_3m": -0.1825546858689553,
+    "dist200": -0.15243282509852885,
+    "vol_ann": 0.3754665805679992
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 62.8,
+   "facts": {
+    "from_high": -0.279,
+    "pos52": 0.07,
+    "bounce20": 0.03,
+    "ret_1m": 0.0089,
+    "dist200": -0.1524,
+    "pe_discount": 0.0464,
+    "eps_up": 0.7305,
+    "rev_growth": 0.094,
+    "upside": 0.4011
    }
   },
   {
@@ -94,57 +190,57 @@
    "zh_name": "Netflix",
    "market": "US",
    "sector": "internet_platforms",
-   "rank": 2,
-   "entry_price": 69.7,
-   "entry_date": "2026-10-07",
-   "composite": 56.4,
+   "rank": 3,
+   "entry_price": 71.57,
+   "entry_date": "2026-10-08",
+   "composite": 57.73,
    "scores": {
-    "sector": 59.4,
+    "sector": 61.6,
     "leader": 0.0,
     "quality": 79.9,
     "growth": 47.4,
-    "valuation": 85.8,
-    "momentum": 13.1,
-    "news": 67.1
+    "valuation": 86.7,
+    "momentum": 18.0,
+    "news": 69.2
    },
    "target": {
-    "base": 93.26,
-    "bull": 116.38,
-    "bear": 58.59,
-    "ev": 89.22,
-    "confidence": "高",
-    "upside": 0.338,
-    "ev_upside": 0.28,
+    "base": 96.52,
+    "bull": 123.53,
+    "bear": 56.01,
+    "ev": 91.79,
+    "confidence": "中",
+    "upside": 0.3486,
+    "ev_upside": 0.2826,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 84.71,
+      "value": 85.33,
       "weight": 0.4,
-      "upside": 0.2154
+      "upside": 0.1922
      },
      "peg": {
-      "value": 88.34,
+      "value": 97.51,
       "weight": 0.15,
-      "upside": 0.2675
+      "upside": 0.3625
      },
      "dcf": {
-      "value": 114.94,
+      "value": 123.13,
       "weight": 0.2,
-      "upside": 0.6491
+      "upside": 0.7204
      },
      "consensus": {
       "value": 92.55,
       "weight": 0.25,
-      "upside": 0.3278
+      "upside": 0.2931
      }
     }
    },
-   "stop": 65.24,
+   "stop": 67.28,
    "fundamentals": {
-    "market_cap": 290226569216,
-    "pe_ttm": 21.5789,
-    "pe_fwd": 18.3102,
-    "peg": 1.17,
+    "market_cap": 298013163520,
+    "pe_ttm": 22.5063,
+    "pe_fwd": 18.8015,
+    "peg": 1.19,
     "roe": 0.4954,
     "gross_margin": 0.4912,
     "op_margin": 0.3338,
@@ -158,25 +254,25 @@
     "fcf_margin": 0.5249
    },
    "tech": {
-    "ret_1m": -0.09209326565032172,
-    "ret_3m": -0.07645427559471263,
-    "rel_3m": -0.11067248830558274,
-    "dist200": -0.1670959003204343,
-    "vol_ann": 0.3558918506686363
+    "ret_1m": -0.05866103973306058,
+    "ret_3m": -0.02453322446775963,
+    "rel_3m": -0.04961044466816822,
+    "dist200": -0.1435819488529918,
+    "vol_ann": 0.3602885935161491
    },
    "book": "bargain",
    "also_main": false,
-   "bargain_score": 55.0,
+   "bargain_score": 57.2,
    "facts": {
-    "from_high": -0.4385,
-    "pos52": 0.0463,
-    "bounce20": 0.0394,
-    "ret_1m": -0.0921,
-    "dist200": -0.1671,
-    "pe_discount": 0.2385,
-    "eps_up": 0.1785,
+    "from_high": -0.4235,
+    "pos52": 0.079,
+    "bounce20": 0.0673,
+    "ret_1m": -0.0587,
+    "dist200": -0.1436,
+    "pe_discount": 0.2064,
+    "eps_up": 0.1971,
     "rev_growth": 0.134,
-    "upside": 0.338
+    "upside": 0.3486
    }
   }
  ]
