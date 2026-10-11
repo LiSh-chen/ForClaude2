@@ -74,3 +74,29 @@ def test_subscribers_roundtrip(tmp_path, monkeypatch):
     monkeypatch.setenv("NEWS_SUBSCRIBERS", "c@d.com, bad,\ne@f.org")
     assert subscribers.load(f) == ["c@d.com", "e@f.org", "a@b.com"]
     assert subscribers.remove("a@b.com", f) and not subscribers.remove("a@b.com", f)
+
+
+def test_gems_compose_penalizes_mainstream_and_trivia():
+    from curator.profiles import GEMS
+    d = dict(practical=8, surprise=8, life=8, evidence=8, mainstream=0, trivia=0)
+    assert score.compose(d, GEMS) == 80.0
+    assert score.compose({**d, "mainstream": 10}, GEMS) == pytest.approx(48.0)
+    assert score.compose({**d, "mainstream": 10, "trivia": 10}, GEMS) == pytest.approx(28.8)
+
+
+def test_gems_digest_renders_detail_and_falls_back():
+    from curator.profiles import GEMS
+    a = fetch.Article("T", "https://a", "", "S", None)
+    a.score, a.one_liner, a.why = 70, "一句話", "原因"
+    assert "一句話" in digest.render_html([a], "", GEMS)
+    a.detail = {"headline": "標題X", "what": "W", "why_unknown": "U", "how_to_use": "H",
+                "caveat": "C", "confidence": "low"}
+    page, text = digest.render_html([a], "", GEMS), digest.render_text([a], "", GEMS)
+    assert "標題X" in page and "怎麼用" in page and "請自行查證" in text
+    assert "冷知識" in digest.subject([a], profile=GEMS)
+
+
+def test_select_respects_threshold():
+    a = fetch.Article("T", "https://a", "", "S", None)
+    a.score = 40
+    assert score.select([a], min_score=50) == []

@@ -20,6 +20,18 @@ python -m pytest tests
 Repo Secrets:`ANTHROPIC_API_KEY`、`NEWS_SUBSCRIBERS`(逗號或換行分隔)、`SMTP_HOST`、`SMTP_PORT`、`SMTP_USER`、`SMTP_PASSWORD`、`MAIL_FROM`。
 `.github/workflows/digest.yml` 預設週一、週四寄出。名單放 Secret 而非檔案,因為 email 是個資。
 
+## 生活冷知識模式 (`--profile gems`)
+針對「主流新聞太瑣碎,想要貼近生活、實用/有趣、但少人知道」的需求。同一條流程,換一套選稿哲學:
+- 評分維度:practical(用得上)、surprise(反直覺)、life(貼近生活)、evidence(可查證);
+  扣分:mainstream(已廣為人知,最多 −40%)、trivia(雜訊/業配,最多 −40%)。未經證實的養生/理財偏方會被壓低。
+- 來源 `sources_gems.json`:偏小眾與一手來源(研究新聞稿、科普、冷門專欄)。
+- 入選後 Claude 再讀內文,寫成「發生什麼 / 為什麼少人知道 / 怎麼用 / 注意事項 + 信心程度」,只根據原文不外加事實。
+- `--interests "育兒, 理財"` 可依讀者關注微調;預設 ≥50 分才入選、每期最多 5 則,沒達標就不寄。
+- 已寄紀錄 `data/seen_gems.json`;排程 `.github/workflows/gems.yml`(週三、週日)。可用 repo variable `GEMS_INTERESTS` 設主題。
+```bash
+python -m curator run --profile gems --dry-run --out gems.html
+```
+
 ## 已知限制
 - 退訂目前是「回信說 unsubscribe」,由你手動改 Secret;訂閱量大時需要另做訂閱/退訂網頁。
 - `sources.json` 的 feed 網址未經實際連線驗證(開發環境網路受限),首次執行看日誌中的 ✓/✗ 並修正。
