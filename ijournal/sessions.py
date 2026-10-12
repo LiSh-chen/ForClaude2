@@ -31,3 +31,31 @@ def strip_partial(prices: dict, now: dt.datetime | None = None, grace_min: int =
             dropped += 1
         out[t] = df
     return out, dropped
+
+
+def _nth_weekday(y: int, m: int, wd: int, n: int) -> dt.date:
+    d = dt.date(y, m, 1)
+    d += dt.timedelta(days=(wd - d.weekday()) % 7 + 7 * (n - 1))
+    return d
+
+
+def nyse_holidays(year: int) -> set[dt.date]:
+    """紐約證交所休市日（依規則推算；週六休市提前到週五、週日休市順延到週一，元旦遇週六不補）。"""
+    from dateutil.easter import easter
+    obs = lambda d: d - dt.timedelta(days=1) if d.weekday() == 5 else d + dt.timedelta(days=1) if d.weekday() == 6 else d
+    out = {_nth_weekday(year, 1, 0, 3), _nth_weekday(year, 2, 0, 3), easter(year) - dt.timedelta(days=2),
+           dt.date(year, 5, 31) - dt.timedelta(days=dt.date(year, 5, 31).weekday()),
+           _nth_weekday(year, 9, 0, 1), _nth_weekday(year, 11, 3, 4), obs(dt.date(year, 7, 4)), obs(dt.date(year, 12, 25))}
+    if year >= 2022:
+        out.add(obs(dt.date(year, 6, 19)))
+    ny = dt.date(year, 1, 1)
+    if ny.weekday() != 5:
+        out.add(obs(ny))
+    return out
+
+
+def closed_days(market: str, tw_holidays: set[dt.date] | None, years: range | list[int]) -> set[dt.date]:
+    """該市場已知的休市日（週末另外處理）。台股由證交所公告的休市表提供，未提供就視為沒有。"""
+    if market == "US":
+        return set().union(*(nyse_holidays(y) for y in years))
+    return set(tw_holidays or ())

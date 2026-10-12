@@ -8,7 +8,7 @@
 from __future__ import annotations
 import datetime as dt
 
-from .sessions import EXCHANGES
+from .sessions import EXCHANGES, closed_days
 from .utils import market_of
 
 RANK = {"ok": 0, "warn": 1, "bad": 2}
@@ -21,27 +21,27 @@ class DataQualityError(RuntimeError):
         super().__init__("資料品質不合格，本次不發佈：" + "；".join(bad))
 
 
-def expected_session_date(market: str, now: dt.datetime, grace_min: int = 20) -> dt.date:
-    """依現在時間推算『該市場最近一個應已收盤的交易日』（只排除週末，不含國定假日）。"""
+def expected_session_date(market: str, now: dt.datetime, grace_min: int = 20, closed: set | frozenset = frozenset()) -> dt.date:
+    """依現在時間推算『該市場最近一個應已收盤的交易日』（排除週末與 closed 內的休市日）。"""
     tz, close = EXCHANGES[market]
     loc = now.astimezone(tz)
     d = loc.date()
     done = dt.datetime.combine(d, close, tzinfo=tz) + dt.timedelta(minutes=grace_min)
     if not (loc >= done and d.weekday() < 5):
         d -= dt.timedelta(days=1)
-    while d.weekday() >= 5:
+    while d.weekday() >= 5 or d in closed:
         d -= dt.timedelta(days=1)
     return d
 
 
-def lag_bdays(basis: dt.date, expected: dt.date) -> int:
-    """基準日落後應有收盤日幾個工作日（<=0 表示沒有落後）。"""
+def lag_bdays(basis: dt.date, expected: dt.date, closed: set | frozenset = frozenset()) -> int:
+    """基準日落後應有收盤日幾個交易日（<=0 表示沒有落後；休市日不算）。"""
     if basis >= expected:
         return 0
     n, d = 0, basis
     while d < expected:
         d += dt.timedelta(days=1)
-        n += d.weekday() < 5
+        n += d.weekday() < 5 and d not in closed
     return n
 
 
@@ -66,15 +66,25 @@ def assess(*, universe: dict, feats: dict, basis: dict, rows: dict, prices: dict
 
     # 2) 行情新鮮度
     if now is not None:
-        lags = {}
+        lags, shut = {}, {}
+        twh = {dt.date.fromisoformat(x) for x in ((data_report or {}).get("tw") or {}).get("holidays", [])}
+        yrs = [now.year - 1, now.year, now.year + 1]
         for m, name in (("TW", "台股"), ("US", "美股")):
             b = basis.get(m)
-            lags[m] = lag_bdays(dt.date.fromisoformat(b), expected_session_date(m, now)) if b else 99
+            cl = closed_days(m, twh, yrs)
+            if b:
+                bd = dt.date.fromisoformat(b)
+                exp = expected_session_date(m, now, closed=cl)
+                lags[m] = lag_bdays(bd, exp, cl)
+                loc = now.astimezone(EXCHANGES[m][0]).date()
+                shut[m] = sorted(d for d in cl if bd < d <= loc and d.weekday() < 5)
+            else:
+                lags[m], shut[m] = 99, []
         both_stale = min(lags.values()) >= q["lag_bad_bdays"]
         for m, name in (("TW", "台股"), ("US", "美股")):
             n = lags[m]
             lvl = "ok" if n < q["lag_warn_bdays"] else ("bad" if both_stale else "warn")
-            detail = f"行情截至 {basis.get(m) or '—'}，" + ("已是最新收盤" if n == 0 else f"落後應有收盤日 {n} 個工作日（若遇休市屬正常）")
+            detail = f"行情截至 {basis.get(m) or '—'}，" + ("已是最新收盤" + (f"（{'、'.join(d.strftime('%m/%d') for d in shut[m])} 休市）" if shut[m] else "") if n == 0 else f"落後應有收盤日 {n} 個交易日")
             checks.append(_chk(f"fresh_{m}", f"{name}行情新鮮度", lvl, detail))
     else:
         checks.append(_chk("fresh", "行情新鮮度", "ok", "回補／示範模式，略過"))

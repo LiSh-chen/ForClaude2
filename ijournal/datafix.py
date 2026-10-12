@@ -27,6 +27,7 @@ from .utils import isnum, market_of
 UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 TWSE_ALL_URL = "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY_ALL?response=csv"
 TPEX_ALL_URL = "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes"
+TWSE_HOLIDAY_URL = "https://www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?response=json&queryYear={y}"
 TWSE_FMTQIK_URL = "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?date={ym}01&response=json"
 COLS = ["Open", "High", "Low", "Close", "Volume"]
 
@@ -99,6 +100,19 @@ def parse_fmtqik(text: str) -> dict[dt.date, dict]:
     return out
 
 
+def parse_twse_holidays(text: str) -> set[dt.date]:
+    """證交所『市場開休市日期』：排除『開始交易日／最後交易日』（那是交易日），其餘（含僅辦理結算交割）都是無交易日。"""
+    out = set()
+    for row in json.loads(text).get("data", []):
+        if "開始交易" in row[1] or "最後交易" in row[1]:
+            continue
+        try:
+            out.add(dt.date.fromisoformat(row[0].strip()))
+        except ValueError:
+            continue
+    return out
+
+
 # ---------------------------------------------------------------- 網路（可注入以便測試）
 def fetch_text(url: str, tries: int = 3, timeout: int = 40) -> str:
     import requests
@@ -133,7 +147,7 @@ def _append(df: pd.DataFrame, day: dt.date, bar: dict) -> pd.DataFrame:
 
 
 def patch_tw(prices: dict, tickers: list[str], fetch=fetch_text) -> dict:
-    rep = {"date": None, "appended": 0, "overridden": 0, "agree": 0, "missing": 0, "twii_appended": 0, "errors": [], "wrong_suffix": []}
+    rep = {"date": None, "appended": 0, "overridden": 0, "agree": 0, "missing": 0, "twii_appended": 0, "errors": [], "wrong_suffix": [], "holidays": []}
     official: dict[str, dict] = {}
     for name, url, parse, suffix in (("證交所", TWSE_ALL_URL, parse_twse_csv, ".TW"), ("櫃買中心", TPEX_ALL_URL, parse_tpex_json, ".TWO")):
         try:
@@ -166,6 +180,16 @@ def patch_tw(prices: dict, tickers: list[str], fetch=fetch_text) -> dict:
                 rep["overridden"] += 1
             else:
                 rep["agree"] += 1
+    # 休市日（讓『行情新鮮度』知道國定假日不算落後）；失敗不影響其他檢查
+    try:
+        yrs = {dt.date.today().year, (rep["date"] and dt.date.fromisoformat(str(rep["date"])).year) or dt.date.today().year}
+        hol: set = set()
+        for y in sorted(yrs):
+            hol |= parse_twse_holidays(fetch(TWSE_HOLIDAY_URL.format(y=y)))
+        rep["holidays"] = sorted(str(d) for d in hol)
+    except Exception as e:  # noqa: BLE001
+        rep["holidays"] = []
+        rep["holiday_error"] = str(e)[:90]
     # 加權指數：Yahoo ^TWII 常慢一天 → 補上證交所官方收盤指數
     try:
         tw = prices.get("^TWII")
