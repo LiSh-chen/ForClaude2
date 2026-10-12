@@ -52,6 +52,7 @@ fun WorldMapView(regionIndex: Int, fraction: Double, finished: Boolean, modifier
     val traveller = remember(key) { WorldMap.pointAt(regionIndex, if (finished) 1.0 else fraction) }
     val puffs = remember(key) { fogPuffs(walked) }
     val fogArt = rememberArt("fog_puff")
+    val mapArt = rememberArt("world_map_base")
     val measurer = rememberTextMeasurer()
     val label = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Vintage.ink)
     val sublabel = TextStyle(fontFamily = FontFamily.Serif, fontSize = 10.sp, color = Vintage.inkSoft)
@@ -59,7 +60,7 @@ fun WorldMapView(regionIndex: Int, fraction: Double, finished: Boolean, modifier
     Canvas(
         modifier
             .fillMaxWidth()
-            .aspectRatio(0.78f)
+            .aspectRatio(if (mapArt != null) mapArt.width.toFloat() / mapArt.height else 0.78f)
             .clip(TornShape(5, 3.dp))
             .background(Vintage.parchmentLight),
     ) {
@@ -67,18 +68,25 @@ fun WorldMapView(regionIndex: Int, fraction: Double, finished: Boolean, modifier
         val h = size.height
         fun Pt.px() = Offset((x * w).toFloat(), (y * h).toFloat())
 
-        // Land, with the sea hatched in around it.
+        if (mapArt != null) {
+            // The painted world map; fog, route and the traveller are drawn over it.
+            drawImage(mapArt, dstSize = androidx.compose.ui.unit.IntSize(w.toInt(), h.toInt()))
+        }
+
+        // Land, with the sea hatched in around it (the drawn fallback when there is no painted map).
         val land = smoothClosed(landOutline.map { it.px() })
-        drawPath(land, Vintage.mossLight.copy(alpha = 0.22f))
-        clipPath(land, clipOp = ClipOp.Difference) {
+        if (mapArt == null) drawPath(land, Vintage.mossLight.copy(alpha = 0.22f))
+        if (mapArt == null) clipPath(land, clipOp = ClipOp.Difference) {
             var y = -h * 0.05f
             while (y < h) {
                 drawLine(Vintage.sea.copy(alpha = 0.55f), Offset(0f, y), Offset(w, y + h * 0.05f), strokeWidth = 1.dp.toPx())
                 y += 9.dp.toPx()
             }
         }
-        drawPath(land, Vintage.ink.copy(alpha = 0.25f), style = Stroke(4.dp.toPx(), join = androidx.compose.ui.graphics.StrokeJoin.Round))
-        drawPath(land, Vintage.ink.copy(alpha = 0.85f), style = Stroke(1.4.dp.toPx(), join = androidx.compose.ui.graphics.StrokeJoin.Round))
+        if (mapArt == null) {
+            drawPath(land, Vintage.ink.copy(alpha = 0.25f), style = Stroke(4.dp.toPx(), join = androidx.compose.ui.graphics.StrokeJoin.Round))
+            drawPath(land, Vintage.ink.copy(alpha = 0.85f), style = Stroke(1.4.dp.toPx(), join = androidx.compose.ui.graphics.StrokeJoin.Round))
+        }
 
         // The whole route as a dotted line; the part already walked is drawn solid.
         val route = ArrayList<Offset>()
@@ -91,13 +99,22 @@ fun WorldMapView(regionIndex: Int, fraction: Double, finished: Boolean, modifier
         // Landmarks and names.
         WorldMap.nodes.forEach { node ->
             val at = node.at.px()
-            drawLandmark(node.id, at, h)
+            if (mapArt == null) drawLandmark(node.id, at, h)
             val name = measurer.measure(node.name, label)
-            val labelTop = at.y + h * 0.055f
+            val labelTop = at.y + if (mapArt == null) h * 0.055f else -name.size.height / 2f
+            if (mapArt != null) {
+                // A small paper tag so the name reads over the painting.
+                drawRoundRect(
+                    Vintage.parchmentLight.copy(alpha = 0.82f),
+                    Offset(at.x - name.size.width / 2f - 6.dp.toPx(), labelTop - 2.dp.toPx()),
+                    Size(name.size.width + 12.dp.toPx(), name.size.height + 4.dp.toPx()),
+                    androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()),
+                )
+            }
             drawText(name, topLeft = Offset(at.x - name.size.width / 2f, labelTop))
             if (!node.available) {
                 val note = measurer.measure("尚未開放", sublabel)
-                drawText(note, topLeft = Offset(at.x - note.size.width / 2f, labelTop + name.size.height))
+                drawText(note, topLeft = Offset(at.x - note.size.width / 2f, labelTop + name.size.height + 3.dp.toPx()))
             }
         }
 
