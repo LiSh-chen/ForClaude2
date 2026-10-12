@@ -34,6 +34,7 @@ import java.io.File
 private val LABELS = listOf("慢走", "一般走", "快走", "小跑", "停住", "上下樓梯", "紅綠燈等待")
 
 /** Test builds: record when every step happens (also with the screen off), then share the file. */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun RecorderCard() {
     val context = LocalContext.current
