@@ -122,6 +122,7 @@ fun DiagnosticsScreen(vm: AppViewModel, padding: PaddingValues, onOpenAppSetting
         ) { Text("開啟電池最佳化設定") }
 
         BatchTestCard(vm)
+        RecorderCard()
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {

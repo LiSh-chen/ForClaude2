@@ -7,6 +7,7 @@ import com.starmist.walker.data.AppDatabase
 import com.starmist.walker.data.JourneyStore
 import com.starmist.walker.data.SettingsStore
 import com.starmist.walker.data.StepRepository
+import com.starmist.walker.sensor.RhythmRecorder
 import com.starmist.walker.sensor.StepCounterReader
 import com.starmist.walker.work.SnapshotScheduler
 
@@ -17,6 +18,7 @@ class AppContainer(context: Context) {
     val settings = SettingsStore(appContext)
     val journey = JourneyStore(appContext)
     val reader = StepCounterReader(appContext)
+    val rhythmRecorder = RhythmRecorder(appContext)
     val repository = StepRepository(appContext, database, settings, reader)
 }
 
