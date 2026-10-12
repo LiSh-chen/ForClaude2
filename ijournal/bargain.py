@@ -174,7 +174,7 @@ def write_report(date: str, picked: dict, rows: dict, p: dict, provider: str) ->
     b = p["bargain"]
     A = (L := []).append
     A(f"# 便宜好貨專區 {date}\n")
-    A(f"> 資料基準日：{date}｜系統參數版本：v{p['version']}｜資料來源：{provider}\n")
+    A(f"> 報告日 {date}（行情皆為已收盤價，非盤中；台美日期以日誌頁首為準）｜系統參數版本：v{p['version']}｜資料來源：{provider}\n")
     if provider == "demo":
         A("> ⚠️ **DEMO 合成資料，非真實行情。**\n")
     A("> **這個專區在找什麼**：股價已被打到低基期，但公司沒有壞掉、而且獲利有轉強條件的標的。**便宜不等於好貨**——股價低常是因為基本面惡化（價值陷阱），"

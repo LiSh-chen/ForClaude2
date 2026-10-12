@@ -163,7 +163,11 @@ def write_journal(date: str, ctx: dict) -> str:
     L: list[str] = []
     A = L.append
     A(f"# 投資研究日誌 {date}\n")
-    A(f"> 資料基準日：{date}｜系統參數版本：v{p['version']}｜資料來源：{ctx['provider']}｜{'已加入 AI 敘事評論' if ctx.get('llm') else '純量化模式（未啟用 LLM 評論）'}\n")
+    bs = ctx.get("basis") or {}
+    prov = any("暫定" in n for n in ctx.get("data_notes") or [])
+    A(f"> **資料基準（皆為已收盤的價格，非盤中）**：台股 {bs.get('TW', '—')} 收盤、美股 {bs.get('US', '—')} 收盤{'（美股為暫定收盤價，下次更新換成正式值）' if prov else ''}。"
+      f"報告日 {date} 取兩個市場中較新的收盤日；若兩者不同，代表較舊的那個市場在報告日休市或尚未收盤。\n")
+    A(f"> 系統參數版本：v{p['version']}｜資料來源：{ctx['provider']}｜{'已加入 AI 敘事評論' if ctx.get('llm') else '純量化模式（未啟用 LLM 評論）'}\n")
     if ctx["provider"] == "demo":
         A("> ⚠️ **DEMO 合成資料，非真實行情，僅供驗證系統流程。**\n")
     A("> 本日誌由系統自動產生，僅供研究與教育用途，**不構成投資建議**。目標價為模型估算，必有誤差；系統會定期回頭檢驗並公開檢討。\n")
