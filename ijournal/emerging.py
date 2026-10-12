@@ -145,7 +145,7 @@ def write_report(date: str, themes: list[dict], picked: dict, rows: dict, p: dic
     L, A = [], None
     A = L.append
     A(f"# 前瞻專區 {date}\n")
-    A(f"> 資料基準日：{date}｜系統參數版本：v{p['version']}｜資料來源：{provider}\n")
+    A(f"> 報告日 {date}（行情皆為已收盤價，非盤中；台美日期以日誌頁首為準）｜系統參數版本：v{p['version']}｜資料來源：{provider}\n")
     if provider == "demo":
         A("> ⚠️ **DEMO 合成資料，非真實行情。**\n")
     A("> **這個專區在找什麼**：驅動力已有可查證證據、但**新聞尚未充分報導**、且**股價尚未被擠進去**的結構性趨勢。"

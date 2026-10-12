@@ -220,6 +220,10 @@ function keyStrip(sn) {
 }
 function overview() {
   const sn = S.snap, root = h('div');
+  if (sn.basis) { const prov = (sn.data_notes || []).some(x => x.includes('暫定')), same = sn.basis.TW === sn.basis.US;
+    root.append(h('div', {class: 'basisbar', role: 'note'}, h('b', null, '行情基準：已收盤價，非盤中'),
+      h('span', {class: 'chip', tip: '台股最近一個已收盤的交易日'}, `台股 ${sn.basis.TW.slice(5)} 收盤`), h('span', {class: 'chip', tip: prov ? '美股收盤價為暫定值，下次更新換成正式資料' : '美股最近一個已收盤的交易日'}, `美股 ${sn.basis.US.slice(5)} 收盤${prov ? '（暫定）' : ''}`),
+      h('span', {class: 'muted sm'}, same ? `報告日 ${sn.date}` : `報告日 ${sn.date}＝兩市場較新的收盤日；台股／美股日期不同代表其中一邊休市或尚未收盤`))); }
   root.append(h('div', {class: 'sec', style: 'margin-top:4px'}, h('h2', null, '今日重點'), h('span', {class: 'sub'}, `資料日 ${sn.date}；點任一格看詳細`)), keyStrip(sn));
   root.append(h('div', {class: 'sec'}, h('h2', null, '市場')), h('div', {class: 'tiles'}, sn.indices.map(indexTile)));
   if (sn.summary) root.append(h('div', {class: 'note', style: 'margin-top:10px'}, 'AI 摘要：' + sn.summary));
