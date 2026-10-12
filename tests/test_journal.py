@@ -452,3 +452,32 @@ def test_bargain_zone_pipeline_and_no_padding():
             assert p["risks_watch"][0]["t"].startswith("價值陷阱") and p["why"][0]["tag"] == "低基期" and p["highlights"]
     perf = run_tracker(DemoProvider(end=dt.date(2026, 9, 30)))
     assert "bargain" in perf and all(p["book"] in ("main", "emerging", "bargain") for p in perf["positions"])
+
+
+def test_holiday_aware_freshness_taiwan_national_day_and_nyse_rules():
+    from zoneinfo import ZoneInfo
+    from ijournal.datafix import parse_twse_holidays
+    from ijournal.quality import assess, expected_session_date as ex, lag_bdays
+    from ijournal.sessions import nyse_holidays
+    tw = ZoneInfo("Asia/Taipei")
+    txt = ('{"data":[["2026-02-11","農曆春節前最後交易日",""],["2026-02-12","市場無交易，僅辦理結算交割作業",""],'
+           '["2026-02-23","農曆春節後開始交易日",""],["2026-10-09","國慶日補假",""]]}')
+    hol = parse_twse_holidays(txt)
+    assert hol == {dt.date(2026, 2, 12), dt.date(2026, 10, 9)}          # 『最後/開始交易日』是交易日，不是休市
+    now = dt.datetime(2026, 10, 12, 8, 46, tzinfo=tw)                    # 週一盤前
+    assert ex("TW", now) == dt.date(2026, 10, 9)                         # 沒有休市表：週五被當成應有收盤日
+    assert ex("TW", now, closed=hol) == dt.date(2026, 10, 8)             # 有休市表：應有收盤日是 10/8
+    assert lag_bdays(dt.date(2026, 10, 8), dt.date(2026, 10, 9), hol) == 0
+    assert lag_bdays(dt.date(2026, 10, 7), dt.date(2026, 10, 9), hol) == 1
+    # 美股規則：2026 感恩節 11/26、聖誕（週五）12/25、耶穌受難日 4/3、7/4 週六 → 7/3 休市、元旦週四、陣亡將士紀念日 5/25
+    h = nyse_holidays(2026)
+    assert {dt.date(2026, 11, 26), dt.date(2026, 12, 25), dt.date(2026, 4, 3), dt.date(2026, 7, 3), dt.date(2026, 1, 1), dt.date(2026, 5, 25), dt.date(2026, 9, 7), dt.date(2026, 6, 19)} <= h
+    assert dt.date(2021, 12, 31) not in nyse_holidays(2021) and dt.date(2022, 12, 26) in nyse_holidays(2022)
+    # 整合：台股基準日 10/8 + 休市表含 10/9 → 不再警示；沒有休市表 → 仍警示（保守）
+    rep = {"date": "2026-10-08", "agree": 10, "overridden": 0, "appended": 0, "missing": 0, "errors": [], "wrong_suffix": [], "holidays": ["2026-10-09"]}
+    base = dict(basis={"TW": "2026-10-08", "US": "2026-10-09"}, now=now)
+    r = assess(**_qctx(data_report={"tw": rep, "us": None, "errors": []}, **base))
+    chk = {c["code"]: c for c in r["checks"]}
+    assert chk["fresh_TW"]["level"] == "ok" and "10/09 休市" in chk["fresh_TW"]["msg"] and chk["fresh_US"]["level"] == "ok"
+    r = assess(**_qctx(data_report={"tw": dict(rep, holidays=[]), "us": None, "errors": []}, **base))
+    assert {c["code"]: c for c in r["checks"]}["fresh_TW"]["level"] == "warn"
