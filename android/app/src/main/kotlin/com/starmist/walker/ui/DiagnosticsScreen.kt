@@ -121,6 +121,8 @@ fun DiagnosticsScreen(vm: AppViewModel, padding: PaddingValues, onOpenAppSetting
             modifier = Modifier.fillMaxWidth(),
         ) { Text("開啟電池最佳化設定") }
 
+        BatchTestCard(vm)
+
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text("常見的背景限制", fontWeight = FontWeight.SemiBold)
@@ -133,4 +135,54 @@ fun DiagnosticsScreen(vm: AppViewModel, padding: PaddingValues, onOpenAppSetting
             }
         }
     }
+}
+
+/** Experimental: can per-step timing be recovered in the background? Needed for the walking music. */
+@Composable
+private fun BatchTestCard(vm: AppViewModel) {
+    val state = vm.batchTest.collectAsStateWithLifecycle().value
+    val info = vm.detectorInfo
+    Card(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("步伐偵測批次測試（實驗）", fontWeight = FontWeight.SemiBold)
+            Text(
+                if (!info.present) "這台裝置沒有步伐偵測感測器。"
+                else "步伐偵測器緩衝容量：${info.fifoMax} 筆（保留 ${info.fifoReserved}），" +
+                    if (info.wakeUp) "會喚醒 CPU" else "不會喚醒 CPU",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                "按下後請持續走路 2 分半鐘，期間可以關螢幕。系統會把每一步先存在感測晶片裡，每分鐘才送出一批；" +
+                    "如果事件成批送達、且有原本的時間，之後就能在背景還原走路的節奏。",
+                style = MaterialTheme.typography.bodySmall,
+            )
+            when (state) {
+                AppViewModel.BatchTestState.Running -> Text("測試中……請持續走路。", fontWeight = FontWeight.SemiBold)
+                is AppViewModel.BatchTestState.Done -> {
+                    val r = state.result
+                    Text(
+                        if (r == null) "無法測試。" else
+                            "收到 ${r.detectorEvents} 筆步伐事件，同時間計步器增加 ${r.counterSteps} 步。\n" +
+                                "事件分 ${r.bursts} 批送達，最大一批 ${r.largestBurst} 筆，最晚延遲 ${r.maxDelayMs / 1000} 秒。\n" +
+                                verdict(r),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+                AppViewModel.BatchTestState.Idle -> Unit
+            }
+            OutlinedButton(
+                onClick = { vm.startBatchTest() },
+                enabled = info.present && state !is AppViewModel.BatchTestState.Running,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text("開始測試（2.5 分鐘）") }
+        }
+    }
+}
+
+private fun verdict(r: com.starmist.walker.sensor.BatchTestResult): String = when {
+    !r.accepted -> "結論：系統沒有接受批次設定，只能用粗略的做法。"
+    r.detectorEvents < 20 -> "結論：走的步數太少，無法判斷，請再試一次並持續走路。"
+    r.maxDelayMs < 10_000 -> "結論：事件幾乎即時送達，沒有批次；可能不支援，只能用粗略的做法。"
+    r.counterSteps > 0 && r.detectorEvents < r.counterSteps * 0.85 -> "結論：支援批次，但有漏事件，可能是緩衝太小；可縮短批次時間。"
+    else -> "結論：支援批次，事件帶著原本的時間，可以在背景還原走路的節奏。"
 }

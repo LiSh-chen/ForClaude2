@@ -249,6 +249,28 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    // ---- step-detector batching trial -----------------------------------------------------
+
+    sealed interface BatchTestState {
+        data object Idle : BatchTestState
+        data object Running : BatchTestState
+        data class Done(val result: com.starmist.walker.sensor.BatchTestResult?) : BatchTestState
+    }
+
+    private val _batchTest = MutableStateFlow<BatchTestState>(BatchTestState.Idle)
+    val batchTest: StateFlow<BatchTestState> = _batchTest
+
+    val detectorInfo get() = repository.reader.detectorInfo
+
+    /** Two and a half minutes with events held back for up to a minute; keeps running if the screen is turned off. */
+    fun startBatchTest() {
+        if (_batchTest.value is BatchTestState.Running) return
+        _batchTest.value = BatchTestState.Running
+        viewModelScope.launch {
+            _batchTest.value = BatchTestState.Done(repository.reader.batchTest(durationMs = 150_000, latencyMs = 60_000))
+        }
+    }
+
     // ---- tuning ----------------------------------------------------------------------------
 
     fun updateSettings(transform: (UserSettings) -> UserSettings) {

@@ -26,6 +26,22 @@ data class CounterReading(
     val atMillis: Long,
 )
 
+/** What the step detector (one event per step) says about its own buffering; for the diagnostics screen. */
+data class DetectorInfo(val present: Boolean, val fifoMax: Int, val fifoReserved: Int, val wakeUp: Boolean)
+
+/** Outcome of a batching trial: did per-step events arrive late but with their original times? */
+data class BatchTestResult(
+    val detectorEvents: Int,
+    /** Steps the cumulative counter gained over the same period, for comparison. */
+    val counterSteps: Long,
+    /** How many separate bursts the events arrived in. */
+    val bursts: Int,
+    val largestBurst: Int,
+    /** Longest gap between a step happening and its event arriving. */
+    val maxDelayMs: Long,
+    val accepted: Boolean,
+)
+
 /**
  * Reads the hardware step counter.
  *
@@ -41,6 +57,73 @@ class StepCounterReader(context: Context) {
     private val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
 
     val hasHardwareCounter: Boolean get() = sensor != null
+
+    val detectorInfo: DetectorInfo
+        get() {
+            val detector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) ?: return DetectorInfo(false, 0, 0, false)
+            return DetectorInfo(true, detector.fifoMaxEventCount, detector.fifoReservedEventCount, detector.isWakeUpSensor)
+        }
+
+    /**
+     * Listens to the step detector for [durationMs] with its events batched in the sensor hub for up to
+     * [latencyMs]. If events arrive in bursts, long after the steps happened, per-step timing can be
+     * recovered in the background. Compares the event count with the counter's gain to spot dropped events.
+     */
+    suspend fun batchTest(durationMs: Long, latencyMs: Int): BatchTestResult? {
+        val detector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) ?: return null
+        val events = AtomicInteger(0)
+        val bursts = AtomicInteger(0)
+        val largest = AtomicInteger(0)
+        val current = AtomicInteger(0)
+        val lastArrivalMs = AtomicLong(0)
+        val maxDelayMs = AtomicLong(0)
+        val firstCounter = AtomicLong(-1)
+        val lastCounter = AtomicLong(-1)
+
+        val detectorListener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent) {
+                val nowNs = android.os.SystemClock.elapsedRealtimeNanos()
+                maxDelayMs.updateAndGet { maxOf(it, (nowNs - event.timestamp) / 1_000_000) }
+                val nowMs = nowNs / 1_000_000
+                if (nowMs - lastArrivalMs.get() > 400) {
+                    bursts.incrementAndGet()
+                    current.set(0)
+                }
+                lastArrivalMs.set(nowMs)
+                largest.updateAndGet { maxOf(it, current.incrementAndGet()) }
+                events.incrementAndGet()
+            }
+
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
+        }
+        val counterListener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent) {
+                val value = event.values[0].toLong()
+                firstCounter.compareAndSet(-1, value)
+                lastCounter.updateAndGet { maxOf(it, value) }
+            }
+
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
+        }
+        val accepted = try {
+            val ok = sensorManager.registerListener(detectorListener, detector, SensorManager.SENSOR_DELAY_NORMAL, latencyMs * 1000)
+            sensor?.let { sensorManager.registerListener(counterListener, it, SensorManager.SENSOR_DELAY_NORMAL) }
+            ok
+        } catch (e: SecurityException) {
+            false
+        }
+        try {
+            delay(durationMs)
+            sensorManager.flush(detectorListener)
+            sensorManager.flush(counterListener)
+            delay(1_500)
+        } finally {
+            sensorManager.unregisterListener(detectorListener)
+            sensorManager.unregisterListener(counterListener)
+        }
+        val gain = if (firstCounter.get() < 0) 0L else lastCounter.get() - firstCounter.get()
+        return BatchTestResult(events.get(), gain, bursts.get(), largest.get(), maxDelayMs.get(), accepted)
+    }
 
     /** Cumulative steps since boot, or null if unavailable (no sensor, no permission, no events). */
     suspend fun readOnce(timeoutMs: Long = DEFAULT_TIMEOUT_MS): Long? = read(timeoutMs)?.value
