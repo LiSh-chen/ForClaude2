@@ -21,12 +21,17 @@ data class GeoPoint(val lat: Double, val lng: Double) {
 /** A collectable place on a route. [blurb] is exactly ten characters about what makes it special. */
 data class Landmark(val id: String, val name: String, val blurb: String)
 
-/** One vertex of the route; [landmark] is set where a card is collected. */
-data class Stop(val name: String, val at: GeoPoint, val landmark: Landmark? = null)
+/**
+ * One vertex of the route; [landmark] is set where a card is collected. When [transit] is set (for
+ * example "搭火車"), the way from the previous stop to this one cannot be walked: it is crossed by
+ * that transport at no cost in steps.
+ */
+data class Stop(val name: String, val at: GeoPoint, val landmark: Landmark? = null, val transit: String? = null)
 
 /**
  * A walkable real-world route. Distances are along the straight lines between stops, stretched by
- * [roadFactor] because real roads wind; they are approximate, which the app says ("about").
+ * [roadFactor] because real roads wind; they are approximate, which the app says ("about"). Legs
+ * marked as transit add no distance.
  */
 data class RouteDef(
     val id: String,
@@ -45,7 +50,7 @@ data class RouteDef(
         var total = 0.0
         add(0.0)
         for (i in 1 until stops.size) {
-            total += stops[i - 1].at.distanceKm(stops[i].at) * roadFactor
+            if (stops[i].transit == null) total += stops[i - 1].at.distanceKm(stops[i].at) * roadFactor
             add(total)
         }
     }
@@ -69,6 +74,8 @@ data class RouteDef(
         for (i in 1 until stops.size) {
             if (d <= cumulativeKm[i]) {
                 val span = cumulativeKm[i] - cumulativeKm[i - 1]
+                // A transit leg has no length: the walker is at its end as soon as the start is reached.
+                if (span == 0.0 && stops[i].transit != null && d >= cumulativeKm[i]) return stops[i].at
                 val u = if (span == 0.0) 0.0 else (d - cumulativeKm[i - 1]) / span
                 val a = stops[i - 1].at
                 val b = stops[i].at
@@ -77,6 +84,9 @@ data class RouteDef(
         }
         return stops.last().at
     }
+
+    /** The transport used to reach stop [index], if that leg is not walked. */
+    fun transitInto(index: Int): String? = stops.getOrNull(index)?.transit
 
     /** The stop most recently passed, for "now near ..." wording. */
     fun lastPassed(walkedKm: Double): Stop =
