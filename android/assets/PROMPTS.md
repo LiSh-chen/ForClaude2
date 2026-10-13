@@ -236,7 +236,7 @@ Create an image with aspect ratio 3:4. Vintage botanical field-guide illustratio
 ### `world_map_base` — 世界地圖底圖（無地名、無地標）
 
 - 用在：旅程頁世界地圖
-- 最終尺寸：1024×1312　Gemini 比例：3:4　背景：一般圖，不用去背
+- 最終尺寸：1493×2000　Gemini 比例：3:4　背景：一般圖，不用去背
 - 注意：陸地輪廓請大致落在整張圖的 4%–97% 範圍內，以便地標座標對得上；地標與路線由 App 疊上。
 
 ```
@@ -385,4 +385,456 @@ Create an image with aspect ratio 1:1. Vintage botanical field-guide illustratio
 
 ```
 Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An antique brass pocket compass seen from above with a small green sprout growing from the top ring, simple bold shapes, centered and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
+```
+
+## card
+
+### `card_taipei101` — 景點卡：台北101
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Taipei 101, a tall skyscraper whose tiers look like stacked bamboo segments, rising above a basin city of low rooftops with green mountains behind, soft morning mist. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_keelung` — 景點卡：基隆廟口
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A bustling night-market lane beside a small temple, red lanterns, steaming food stalls and paper lanterns in a harbour town. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_jiufen` — 景點卡：九份
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A hillside mountain town of stone stairways and glowing red lanterns above a calm sea at dusk, old tea houses with tiled roofs. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_fulong` — 景點卡：福隆
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A long sandy beach where a small river meets the Pacific, a railway station and track in the background, a paper lunchbox on a bench. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_sandiaojiao` — 景點卡：三貂角
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A white lighthouse on a green headland at the eastern tip of an island, waves breaking on dark rocks, wide Pacific horizon. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_toucheng` — 景點卡：頭城老街
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old street of narrow red-brick shophouses with arcaded fronts and hanging signs, a gate at the end of the street, quiet morning. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_ncta` — 景點卡：傳統藝術中心
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A traditional arts village beside a river: old-style buildings with curved roofs, a small stage, craft stalls with lanterns, willows by the water. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_suao` — 景點卡：蘇澳冷泉
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A cold spring pool with small bubbles rising in clear water in a small port town, fishing boats and green hills in the background. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_qixingtan` — 景點卡：七星潭
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A crescent-shaped bay with a pebble beach, waves rolling in, distant mountains and a wide Pacific sky. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_pinegarden` — 景點卡：松園別館
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A two-storey Japanese colonial-style wooden building among tall pine trees, a quiet garden path, the sea visible beyond. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_lintienshan` — 景點卡：林田山
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A former forestry village on a mountainside: wooden houses with tin roofs, an old log-hauling railway track, tall cedar trees. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_ruisui` — 景點卡：瑞穗北回歸線標
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A white monument marking the Tropic of Cancer on a terrace with a round plaza, rice fields and mountains behind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_yuli` — 景點卡：玉里
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A bowl of steaming noodles on a wooden table in a small-town eatery, a valley railway station visible through the window. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_chishang` — 景點卡：池上
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A traditional railway lunchbox of rice with side dishes beside a small train-station platform, golden rice paddies behind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_guanshan` — 景點卡：關山
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A flat riverside bicycle path looping around a small valley town, cyclists, rice fields and mountains on both sides. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_luye` — 景點卡：鹿野高台
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Hot-air balloons rising over a green highland plateau in summer, people on the grass, a wide valley below. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_prehistory` — 景點卡：史前博物館
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A museum hall with ancient stone tools, pottery and carved stone slabs displayed in soft light, a standing stone column in front. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_taimali` — 景點卡：太麻里
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Sunrise over the Pacific seen from a coastal railway platform, golden light on the water, a slope of orange daylilies. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_shouka` — 景點卡：壽卡
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A winding mountain road reaching a high pass marked by a small signpost, clouds in the valley, forest on both sides. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_hengchun` — 景點卡：恆春古城
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old stone city gate with a tower and curving stone walls, a quiet street, tropical trees. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_eluanbi` — 景點卡：鵝鑾鼻
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A white lighthouse standing on a green cape at the southern tip of an island, ocean on both sides, tropical vegetation. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_maobitou` — 景點卡：貓鼻頭
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A limestone reef coast with wave-shaped rocks and one rock that looks like a crouching cat, turquoise sea, blue sky. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_nmmba` — 景點卡：海生館
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A marine aquarium building by the sea, a large glass tank with a whale shark and coral fish, blue light. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_fangliao` — 景點卡：枋寮
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A small railway station where a coastal line meets a mountain line, a train on the track, palm trees. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_donggang` — 景點卡：東港
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A fishing harbour with fishing boats, a bluefin tuna on the dock, a colourful temple procession carrying a ceremonial boat. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_pier2` — 景點卡：高雄駁二
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Old harbour warehouses turned into art spaces, colourful sculptures, a rail track, cranes and the sea behind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_lotuspond` — 景點卡：蓮池潭
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A lotus pond with two ornate pagodas shaped like a dragon and a tiger, red and green lacquer, a pavilion reflected in the water. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_qiaotou` — 景點卡：橋頭糖廠
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old sugar refinery with brick chimneys and a small narrow-gauge sugar train, sugar-cane fields. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_anping` — 景點卡：安平古堡
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A stone-and-brick fort with a red-brick watchtower on a hill, old banyan trees, harbour behind, 17th-century Dutch style. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_jingzijiao` — 景點卡：井仔腳鹽田
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Tile-paved salt fields: a grid of terracotta-tile pans reflecting the sky, a small salt worker's hut, a wide flat coastal plain. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_budai` — 景點卡：布袋
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A fishing port on a lagoon with fishing boats, old salt-pan remains and gulls, a quiet evening. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_peitian` — 景點卡：朴子配天宮
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A grand Mazu temple with ornate roof carvings, drifting incense smoke, lanterns and a courtyard in a small town. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_shuishang` — 景點卡：水上北回歸線標
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A monument marking the Tropic of Cancer: a tall stone pillar with an arch, a line on the ground, plain fields around. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_hinoki` — 景點卡：檜意森活村
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Rows of old Japanese-style cypress-wood dormitories with tiled roofs, trees and a garden path. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_xiluo` — 景點卡：西螺大橋
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A long steel truss bridge over a broad river with a few pedestrians and bicycles, farmland, evening light. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_lukang` — 景點卡：鹿港老街
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A very narrow stone-paved alley between old brick houses, a half-moon well set into a wall, hanging lanterns. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_roundhouse` — 景點卡：彰化扇形車庫
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A fan-shaped railway roundhouse with locomotives pointing out from a central turntable, steam, brick building. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_gaomei` — 景點卡：高美濕地
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Wind turbines in silhouette on tidal wetlands at sunset, reflections in shallow water, a wooden boardwalk. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_dajia` — 景點卡：大甲鎮瀾宮
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A grand Mazu temple at dawn with a long procession carrying a palanquin, banners and firecracker smoke. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_tongxiao` — 景點卡：通霄精鹽廠
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A salt-works visitor factory with white pyramids of salt and salt sculptures, the sea behind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_hsinchu` — 景點卡：新竹城隍廟
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old city-god temple with ornate red roofs and a stone city gate beside it, racks of rice noodles drying in the wind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_taoyuan` — 景點卡：桃園神社
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A Japanese-style shrine with stone lanterns and a torii gate, large trees, stone steps. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_shihsanhang` — 景點卡：十三行博物館
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A modern museum building at a river mouth with ancient pottery and iron-smelting finds displayed, the sea behind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_dihua` — 景點卡：迪化街
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old trading street with narrow baroque-style shop facades, hanging dried goods, red lanterns, cobbles. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+```
+
+### `card_finish` — 景點卡：回到台北
+
+- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
+- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A traveller coming home: a city skyline with a tall tower at sunrise, a railway station, a welcome banner, a backpack set down. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
 ```
