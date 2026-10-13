@@ -21,12 +21,21 @@ data class GeoPoint(val lat: Double, val lng: Double) {
 /** A collectable place on a route. [blurb] is exactly ten characters about what makes it special. */
 data class Landmark(val id: String, val name: String, val blurb: String)
 
+/** A place to stop and restock in a long stretch between cards: a railway station with its opening year. */
+data class Supply(val id: String, val name: String, val opened: String)
+
 /**
  * One vertex of the route; [landmark] is set where a card is collected. When [transit] is set (for
  * example "搭火車"), the way from the previous stop to this one cannot be walked: it is crossed by
  * that transport at no cost in steps.
  */
-data class Stop(val name: String, val at: GeoPoint, val landmark: Landmark? = null, val transit: String? = null)
+data class Stop(
+    val name: String,
+    val at: GeoPoint,
+    val landmark: Landmark? = null,
+    val transit: String? = null,
+    val supply: Supply? = null,
+)
 
 /**
  * A walkable real-world route. Distances are along the straight lines between stops, stretched by
@@ -60,6 +69,13 @@ data class RouteDef(
     /** Cards in route order, each with the distance at which it is collected. */
     val cards: List<Pair<Landmark, Double>> =
         stops.mapIndexedNotNull { i, stop -> stop.landmark?.let { it to cumulativeKm[i] } }
+
+    /** Supply stops in route order, each with the distance at which it is reached. */
+    val supplies: List<Pair<Supply, Double>> =
+        stops.mapIndexedNotNull { i, stop -> stop.supply?.let { it to cumulativeKm[i] } }
+
+    /** Supply stops reached after walking [walkedKm]. */
+    fun suppliesReached(walkedKm: Double): List<Supply> = supplies.filter { it.second <= walkedKm + 1e-9 }.map { it.first }
 
     /** Cards collected after walking [walkedKm]. */
     fun collected(walkedKm: Double): List<Landmark> = cards.filter { it.second <= walkedKm + 1e-9 }.map { it.first }

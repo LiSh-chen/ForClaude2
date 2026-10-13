@@ -12,6 +12,10 @@ object TaiwanLoop {
     private fun stop(name: String, lat: Double, lng: Double, transit: String? = null) =
         Stop(name, GeoPoint(lat, lng), transit = transit)
 
+    /** A railway station used as a supply stop; the opening year is from the station's article. */
+    private fun supply(id: String, name: String, lat: Double, lng: Double, opened: String) =
+        Stop(name + "站", GeoPoint(lat, lng), supply = Supply(id, name + "站", opened))
+
     private fun card(id: String, name: String, lat: Double, lng: Double, blurb: String) =
         Stop(name, GeoPoint(lat, lng), Landmark(id, name, blurb))
 
@@ -32,7 +36,9 @@ object TaiwanLoop {
             stop("花蓮", 23.9769, 121.604, transit = "搭火車"),
             card("qixingtan", "七星潭", 24.03289, 121.62794, "新月形海灣鋪滿礫石灘"),
             card("pinegarden", "松園別館", 23.98261, 121.61542, "日治時期軍方的辦公處"),
+            supply("fenglin", "鳳林", 23.74639, 121.44689, "1912"),
             card("lintienshan", "林田山", 23.71774, 121.39842, "至今仍保存的林業聚落"),
+            supply("guangfu", "光復", 23.66600, 121.42100, "1913"),
             card("ruisui", "瑞穗北回歸線標", 23.4655, 121.3578, "回歸線標一九三三年建"),
             card("yuli", "玉里", 23.33158, 121.31175, "當地招牌小吃是玉里麵"),
             card("chishang", "池上", 23.12417, 121.22083, "池上便當起源於火車站"),
@@ -40,11 +46,14 @@ object TaiwanLoop {
             card("luye", "鹿野高台", 22.91339, 121.11961, "夏季舉辦熱氣球嘉年華"),
             card("prehistory", "史前博物館", 22.76028, 121.09167, "專門展示臺灣史前文化"),
             card("taimali", "太麻里", 22.61914, 121.00492, "號稱台灣最早的曙光處"),
+            supply("jinlun", "金崙", 22.53136, 120.96739, "1992"),
+            supply("dawu", "大武", 22.36531, 120.90056, "1992"),
             card("shouka", "壽卡", 22.24528, 120.83556, "南迴公路上最高的山口"),
             card("hengchun", "恆春古城", 22.0027, 120.7447, "四座城門全都完整保留"),
             card("eluanbi", "鵝鑾鼻", 21.9022, 120.8525, "台灣本島最南端的燈塔"),
             card("maobitou", "貓鼻頭", 21.9197, 120.7394, "狀似蹲貓的波浪狀礁岩"),
             card("nmmba", "海生館", 22.0464, 120.6978, "海生館二〇〇〇年成立"),
+            supply("fangshan", "枋山", 22.26706, 120.65945, "1992"),
             card("fangliao", "枋寮", 22.3683, 120.5950, "環島鐵路由此全線貫通"),
             card("donggang", "東港", 22.46303, 120.44881, "東港迎王平安祭典主廟"),
             card("pier2", "高雄駁二", 22.61989, 120.28172, "港邊舊倉庫變身藝術區"),
@@ -56,13 +65,19 @@ object TaiwanLoop {
             card("peitian", "朴子配天宮", 23.4679, 120.2452, "朴子供奉媽祖的配天宮"),
             card("shuishang", "水上北回歸線標", 23.4539, 120.4167, "一九〇八年起建的標誌"),
             card("hinoki", "檜意森活村", 23.48619, 120.45411, "林務局宿舍改造的園區"),
+            supply("dalin", "大林", 23.60100, 120.45600, "1903"),
+            supply("dounan", "斗南", 23.67300, 120.48100, "1903"),
             card("xiluo", "西螺大橋", 23.81286, 120.46092, "長近兩公里的鋼桁大橋"),
             card("lukang", "鹿港老街", 24.0505, 120.4356, "寬約七十公分的摸乳巷"),
             card("roundhouse", "彰化扇形車庫", 24.0856, 120.5400, "一九二二年建成仍運作"),
             card("gaomei", "高美濕地", 24.3121, 120.5497, "風車剪影襯著濕地夕陽"),
             card("dajia", "大甲鎮瀾宮", 24.34522, 120.62358, "九天遶境三百四十公里"),
             card("tongxiao", "通霄精鹽廠", 24.5564, 120.7042, "台鹽通霄的觀光精鹽廠"),
+            supply("houlong", "後龍", 24.61600, 120.78700, "1922"),
+            supply("zhunan", "竹南", 24.68700, 120.88100, "1902"),
             card("hsinchu", "新竹城隍廟", 24.80437, 120.96606, "一七四八年創建城隍廟"),
+            supply("hukou", "湖口", 24.90300, 121.04400, "1893"),
+            supply("zhongli", "中壢", 24.95400, 121.22600, "1893"),
             card("taoyuan", "桃園神社", 25.0063, 121.3253, "一九三八年建成的神社"),
             card("shihsanhang", "十三行博物館", 25.1568, 121.4052, "展示十三行遺址的文物"),
             stop("淡水", 25.1696, 121.4422, transit = "搭渡輪"),

@@ -61,6 +61,13 @@ class RouteTest {
         assertEquals(route.cumulativeKm[tamsui - 1], route.cumulativeKm[tamsui], 1e-9)
     }
 
+    @Test
+    fun `cards and supply stops together leave no stretch longer than forty kilometres`() {
+        val points = (route.cards.map { it.second } + route.supplies.map { it.second }).sorted()
+        points.zipWithNext().forEach { (a, b) -> assertTrue(b - a <= 40.0, "gap ${"%.0f".format(b - a)} km after ${"%.0f".format(a)}") }
+        assertEquals(route.supplies.size, route.supplies.map { it.first.id }.toSet().size)
+    }
+
     /** Writes the card list for review into the build folder; not an assertion. */
     @Test
     fun `write review table`() {
@@ -68,6 +75,8 @@ class RouteTest {
         val rows = route.cards.mapIndexed { i, (card, km) ->
             "| ${i + 1} | ${card.name} | ${card.blurb} | ${"%.0f".format(km)} |"
         }
+        val all = (route.cards.map { it.first.name to it.second } + route.supplies.map { "🚉" + it.first.name to it.second }).sortedBy { it.second }
+        File(out, "taiwan_gaps_all.txt").writeText(all.zipWithNext { a, b -> "${a.first}→${b.first} ${"%.0f".format(b.second - a.second)} km" }.joinToString("\n"))
         val gaps = route.cards.zipWithNext { a, b -> "${a.first.name}→${b.first.name} ${"%.0f".format(b.second - a.second)} km" }
         File(out, "taiwan_gaps.txt").writeText(gaps.joinToString("\n"))
         File(out, "taiwan_loop.md").writeText(
