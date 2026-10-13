@@ -213,7 +213,7 @@
         768
       ],
       "alpha": true,
-      "source": "svg",
+      "source": "ai",
       "prompt": "A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, with fox ears, a wide-brimmed hat tucked behind them, a warm orange wash coat, and a small leather satchel on the back. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
       "notes": "面向右；腳貼底邊；全身。 已由 SVG 手繪完成（svg/traveller_fox.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/traveller_fox.png。"
     },
