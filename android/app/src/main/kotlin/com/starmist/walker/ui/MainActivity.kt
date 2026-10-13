@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -130,6 +131,9 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
         )
     }
 
+    val routeEvents by vm.pendingRouteEvents.collectAsStateWithLifecycle()
+    routeEvents.firstOrNull()?.let { RouteEventDialog(it, onDismiss = { vm.dismissRouteEvent() }) }
+
     Scaffold(
         modifier = Modifier.parchmentTexture(rememberArt("paper_page") ?: rememberArt("parchment_tile")),
         containerColor = androidx.compose.ui.graphics.Color.Transparent,
@@ -147,6 +151,12 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
                     onClick = { tab = 3; showDiagnostics = false },
                     icon = { Icon(Icons.Filled.Place, contentDescription = null) },
                     label = { Text("旅程") },
+                )
+                NavigationBarItem(
+                    selected = tab == 4 && !showDiagnostics,
+                    onClick = { tab = 4; showDiagnostics = false },
+                    icon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
+                    label = { Text("路線") },
                 )
                 NavigationBarItem(
                     selected = tab == 1 && !showDiagnostics,
@@ -168,6 +178,7 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
             tab == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings)
             tab == 1 -> StatsScreen(vm, current, padding)
             tab == 3 -> JourneyScreen(vm, current, padding)
+            tab == 4 -> RouteScreen(vm, current, padding)
             else -> SettingsScreen(vm, current, padding, onOpenDiagnostics = { showDiagnostics = true })
         }
     }

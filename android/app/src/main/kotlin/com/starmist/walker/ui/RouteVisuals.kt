@@ -1,0 +1,223 @@
+package com.starmist.walker.ui
+
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.starmist.core.route.GeoPoint
+import com.starmist.core.route.Landmark
+import com.starmist.core.route.RouteDef
+import com.starmist.core.route.RouteEvent
+import com.starmist.core.route.TaiwanOutline
+import kotlin.math.cos
+import kotlin.math.roundToInt
+
+private const val LON_MIN = 119.95
+private const val LON_MAX = 122.1
+private const val LAT_MIN = 21.8
+private const val LAT_MAX = 25.4
+private val STAMP_INK = Color(0xFFB04A3A)
+private val SUPPLY_ORANGE = Color(0xFFD9744B)
+
+/** The island with the route over it: walked part solid, the rest dotted; trains and ferries dashed red. */
+@Composable
+fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifier) {
+    val measurer = rememberTextMeasurer()
+    val label = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 11.sp, color = Vintage.ink)
+    val aspect = ((LON_MAX - LON_MIN) * cos(Math.toRadians(23.5)) / (LAT_MAX - LAT_MIN)).toFloat()
+    val here = route.positionAt(walkedKm)
+    val next = route.next(walkedKm)?.first
+    val lastCard = route.collected(walkedKm).lastOrNull()
+
+    Canvas(
+        modifier
+            .aspectRatio(aspect)
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xFFCFE0E0)),
+    ) {
+        fun GeoPoint.px() = Offset(
+            ((lng - LON_MIN) / (LON_MAX - LON_MIN) * size.width).toFloat(),
+            ((LAT_MAX - lat) / (LAT_MAX - LAT_MIN) * size.height).toFloat(),
+        )
+
+        val island = Path().apply {
+            TaiwanOutline.lonLat.forEachIndexed { i, p ->
+                val o = p.px()
+                if (i == 0) moveTo(o.x, o.y) else lineTo(o.x, o.y)
+            }
+            close()
+        }
+        drawPath(island, Color(0xFFE9DFBF))
+        drawPath(island, Vintage.inkSoft, style = Stroke(1.2.dp.toPx()))
+
+        val dotted = PathEffect.dashPathEffect(floatArrayOf(3.dp.toPx(), 5.dp.toPx()))
+        val dashed = PathEffect.dashPathEffect(floatArrayOf(8.dp.toPx(), 5.dp.toPx()))
+        val walkedColor = Vintage.moss
+        val width = 2.6.dp.toPx()
+        for (i in 1 until route.stops.size) {
+            val a = route.stops[i - 1].at.px()
+            val b = route.stops[i].at.px()
+            val startKm = route.cumulativeKm[i - 1]
+            val endKm = route.cumulativeKm[i]
+            when {
+                route.stops[i].transit != null ->
+                    drawLine(if (walkedKm >= endKm) STAMP_INK else STAMP_INK.copy(alpha = 0.35f), a, b, width, pathEffect = dashed)
+                walkedKm >= endKm -> drawLine(walkedColor, a, b, width, cap = StrokeCap.Round)
+                walkedKm <= startKm -> drawLine(Vintage.inkSoft.copy(alpha = 0.6f), a, b, 1.6.dp.toPx(), pathEffect = dotted)
+                else -> {
+                    val mid = here.px()
+                    drawLine(walkedColor, a, mid, width, cap = StrokeCap.Round)
+                    drawLine(Vintage.inkSoft.copy(alpha = 0.6f), mid, b, 1.6.dp.toPx(), pathEffect = dotted)
+                }
+            }
+        }
+
+        route.stops.forEachIndexed { i, stop ->
+            val o = stop.at.px()
+            val reached = route.cumulativeKm[i] <= walkedKm + 1e-9
+            if (stop.landmark != null) {
+                drawCircle(if (reached) Vintage.moss else Vintage.parchmentLight, 4.dp.toPx(), o)
+                drawCircle(if (reached) Color.White else Vintage.moss, 4.dp.toPx(), o, style = Stroke(1.4.dp.toPx()))
+            } else if (stop.supply != null) {
+                val side = 6.dp.toPx()
+                drawRect(if (reached) SUPPLY_ORANGE else Vintage.parchmentLight, Offset(o.x - side / 2, o.y - side / 2), Size(side, side))
+                drawRect(if (reached) Color.White else SUPPLY_ORANGE, Offset(o.x - side / 2, o.y - side / 2), Size(side, side), style = Stroke(1.2.dp.toPx()))
+            }
+        }
+
+        listOfNotNull(next?.let { it to "下一張" }, lastCard?.let { it to "" }).forEach { (card, tag) ->
+            val stop = route.stops.first { it.landmark?.id == card.id }
+            val o = stop.at.px()
+            val text = measurer.measure(card.name + if (tag.isNotEmpty()) "（$tag）" else "", label)
+            val x = if (o.x + text.size.width + 10.dp.toPx() > size.width) o.x - text.size.width - 8.dp.toPx() else o.x + 8.dp.toPx()
+            drawRoundRect(Vintage.parchmentLight.copy(alpha = 0.85f), Offset(x - 3.dp.toPx(), o.y - text.size.height / 2f - 1.dp.toPx()), Size(text.size.width + 6.dp.toPx(), text.size.height + 2.dp.toPx()), CornerRadius(3.dp.toPx()))
+            drawText(text, topLeft = Offset(x, o.y - text.size.height / 2f))
+        }
+
+        val pin = here.px()
+        drawCircle(Vintage.brassLight, 8.dp.toPx(), pin)
+        drawCircle(Vintage.ink, 8.dp.toPx(), pin, style = Stroke(1.6.dp.toPx()))
+        drawCircle(Vintage.moss, 3.dp.toPx(), pin)
+    }
+}
+
+/** Small round picture for a card: the painted card art if the asset library has it, a letter tile otherwise. */
+@Composable
+fun CardEmblem(card: Landmark, owned: Boolean, modifier: Modifier = Modifier) {
+    val art = rememberArt("card_${card.id}")
+    if (owned && art != null) {
+        Image(art, contentDescription = card.name, modifier = modifier.clip(CircleShape), contentScale = ContentScale.Crop)
+    } else {
+        Box(
+            modifier.clip(CircleShape).background(if (owned) Vintage.mossLight else Vintage.edge.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(if (owned) card.name.take(1) else "？", fontSize = 22.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, color = Vintage.ink)
+        }
+    }
+}
+
+/** A collected card, large: picture, the ten-character line, and where on the route it was found. */
+@Composable
+fun CardFace(card: Landmark, atKm: Double) {
+    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        val art = rememberArt("card_${card.id}")
+        if (art != null) {
+            Image(art, contentDescription = card.name, modifier = Modifier.fillMaxWidth().aspectRatio(4f / 3f).clip(RoundedCornerShape(10.dp)), contentScale = ContentScale.Crop)
+        } else {
+            CardEmblem(card, true, Modifier.size(96.dp))
+        }
+        Text(card.blurb, fontSize = 20.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, color = Vintage.ink)
+        Text("路線第 ${atKm.roundToInt()} 公里", style = MaterialTheme.typography.labelMedium)
+    }
+}
+
+/** A round station stamp: station name and the year the station opened. */
+@Composable
+fun StationStamp(name: String, opened: String, modifier: Modifier = Modifier) {
+    val measurer = rememberTextMeasurer()
+    val big = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = STAMP_INK)
+    val small = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 11.sp, color = STAMP_INK)
+    Canvas(modifier.aspectRatio(1f)) {
+        val c = Offset(size.width / 2, size.height / 2)
+        val r = size.minDimension / 2 - 2.dp.toPx()
+        rotate(-8f, c) {
+            drawCircle(STAMP_INK.copy(alpha = 0.9f), r, c, style = Stroke(3.dp.toPx()))
+            drawCircle(STAMP_INK.copy(alpha = 0.7f), r - 6.dp.toPx(), c, style = Stroke(1.dp.toPx()))
+            val top = measurer.measure("台鐵車站", small)
+            drawText(top, topLeft = Offset(c.x - top.size.width / 2f, c.y - r * 0.62f))
+            val title = measurer.measure(name, big)
+            drawText(title, topLeft = Offset(c.x - title.size.width / 2f, c.y - title.size.height / 2f))
+            val year = measurer.measure("$opened 年開站", small)
+            drawText(year, topLeft = Offset(c.x - year.size.width / 2f, c.y + r * 0.38f))
+        }
+    }
+}
+
+/** One thing that happened on the route, shown when it is reached. */
+@Composable
+fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit) {
+    when (event) {
+        is RouteEvent.CardCollected -> AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("獲得景點卡：${event.landmark.name}") },
+            text = { CardFace(event.landmark, event.atKm) },
+            confirmButton = { TextButton(onClick = onDismiss) { Text("收下") } },
+        )
+        is RouteEvent.StampCollected -> AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("蓋上紀念章") },
+            text = {
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    StationStamp(event.supply.name, event.supply.opened, Modifier.size(170.dp))
+                    Text("${event.supply.name}・${event.supply.opened} 年開站", style = MaterialTheme.typography.bodyMedium)
+                }
+            },
+            confirmButton = { TextButton(onClick = onDismiss) { Text("收下") } },
+        )
+        is RouteEvent.Transit -> AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("${event.by}前往${event.into}") },
+            text = { Text("這一段不能步行，直接${event.by}抵達，不計步數。") },
+            confirmButton = { TextButton(onClick = onDismiss) { Text("上車") } },
+        )
+        RouteEvent.Finished -> AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("環島完成！") },
+            text = { Text("你用自己的腳步繞完了整座島。景點卡和紀念章都留在「路線」頁。") },
+            confirmButton = { TextButton(onClick = onDismiss) { Text("太棒了") } },
+        )
+    }
+}

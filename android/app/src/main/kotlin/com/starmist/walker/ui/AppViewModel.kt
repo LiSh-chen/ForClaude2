@@ -3,6 +3,10 @@ package com.starmist.walker.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.starmist.core.metrics.BodyMetrics
+import com.starmist.core.route.RouteEvent
+import com.starmist.core.route.RouteState
+import com.starmist.core.route.Routes
 import com.starmist.core.stats.Aggregator
 import com.starmist.core.world.ItemType
 import com.starmist.core.world.JourneyEngine
@@ -25,6 +29,7 @@ import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -97,6 +102,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             _permissionGranted.value = repository.hasPermission()
             val result = repository.takeSnapshot()
             settleJourney()
+            settleRoute()
             if (announce) {
                 _message.value = when (result) {
                     is SnapshotResult.Success -> when {
@@ -151,6 +157,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 repository.reader.liveCounter().conflate().collect { counter ->
                     repository.ingestLive(counter)
                     settleJourney(live = true)
+                    settleRoute()
                     delay(LIVE_MIN_INTERVAL_MS) // conflate keeps only the newest value meanwhile
                 }
             }
@@ -246,6 +253,48 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             if (resolution != null) {
                 _message.value = "${resolution.option.result}（獲得 ${resolution.option.bonus.item.displayName}）"
             }
+        }
+    }
+
+    // ---- real-world route -----------------------------------------------------------------
+
+    /** Null until a route has been chosen. */
+    val routeState: StateFlow<RouteState?> = container.routes.flow
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    private val _pendingRouteEvents = MutableStateFlow<List<RouteEvent>>(emptyList())
+
+    /** Cards, stamps and crossings waiting to be shown, oldest first; the screen shows one at a time. */
+    val pendingRouteEvents: StateFlow<List<RouteEvent>> = _pendingRouteEvents
+
+    fun dismissRouteEvent() = _pendingRouteEvents.update { it.drop(1) }
+
+    fun startRoute(routeId: String) {
+        val route = Routes.byId(routeId) ?: return
+        viewModelScope.launch {
+            container.routes.start(route, repository.allTimeTotal())
+            settleRoute()
+        }
+    }
+
+    fun restartRoute() {
+        viewModelScope.launch {
+            container.routes.clear()
+            _pendingRouteEvents.value = emptyList()
+        }
+    }
+
+    /** Turns the steps counted since the last time into distance along the route and queues what was passed. */
+    fun settleRoute() {
+        viewModelScope.launch {
+            val state = routeState.value ?: container.routes.flow.first() ?: return@launch
+            val route = Routes.byId(state.routeId) ?: return@launch
+            val stride = BodyMetrics.strideMeters(container.settings.current().profile)
+            val advance = container.routes.settle(route, repository.allTimeTotal(), stride) ?: return@launch
+            val shown = advance.events.filter {
+                it is RouteEvent.CardCollected || it is RouteEvent.StampCollected || it is RouteEvent.Transit || it is RouteEvent.Finished
+            }
+            if (shown.isNotEmpty()) _pendingRouteEvents.update { it + shown }
         }
     }
 
