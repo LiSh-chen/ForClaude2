@@ -77,6 +77,17 @@ class RouteTest {
         }
         val all = (route.cards.map { it.first.name to it.second } + route.supplies.map { "🚉" + it.first.name to it.second }).sortedBy { it.second }
         File(out, "taiwan_gaps_all.txt").writeText(all.zipWithNext { a, b -> "${a.first}→${b.first} ${"%.0f".format(b.second - a.second)} km" }.joinToString("\n"))
+        val json = route.stops.mapIndexed { i, st ->
+            val kind = when {
+                st.landmark != null -> "card"
+                st.supply != null -> "supply"
+                st.transit != null -> "transit"
+                else -> "via"
+            }
+            val label = st.landmark?.blurb ?: st.supply?.opened ?: st.transit ?: ""
+            """{"name":"${st.name}","lat":${st.at.lat},"lng":${st.at.lng},"kind":"$kind","km":${"%.1f".format(route.cumulativeKm[i])},"text":"$label"}"""
+        }
+        File(out, "taiwan_route.json").writeText("[" + json.joinToString(",\n") + "]")
         val gaps = route.cards.zipWithNext { a, b -> "${a.first.name}→${b.first.name} ${"%.0f".format(b.second - a.second)} km" }
         File(out, "taiwan_gaps.txt").writeText(gaps.joinToString("\n"))
         File(out, "taiwan_loop.md").writeText(
