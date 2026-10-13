@@ -391,7 +391,7 @@ Create an image with aspect ratio 1:1. Vintage botanical field-guide illustratio
 
 ### `card_taipei101` — 景點卡：台北101
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（高五百零八公尺的高塔）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -401,7 +401,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_keelung` — 景點卡：基隆廟口
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（奠濟宮四周擠滿小吃攤）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -411,7 +411,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_jiufen` — 景點卡：九份
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（淘金小山城因電影重生）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -421,7 +421,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_fulong` — 景點卡：福隆
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（雙溪在這裡流入太平洋）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -431,7 +431,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_sandiaojiao` — 景點卡：三貂角
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（位於本島最東端的燈塔）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -441,7 +441,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_toucheng` — 景點卡：頭城老街
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（開蘭第一街約六百公尺）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -451,7 +451,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_ncta` — 景點卡：傳統藝術中心
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（傳藝中心坐落冬山河畔）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -461,7 +461,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_suao` — 景點卡：蘇澳冷泉
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（約二十一度的碳酸冷泉）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -471,7 +471,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_qixingtan` — 景點卡：七星潭
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（新月形海灣鋪滿礫石灘）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -481,7 +481,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_pinegarden` — 景點卡：松園別館
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（日治時期軍方的辦公處）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -491,7 +491,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_lintienshan` — 景點卡：林田山
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（至今仍保存的林業聚落）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -501,7 +501,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_ruisui` — 景點卡：瑞穗北回歸線標
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（回歸線標一九三三年建）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -511,7 +511,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_yuli` — 景點卡：玉里
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（當地招牌小吃是玉里麵）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -521,7 +521,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_chishang` — 景點卡：池上
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（池上便當起源於火車站）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -531,7 +531,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_guanshan` — 景點卡：關山
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（環鎮單車道長十二公里）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -541,7 +541,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_luye` — 景點卡：鹿野高台
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（夏季舉辦熱氣球嘉年華）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -551,7 +551,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_prehistory` — 景點卡：史前博物館
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（專門展示臺灣史前文化）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -561,7 +561,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_taimali` — 景點卡：太麻里
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（號稱台灣最早的曙光處）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -571,7 +571,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_shouka` — 景點卡：壽卡
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（南迴公路上最高的山口）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -581,7 +581,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_hengchun` — 景點卡：恆春古城
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（四座城門全都完整保留）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -591,7 +591,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_eluanbi` — 景點卡：鵝鑾鼻
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（台灣本島最南端的燈塔）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -601,7 +601,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_maobitou` — 景點卡：貓鼻頭
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（狀似蹲貓的波浪狀礁岩）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -611,7 +611,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_nmmba` — 景點卡：海生館
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（海生館二〇〇〇年成立）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -621,7 +621,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_fangliao` — 景點卡：枋寮
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（環島鐵路由此全線貫通）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -631,7 +631,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_donggang` — 景點卡：東港
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（東港迎王平安祭典主廟）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -641,7 +641,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_pier2` — 景點卡：高雄駁二
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（港邊舊倉庫變身藝術區）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -651,7 +651,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_lotuspond` — 景點卡：蓮池潭
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（龍虎塔一九七六年落成）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -661,7 +661,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_qiaotou` — 景點卡：橋頭糖廠
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（一九〇一年興建的糖廠）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -671,7 +671,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_anping` — 景點卡：安平古堡
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（荷蘭人一六二四年起建）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -681,7 +681,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_jingzijiao` — 景點卡：井仔腳鹽田
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（現存最古老的瓦盤鹽田）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -691,7 +691,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_budai` — 景點卡：布袋
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（一八九五年日軍登陸處）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -701,7 +701,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_peitian` — 景點卡：朴子配天宮
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（朴子供奉媽祖的配天宮）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -711,7 +711,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_shuishang` — 景點卡：水上北回歸線標
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（一九〇八年起建的標誌）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -721,7 +721,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_hinoki` — 景點卡：檜意森活村
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（林務局宿舍改造的園區）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -731,7 +731,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_xiluo` — 景點卡：西螺大橋
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（長近兩公里的鋼桁大橋）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -741,7 +741,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_lukang` — 景點卡：鹿港老街
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（寬約七十公分的摸乳巷）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -751,7 +751,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_roundhouse` — 景點卡：彰化扇形車庫
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（一九二二年建成仍運作）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -761,7 +761,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_gaomei` — 景點卡：高美濕地
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（風車剪影襯著濕地夕陽）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -771,7 +771,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_dajia` — 景點卡：大甲鎮瀾宮
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（九天遶境三百四十公里）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -781,7 +781,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_tongxiao` — 景點卡：通霄精鹽廠
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（台鹽通霄的觀光精鹽廠）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -791,7 +791,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_hsinchu` — 景點卡：新竹城隍廟
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（一七四八年創建城隍廟）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -801,7 +801,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_taoyuan` — 景點卡：桃園神社
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（一九三八年建成的神社）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -811,7 +811,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_shihsanhang` — 景點卡：十三行博物館
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（展示十三行遺址的文物）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -821,7 +821,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_dihua` — 景點卡：迪化街
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（號稱台北最古老的街道）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
@@ -831,7 +831,7 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ### `card_finish` — 景點卡：回到台北
 
-- 用在：路線頁與解鎖視窗的景點卡插圖（{blurb}）
+- 用在：路線頁與解鎖視窗的景點卡插圖（繞完一圈回到熟悉的家）
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
 - 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
 
