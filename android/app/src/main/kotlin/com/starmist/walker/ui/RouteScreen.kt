@@ -31,6 +31,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -56,31 +58,37 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
         if (current == null || route == null) {
             RoutePicker(onStart = { vm.startRoute(it) })
         } else {
-            RouteProgressContent(route, current, onRestart = { vm.restartRoute() })
+            RouteProgressContent(route, current, onRestart = { vm.restartRoute() }, onSwitch = { vm.startRoute(it) })
         }
     }
 }
 
+/** Choose a route and which way round to walk it. */
 @Composable
-private fun RoutePicker(onStart: (String) -> Unit) {
-    Text("選一條真實世界的路線，從現在開始用你的腳步走完它。路上會收集景點卡，經過車站還會蓋紀念章。", style = MaterialTheme.typography.bodyMedium)
-    Routes.all.forEach { route ->
+internal fun RoutePicker(onStart: (String) -> Unit) {
+    Text("選一條真實世界的路線，從現在開始用你的腳步走完它。路上會收集景點卡，經過車站還會蓋紀念章。出發後就不能改方向，除非重新出發。", style = MaterialTheme.typography.bodyMedium)
+    Routes.families.forEach { family ->
+        val first = family.first()
         Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight)) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("${route.region}・${route.name}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Text(route.description, style = MaterialTheme.typography.bodyMedium)
+                Text("${first.region}・環島一圈", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(first.description, style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    "全長約 ${route.totalKm.roundToInt()} 公里・${route.cards.size} 張景點卡・${route.supplies.size} 個紀念章",
+                    "全長約 ${first.totalKm.roundToInt()} 公里・${first.cards.size} 張景點卡・${first.supplies.size} 個紀念章",
                     style = MaterialTheme.typography.labelMedium,
                 )
-                Button(onClick = { onStart(route.id) }, modifier = Modifier.fillMaxWidth()) { Text("出發") }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    family.forEach { route ->
+                        Button(onClick = { onStart(route.id) }, modifier = Modifier.weight(1f)) { Text("${route.direction}出發") }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState, onRestart: () -> Unit) {
+private fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState, onRestart: () -> Unit, onSwitch: (String) -> Unit) {
     val km = state.walkedKm
     val done = km >= route.totalKm - 1e-9
     val next = route.next(km)
@@ -101,7 +109,14 @@ private fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState,
         }
     }
 
-    RouteMapView(route, km, Modifier.fillMaxWidth(0.92f).align(Alignment.CenterHorizontally))
+    if (km < 0.05) {
+        val others = Routes.all.filter { it.family == route.family && it.id != route.id }
+        others.forEach { other ->
+            OutlinedButton(onClick = { onSwitch(other.id) }, modifier = Modifier.fillMaxWidth()) { Text("改成${other.direction}走（還沒出發才能改）") }
+        }
+    }
+
+    RouteMapView(route, km, Modifier.fillMaxWidth().height(420.dp).clip(RoundedCornerShape(12.dp)), initialZoom = 1f)
 
     val collected = route.collected(km).map { it.id }.toSet()
     Text("景點卡 ${collected.size} / ${route.cards.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)

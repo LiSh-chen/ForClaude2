@@ -287,7 +287,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     /** Turns the steps counted since the last time into distance along the route and queues what was passed. */
     fun settleRoute() {
         viewModelScope.launch {
-            val state = routeState.value ?: container.routes.flow.first() ?: return@launch
+            val state = container.routes.flow.first() ?: return@launch
             val route = Routes.byId(state.routeId) ?: return@launch
             val stride = BodyMetrics.strideMeters(container.settings.current().profile)
             val advance = container.routes.settle(route, repository.allTimeTotal(), stride) ?: return@launch

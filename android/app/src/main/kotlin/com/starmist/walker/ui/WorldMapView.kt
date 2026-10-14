@@ -36,120 +36,226 @@ private val landOutline = listOf(
     Pt(0.88, 0.82), Pt(0.64, 0.97), Pt(0.36, 0.99), Pt(0.09, 0.89), Pt(0.05, 0.60), Pt(0.02, 0.30),
 )
 
-private class Puff(val at: Pt, val alpha: Float)
+internal class Puff(val at: Pt, val alpha: Float)
 
 private const val FOG_COLUMNS = 15
 private const val FOG_ROWS = 20
 
-/**
- * The whole world on one sheet of old paper. Places the traveller has not reached are hidden under
- * drifting fog; the fog lifts around every spot that has been walked.
- */
+/** What the world map needs besides its size: where the walker is, what has been walked, the fog and the art. */
+internal class WorldMapData(
+    val walked: List<Pt>,
+    val traveller: Pt,
+    val puffs: List<Puff>,
+    val fogArt: androidx.compose.ui.graphics.ImageBitmap?,
+    val mapArt: androidx.compose.ui.graphics.ImageBitmap?,
+    val pin: androidx.compose.ui.graphics.ImageBitmap?,
+)
+
 @Composable
-fun WorldMapView(regionIndex: Int, fraction: Double, finished: Boolean, modifier: Modifier = Modifier) {
+internal fun rememberWorldMapData(regionIndex: Int, fraction: Double, finished: Boolean): WorldMapData {
     val key = Triple(regionIndex, (fraction * 40).toInt(), finished)
     val walked = remember(key) { WorldMap.walkedPoints(regionIndex, fraction, finished) }
     val traveller = remember(key) { WorldMap.pointAt(regionIndex, if (finished) 1.0 else fraction) }
     val puffs = remember(key) { fogPuffs(walked) }
-    val fogArt = rememberArt("fog_puff")
-    val mapArt = rememberArt("world_map_base")
-    val measurer = rememberTextMeasurer()
-    val label = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Vintage.ink)
-    val sublabel = TextStyle(fontFamily = FontFamily.Serif, fontSize = 10.sp, color = Vintage.inkSoft)
+    return WorldMapData(walked, traveller, puffs, rememberArt("fog_puff"), rememberArt("world_map_base"), rememberArt("traveller_fox"))
+}
 
+/** Width over height of the world map. */
+@Composable
+internal fun worldMapAspect(): Float = rememberArt("world_map_base")?.let { it.width.toFloat() / it.height } ?: 0.78f
+
+/**
+ * The whole world on one sheet of old paper. Places the traveller has not reached are hidden under
+ * drifting fog; the fog lifts around every spot that has been walked. Static, for the journey page.
+ */
+@Composable
+fun WorldMapView(regionIndex: Int, fraction: Double, finished: Boolean, modifier: Modifier = Modifier) {
+    val data = rememberWorldMapData(regionIndex, fraction, finished)
+    val measurer = rememberTextMeasurer()
     Canvas(
         modifier
             .fillMaxWidth()
-            .aspectRatio(if (mapArt != null) mapArt.width.toFloat() / mapArt.height else 0.78f)
+            .aspectRatio(worldMapAspect())
             .clip(TornShape(5, 3.dp))
             .background(Vintage.parchmentLight),
-    ) {
-        val w = size.width
-        val h = size.height
-        fun Pt.px() = Offset((x * w).toFloat(), (y * h).toFloat())
+    ) { drawWorldMap(size.width, size.height, data, measurer, zoom = 1f) }
+}
 
+/** The same world, zoomed in on the traveller; pinch and drag to look around, never out past the whole map. */
+@Composable
+fun ZoomWorldMap(regionIndex: Int, fraction: Double, finished: Boolean, modifier: Modifier = Modifier) {
+    val data = rememberWorldMapData(regionIndex, fraction, finished)
+    val measurer = rememberTextMeasurer()
+    ZoomPanMap(
+        aspect = worldMapAspect(),
+        focus = Offset(data.traveller.x.toFloat(), data.traveller.y.toFloat()),
+        followKey = (regionIndex * 1000 + (fraction * 200).toInt()),
+        modifier = modifier,
+        initialZoom = 3.2f,
+    ) { w, h, zoom -> drawWorldMap(w, h, data, measurer, zoom) }
+}
+
+internal fun DrawScope.drawWorldMap(w: Float, h: Float, data: WorldMapData, measurer: androidx.compose.ui.text.TextMeasurer, zoom: Float) {
+    val walked = data.walked
+    val traveller = data.traveller
+    val puffs = data.puffs
+    val fogArt = data.fogArt
+    val mapArt = data.mapArt
+    val label = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Vintage.ink)
+    val sublabel = TextStyle(fontFamily = FontFamily.Serif, fontSize = 10.sp, color = Vintage.inkSoft)
+    fun Pt.px() = Offset((x * w).toFloat(), (y * h).toFloat())
+
+    if (mapArt != null) {
+        // The painted world map; fog, route and the traveller are drawn over it.
+        drawImage(mapArt, dstSize = androidx.compose.ui.unit.IntSize(w.toInt(), h.toInt()))
+    }
+
+    // Land, with the sea hatched in around it (the drawn fallback when there is no painted map).
+    val land = smoothClosed(landOutline.map { it.px() })
+    if (mapArt == null) drawPath(land, Vintage.mossLight.copy(alpha = 0.22f))
+    if (mapArt == null) clipPath(land, clipOp = ClipOp.Difference) {
+        var y = -h * 0.05f
+        while (y < h) {
+            drawLine(Vintage.sea.copy(alpha = 0.55f), Offset(0f, y), Offset(w, y + h * 0.05f), strokeWidth = 1.dp.toPx())
+            y += 9.dp.toPx()
+        }
+    }
+    if (mapArt == null) {
+        drawPath(land, Vintage.ink.copy(alpha = 0.25f), style = Stroke(4.dp.toPx(), join = androidx.compose.ui.graphics.StrokeJoin.Round))
+        drawPath(land, Vintage.ink.copy(alpha = 0.85f), style = Stroke(1.4.dp.toPx(), join = androidx.compose.ui.graphics.StrokeJoin.Round))
+    }
+
+    // The whole route as a dotted line; the part already walked is drawn solid.
+    val route = ArrayList<Offset>()
+    for (k in WorldMap.nodes.indices) for (i in 0..16) route += WorldMap.pointAt(k, i / 16.0).px()
+    val dotted = Path().apply { route.forEachIndexed { i, p -> if (i == 0) moveTo(p.x, p.y) else lineTo(p.x, p.y) } }
+    drawPath(dotted, Vintage.inkSoft.copy(alpha = 0.7f), style = Stroke(1.6.dp.toPx(), cap = StrokeCap.Round, pathEffect = PathEffect.dashPathEffect(floatArrayOf(3f, 11f))))
+    val done = Path().apply { walked.forEachIndexed { i, p -> val o = p.px(); if (i == 0) moveTo(o.x, o.y) else lineTo(o.x, o.y) } }
+    drawPath(done, Vintage.brassDark, style = Stroke(2.4.dp.toPx(), cap = StrokeCap.Round))
+
+    // Landmarks and names.
+    WorldMap.nodes.forEach { node ->
+        val at = node.at.px()
+        if (mapArt == null) drawLandmark(node.id, at, h)
+        val name = measurer.measure(node.name, label)
+        val labelTop = at.y + if (mapArt == null) h * 0.055f else -name.size.height / 2f
         if (mapArt != null) {
-            // The painted world map; fog, route and the traveller are drawn over it.
-            drawImage(mapArt, dstSize = androidx.compose.ui.unit.IntSize(w.toInt(), h.toInt()))
+            // A small paper tag so the name reads over the painting.
+            drawRoundRect(
+                Vintage.parchmentLight.copy(alpha = 0.82f),
+                Offset(at.x - name.size.width / 2f - 6.dp.toPx(), labelTop - 2.dp.toPx()),
+                Size(name.size.width + 12.dp.toPx(), name.size.height + 4.dp.toPx()),
+                androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()),
+            )
         }
-
-        // Land, with the sea hatched in around it (the drawn fallback when there is no painted map).
-        val land = smoothClosed(landOutline.map { it.px() })
-        if (mapArt == null) drawPath(land, Vintage.mossLight.copy(alpha = 0.22f))
-        if (mapArt == null) clipPath(land, clipOp = ClipOp.Difference) {
-            var y = -h * 0.05f
-            while (y < h) {
-                drawLine(Vintage.sea.copy(alpha = 0.55f), Offset(0f, y), Offset(w, y + h * 0.05f), strokeWidth = 1.dp.toPx())
-                y += 9.dp.toPx()
-            }
+        drawText(name, topLeft = Offset(at.x - name.size.width / 2f, labelTop))
+        if (!node.available) {
+            val note = measurer.measure("尚未開放", sublabel)
+            drawText(note, topLeft = Offset(at.x - note.size.width / 2f, labelTop + name.size.height + 3.dp.toPx()))
         }
-        if (mapArt == null) {
-            drawPath(land, Vintage.ink.copy(alpha = 0.25f), style = Stroke(4.dp.toPx(), join = androidx.compose.ui.graphics.StrokeJoin.Round))
-            drawPath(land, Vintage.ink.copy(alpha = 0.85f), style = Stroke(1.4.dp.toPx(), join = androidx.compose.ui.graphics.StrokeJoin.Round))
-        }
+    }
 
-        // The whole route as a dotted line; the part already walked is drawn solid.
-        val route = ArrayList<Offset>()
-        for (k in WorldMap.nodes.indices) for (i in 0..16) route += WorldMap.pointAt(k, i / 16.0).px()
-        val dotted = Path().apply { route.forEachIndexed { i, p -> if (i == 0) moveTo(p.x, p.y) else lineTo(p.x, p.y) } }
-        drawPath(dotted, Vintage.inkSoft.copy(alpha = 0.7f), style = Stroke(1.6.dp.toPx(), cap = StrokeCap.Round, pathEffect = PathEffect.dashPathEffect(floatArrayOf(3f, 11f))))
-        val done = Path().apply { walked.forEachIndexed { i, p -> val o = p.px(); if (i == 0) moveTo(o.x, o.y) else lineTo(o.x, o.y) } }
-        drawPath(done, Vintage.brassDark, style = Stroke(2.4.dp.toPx(), cap = StrokeCap.Round))
+    // Small sights near the traveller, drawn only while close; they fade out as the traveller moves away.
+    drawNearbySights(w, h, traveller)
 
-        // Landmarks and names.
-        WorldMap.nodes.forEach { node ->
-            val at = node.at.px()
-            if (mapArt == null) drawLandmark(node.id, at, h)
-            val name = measurer.measure(node.name, label)
-            val labelTop = at.y + if (mapArt == null) h * 0.055f else -name.size.height / 2f
-            if (mapArt != null) {
-                // A small paper tag so the name reads over the painting.
-                drawRoundRect(
-                    Vintage.parchmentLight.copy(alpha = 0.82f),
-                    Offset(at.x - name.size.width / 2f - 6.dp.toPx(), labelTop - 2.dp.toPx()),
-                    Size(name.size.width + 12.dp.toPx(), name.size.height + 4.dp.toPx()),
-                    androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()),
-                )
-            }
-            drawText(name, topLeft = Offset(at.x - name.size.width / 2f, labelTop))
-            if (!node.available) {
-                val note = measurer.measure("尚未開放", sublabel)
-                drawText(note, topLeft = Offset(at.x - note.size.width / 2f, labelTop + name.size.height + 3.dp.toPx()))
-            }
-        }
-
-        // The traveller: a brass pin.
-        val pin = traveller.px()
+    // The traveller: the fox if the art is there, a brass pin otherwise.
+    val pin = traveller.px()
+    val art = data.pin
+    if (art != null) {
+        val height = 46.dp.toPx()
+        val width = height * art.width / art.height
+        drawOval(Color.Black.copy(alpha = 0.18f), Offset(pin.x - width * 0.3f, pin.y - 3.dp.toPx()), Size(width * 0.6f, 6.dp.toPx()))
+        drawImage(
+            art,
+            dstOffset = androidx.compose.ui.unit.IntOffset((pin.x - width / 2f).toInt(), (pin.y - height + 2.dp.toPx()).toInt()),
+            dstSize = androidx.compose.ui.unit.IntSize(width.toInt(), height.toInt()),
+        )
+    } else {
         drawCircle(Vintage.brassLight, 9.dp.toPx(), pin)
         drawCircle(Vintage.ink, 9.dp.toPx(), pin, style = Stroke(1.6.dp.toPx()))
         drawCircle(Vintage.moss, 3.5.dp.toPx(), pin)
+    }
 
-        // Fog over everything that is still unknown.
-        val radius = w / FOG_COLUMNS * 1.15f
-        puffs.forEach { puff ->
-            val center = puff.at.px()
-            if (fogArt != null) {
-                // The painted puff is soft-edged, so draw it a little larger than the grid spacing.
-                val side = (radius * 2.6f).toInt()
-                drawImage(
-                    fogArt,
-                    dstOffset = androidx.compose.ui.unit.IntOffset((center.x - side / 2f).toInt(), (center.y - side / 2f).toInt()),
-                    dstSize = androidx.compose.ui.unit.IntSize(side, side),
-                    alpha = puff.alpha,
-                )
-                return@forEach
-            }
-            drawCircle(
-                brush = Brush.radialGradient(
-                    0f to Vintage.fog.copy(alpha = puff.alpha),
-                    0.65f to Vintage.fog.copy(alpha = puff.alpha * 0.8f),
-                    1f to Color.Transparent,
-                    center = center, radius = radius,
-                ),
-                radius = radius, center = center,
+    // Fog over everything that is still unknown.
+    val radius = w / FOG_COLUMNS * 1.15f
+    puffs.forEach { puff ->
+        val center = puff.at.px()
+        if (fogArt != null) {
+            // The painted puff is soft-edged, so draw it a little larger than the grid spacing.
+            val side = (radius * 2.6f).toInt()
+            drawImage(
+                fogArt,
+                dstOffset = androidx.compose.ui.unit.IntOffset((center.x - side / 2f).toInt(), (center.y - side / 2f).toInt()),
+                dstSize = androidx.compose.ui.unit.IntSize(side, side),
+                alpha = puff.alpha,
             )
+            return@forEach
         }
-        drawRect(Vintage.ink.copy(alpha = 0.8f), style = Stroke(2.dp.toPx()))
+        drawCircle(
+            brush = Brush.radialGradient(
+                0f to Vintage.fog.copy(alpha = puff.alpha),
+                0.65f to Vintage.fog.copy(alpha = puff.alpha * 0.8f),
+                1f to Color.Transparent,
+                center = center, radius = radius,
+            ),
+            radius = radius, center = center,
+        )
+    }
+    drawRect(Vintage.ink.copy(alpha = 0.8f), style = Stroke(2.dp.toPx()))
+}
+
+/** Places for small things to see along each region; each shows only while the traveller is close. */
+private class Sight(val at: Pt, val kind: Int)
+
+private val sights: List<Sight> by lazy {
+    val list = ArrayList<Sight>()
+    for (k in WorldMap.nodes.indices) {
+        val count = 12
+        for (i in 0 until count) {
+            val t = (i + 0.5) / count
+            val a = WorldMap.pointAt(k, (t - 0.02).coerceAtLeast(0.0))
+            val b = WorldMap.pointAt(k, (t + 0.02).coerceAtMost(1.0))
+            val base = WorldMap.pointAt(k, t)
+            val dx = b.x - a.x
+            val dy = b.y - a.y
+            val len = kotlin.math.hypot(dx, dy).coerceAtLeast(1e-6)
+            val side = if ((i + k) % 2 == 0) 1.0 else -1.0
+            val away = 0.022 + ((i * 7 + k * 3) % 5) * 0.008
+            list += Sight(Pt(base.x - dy / len * away * side, base.y + dx / len * away * side), (i * 3 + k * 2) % 6)
+        }
+    }
+    list
+}
+
+private fun DrawScope.drawNearbySights(w: Float, h: Float, traveller: Pt) {
+    val range = 0.13
+    sights.forEach { sight ->
+        val d = traveller.distanceTo(sight.at)
+        if (d > range) return@forEach
+        val alpha = (1.0 - (d - range * 0.55) / (range * 0.45)).coerceIn(0.0, 1.0).toFloat()
+        if (alpha <= 0f) return@forEach
+        val o = Offset((sight.at.x * w).toFloat(), (sight.at.y * h).toFloat())
+        val ink = Vintage.ink.copy(alpha = alpha)
+        val unit = 14.dp.toPx()
+        when (sight.kind) {
+            0 -> drawTreeSketch(o, unit * 1.8f, ink, Vintage.mossLight.copy(alpha = alpha))
+            1 -> drawFern(o, unit * 1.6f, 0.2f, ink, Vintage.mossLight.copy(alpha = alpha))
+            2 -> drawReed(o, unit * 1.5f, 0.1f, ink)
+            3 -> drawShell(o, unit * 0.45f, ink)
+            4 -> { // a ring of glowing mushrooms
+                for (m in -1..1) {
+                    val c = Offset(o.x + m * unit * 0.5f, o.y - kotlin.math.abs(m) * unit * 0.1f)
+                    drawLine(ink, c, Offset(c.x, c.y - unit * 0.35f), 1.1.dp.toPx())
+                    drawArc(Vintage.rose.copy(alpha = alpha), 180f, 180f, true, Offset(c.x - unit * 0.28f, c.y - unit * 0.6f), Size(unit * 0.56f, unit * 0.5f))
+                    drawCircle(Vintage.brassLight.copy(alpha = alpha * 0.55f), unit * 0.55f, Offset(c.x, c.y - unit * 0.4f))
+                }
+            }
+            else -> { // a mossy stone
+                drawOval(Vintage.parchmentDark.copy(alpha = alpha), Offset(o.x - unit * 0.55f, o.y - unit * 0.4f), Size(unit * 1.1f, unit * 0.7f))
+                drawOval(ink, Offset(o.x - unit * 0.55f, o.y - unit * 0.4f), Size(unit * 1.1f, unit * 0.7f), style = Stroke(1.dp.toPx()))
+                drawOval(Vintage.mossLight.copy(alpha = alpha), Offset(o.x - unit * 0.35f, o.y - unit * 0.45f), Size(unit * 0.7f, unit * 0.25f))
+            }
+        }
     }
 }
 

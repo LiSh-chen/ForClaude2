@@ -51,86 +51,21 @@ private const val LAT_MAX = 25.4
 private val STAMP_INK = Color(0xFFB04A3A)
 private val SUPPLY_ORANGE = Color(0xFFD9744B)
 
-/** The island with the route over it: walked part solid, the rest dotted; trains and ferries dashed red. */
+/** The island walk as a map the player can pinch and drag; it opens on the walker and cannot zoom out past the whole island. */
 @Composable
-fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifier) {
-    val measurer = rememberTextMeasurer()
-    val label = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 11.sp, color = Vintage.ink)
-    val aspect = ((LON_MAX - LON_MIN) * cos(Math.toRadians(23.5)) / (LAT_MAX - LAT_MIN)).toFloat()
+fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifier, initialZoom: Float = 3f) {
+    val measurer = rememberMapMeasurer()
+    val data = rememberRealMapData(route)
+    val pin = rememberArt("traveller_fox")
     val here = route.positionAt(walkedKm)
-    val next = route.next(walkedKm)?.first
-    val lastCard = route.collected(walkedKm).lastOrNull()
-
-    Canvas(
-        modifier
-            .aspectRatio(aspect)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFCFE0E0)),
-    ) {
-        fun GeoPoint.px() = Offset(
-            ((lng - LON_MIN) / (LON_MAX - LON_MIN) * size.width).toFloat(),
-            ((LAT_MAX - lat) / (LAT_MAX - LAT_MIN) * size.height).toFloat(),
-        )
-
-        val island = Path().apply {
-            TaiwanOutline.lonLat.forEachIndexed { i, p ->
-                val o = p.px()
-                if (i == 0) moveTo(o.x, o.y) else lineTo(o.x, o.y)
-            }
-            close()
-        }
-        drawPath(island, Color(0xFFE9DFBF))
-        drawPath(island, Vintage.inkSoft, style = Stroke(1.2.dp.toPx()))
-
-        val dotted = PathEffect.dashPathEffect(floatArrayOf(3.dp.toPx(), 5.dp.toPx()))
-        val dashed = PathEffect.dashPathEffect(floatArrayOf(8.dp.toPx(), 5.dp.toPx()))
-        val walkedColor = Vintage.moss
-        val width = 2.6.dp.toPx()
-        for (i in 1 until route.stops.size) {
-            val a = route.stops[i - 1].at.px()
-            val b = route.stops[i].at.px()
-            val startKm = route.cumulativeKm[i - 1]
-            val endKm = route.cumulativeKm[i]
-            when {
-                route.stops[i].transit != null ->
-                    drawLine(if (walkedKm >= endKm) STAMP_INK else STAMP_INK.copy(alpha = 0.35f), a, b, width, pathEffect = dashed)
-                walkedKm >= endKm -> drawLine(walkedColor, a, b, width, cap = StrokeCap.Round)
-                walkedKm <= startKm -> drawLine(Vintage.inkSoft.copy(alpha = 0.6f), a, b, 1.6.dp.toPx(), pathEffect = dotted)
-                else -> {
-                    val mid = here.px()
-                    drawLine(walkedColor, a, mid, width, cap = StrokeCap.Round)
-                    drawLine(Vintage.inkSoft.copy(alpha = 0.6f), mid, b, 1.6.dp.toPx(), pathEffect = dotted)
-                }
-            }
-        }
-
-        route.stops.forEachIndexed { i, stop ->
-            val o = stop.at.px()
-            val reached = route.cumulativeKm[i] <= walkedKm + 1e-9
-            if (stop.landmark != null) {
-                drawCircle(if (reached) Vintage.moss else Vintage.parchmentLight, 4.dp.toPx(), o)
-                drawCircle(if (reached) Color.White else Vintage.moss, 4.dp.toPx(), o, style = Stroke(1.4.dp.toPx()))
-            } else if (stop.supply != null) {
-                val side = 6.dp.toPx()
-                drawRect(if (reached) SUPPLY_ORANGE else Vintage.parchmentLight, Offset(o.x - side / 2, o.y - side / 2), Size(side, side))
-                drawRect(if (reached) Color.White else SUPPLY_ORANGE, Offset(o.x - side / 2, o.y - side / 2), Size(side, side), style = Stroke(1.2.dp.toPx()))
-            }
-        }
-
-        listOfNotNull(next?.let { it to "下一張" }, lastCard?.let { it to "" }).forEach { (card, tag) ->
-            val stop = route.stops.first { it.landmark?.id == card.id }
-            val o = stop.at.px()
-            val text = measurer.measure(card.name + if (tag.isNotEmpty()) "（$tag）" else "", label)
-            val x = if (o.x + text.size.width + 10.dp.toPx() > size.width) o.x - text.size.width - 8.dp.toPx() else o.x + 8.dp.toPx()
-            drawRoundRect(Vintage.parchmentLight.copy(alpha = 0.85f), Offset(x - 3.dp.toPx(), o.y - text.size.height / 2f - 1.dp.toPx()), Size(text.size.width + 6.dp.toPx(), text.size.height + 2.dp.toPx()), CornerRadius(3.dp.toPx()))
-            drawText(text, topLeft = Offset(x, o.y - text.size.height / 2f))
-        }
-
-        val pin = here.px()
-        drawCircle(Vintage.brassLight, 8.dp.toPx(), pin)
-        drawCircle(Vintage.ink, 8.dp.toPx(), pin, style = Stroke(1.6.dp.toPx()))
-        drawCircle(Vintage.moss, 3.dp.toPx(), pin)
-    }
+    ZoomPanMap(
+        aspect = REAL_MAP_ASPECT,
+        focus = here.unit(),
+        followKey = (walkedKm * 20).toInt(),
+        modifier = modifier,
+        initialZoom = initialZoom,
+        background = SEA_COLOR,
+    ) { w, h, _ -> drawRealMap(w, h, route, data, walkedKm, measurer, pin) }
 }
 
 /** Small round picture for a card: the painted card art if the asset library has it, a letter tile otherwise. */
