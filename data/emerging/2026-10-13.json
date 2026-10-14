@@ -6,14 +6,14 @@
    "id": "aging_care",
    "name": "高齡化與慢性病照護設備",
    "tier": "A",
-   "score": 86.478,
-   "coverage_ratio": 0.13,
+   "score": 87.021,
+   "coverage_ratio": 0.108,
    "n_headlines": 1,
    "status": "尚未被充分報導",
    "rank": 1,
    "components": {
     "evidence": 100,
-    "low_coverage": 87.0,
+    "low_coverage": 89.2,
     "fundamental": 72.6,
     "not_crowded": 82.9
    }
@@ -38,7 +38,7 @@
    "id": "pq_security",
    "name": "抗量子密碼與硬體安全遷移",
    "tier": "A",
-   "score": 82.035,
+   "score": 81.58,
    "coverage_ratio": 0.0,
    "n_headlines": 0,
    "status": "尚未被充分報導",
@@ -47,46 +47,46 @@
     "evidence": 100,
     "low_coverage": 100.0,
     "fundamental": 74.0,
-    "not_crowded": 42.7
+    "not_crowded": 40.4
    }
   },
   {
    "id": "adv_packaging_supply",
    "name": "先進封裝測試介面與材料",
    "tier": "B",
-   "score": 81.192,
-   "coverage_ratio": 0.052,
+   "score": 81.163,
+   "coverage_ratio": 0.062,
    "n_headlines": 1,
    "status": "尚未被充分報導",
    "rank": 4,
    "components": {
     "evidence": 75,
-    "low_coverage": 94.8,
+    "low_coverage": 93.8,
     "fundamental": 97.1,
-    "not_crowded": 53.5
+    "not_crowded": 54.6
    }
   },
   {
    "id": "edge_ai_industrial",
    "name": "工業邊緣 AI 與嵌入式運算",
    "tier": "B",
-   "score": 75.913,
-   "coverage_ratio": 0.236,
+   "score": 75.89,
+   "coverage_ratio": 0.249,
    "n_headlines": 2,
    "status": "尚未被充分報導",
    "rank": 5,
    "components": {
     "evidence": 75,
-    "low_coverage": 76.4,
+    "low_coverage": 75.1,
     "fundamental": 86.7,
-    "not_crowded": 63.3
+    "not_crowded": 64.7
    }
   },
   {
    "id": "power_semis",
    "name": "高壓功率半導體（SiC / GaN）",
    "tier": "B",
-   "score": 75.32,
+   "score": 75.827,
    "coverage_ratio": 0.0,
    "n_headlines": 0,
    "status": "尚未被充分報導",
@@ -95,21 +95,21 @@
     "evidence": 75,
     "low_coverage": 100.0,
     "fundamental": 74.8,
-    "not_crowded": 45.6
+    "not_crowded": 48.2
    }
   },
   {
    "id": "water_infra",
    "name": "水資源與超純水處理",
    "tier": "B",
-   "score": 73.924,
-   "coverage_ratio": 0.052,
+   "score": 73.677,
+   "coverage_ratio": 0.062,
    "n_headlines": 1,
    "status": "尚未被充分報導",
    "rank": 7,
    "components": {
     "evidence": 75,
-    "low_coverage": 94.8,
+    "low_coverage": 93.8,
     "fundamental": 46.9,
     "not_crowded": 80.0
    }
@@ -118,14 +118,14 @@
    "id": "process_control",
    "name": "先進製程量測、檢測與可靠度驗證",
    "tier": "B",
-   "score": 72.089,
-   "coverage_ratio": 0.199,
-   "n_headlines": 2,
-   "status": "尚未被充分報導",
+   "score": 54.831,
+   "coverage_ratio": 0.889,
+   "n_headlines": 7,
+   "status": "報導中等",
    "rank": 8,
    "components": {
     "evidence": 75,
-    "low_coverage": 80.1,
+    "low_coverage": 11.1,
     "fundamental": 56.5,
     "not_crowded": 77.1
    }
@@ -152,19 +152,19 @@
     "news": 40.0
    },
    "target": {
-    "base": 164.02,
-    "bull": 229.62,
-    "bear": 65.61,
-    "ev": 152.54,
+    "base": 164.99,
+    "bull": 230.98,
+    "bear": 66.0,
+    "ev": 153.44,
     "confidence": "中",
-    "upside": 0.4262,
-    "ev_upside": 0.3264,
+    "upside": 0.4347,
+    "ev_upside": 0.3343,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 148.29,
+      "value": 150.11,
       "weight": 0.533,
-      "upside": 0.2895
+      "upside": 0.3053
      },
      "peg": {
       "value": 231.73,
@@ -178,10 +178,10 @@
      }
     }
    },
-   "stop": 97.41,
+   "stop": 97.59,
    "fundamentals": {
     "market_cap": 25052866560,
-    "pe_ttm": 21.3358,
+    "pe_ttm": 23.1855,
     "pe_fwd": 16.129,
     "peg": 0.9,
     "roe": 0.2019,
@@ -197,11 +197,11 @@
     "fcf_margin": 0.0386
    },
    "tech": {
-    "ret_1m": 0.004366812227074135,
+    "ret_1m": -0.0043290043290042934,
     "ret_3m": -0.14498141263940523,
-    "rel_3m": -0.21022502582592095,
-    "dist200": 0.17191699840838415,
-    "vol_ann": 0.7659451475982202
+    "rel_3m": -0.21022505681388715,
+    "dist200": 0.16867819448029042,
+    "vol_ann": 0.7571400170238715
    },
    "theme": "edge_ai_industrial",
    "book": "emerging",
@@ -253,10 +253,10 @@
      }
     }
    },
-   "stop": 217.5,
+   "stop": 218.21,
    "fundamentals": {
     "market_cap": 17389932544,
-    "pe_ttm": 34.8148,
+    "pe_ttm": 36.0429,
     "pe_fwd": 15.4911,
     "peg": null,
     "roe": 0.0925,
@@ -272,11 +272,11 @@
     "fcf_margin": 0.1726
    },
    "tech": {
-    "ret_1m": -0.04471544715447151,
-    "ret_3m": -0.17621819571364905,
-    "rel_3m": -0.24146180890016478,
-    "dist200": -0.06560820654132815,
-    "vol_ann": 0.558250419135073
+    "ret_1m": -0.06374501992031878,
+    "ret_3m": -0.13599742206677623,
+    "rel_3m": -0.20124106624125815,
+    "dist200": -0.06632967957358948,
+    "vol_ann": 0.5556045417227852
    },
    "theme": "process_control",
    "book": "emerging",
@@ -289,56 +289,56 @@
    "market": "US",
    "sector": "aging_care",
    "rank": 1,
-   "entry_price": 282.6,
-   "entry_date": "2026-10-12",
-   "composite": 69.98,
+   "entry_price": 282.55,
+   "entry_date": "2026-10-13",
+   "composite": 69.75,
    "scores": {
     "sector": null,
     "leader": 100.0,
     "quality": 83.9,
     "growth": 70.6,
-    "valuation": 88.7,
-    "momentum": 12.1,
+    "valuation": 88.2,
+    "momentum": 11.2,
     "news": 40.0
    },
    "target": {
-    "base": 390.35,
-    "bull": 536.5,
-    "bear": 171.12,
-    "ev": 364.77,
+    "base": 389.97,
+    "bull": 536.36,
+    "bear": 170.39,
+    "ev": 364.35,
     "confidence": "中",
-    "upside": 0.3813,
-    "ev_upside": 0.2908,
+    "upside": 0.3802,
+    "ev_upside": 0.2895,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 301.19,
+      "value": 300.33,
       "weight": 0.4,
-      "upside": 0.0658
+      "upside": 0.0629
      },
      "peg": {
-      "value": 542.67,
+      "value": 542.48,
       "weight": 0.15,
-      "upside": 0.9203
+      "upside": 0.9199
      },
      "dcf": {
       "value": 489.07,
       "weight": 0.2,
-      "upside": 0.7306
+      "upside": 0.7309
      },
      "consensus": {
       "value": 362.62,
       "weight": 0.25,
-      "upside": 0.2831
+      "upside": 0.2834
      }
     }
    },
-   "stop": 265.3,
+   "stop": 264.68,
    "fundamentals": {
-    "market_cap": 108359385088,
-    "pe_ttm": 29.2746,
-    "pe_fwd": 16.9245,
-    "peg": 1.3,
+    "market_cap": 108378562560,
+    "pe_ttm": 29.2798,
+    "pe_fwd": 16.9275,
+    "peg": 1.32,
     "roe": 0.1651,
     "gross_margin": 0.6559,
     "op_margin": 0.2702,
@@ -352,93 +352,13 @@
     "fcf_margin": 0.159
    },
    "tech": {
-    "ret_1m": 0.028795653305182523,
-    "ret_3m": -0.08864591109210596,
-    "rel_3m": -0.12359616635332482,
-    "dist200": -0.13329971570711985,
-    "vol_ann": 0.3582681729114525
+    "ret_1m": 0.005586782460606843,
+    "ret_3m": -0.10427018217413564,
+    "rel_3m": -0.13504646128964004,
+    "dist200": -0.1325445173612081,
+    "vol_ann": 0.35828093045486664
    },
    "theme": "aging_care",
-   "book": "emerging",
-   "also_main": false
-  },
-  {
-   "ticker": "POWL",
-   "name": "Powell Industries, Inc.",
-   "zh_name": "Powell Industries",
-   "market": "US",
-   "sector": "grid_hardware",
-   "rank": 2,
-   "entry_price": 185.38,
-   "entry_date": "2026-10-12",
-   "composite": 48.92,
-   "scores": {
-    "sector": null,
-    "leader": 50.0,
-    "quality": 81.4,
-    "growth": 37.5,
-    "valuation": 40.8,
-    "momentum": 6.0,
-    "news": 40.0
-   },
-   "target": {
-    "base": 204.6,
-    "bull": 286.45,
-    "bear": 81.84,
-    "ev": 190.28,
-    "confidence": "中",
-    "upside": 0.1037,
-    "ev_upside": 0.0264,
-    "horizon_days": 250,
-    "methods": {
-     "pe": {
-      "value": 163.57,
-      "weight": 0.4,
-      "upside": -0.1177
-     },
-     "peg": {
-      "value": 232.98,
-      "weight": 0.15,
-      "upside": 0.2568
-     },
-     "dcf": {
-      "value": 171.15,
-      "weight": 0.2,
-      "upside": -0.0768
-     },
-     "consensus": {
-      "value": 280.0,
-      "weight": 0.25,
-      "upside": 0.5104
-     }
-    }
-   },
-   "stop": 164.44,
-   "fundamentals": {
-    "market_cap": 6584457216,
-    "pe_ttm": 34.6226,
-    "pe_fwd": 25.8595,
-    "peg": 2.1,
-    "roe": 0.2825,
-    "gross_margin": 0.3008,
-    "op_margin": 0.2055,
-    "net_margin": 0.1649,
-    "rev_growth": 0.089,
-    "eps_growth": 0.076,
-    "de": 0.0033,
-    "beta": 1.173,
-    "target_mean": 280.0,
-    "n_analysts": 4,
-    "fcf_margin": 0.1645
-   },
-   "tech": {
-    "ret_1m": 0.015780848672945158,
-    "ret_3m": -0.20827317266448664,
-    "rel_3m": -0.2432234279257055,
-    "dist200": -0.11745253249099563,
-    "vol_ann": 0.577377197420393
-   },
-   "theme": "grid_hardware",
    "book": "emerging",
    "also_main": false
   },
@@ -448,56 +368,56 @@
    "zh_name": "IBM",
    "market": "US",
    "sector": "pq_security",
-   "rank": 3,
-   "entry_price": 227.02,
-   "entry_date": "2026-10-12",
-   "composite": 51.28,
+   "rank": 2,
+   "entry_price": 230.78,
+   "entry_date": "2026-10-13",
+   "composite": 51.81,
    "scores": {
     "sector": null,
     "leader": 100.0,
     "quality": 57.3,
     "growth": 16.9,
-    "valuation": 58.5,
-    "momentum": 25.2,
+    "valuation": 57.2,
+    "momentum": 30.3,
     "news": 40.0
    },
    "target": {
-    "base": 285.69,
-    "bull": 399.96,
-    "bear": 114.27,
-    "ev": 265.69,
+    "base": 288.03,
+    "bull": 403.24,
+    "bear": 115.21,
+    "ev": 267.87,
     "confidence": "低",
-    "upside": 0.2584,
-    "ev_upside": 0.1703,
+    "upside": 0.2481,
+    "ev_upside": 0.1607,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 233.02,
+      "value": 236.93,
       "weight": 0.4,
-      "upside": 0.0264
+      "upside": 0.0267
      },
      "peg": {
-      "value": 283.97,
+      "value": 289.13,
       "weight": 0.15,
-      "upside": 0.2509
+      "upside": 0.2529
      },
      "dcf": {
       "value": 448.72,
       "weight": 0.2,
-      "upside": 0.9766
+      "upside": 0.9444
      },
      "consensus": {
       "value": 240.56,
       "weight": 0.25,
-      "upside": 0.0597
+      "upside": 0.0424
      }
     }
    },
-   "stop": 213.21,
+   "stop": 216.93,
    "fundamentals": {
-    "market_cap": 217774358528,
-    "pe_ttm": 20.5467,
-    "pe_fwd": 17.5747,
+    "market_cap": 217425772544,
+    "pe_ttm": 20.5138,
+    "pe_fwd": 17.5466,
     "peg": 2.15,
     "roe": 0.3446,
     "gross_margin": 0.581,
@@ -512,11 +432,11 @@
     "fcf_margin": 0.1744
    },
    "tech": {
-    "ret_1m": -0.06687487961963479,
-    "ret_3m": 0.053340075246147256,
-    "rel_3m": 0.01838981998492839,
-    "dist200": -0.09401639849547305,
-    "vol_ann": 0.3073951461124575
+    "ret_1m": -0.07350755392461894,
+    "ret_3m": 0.10054691754556266,
+    "rel_3m": 0.06977063843005826,
+    "dist200": -0.07776531857952862,
+    "vol_ann": 0.3089638796313933
    },
    "theme": "pq_security",
    "book": "emerging",
@@ -528,57 +448,57 @@
    "zh_name": "Akamai",
    "market": "US",
    "sector": "pq_security",
-   "rank": 4,
-   "entry_price": 101.65,
-   "entry_date": "2026-10-12",
-   "composite": 41.16,
+   "rank": 3,
+   "entry_price": 99.93,
+   "entry_date": "2026-10-13",
+   "composite": 41.89,
    "scores": {
     "sector": null,
     "leader": 0.0,
     "quality": 51.6,
     "growth": 14.9,
-    "valuation": 92.0,
-    "momentum": 12.8,
+    "valuation": 93.1,
+    "momentum": 16.4,
     "news": 40.0
    },
    "target": {
-    "base": 162.64,
-    "bull": 227.7,
-    "bear": 65.06,
-    "ev": 151.26,
+    "base": 159.89,
+    "bull": 223.84,
+    "bear": 63.96,
+    "ev": 148.7,
     "confidence": "低",
     "upside": 0.6,
     "ev_upside": 0.488,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 124.51,
+      "value": 121.51,
       "weight": 0.4,
-      "upside": 0.2249
+      "upside": 0.2159
      },
      "peg": {
-      "value": 228.96,
+      "value": 222.56,
       "weight": 0.15,
-      "upside": 1.2524
+      "upside": 1.2272
      },
      "dcf": {
       "value": 268.33,
       "weight": 0.2,
-      "upside": 1.6397
+      "upside": 1.6852
      },
      "consensus": {
       "value": 158.87,
       "weight": 0.25,
-      "upside": 0.5629
+      "upside": 0.5898
      }
     }
    },
-   "stop": 84.84,
+   "stop": 83.3,
    "fundamentals": {
-    "market_cap": 14200637440,
-    "pe_ttm": 35.8007,
-    "pe_fwd": 14.4291,
-    "peg": 1.24,
+    "market_cap": 14361601024,
+    "pe_ttm": 36.2065,
+    "pe_fwd": 14.5926,
+    "peg": 1.18,
     "roe": 0.0892,
     "gross_margin": 0.5745,
     "op_margin": 0.0763,
@@ -592,11 +512,11 @@
     "fcf_margin": 0.1643
    },
    "tech": {
-    "ret_1m": -0.0481318414231896,
-    "ret_3m": -0.19395764781611535,
-    "rel_3m": -0.22890790307733422,
-    "dist200": -0.0937934759708623,
-    "vol_ann": 0.5589760795578368
+    "ret_1m": -0.05342426552172019,
+    "ret_3m": -0.16731940487290764,
+    "rel_3m": -0.19809568398841204,
+    "dist200": -0.10956820017550661,
+    "vol_ann": 0.5569799407939285
    },
    "theme": "pq_security",
    "book": "emerging",
@@ -608,9 +528,9 @@
    "zh_name": "Amkor",
    "market": "US",
    "sector": "adv_packaging_supply",
-   "rank": 5,
-   "entry_price": 48.11,
-   "entry_date": "2026-10-12",
+   "rank": 4,
+   "entry_price": 47.61,
+   "entry_date": "2026-10-13",
    "composite": 57.64,
    "scores": {
     "sector": null,
@@ -622,37 +542,37 @@
     "news": 40.0
    },
    "target": {
-    "base": 75.44,
-    "bull": 104.0,
-    "bear": 32.6,
-    "ev": 70.45,
+    "base": 74.93,
+    "bull": 102.26,
+    "bear": 33.93,
+    "ev": 70.15,
     "confidence": "高",
-    "upside": 0.5681,
-    "ev_upside": 0.4643,
+    "upside": 0.5738,
+    "ev_upside": 0.4734,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 67.98,
+      "value": 67.91,
       "weight": 0.5,
-      "upside": 0.4131
+      "upside": 0.4263
      },
      "peg": {
-      "value": 93.74,
+      "value": 91.21,
       "weight": 0.187,
-      "upside": 0.9484
+      "upside": 0.9157
      },
      "consensus": {
       "value": 76.4,
       "weight": 0.312,
-      "upside": 0.588
+      "upside": 0.6047
      }
     }
    },
-   "stop": 42.19,
+   "stop": 41.85,
    "fundamentals": {
-    "market_cap": 11630060544,
-    "pe_ttm": 20.991,
-    "pe_fwd": 16.68,
+    "market_cap": 11801210880,
+    "pe_ttm": 21.3498,
+    "pe_fwd": 16.9651,
     "peg": 0.76,
     "roe": 0.1251,
     "gross_margin": 0.1551,
@@ -667,13 +587,93 @@
     "fcf_margin": -0.0508
    },
    "tech": {
-    "ret_1m": -0.06997871571464298,
-    "ret_3m": -0.3134111149050036,
-    "rel_3m": -0.3483613701662225,
-    "dist200": -0.1627762267319931,
-    "vol_ann": 0.8653674466125804
+    "ret_1m": 0.010399004227983122,
+    "ret_3m": -0.29483125513804576,
+    "rel_3m": -0.32560753425355016,
+    "dist200": -0.17198518655016826,
+    "vol_ann": 0.865481304978289
    },
    "theme": "adv_packaging_supply",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
+   "ticker": "ADI",
+   "name": "Analog Devices, Inc.",
+   "zh_name": "Analog Devices",
+   "market": "US",
+   "sector": "edge_ai_industrial",
+   "rank": 5,
+   "entry_price": 414.7,
+   "entry_date": "2026-10-13",
+   "composite": 70.88,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 78.8,
+    "growth": 100.0,
+    "valuation": 64.3,
+    "momentum": 62.5,
+    "news": 40.0
+   },
+   "target": {
+    "base": 457.13,
+    "bull": 627.06,
+    "bear": 202.23,
+    "ev": 427.39,
+    "confidence": "中",
+    "upside": 0.1023,
+    "ev_upside": 0.0306,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 515.18,
+      "weight": 0.4,
+      "upside": 0.2423
+     },
+     "peg": {
+      "value": 530.95,
+      "weight": 0.15,
+      "upside": 0.2803
+     },
+     "dcf": {
+      "value": 268.69,
+      "weight": 0.2,
+      "upside": -0.3521
+     },
+     "consensus": {
+      "value": 470.72,
+      "weight": 0.25,
+      "upside": 0.1351
+     }
+    }
+   },
+   "stop": 387.3,
+   "fundamentals": {
+    "market_cap": 200949301248,
+    "pe_ttm": 49.2518,
+    "pe_fwd": 25.3844,
+    "peg": 0.61,
+    "roe": 0.1223,
+    "gross_margin": 0.658,
+    "op_margin": 0.395,
+    "net_margin": 0.2979,
+    "rev_growth": 0.396,
+    "eps_growth": 1.635,
+    "de": 0.2731,
+    "beta": 1.231,
+    "target_mean": 470.7188,
+    "n_analysts": 32,
+    "fcf_margin": 0.2988
+   },
+   "tech": {
+    "ret_1m": 0.14868985823467873,
+    "ret_3m": 0.06395416308234614,
+    "rel_3m": 0.03317788396684174,
+    "dist200": 0.14350755280058713,
+    "vol_ann": 0.311949459289109
+   },
+   "theme": "edge_ai_industrial",
    "book": "emerging",
    "also_main": false
   }
