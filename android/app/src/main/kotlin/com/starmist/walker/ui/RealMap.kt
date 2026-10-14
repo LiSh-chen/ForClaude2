@@ -229,8 +229,6 @@ internal fun DrawScope.drawRealMap(
                 ),
                 radius = r, center = c,
             )
-            drawCircle(Vintage.inkSoft.copy(alpha = 0.10f), r * 0.55f, c, style = Stroke(0.7.dp.toPx()))
-            drawCircle(Vintage.inkSoft.copy(alpha = 0.07f), r * 0.9f, c, style = Stroke(0.7.dp.toPx()))
         }
         data.fields.forEach { u ->
             val o = u.scaled()
