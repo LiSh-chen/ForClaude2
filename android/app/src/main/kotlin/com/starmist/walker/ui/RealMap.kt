@@ -52,6 +52,33 @@ internal fun GeoPoint.unit() = Offset(
     ((MAP_LAT_MAX - lat) / (MAP_LAT_MAX - MAP_LAT_MIN)).toFloat(),
 )
 
+/** Rivers as (lat, lon) courses from the mountains to the sea; drawn small and unnamed, decoration only. */
+private val RIVERS: List<List<Pair<Double, Double>>> = listOf(
+    listOf(23.95 to 121.15, 23.87 to 120.9, 23.84 to 120.6, 23.82 to 120.28),   // 濁水溪
+    listOf(24.25 to 121.3, 24.25 to 121.0, 24.3 to 120.75, 24.35 to 120.6),     // 大甲溪
+    listOf(24.7 to 121.35, 24.9 to 121.4, 25.05 to 121.45, 25.17 to 121.42),    // 淡水河
+    listOf(23.3 to 120.8, 23.2 to 120.5, 23.05 to 120.07),                      // 曾文溪
+    listOf(23.25 to 120.9, 22.95 to 120.65, 22.5 to 120.4),                     // 高屏溪
+    listOf(23.45 to 121.38, 23.7 to 121.43, 23.92 to 121.62),                   // 花蓮溪
+    listOf(23.1 to 121.2, 23.3 to 121.3, 23.47 to 121.52),                      // 秀姑巒溪
+    listOf(24.5 to 121.5, 24.65 to 121.7, 24.7 to 121.83),                      // 蘭陽溪
+    listOf(23.05 to 121.1, 22.85 to 121.15, 22.78 to 121.2),                    // 卑南溪
+)
+
+private class Place(val name: String, val lat: Double, val lon: Double)
+
+private val CITIES = listOf(
+    Place("基隆", 25.13, 121.74), Place("台北", 25.04, 121.52), Place("桃園", 24.99, 121.30), Place("新竹", 24.80, 120.97),
+    Place("苗栗", 24.56, 120.82), Place("台中", 24.15, 120.68), Place("彰化", 24.08, 120.54), Place("南投", 23.91, 120.69),
+    Place("嘉義", 23.48, 120.45), Place("台南", 22.99, 120.21), Place("高雄", 22.63, 120.30), Place("屏東", 22.67, 120.49),
+    Place("宜蘭", 24.76, 121.75), Place("花蓮", 23.98, 121.60), Place("台東", 22.76, 121.14),
+)
+
+private val PEAKS = listOf(
+    Place("玉山", 23.47, 120.96), Place("雪山", 24.38, 121.23), Place("合歡山", 24.14, 121.28),
+    Place("阿里山", 23.51, 120.80), Place("北大武山", 22.62, 120.75),
+)
+
 /** What can be worked out once per route: the island shape and the little decorations. */
 internal class RealMapData(
     val island: List<Offset>,
@@ -202,6 +229,8 @@ internal fun DrawScope.drawRealMap(
                 ),
                 radius = r, center = c,
             )
+            drawCircle(Vintage.inkSoft.copy(alpha = 0.10f), r * 0.55f, c, style = Stroke(0.7.dp.toPx()))
+            drawCircle(Vintage.inkSoft.copy(alpha = 0.07f), r * 0.9f, c, style = Stroke(0.7.dp.toPx()))
         }
         data.fields.forEach { u ->
             val o = u.scaled()
@@ -235,7 +264,39 @@ internal fun DrawScope.drawRealMap(
             }
         }
     }
+    // Rivers: thin blue lines that wander from the hills to the sea.
+    clipPath(island) {
+        RIVERS.forEach { course ->
+            val pts = course.map { GeoPoint(it.first, it.second).px() }
+            val river = Path().apply {
+                moveTo(pts[0].x, pts[0].y)
+                for (i in 1 until pts.size) {
+                    val a = pts[i - 1]; val b = pts[i]
+                    val mx = (a.x + b.x) / 2f; val my = (a.y + b.y) / 2f
+                    val bend = (if (i % 2 == 0) 1 else -1) * (b - a).getDistance() * 0.12f
+                    quadraticTo(mx - (b.y - a.y) / (b - a).getDistance().coerceAtLeast(1f) * bend, my + (b.x - a.x) / (b - a).getDistance().coerceAtLeast(1f) * bend, b.x, b.y)
+                }
+            }
+            drawPath(river, Color(0xFF6E9396).copy(alpha = 0.9f), style = Stroke(2.4.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+            drawPath(river, Color(0xFFBBD6D6), style = Stroke(1.3.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+        }
+    }
     drawPath(island, Vintage.inkSoft, style = Stroke(1.4.dp.toPx(), join = StrokeJoin.Round))
+
+    // Mountain peaks and city names, faint so the route stays the main thing.
+    PEAKS.forEach { pk ->
+        val o = GeoPoint(pk.lat, pk.lon).px()
+        val tri = Path().apply { moveTo(o.x - 5.dp.toPx(), o.y + 3.dp.toPx()); lineTo(o.x, o.y - 5.dp.toPx()); lineTo(o.x + 5.dp.toPx(), o.y + 3.dp.toPx()); close() }
+        drawPath(tri, Vintage.inkSoft.copy(alpha = 0.55f))
+        val t = measurer.measure(pk.name, label.copy(fontSize = 11.sp, fontWeight = FontWeight.Normal, color = Vintage.inkSoft.copy(alpha = 0.9f)))
+        drawText(t, topLeft = Offset(o.x - t.size.width / 2f, o.y + 4.dp.toPx()))
+    }
+    CITIES.forEach { c ->
+        val o = GeoPoint(c.lat, c.lon).px()
+        drawCircle(Vintage.inkSoft.copy(alpha = 0.7f), 2.6.dp.toPx(), o)
+        val t = measurer.measure(c.name, label.copy(fontSize = 12.sp, color = Vintage.inkSoft.copy(alpha = 0.85f)))
+        drawText(t, topLeft = Offset(o.x + 4.dp.toPx(), o.y - t.size.height / 2f))
+    }
 
     // The route: dotted ahead, solid behind, dashed red where a train or ferry carries the walker.
     val dotted = PathEffect.dashPathEffect(floatArrayOf(3.dp.toPx(), 5.dp.toPx()))

@@ -144,8 +144,7 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
             showDiagnostics -> DiagnosticsScreen(vm, padding, openAppSettings)
             tab == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings)
             tab == 1 -> StatsScreen(vm, current, padding)
-            tab == 3 -> JourneyScreen(vm, current, padding)
-            tab == 4 -> RouteScreen(vm, current, padding)
+            tab == 3 -> if (current.challenge == 1) RouteScreen(vm, current, padding) else JourneyScreen(vm, current, padding)
             else -> SettingsScreen(vm, current, padding, onOpenDiagnostics = { showDiagnostics = true })
         }
     }

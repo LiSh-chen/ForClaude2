@@ -45,18 +45,11 @@ fun JourneyScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValu
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text("世界地圖", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
+        Text("收藏・虛擬世界", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
         if (state == null || progress == null) {
-            WorldMapView(regionIndex = 0, fraction = 0.0, finished = false)
             Text("旅程會在你走路後開始。", style = MaterialTheme.typography.bodyMedium)
             return@Column
         }
-        WorldMapView(progress.regionIndex, progress.regionFraction, progress.finished)
-        Text(
-            "走過的地方會留下足跡，迷霧也隨之散去；沒去過的地方還藏在霧裡。",
-            style = MaterialTheme.typography.labelSmall,
-        )
-
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
@@ -133,7 +126,7 @@ fun describe(event: JourneyEvent, vm: AppViewModel): String = when (event) {
     is JourneyEvent.Found -> "${event.line}（獲得 ${event.item.displayName}）"
     is JourneyEvent.ChoiceAppeared -> {
         val title = vm.engine.definition(event.defId)?.title ?: "一個故事"
-        "遇到「$title」，也撿到了${event.item.displayName}。到「旅程」頁回應它。"
+        "遇到「$title」，也撿到了${event.item.displayName}。到「收藏」頁回應它。"
     }
     is JourneyEvent.RegionCleared -> {
         val region = vm.engine.region(event.regionId)

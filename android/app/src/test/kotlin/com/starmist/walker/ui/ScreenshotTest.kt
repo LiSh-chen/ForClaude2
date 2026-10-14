@@ -47,6 +47,15 @@ class ScreenshotTest {
     @Test fun home_real_east() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 260.0)) }
     @Test fun home_choose_route() = paparazzi.snapshot { Home(true, HomeMap.ChooseRoute, 0) }
 
+    @Test fun collection_real() = paparazzi.snapshot {
+        Page(tab = 3) { pad ->
+            androidx.compose.foundation.layout.Column(Modifier.padding(pad).padding(16.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
+                androidx.compose.material3.Text("收藏・真實世界")
+                RouteProgressContent(forward, com.starmist.core.route.RouteState(forward.id, 0L, 260.0), onRestart = {}, onSwitch = {})
+            }
+        }
+    }
+
     @Test fun card_face() = paparazzi.snapshot {
         StarMistTheme { Box(Modifier.padding(16.dp)) { CardFace(forward.cards[3].first, forward.cards[3].second) } }
     }

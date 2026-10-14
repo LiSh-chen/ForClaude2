@@ -54,7 +54,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
         Modifier.padding(padding).verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text("路線", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        Text("收藏・真實世界", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
         if (current == null || route == null) {
             RoutePicker(onStart = { vm.startRoute(it) })
         } else {
@@ -88,7 +88,7 @@ internal fun RoutePicker(onStart: (String) -> Unit) {
 }
 
 @Composable
-private fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState, onRestart: () -> Unit, onSwitch: (String) -> Unit) {
+internal fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState, onRestart: () -> Unit, onSwitch: (String) -> Unit) {
     val km = state.walkedKm
     val done = km >= route.totalKm - 1e-9
     val next = route.next(km)
@@ -115,8 +115,6 @@ private fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState,
             OutlinedButton(onClick = { onSwitch(other.id) }, modifier = Modifier.fillMaxWidth()) { Text("改成${other.direction}走（還沒出發才能改）") }
         }
     }
-
-    RouteMapView(route, km, Modifier.fillMaxWidth().height(420.dp).clip(RoundedCornerShape(12.dp)), initialZoom = 1f)
 
     val collected = route.collected(km).map { it.id }.toSet()
     Text("景點卡 ${collected.size} / ${route.cards.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
