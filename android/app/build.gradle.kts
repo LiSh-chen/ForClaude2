@@ -17,6 +17,18 @@ android {
         versionName = "0.1.0"
     }
 
+    // A fixed debug key, so a newer APK installs over the old one and keeps its data. Without it every
+    // CI build is signed with a freshly generated key, Android refuses the update, and the app has to
+    // be uninstalled first, which wipes the step history. This key is public on purpose: debug builds only.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
