@@ -24,7 +24,7 @@ class RouteTrackerTest {
         var state = RouteTracker.start(route, 0)
         val seen = ArrayList<String>()
         var steps = 0L
-        while (state.walkedKm < 142.0) {
+        while (state.walkedKm < 160.0) {
             steps += 1_000
             val result = RouteTracker.advance(route, state, steps, stride)
             state = result.state

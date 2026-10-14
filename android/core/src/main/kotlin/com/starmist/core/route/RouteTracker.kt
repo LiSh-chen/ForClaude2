@@ -40,7 +40,7 @@ object RouteTracker {
             // The first stop sits at kilometre 0: it is collected with the first steps, once.
             val firstStop = at == 0.0 && before == 0.0 && steps > 0
             if (!((at > before + 1e-9 || firstStop) && at <= after + 1e-9)) continue
-            stop.transit?.let { events += RouteEvent.Transit(it, stop.name) }
+            if (!stop.via) stop.transit?.let { events += RouteEvent.Transit(it, stop.name) }
             stop.landmark?.let { events += RouteEvent.CardCollected(it, at) }
             stop.supply?.let { events += RouteEvent.StampCollected(it, at) }
         }

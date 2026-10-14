@@ -39,7 +39,7 @@ class RouteTest {
         assertEquals(route.stops.first().at, route.positionAt(0.0))
         assertEquals(route.stops.last().at, route.positionAt(route.totalKm + 50))
         // Only the train and ferry legs may jump: the walker is carried across them.
-        val hops = route.stops.indices.filter { route.stops[it].transit != null }.map { route.cumulativeKm[it] }
+        val hops = route.stops.indices.filter { route.stops[it].transit != null && !route.stops[it].via }.map { route.cumulativeKm[it] }
         var last = route.positionAt(0.0)
         var km = 0.0
         while (km < route.totalKm) {
@@ -75,13 +75,13 @@ class RouteTest {
         assertEquals(route.supplies.map { it.first.id }.toSet(), ccw.supplies.map { it.first.id }.toSet())
         assertEquals("taipei101", ccw.cards.first().first.id)
         assertEquals("finish", ccw.cards.last().first.id)
-        assertEquals(2, ccw.stops.count { it.transit != null })
+        assertEquals(2, ccw.stops.count { it.transit != null && !it.via })
         assertEquals(route.totalKm, ccw.totalKm, 40.0)
         assertEquals(2, Routes.families.single().size)
         // The train leg is now Hualien -> Suao.
         val suao = ccw.stops.indexOfFirst { it.landmark?.id == "suao" }
         assertEquals("搭火車", ccw.stops[suao].transit)
-        assertEquals("花蓮", ccw.stops[suao - 1].name)
+        assertEquals("花蓮", ccw.stops.take(suao).last { !it.via }.name)
     }
 
     @Test

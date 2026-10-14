@@ -43,6 +43,8 @@ data class Stop(
     val at: GeoPoint,
     val landmark: Landmark? = null,
     val transit: String? = null,
+    /** A shaping point that only bends the line; it is never announced or collected. */
+    val via: Boolean = false,
     val supply: Supply? = null,
 )
 
@@ -146,5 +148,5 @@ data class RouteDef(
 
     /** The stop most recently passed, for "now near ..." wording. */
     fun lastPassed(walkedKm: Double): Stop =
-        stops[cumulativeKm.indexOfLast { it <= walkedKm + 1e-9 }.coerceAtLeast(0)]
+        stops.take(cumulativeKm.indexOfLast { it <= walkedKm + 1e-9 }.coerceAtLeast(0) + 1).last { !it.via }
 }
