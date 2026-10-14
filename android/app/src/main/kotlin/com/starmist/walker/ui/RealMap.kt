@@ -188,6 +188,7 @@ internal fun DrawScope.drawRealMap(
     walkedKm: Double,
     measurer: TextMeasurer,
     pin: ImageBitmap?,
+    base: ImageBitmap? = null,
 ) {
     fun GeoPoint.px() = unit().let { Offset(it.x * w, it.y * h) }
     fun Offset.scaled() = Offset(x * w, y * h)
@@ -202,84 +203,90 @@ internal fun DrawScope.drawRealMap(
         }
         close()
     }
-    clipPath(island, clipOp = ClipOp.Difference) {
-        val gap = 7.dp.toPx()
-        var y = 0f
-        while (y < h) {
-            drawLine(Color(0xFF6E9396).copy(alpha = 0.22f), Offset(0f, y), Offset(w, y), 0.8.dp.toPx())
-            y += gap
+    if (base != null) {
+        drawImage(base, dstSize = IntSize(w.toInt(), h.toInt()))
+    } else {
+        clipPath(island, clipOp = ClipOp.Difference) {
+            val gap = 7.dp.toPx()
+            var y = 0f
+            while (y < h) {
+                drawLine(Color(0xFF6E9396).copy(alpha = 0.22f), Offset(0f, y), Offset(w, y), 0.8.dp.toPx())
+                y += gap
+            }
         }
-    }
-    for ((width, alpha) in listOf(16f to 0.10f, 10f to 0.14f, 5f to 0.2f)) {
-        drawPath(island, Color(0xFF6E9396).copy(alpha = alpha), style = Stroke(width.dp.toPx(), join = StrokeJoin.Round))
-    }
-    data.boats.forEach { u -> drawBoat(u.scaled(), 7.dp.toPx()) }
-    drawCompassRose(Offset(w * 0.16f, h * 0.9f), 26.dp.toPx())
+        for ((width, alpha) in listOf(16f to 0.10f, 10f to 0.14f, 5f to 0.2f)) {
+            drawPath(island, Color(0xFF6E9396).copy(alpha = alpha), style = Stroke(width.dp.toPx(), join = StrokeJoin.Round))
+        }
+        data.boats.forEach { u -> drawBoat(u.scaled(), 7.dp.toPx()) }
+        drawCompassRose(Offset(w * 0.16f, h * 0.9f), 26.dp.toPx())
 
-    // Land.
-    drawPath(island, LAND_COLOR)
-    clipPath(island) {
-        // Soft tint over the mountain belt, and flat field colour on the western plain.
-        data.relief.forEach { (u, s) ->
-            val c = u.scaled()
-            val r = w * 0.085f * s
-            drawCircle(
-                brush = androidx.compose.ui.graphics.Brush.radialGradient(
-                    listOf(Color(0xFF9DB08A).copy(alpha = 0.42f), Color.Transparent), center = c, radius = r,
-                ),
-                radius = r, center = c,
-            )
-        }
-        data.fields.forEach { u ->
-            val o = u.scaled()
-            drawRect(Color(0xFFD9CF9C).copy(alpha = 0.55f), Offset(o.x - 3.dp.toPx(), o.y - 1.5.dp.toPx()), Size(6.dp.toPx(), 3.dp.toPx()))
-        }
-        data.ticks.forEach { u ->
-            val o = u.scaled()
-            drawLine(Vintage.inkSoft.copy(alpha = 0.35f), o, Offset(o.x - 1.5.dp.toPx(), o.y - 3.dp.toPx()), 0.8.dp.toPx())
-            drawLine(Vintage.inkSoft.copy(alpha = 0.35f), o, Offset(o.x + 1.5.dp.toPx(), o.y - 3.dp.toPx()), 0.8.dp.toPx())
-        }
-        data.trees.forEach { u ->
-            val o = u.scaled()
-            drawCircle(Vintage.mossLight.copy(alpha = 0.8f), 2.6.dp.toPx(), Offset(o.x, o.y - 3.dp.toPx()))
-            drawCircle(Vintage.inkSoft.copy(alpha = 0.55f), 2.6.dp.toPx(), Offset(o.x, o.y - 3.dp.toPx()), style = Stroke(0.7.dp.toPx()))
-            drawLine(Vintage.inkSoft.copy(alpha = 0.55f), o, Offset(o.x, o.y - 0.5.dp.toPx()), 0.8.dp.toPx())
-        }
-        // Hills: a light wash, a pen curve and a few hatch strokes, not solid shapes.
-        data.hills.forEach { (u, size) ->
-            val o = u.scaled()
-            val s = 6.dp.toPx() * size
-            drawOval(Vintage.mossLight.copy(alpha = 0.4f), Offset(o.x - s * 1.2f, o.y - s * 0.7f), Size(s * 2.4f, s * 1.1f))
-            val crest = Path().apply {
-                moveTo(o.x - s * 1.1f, o.y + s * 0.1f)
-                quadraticTo(o.x - s * 0.5f, o.y - s * 1.1f, o.x, o.y - s * 0.9f)
-                quadraticTo(o.x + s * 0.6f, o.y - s * 0.8f, o.x + s * 1.1f, o.y + s * 0.1f)
+        // Land.
+        drawPath(island, LAND_COLOR)
+        clipPath(island) {
+            // Soft tint over the mountain belt, and flat field colour on the western plain.
+            data.relief.forEach { (u, s) ->
+                val c = u.scaled()
+                val r = w * 0.085f * s
+                drawCircle(
+                    brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                        listOf(Color(0xFF9DB08A).copy(alpha = 0.42f), Color.Transparent), center = c, radius = r,
+                    ),
+                    radius = r, center = c,
+                )
             }
-            drawPath(crest, Vintage.inkSoft.copy(alpha = 0.6f), style = Stroke(0.9.dp.toPx(), cap = StrokeCap.Round))
-            for (k in 1..3) {
-                val x = o.x + s * (0.1f + 0.22f * k)
-                drawLine(Vintage.inkSoft.copy(alpha = 0.4f), Offset(x, o.y - s * (0.8f - 0.12f * k)), Offset(x + s * 0.12f, o.y - s * 0.05f), 0.7.dp.toPx())
+            data.fields.forEach { u ->
+                val o = u.scaled()
+                drawRect(Color(0xFFD9CF9C).copy(alpha = 0.55f), Offset(o.x - 3.dp.toPx(), o.y - 1.5.dp.toPx()), Size(6.dp.toPx(), 3.dp.toPx()))
             }
-        }
-    }
-    // Rivers: thin blue lines that wander from the hills to the sea.
-    clipPath(island) {
-        RIVERS.forEach { course ->
-            val pts = course.map { GeoPoint(it.first, it.second).px() }
-            val river = Path().apply {
-                moveTo(pts[0].x, pts[0].y)
-                for (i in 1 until pts.size) {
-                    val a = pts[i - 1]; val b = pts[i]
-                    val mx = (a.x + b.x) / 2f; val my = (a.y + b.y) / 2f
-                    val bend = (if (i % 2 == 0) 1 else -1) * (b - a).getDistance() * 0.12f
-                    quadraticTo(mx - (b.y - a.y) / (b - a).getDistance().coerceAtLeast(1f) * bend, my + (b.x - a.x) / (b - a).getDistance().coerceAtLeast(1f) * bend, b.x, b.y)
+            data.ticks.forEach { u ->
+                val o = u.scaled()
+                drawLine(Vintage.inkSoft.copy(alpha = 0.35f), o, Offset(o.x - 1.5.dp.toPx(), o.y - 3.dp.toPx()), 0.8.dp.toPx())
+                drawLine(Vintage.inkSoft.copy(alpha = 0.35f), o, Offset(o.x + 1.5.dp.toPx(), o.y - 3.dp.toPx()), 0.8.dp.toPx())
+            }
+            data.trees.forEach { u ->
+                val o = u.scaled()
+                drawCircle(Vintage.mossLight.copy(alpha = 0.8f), 2.6.dp.toPx(), Offset(o.x, o.y - 3.dp.toPx()))
+                drawCircle(Vintage.inkSoft.copy(alpha = 0.55f), 2.6.dp.toPx(), Offset(o.x, o.y - 3.dp.toPx()), style = Stroke(0.7.dp.toPx()))
+                drawLine(Vintage.inkSoft.copy(alpha = 0.55f), o, Offset(o.x, o.y - 0.5.dp.toPx()), 0.8.dp.toPx())
+            }
+            // Hills: a light wash, a pen curve and a few hatch strokes, not solid shapes.
+            data.hills.forEach { (u, size) ->
+                val o = u.scaled()
+                val s = 6.dp.toPx() * size
+                drawOval(Vintage.mossLight.copy(alpha = 0.4f), Offset(o.x - s * 1.2f, o.y - s * 0.7f), Size(s * 2.4f, s * 1.1f))
+                val crest = Path().apply {
+                    moveTo(o.x - s * 1.1f, o.y + s * 0.1f)
+                    quadraticTo(o.x - s * 0.5f, o.y - s * 1.1f, o.x, o.y - s * 0.9f)
+                    quadraticTo(o.x + s * 0.6f, o.y - s * 0.8f, o.x + s * 1.1f, o.y + s * 0.1f)
+                }
+                drawPath(crest, Vintage.inkSoft.copy(alpha = 0.6f), style = Stroke(0.9.dp.toPx(), cap = StrokeCap.Round))
+                for (k in 1..3) {
+                    val x = o.x + s * (0.1f + 0.22f * k)
+                    drawLine(Vintage.inkSoft.copy(alpha = 0.4f), Offset(x, o.y - s * (0.8f - 0.12f * k)), Offset(x + s * 0.12f, o.y - s * 0.05f), 0.7.dp.toPx())
                 }
             }
-            drawPath(river, Color(0xFF6E9396).copy(alpha = 0.9f), style = Stroke(2.4.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
-            drawPath(river, Color(0xFFBBD6D6), style = Stroke(1.3.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
         }
+        // Rivers: thin blue lines that wander from the hills to the sea.
+        clipPath(island) {
+            RIVERS.forEach { course ->
+                val pts = course.map { GeoPoint(it.first, it.second).px() }
+                val river = Path().apply {
+                    moveTo(pts[0].x, pts[0].y)
+                    for (i in 1 until pts.size) {
+                        val a = pts[i - 1]; val b = pts[i]
+                        val mx = (a.x + b.x) / 2f; val my = (a.y + b.y) / 2f
+                        val bend = (if (i % 2 == 0) 1 else -1) * (b - a).getDistance() * 0.12f
+                        quadraticTo(mx - (b.y - a.y) / (b - a).getDistance().coerceAtLeast(1f) * bend, my + (b.x - a.x) / (b - a).getDistance().coerceAtLeast(1f) * bend, b.x, b.y)
+                    }
+                }
+                drawPath(river, Color(0xFF6E9396).copy(alpha = 0.9f), style = Stroke(2.4.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+                drawPath(river, Color(0xFFBBD6D6), style = Stroke(1.3.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+            }
+        }
+        drawPath(island, Vintage.inkSoft, style = Stroke(1.4.dp.toPx(), join = StrokeJoin.Round))
+
+
     }
-    drawPath(island, Vintage.inkSoft, style = Stroke(1.4.dp.toPx(), join = StrokeJoin.Round))
 
     // Mountain peaks and city names, faint so the route stays the main thing.
     PEAKS.forEach { pk ->

@@ -1126,6 +1126,20 @@
       "source": "ai",
       "prompt": "A traveller coming home: a city skyline with a tall tower at sunrise, a railway station, a welcome banner, a backpack set down. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.",
       "notes": "4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。"
+    },
+    {
+      "id": "real_map_base",
+      "category": "map",
+      "title": "真實世界（台灣）地圖底圖",
+      "usedIn": "首頁真實世界地圖",
+      "size": [
+        1200,
+        2191
+      ],
+      "alpha": false,
+      "source": "ai",
+      "prompt": "見 REAL_MAP_PROMPT.md",
+      "notes": "海岸線要照 mapguide/real_map_guide.png；沒有文字、沒有邊框。"
     }
   ]
 }

@@ -57,6 +57,7 @@ fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifie
     val measurer = rememberMapMeasurer()
     val data = rememberRealMapData(route)
     val pin = rememberArt("traveller_fox")
+    val base = rememberArt("real_map_base")
     val here = route.positionAt(walkedKm)
     ZoomPanMap(
         aspect = REAL_MAP_ASPECT,
@@ -66,7 +67,7 @@ fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifie
         initialZoom = initialZoom,
         maxZoom = 24f,
         background = SEA_COLOR,
-    ) { w, h, _ -> drawRealMap(w, h, route, data, walkedKm, measurer, pin) }
+    ) { w, h, _ -> drawRealMap(w, h, route, data, walkedKm, measurer, pin, base) }
 }
 
 /** Small round picture for a card: the painted card art if the asset library has it, a letter tile otherwise. */
