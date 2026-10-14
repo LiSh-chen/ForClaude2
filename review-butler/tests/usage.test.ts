@@ -44,3 +44,16 @@ describe("computeCostUsd", () => {
     expect(computeCostUsd("some-future-model", { input: 10, output: 10 })).toBe(0);
   });
 });
+
+import { periodStart } from "@/lib/line/handlers";
+describe("periodStart (Asia/Taipei)", () => {
+  const now = new Date("2026-10-14T03:00:00Z"); // 台灣 10/14 11:00
+  it("starts days at Taipei midnight", () => {
+    expect(periodStart("today", now).toISOString()).toBe("2026-10-13T16:00:00.000Z");
+    expect(periodStart("week", now).toISOString()).toBe("2026-10-07T16:00:00.000Z"); // 含今天共 7 天
+    expect(periodStart("month", now).toISOString()).toBe("2026-09-30T16:00:00.000Z");
+  });
+  it("handles late-evening UTC that is already tomorrow in Taipei", () => {
+    expect(periodStart("today", new Date("2026-10-14T17:00:00Z")).toISOString()).toBe("2026-10-14T16:00:00.000Z");
+  });
+});

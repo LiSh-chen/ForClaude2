@@ -62,7 +62,7 @@ export async function publishReply(db: Db, input: PublishInput, deps: { google?:
     // 上次失敗／被拒絕、或 pending 卡太久 → 以單一 UPDATE 原子地重新搶佔
     const [reclaimed] = await db
       .update(replies)
-      .set({ content, publishStatus: "pending", publishedBy: input.publishedBy, publishedByLineUserId: input.lineUserId ?? null, errorMessage: null, createdAt: new Date() })
+      .set({ content, publishStatus: "pending", publishedBy: input.publishedBy, publishedByLineUserId: input.lineUserId ?? null, errorMessage: null, verifiedAt: null, createdAt: new Date() })
       .where(
         and(
           eq(replies.reviewId, input.reviewId),

@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, MessageSquare, Settings, Store } from "lucide-react";
+import { BarChart3, Bell, MessageSquare, Settings, Store } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
   { href: "/dashboard", label: "評論", icon: MessageSquare, match: (p: string) => p === "/dashboard" || p.startsWith("/dashboard/reviews") },
   { href: "/dashboard/locations", label: "店點", icon: Store, match: (p: string) => p.startsWith("/dashboard/locations") },
+  { href: "/dashboard/line", label: "LINE", icon: Bell, match: (p: string) => p.startsWith("/dashboard/line") },
   { href: "/dashboard/settings", label: "設定", icon: Settings, match: (p: string) => p.startsWith("/dashboard/settings") },
   { href: "/dashboard/usage", label: "用量", icon: BarChart3, match: (p: string) => p.startsWith("/dashboard/usage") },
 ];

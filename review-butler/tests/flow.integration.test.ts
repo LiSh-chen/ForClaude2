@@ -132,7 +132,7 @@ describe("F3: review sync", () => {
     for (const l of locs.slice(0, 2)) await enableLocation(db, orgId, l.id, { google, llm });
     const real = google.listReviews.bind(google);
     google.listReviews = async (a, locId, p) => { if (locId === locs[0]!.googleLocationId) throw new Error("boom"); return real(a, locId, p); };
-    const out = (await syncAllLocations(db, { google, llm, draft: false, backoff: fastBackoff })).filter((r) => locs.slice(0, 2).some((l) => l.id === r.locationId));
+    const out = (await syncAllLocations(db, { google, llm, draft: false, backoff: fastBackoff, now: () => new Date(Date.now() + 31 * 60_000) })).filter((r) => locs.slice(0, 2).some((l) => l.id === r.locationId));
     expect(out.find((r) => r.locationId === locs[0]!.id)?.error).toBe("boom");
     expect(out.find((r) => r.locationId === locs[1]!.id)?.error).toBeUndefined();
   });

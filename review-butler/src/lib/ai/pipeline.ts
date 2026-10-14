@@ -17,6 +17,8 @@ const INDUSTRY_LABEL: Record<Industry, string> = { food: "餐飲", beauty: "美�
 
 export interface PipelineDeps {
   llm?: LlmAdapter;
+  /** 店主用說的修改要求（LINE 對話）。有值時以最新草稿為基礎修改，而不是重寫。 */
+  instruction?: string;
 }
 
 export type DraftResult =
@@ -45,7 +47,7 @@ async function loadContext(db: Db, reviewId: string): Promise<Ctx> {
 }
 
 /** 呼叫 LLM 並記錄 token 與成本（SPEC 6.2：每次 AI 呼叫都要記錄）。 */
-async function callLlm(db: Db, organizationId: string, llm: LlmAdapter, req: LlmRequest): Promise<LlmResponse> {
+export async function callLlm(db: Db, organizationId: string, llm: LlmAdapter, req: LlmRequest): Promise<LlmResponse> {
   const res = await llm.generate(req);
   await db.insert(aiUsageLogs).values({
     organizationId,
@@ -136,7 +138,7 @@ export async function generateDraft(db: Db, reviewId: string, deps: PipelineDeps
     try {
       const res = await callLlm(db, orgId, llm, {
         tier: "write",
-        purpose: previous.length ? "write_regenerate" : "write",
+        purpose: deps.instruction ? "write_revise" : previous.length ? "write_regenerate" : "write",
         system,
         user: writeUserPrompt({
           stars: review.starRating,
@@ -146,6 +148,7 @@ export async function generateDraft(db: Db, reviewId: string, deps: PipelineDeps
           riskFlags: analysis.riskFlags,
           previousDrafts: previous.slice(0, 3).map((d) => d.content),
           violations,
+          revision: deps.instruction && previous[0] ? { draft: previous[0].content, instruction: deps.instruction.slice(0, 300) } : undefined,
         }),
       });
       const body = cleanDraft(res.text);

@@ -1,10 +1,9 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { z } from "zod";
+import { go } from "@/lib/flash";
 import { INDUSTRIES, type Industry } from "@/config/industries";
-import { getGoogleBusiness, isMockGoogle } from "@/lib/adapters";
-import { MockGoogleBusinessAdapter } from "@/lib/adapters/google-business/mock";
+import { asMockGoogle } from "@/lib/adapters";
 import { generateDraft } from "@/lib/ai/pipeline";
 import { requireUser } from "@/lib/auth";
 import { brandSettings, locations } from "@/lib/db/schema";
@@ -14,13 +13,6 @@ import { publishReply, setReviewSkipped } from "@/lib/publish";
 import { getReviewDetail } from "@/lib/queries";
 import { and, eq } from "drizzle-orm";
 
-type Flash = { notice?: string; error?: string };
-function go(path: string, flash: Flash = {}): never {
-  const q = new URLSearchParams();
-  if (flash.notice) q.set("notice", flash.notice);
-  if (flash.error) q.set("error", flash.error);
-  redirect(q.size ? `${path}${path.includes("?") ? "&" : "?"}${q}` : path);
-}
 const reviewPath = (id: string) => `/dashboard/reviews/${id}`;
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
@@ -57,15 +49,15 @@ const SAMPLES: Record<string, string> = {
 /** 開發工具：在 mock Google 加一則新評論，然後同步（僅 mock 模式可用）。 */
 export async function simulateReviewAction(formData: FormData) {
   const { db, org } = await requireUser();
-  const google = getGoogleBusiness();
-  if (!isMockGoogle() || !(google instanceof MockGoogleBusinessAdapter)) go("/dashboard", { error: "只有模擬模式可以產生假評論" });
+  const google = asMockGoogle();
+  if (!google) go("/dashboard", { error: "只有模擬模式可以產生假評論" });
   const kind = String(formData.get("kind") ?? "5");
   const locationId = String(formData.get("locationId") ?? "");
   const [loc] = await db.select().from(locations).where(and(eq(locations.id, locationId), eq(locations.organizationId, org.id)));
   if (!loc?.enabled) go("/dashboard", { error: "請先選擇一個已啟用的店點" });
   const stars = kind === "food" ? 1 : kind === "en" ? 5 : Number(kind);
   const now = new Date();
-  (google as MockGoogleBusinessAdapter).addReview(loc.googleLocationId, {
+  google.addReview(loc.googleLocationId, {
     googleReviewId: `sim-${now.getTime()}`,
     starRating: Math.min(5, Math.max(1, stars)) as 1 | 2 | 3 | 4 | 5,
     comment: SAMPLES[kind] ?? SAMPLES["5"]!,

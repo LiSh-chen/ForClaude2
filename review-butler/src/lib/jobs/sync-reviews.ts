@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull, lt, or, sql } from "drizzle-orm";
 import { getGoogleBusiness } from "@/lib/adapters";
 import { AuthRevokedError } from "@/lib/adapters/errors";
 import type { GoogleBusinessAdapter, GoogleReview } from "@/lib/adapters/google-business/interface";
@@ -7,6 +7,8 @@ import { processNewReview } from "@/lib/ai/pipeline";
 import type { Db } from "@/lib/db/client";
 import { locations, replies, reviews } from "@/lib/db/schema";
 import { getGoogleAuth, markCredentialRevoked } from "@/lib/google-auth";
+import { enqueueNewReview, flushNotifications } from "@/lib/line/notify";
+import type { LineAdapter } from "@/lib/adapters/line/interface";
 import { withBackoff, type BackoffOptions } from "@/lib/retry";
 
 /** 首次啟用店點時匯入的歷史評論數（SPEC F3） */
@@ -21,7 +23,15 @@ export interface SyncDeps {
   backoff?: BackoffOptions;
   /** 是否在同步後對新評論產生 AI 草稿（預設 true） */
   draft?: boolean;
+  /** 是否在同步後推播 LINE 通知（預設 true） */
+  notify?: boolean;
+  line?: LineAdapter;
+  now?: () => Date;
+  /** syncAllLocations 的最小輪詢間隔（預設 30 分鐘，SPEC F3）。排程可以每分鐘呼叫，不會每分鐘打 Google。 */
+  minIntervalMs?: number;
 }
+
+export const SYNC_INTERVAL_MS = 30 * 60 * 1000;
 
 export interface SyncResult {
   locationId: string;
@@ -35,13 +45,21 @@ export interface SyncResult {
 type ReviewRow = typeof reviews.$inferSelect;
 
 /** 寫入或更新一則評論。回傳 'created' | 'updated' | 'unchanged'。 */
-async function upsertReview(db: Db, locationId: string, r: GoogleReview, historical: boolean): Promise<{ kind: "created" | "updated" | "unchanged"; id: string }> {
+async function upsertReview(
+  db: Db,
+  locationId: string,
+  r: GoogleReview,
+  historical: boolean,
+  /** 增量同步時：比已知最舊評論還舊、且資料庫沒有的，是首次匯入（上限 50 則）之外的更早評論，不當成新評論 */
+  oldestKnown: Date | null = null,
+): Promise<{ kind: "created" | "updated" | "unchanged"; id: string }> {
   const [existing] = await db
     .select()
     .from(reviews)
     .where(and(eq(reviews.locationId, locationId), eq(reviews.googleReviewId, r.googleReviewId)));
 
   if (!existing) {
+    if (oldestKnown && r.createTime < oldestKnown) return { kind: "unchanged", id: "" };
     const [row] = await db
       .insert(reviews)
       .values({
@@ -115,13 +133,15 @@ export async function syncLocation(db: Db, locationId: string, deps: SyncDeps = 
     }
 
     const auth = await getGoogleAuth(db, loc.organizationId);
+    const [known] = await db.select({ oldest: sql<Date | null>`min(${reviews.createTime})` }).from(reviews).where(eq(reviews.locationId, loc.id));
+    const oldestKnown = known?.oldest ? new Date(known.oldest) : null;
     const newIds: string[] = [];
     let pageToken: string | undefined;
     for (let page = 0; page < MAX_PAGES; page++) {
       const res = await withBackoff(() => google.listReviews(auth, loc.googleLocationId, { pageSize: PAGE_SIZE, pageToken }), deps.backoff);
       let touched = 0;
       for (const r of res.reviews) {
-        const u = await upsertReview(db, loc.id, r, false);
+        const u = await upsertReview(db, loc.id, r, false, oldestKnown);
         if (u.kind === "created") { result.created++; newIds.push(u.id); touched++; }
         else if (u.kind === "updated") { result.updated++; touched++; }
       }
@@ -142,6 +162,16 @@ export async function syncLocation(db: Db, locationId: string, deps: SyncDeps = 
         }
       }
     }
+
+    if (deps.notify !== false) {
+      try {
+        // 不論 AI 有沒有寫出草稿都要通知：額度用完或 AI 失敗時，卡片會提示「請自己回覆」
+        for (const id of newIds) await enqueueNewReview(db, id);
+        await flushNotifications(db, { line: deps.line, locationId, backoff: deps.backoff });
+      } catch (e) {
+        console.error(`[sync] LINE notification failed for location ${locationId}:`, e);
+      }
+    }
     return result;
   } catch (e) {
     if (e instanceof AuthRevokedError) await markCredentialRevoked(db, loc.organizationId);
@@ -151,7 +181,12 @@ export async function syncLocation(db: Db, locationId: string, deps: SyncDeps = 
 
 /** 同步所有啟用中的店點；每個店點獨立 try/catch，單點失敗不影響其他（SPEC F3 驗收）。 */
 export async function syncAllLocations(db: Db, deps: SyncDeps = {}): Promise<SyncResult[]> {
-  const active = await db.select({ id: locations.id }).from(locations).where(eq(locations.enabled, true));
+  const now = deps.now?.() ?? new Date();
+  const due = new Date(now.getTime() - (deps.minIntervalMs ?? SYNC_INTERVAL_MS));
+  const active = await db
+    .select({ id: locations.id })
+    .from(locations)
+    .where(and(eq(locations.enabled, true), or(isNull(locations.lastSyncedAt), lt(locations.lastSyncedAt, due))));
   const out: SyncResult[] = [];
   for (const { id } of active) {
     try {

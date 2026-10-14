@@ -41,10 +41,12 @@ export function generateReviews(opts: { seed: number; count: number; now?: Date;
   const rng = createRng(opts.seed);
   const now = (opts.now ?? new Date()).getTime();
   const prefix = opts.idPrefix ?? "mock-review";
+  let age = 0;
   return Array.from({ length: opts.count }, (_, i) => {
     const sample = SAMPLE_REVIEWS[Math.floor(rng() * SAMPLE_REVIEWS.length)]!;
-    // 越小的 index 越新；每則間隔數小時到數天
-    const created = new Date(now - (i + 1) * (3_600_000 * (2 + Math.floor(rng() * 40))));
+    // 與 Google 一致：由新到舊排序（index 越小越新），每則間隔數小時到近兩天
+    age += 3_600_000 * (2 + Math.floor(rng() * 40));
+    const created = new Date(now - age);
     return {
       googleReviewId: `${prefix}-${opts.seed}-${i}`,
       starRating: sample.stars,

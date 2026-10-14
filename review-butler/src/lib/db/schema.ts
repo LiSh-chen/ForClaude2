@@ -33,6 +33,7 @@ export const publishStatusEnum = pgEnum("publish_status", ["pending", "published
 export const publishedByEnum = pgEnum("published_by", ["user", "line_user", "auto", "external"]);
 /** AI 草稿狀態：none=尚未處理、done=已有草稿、failed=重試後仍失敗（請手動回覆）、quota_exceeded=額度用完 */
 export const aiStatusEnum = pgEnum("ai_status", ["none", "done", "failed", "quota_exceeded"]);
+export const notificationKindEnum = pgEnum("notification_kind", ["new_review", "reply_rejected", "auth_revoked"]);
 export const subscriptionStatusEnum = pgEnum("subscription_status", [
   "trialing",
   "active",
@@ -108,10 +109,29 @@ export const lineBindings = pgTable(
     organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
     lineUserId: text("line_user_id").notNull(),
     displayName: text("display_name"),
+    /** 使用者封鎖或刪除官方帳號時為 false（unfollow 事件），不再推播 */
+    following: boolean("following").notNull().default(true),
+    /** 這位使用者最近互動／收到的評論，LINE 對話代理人用它判斷「改短一點」指的是哪一則 */
+    lastReviewId: uuid("last_review_id").references(() => reviews.id, { onDelete: "set null" }),
     createdAt: createdAt(),
   },
   (t) => [uniqueIndex("line_bindings_org_user_idx").on(t.organizationId, t.lineUserId)],
 );
+
+/** 綁定碼：店主在後台產生 6 位數字，貼到 LINE 對話框即可綁定（不需要 LINE Login，適合邀請店長）。 */
+export const lineBindCodes = pgTable("line_bind_codes", {
+  code: text("code").primaryKey(),
+  organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+  expiresAt: ts("expires_at").notNull(),
+  usedAt: ts("used_at"),
+  createdAt: createdAt(),
+});
+
+/** 已處理過的 LINE webhook 事件（webhookEventId），避免重送造成重複處理。 */
+export const lineEvents = pgTable("line_events", {
+  webhookEventId: text("webhook_event_id").primaryKey(),
+  createdAt: createdAt(),
+});
 
 /** 每個 LINE 用戶可接收哪些店點的通知 */
 export const lineBindingLocations = pgTable(
@@ -187,8 +207,43 @@ export const replies = pgTable("replies", {
   publishedBy: publishedByEnum("published_by").notNull(),
   publishedByLineUserId: text("published_by_line_user_id"),
   errorMessage: text("error_message"),
+  /** 發布後檢查到 Google 上確實顯示的時間（F5） */
+  verifiedAt: ts("verified_at"),
   createdAt: createdAt(),
 });
+
+/** 待推播的通知佇列。sent_at 為空 = 尚未送出；送出時以單一 UPDATE 認領，避免重複推播。 */
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: id(),
+    organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+    /** 店點層級的通知（新評論、回覆被拒）才有；授權失效等帳號層級通知為 null */
+    locationId: uuid("location_id").references(() => locations.id, { onDelete: "cascade" }),
+    reviewId: uuid("review_id").references(() => reviews.id, { onDelete: "cascade" }),
+    kind: notificationKindEnum("kind").notNull(),
+    createdAt: createdAt(),
+    sentAt: ts("sent_at"),
+  },
+  (t) => [index("notifications_pending_idx").on(t.locationId, t.sentAt)],
+);
+
+/** 實際送出的 LINE 訊息紀錄：合併推播的間隔判斷、批次發布好評的依據（items 記錄當時看到的草稿）。 */
+export const lineMessages = pgTable(
+  "line_messages",
+  {
+    id: id(),
+    organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+    bindingId: uuid("binding_id").notNull().references(() => lineBindings.id, { onDelete: "cascade" }),
+    locationId: uuid("location_id").references(() => locations.id, { onDelete: "set null" }),
+    kind: notificationKindEnum("kind").notNull(),
+    items: jsonb("items").$type<{ reviewId: string; draftId: string | null }[]>().notNull().default([]),
+    status: text("status").notNull(), // sent | failed
+    error: text("error"),
+    createdAt: createdAt(),
+  },
+  (t) => [index("line_messages_location_idx").on(t.locationId, t.kind, t.createdAt)],
+);
 
 // ---------- 訂閱與帳務 ----------
 export const subscriptions = pgTable("subscriptions", {

@@ -42,3 +42,14 @@ export const getPayment = (): PaymentAdapter =>
 
 /** 目前的 Google adapter 是否為 mock（後台據此顯示「模擬新評論」等開發工具） */
 export const isMockGoogle = (): boolean => useMock(process.env.USE_MOCK_GOOGLE);
+export const isMockLine = (): boolean => useMock(process.env.USE_MOCK_LINE);
+
+// 以「有沒有測試鉤子」判斷，而不是 instanceof：Next 的不同 bundle 可能各載入一份類別，instanceof 會失準。
+export const asMockGoogle = (): MockGoogleBusinessAdapter | null => {
+  const g = getGoogleBusiness() as Partial<MockGoogleBusinessAdapter>;
+  return typeof g.addReview === "function" ? (g as MockGoogleBusinessAdapter) : null;
+};
+export const asMockLine = (): MockLineAdapter | null => {
+  const l = getLine() as Partial<MockLineAdapter>;
+  return typeof l.issueReplyToken === "function" ? (l as MockLineAdapter) : null;
+};

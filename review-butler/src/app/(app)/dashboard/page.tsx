@@ -9,7 +9,7 @@ import { Select } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { isMockGoogle } from "@/lib/adapters";
 import { requireUser } from "@/lib/auth";
-import { locations } from "@/lib/db/schema";
+import { lineBindings, locations } from "@/lib/db/schema";
 import { relativeTime } from "@/lib/format";
 import { listReviews, reviewCounts, STATUS_LABEL, type ReviewStatus } from "@/lib/queries";
 import { cn } from "@/lib/utils";
@@ -29,6 +29,7 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Prom
   const { db, org } = await requireUser();
   const locs = await db.select().from(locations).where(eq(locations.organizationId, org.id));
   const active = locs.filter((l) => l.enabled);
+  const bound = (await db.select({ id: lineBindings.id }).from(lineBindings).where(eq(lineBindings.organizationId, org.id)).limit(1)).length > 0;
 
   if (!active.length) {
     return (
@@ -53,6 +54,11 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Prom
 
   return (
     <>
+      {!bound && (
+        <Link href="/dashboard/line" className="block rounded-md bg-blue-50 p-3 text-sm text-blue-900">
+          📱 還沒綁定 LINE，新評論不會通知您。<b className="underline">綁定 LINE →</b>
+        </Link>
+      )}
       <div className="flex flex-wrap items-center gap-2">
         <form action={syncNowAction}>
           <SubmitButton pendingText="檢查中…（AI 寫草稿需要一點時間）"><RefreshCw className="size-4" aria-hidden />立即檢查新評論</SubmitButton>

@@ -5,7 +5,7 @@ import { AuthRevokedError } from "@/lib/adapters/errors";
 import type { GoogleBusinessAdapter } from "@/lib/adapters/google-business/interface";
 import type { Industry } from "@/config/industries";
 import type { Db } from "./db/client";
-import { locations, subscriptions } from "./db/schema";
+import { lineBindingLocations, lineBindings, locations, subscriptions } from "./db/schema";
 import { getGoogleAuth, markCredentialRevoked } from "./google-auth";
 import { syncLocation, type SyncDeps } from "./jobs/sync-reviews";
 import { withBackoff } from "./retry";
@@ -45,6 +45,11 @@ export async function enableLocation(db: Db, organizationId: string, locationId:
   if ((countRow?.n ?? 0) >= limit) return { ok: false, error: "limit_reached", limit };
 
   await db.update(locations).set({ enabled: true }).where(eq(locations.id, locationId));
+  // 新啟用的店點，預設通知所有已綁定的 LINE 使用者（之後可在 LINE 頁個別調整）
+  const bound = await db.select({ id: lineBindings.id }).from(lineBindings).where(eq(lineBindings.organizationId, organizationId));
+  if (bound.length) {
+    await db.insert(lineBindingLocations).values(bound.map((b) => ({ lineBindingId: b.id, locationId }))).onConflictDoNothing();
+  }
   const res = await syncLocation(db, locationId, deps);
   return { ok: true, imported: res.imported };
 }
