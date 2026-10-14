@@ -26,6 +26,39 @@ jobs:
       - name: Unit tests (pure Kotlin core)
         run: ./gradlew -p core test
 
+  ui-previews:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Render screens
+        run: ./gradlew :app:recordPaparazziDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ui-previews
+          path: android/app/src/test/snapshots/images/*.png
+      - name: Publish to ui-previews branch
+        if: github.event_name == 'push'
+        run: |
+          d=$(mktemp -d)
+          cp app/src/test/snapshots/images/*.png "$d"/
+          cd "$d"
+          git init -q -b ui-previews
+          git config user.name "ui-previews"
+          git config user.email "ui-previews@users.noreply.github.com"
+          git add -A
+          git commit -q -m "UI previews for ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" ui-previews
+
   app-build:
     runs-on: ubuntu-latest
     defaults:

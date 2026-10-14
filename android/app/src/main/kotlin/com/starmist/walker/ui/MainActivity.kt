@@ -138,40 +138,7 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
         modifier = Modifier.parchmentTexture(rememberArt("paper_page") ?: rememberArt("parchment_tile")),
         containerColor = androidx.compose.ui.graphics.Color.Transparent,
         snackbarHost = { SnackbarHost(snackbar) },
-        bottomBar = {
-            NavigationBar(containerColor = Vintage.parchmentDark.copy(alpha = 0.92f)) {
-                NavigationBarItem(
-                    selected = tab == 0 && !showDiagnostics,
-                    onClick = { tab = 0; showDiagnostics = false },
-                    icon = { Icon(Icons.Filled.Home, contentDescription = null) },
-                    label = { Text("今日") },
-                )
-                NavigationBarItem(
-                    selected = tab == 3 && !showDiagnostics,
-                    onClick = { tab = 3; showDiagnostics = false },
-                    icon = { Icon(Icons.Filled.Place, contentDescription = null) },
-                    label = { Text("旅程") },
-                )
-                NavigationBarItem(
-                    selected = tab == 4 && !showDiagnostics,
-                    onClick = { tab = 4; showDiagnostics = false },
-                    icon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
-                    label = { Text("路線") },
-                )
-                NavigationBarItem(
-                    selected = tab == 1 && !showDiagnostics,
-                    onClick = { tab = 1; showDiagnostics = false },
-                    icon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
-                    label = { Text("統計") },
-                )
-                NavigationBarItem(
-                    selected = tab == 2 || showDiagnostics,
-                    onClick = { tab = 2; showDiagnostics = false },
-                    icon = { Icon(Icons.Filled.Settings, contentDescription = null) },
-                    label = { Text("設定") },
-                )
-            }
-        },
+        bottomBar = { AppBottomBar(selected = if (showDiagnostics) 2 else tab, onSelect = { tab = it; showDiagnostics = false }) },
     ) { padding ->
         when {
             showDiagnostics -> DiagnosticsScreen(vm, padding, openAppSettings)

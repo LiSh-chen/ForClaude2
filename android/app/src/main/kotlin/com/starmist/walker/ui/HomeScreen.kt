@@ -40,10 +40,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.starmist.core.metrics.BodyMetrics
+import com.starmist.core.route.RouteDef
 import com.starmist.core.route.Routes
 import com.starmist.walker.data.UserSettings
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
+
+/** What the home map shows. */
+internal sealed interface HomeMap {
+    data object Preparing : HomeMap
+    data class Virtual(val regionName: String, val regionIndex: Int, val fraction: Double, val finished: Boolean) : HomeMap
+    data object ChooseRoute : HomeMap
+    data class Real(val route: RouteDef, val walkedKm: Double) : HomeMap
+}
 
 /**
  * What opens first: the map of the challenge being walked (the fantasy world or a real-world
@@ -66,58 +75,96 @@ fun HomeScreen(
     val lastSnapshot by vm.lastSnapshotAt.collectAsStateWithLifecycle()
 
     val profile = settings.profile
-    val km = BodyMetrics.distanceKm(steps, profile)
-    val kcal = BodyMetrics.kcal(steps, profile)
-    val progress = BodyMetrics.goalProgress(steps, settings.dailyGoal)
-    val remaining = (settings.dailyGoal - steps).coerceAtLeast(0)
     val real = settings.challenge == 1
+    val map: HomeMap = if (!real) {
+        val state = journey
+        if (state == null) HomeMap.Preparing else {
+            val p = vm.engine.progress(state.position)
+            HomeMap.Virtual(p.region?.name ?: "星霧大陸", p.regionIndex, p.regionFraction, p.finished)
+        }
+    } else {
+        val route = routeState?.let { Routes.byId(it.routeId) }
+        if (route == null) HomeMap.ChooseRoute else HomeMap.Real(route, routeState?.walkedKm ?: 0.0)
+    }
+
+    HomeContent(
+        padding = padding,
+        steps = steps,
+        goal = settings.dailyGoal,
+        km = BodyMetrics.distanceKm(steps, profile),
+        kcal = BodyMetrics.kcal(steps, profile),
+        lastSnapshot = lastSnapshot,
+        real = real,
+        granted = granted,
+        hasCounter = hasCounter,
+        map = map,
+        onChallenge = { value -> vm.updateSettings { it.copy(challenge = value) } },
+        onRequestPermission = onRequestPermission,
+        onOpenAppSettings = onOpenAppSettings,
+        onSync = { vm.refresh(announce = true) },
+        onStartRoute = { vm.startRoute(it) },
+        overlay = { if (map is HomeMap.Virtual) PickupBanner(vm) },
+    )
+}
+
+/** The home page as plain data in, so it can also be drawn without the app's state (screenshots). */
+@Composable
+internal fun HomeContent(
+    padding: PaddingValues,
+    steps: Long,
+    goal: Int,
+    km: Double,
+    kcal: Double,
+    lastSnapshot: Long?,
+    real: Boolean,
+    granted: Boolean,
+    hasCounter: Boolean,
+    map: HomeMap,
+    onChallenge: (Int) -> Unit,
+    onRequestPermission: () -> Unit,
+    onOpenAppSettings: () -> Unit,
+    onSync: () -> Unit,
+    onStartRoute: (String) -> Unit,
+    overlay: @Composable BoxScope.() -> Unit = {},
+) {
+    val progress = BodyMetrics.goalProgress(steps, goal)
+    val remaining = (goal - steps).coerceAtLeast(0)
 
     Column(Modifier.padding(padding).padding(horizontal = 10.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (!granted) PermissionCard(onRequestPermission, onOpenAppSettings)
         if (!hasCounter) NoticeCard("這台裝置沒有硬體計步器，目前版本無法計步。")
 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ChallengeButton("虛擬世界", !real, Modifier.weight(1f)) { vm.updateSettings { it.copy(challenge = 0) } }
-            ChallengeButton("真實世界", real, Modifier.weight(1f)) { vm.updateSettings { it.copy(challenge = 1) } }
+            ChallengeButton("虛擬世界", !real, Modifier.weight(1f)) { onChallenge(0) }
+            ChallengeButton("真實世界", real, Modifier.weight(1f)) { onChallenge(1) }
         }
 
         Box(Modifier.weight(1f).fillMaxWidth().clip(RoundedCornerShape(14.dp))) {
-            if (!real) {
-                val state = journey
-                if (state == null) {
-                    Text("世界準備中……", Modifier.align(Alignment.Center))
-                } else {
-                    val p = vm.engine.progress(state.position)
+            when (map) {
+                HomeMap.Preparing -> Text("世界準備中……", Modifier.align(Alignment.Center))
+                is HomeMap.Virtual -> {
                     Column(Modifier.fillMaxSize()) {
                         ChallengeHeader(
-                            title = p.region?.name ?: "星霧大陸",
-                            detail = if (p.finished) "目前開放的路線已走完" else "這個區域已走 ${(p.regionFraction * 100).roundToInt()}%",
+                            title = map.regionName,
+                            detail = if (map.finished) "目前開放的路線已走完" else "這個區域已走 ${(map.fraction * 100).roundToInt()}%",
                         )
-                        ZoomWorldMap(
-                            regionIndex = p.regionIndex,
-                            fraction = p.regionFraction,
-                            finished = p.finished,
-                            modifier = Modifier.weight(1f).fillMaxWidth(),
-                        )
+                        ZoomWorldMap(map.regionIndex, map.fraction, map.finished, Modifier.weight(1f).fillMaxWidth())
                     }
-                    PickupBanner(vm)
+                    overlay()
                 }
-            } else {
-                val state = routeState
-                val route = state?.let { Routes.byId(it.routeId) }
-                if (state == null || route == null) {
+                HomeMap.ChooseRoute ->
                     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        RoutePicker(onStart = { vm.startRoute(it) })
+                        RoutePicker(onStart = onStartRoute)
                     }
-                } else {
-                    val next = route.next(state.walkedKm)
+                is HomeMap.Real -> {
+                    val next = map.route.next(map.walkedKm)
                     Column(Modifier.fillMaxSize()) {
                         ChallengeHeader(
-                            title = "${route.region}・${route.name}",
-                            detail = "已走 ${"%.1f".format(state.walkedKm)} / ${route.totalKm.roundToInt()} 公里" +
+                            title = "${map.route.region}・${map.route.name}",
+                            detail = "已走 ${"%.1f".format(map.walkedKm)} / ${map.route.totalKm.roundToInt()} 公里" +
                                 (next?.let { "　下一張：${it.first.name}（${"%.1f".format(it.second)} 公里）" } ?: "　環島完成"),
                         )
-                        RouteMapView(route, state.walkedKm, Modifier.weight(1f).fillMaxWidth())
+                        RouteMapView(map.route, map.walkedKm, Modifier.weight(1f).fillMaxWidth())
                     }
                 }
             }
@@ -125,13 +172,13 @@ fun HomeScreen(
 
         StepsPanel(
             steps = steps,
-            goal = settings.dailyGoal,
+            goal = goal,
             progress = progress,
             remaining = remaining,
             km = km,
             kcal = kcal,
             lastSnapshot = lastSnapshot,
-            onSync = { vm.refresh(announce = true) },
+            onSync = onSync,
         )
     }
 }
