@@ -47,6 +47,12 @@ class ScreenshotTest {
     @Test fun home_real_east() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 260.0)) }
     @Test fun home_real_coast_ne() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 78.0)) }
     @Test fun home_real_south_tip() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 478.0)) }
+    @Test fun home_west_tainan() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 660.0)) }
+    @Test fun home_west_xiluo() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 770.0)) }
+    @Test fun home_west_changhua() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0)) }
+    @Test fun home_west_dajia() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 880.0)) }
+    @Test fun home_west_hsinchu() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 960.0)) }
+    @Test fun home_west_taoyuan() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 1005.0)) }
     @Test fun home_choose_route() = paparazzi.snapshot { Home(true, HomeMap.ChooseRoute, 0) }
 
     @Test fun collection_real() = paparazzi.snapshot {
