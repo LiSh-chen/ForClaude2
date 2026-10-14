@@ -53,7 +53,7 @@ private val SUPPLY_ORANGE = Color(0xFFD9744B)
 
 /** The island walk as a map the player can pinch and drag; it opens on the walker and cannot zoom out past the whole island. */
 @Composable
-fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifier, initialZoom: Float = 12f) {
+fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifier, initialZoom: Float? = null) {
     val measurer = rememberMapMeasurer()
     val data = rememberRealMapData(route)
     val pin = rememberArt("traveller_fox")
@@ -64,7 +64,7 @@ fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifie
         focus = here.unit(),
         followKey = (walkedKm * 20).toInt(),
         modifier = modifier,
-        initialZoom = initialZoom,
+        initialZoom = initialZoom ?: if (base != null) 6f else 12f,
         maxZoom = 24f,
         background = SEA_COLOR,
     ) { w, h, _ -> drawRealMap(w, h, route, data, walkedKm, measurer, pin, base) }
