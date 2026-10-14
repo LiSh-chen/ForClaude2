@@ -80,3 +80,13 @@
 **驗收：** 海岸線跟草圖一致（尤其北部、恆春半島、花東海岸）；沒有文字、沒有邊框、海一直延伸到圖的四邊；五座山、縱谷、四個離島都在。位置偏很多就在同一個對話說 "move object N toward ..."，或整張重畫。
 
 存檔：`generated/real_map_base.png`（有多張就挑一張，再告訴我尺寸）。
+
+## 修圖：把畫錯位置的湖與風車移到高美濕地
+
+第一張圖裡，高美濕地（風車＋濕地）被畫在雲林、嘉義外海邊（約距左 12–26%、距上 44–55%），變成一大片淡藍色湖。高美應該在台中清水海邊（約距左 28%、距上 30%，海岸線上）。
+
+用法：同一個對話，上傳目前的 `generated/real_map_base.png`，貼下面的文字。
+
+> Edit the uploaded map, keeping everything else exactly the same (coastline, style, colours, all other objects and positions). Two changes only: (1) In the area about 12–26% from the left and 44–55% from the top, there is a large pale-blue lagoon with white wind turbines. Remove it completely and fill that area with the same flat patchwork of rice fields, fish ponds and small villages as the surrounding plain, so it blends in with no visible edit. (2) At the coast about 28% from the left and 30% from the top (central west coast, a little north of the middle of the island), draw a small tidal-flat wetland with a few shallow pools and a row of five small white wind turbines standing on the shore. Keep it small, no bigger than a quarter of the removed lagoon. No text, no frame.
+
+存檔後覆蓋 `generated/real_map_base.png`，我再重新匯出並用截圖確認。
