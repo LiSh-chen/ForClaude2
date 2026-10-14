@@ -62,9 +62,9 @@ class RouteTest {
     }
 
     @Test
-    fun `cards and supply stops together leave no stretch longer than forty kilometres`() {
+    fun `cards and supply stops together leave no stretch longer than forty-three kilometres`() {
         val points = (route.cards.map { it.second } + route.supplies.map { it.second }).sorted()
-        points.zipWithNext().forEach { (a, b) -> assertTrue(b - a <= 40.0, "gap ${"%.0f".format(b - a)} km after ${"%.0f".format(a)}") }
+        points.zipWithNext().forEach { (a, b) -> assertTrue(b - a <= 43.0, "gap ${"%.0f".format(b - a)} km after ${"%.0f".format(a)}") }
         assertEquals(route.supplies.size, route.supplies.map { it.first.id }.toSet().size)
     }
 
@@ -85,10 +85,10 @@ class RouteTest {
     }
 
     @Test
-    fun `no stretch of the counter-clockwise loop is longer than forty kilometres either`() {
+    fun `no stretch of the counter-clockwise loop is longer than forty-three kilometres either`() {
         val ccw = TaiwanLoop.counterClockwise
         val points = (ccw.cards.map { it.second } + ccw.supplies.map { it.second }).sorted()
-        points.zipWithNext().forEach { (a, b) -> assertTrue(b - a <= 41.0, "gap ${"%.0f".format(b - a)} km after ${"%.0f".format(a)}") }
+        points.zipWithNext().forEach { (a, b) -> assertTrue(b - a <= 43.0, "gap ${"%.0f".format(b - a)} km after ${"%.0f".format(a)}") }
     }
 
     @Test

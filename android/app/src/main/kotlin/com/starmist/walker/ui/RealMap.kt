@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ClipOp
@@ -288,21 +289,6 @@ internal fun DrawScope.drawRealMap(
 
     }
 
-    // Mountain peaks and city names, faint so the route stays the main thing.
-    PEAKS.forEach { pk ->
-        val o = GeoPoint(pk.lat, pk.lon).px()
-        val tri = Path().apply { moveTo(o.x - 5.dp.toPx(), o.y + 3.dp.toPx()); lineTo(o.x, o.y - 5.dp.toPx()); lineTo(o.x + 5.dp.toPx(), o.y + 3.dp.toPx()); close() }
-        drawPath(tri, Vintage.inkSoft.copy(alpha = 0.55f))
-        val t = measurer.measure(pk.name, label.copy(fontSize = 11.sp, fontWeight = FontWeight.Normal, color = Vintage.inkSoft.copy(alpha = 0.9f)))
-        drawText(t, topLeft = Offset(o.x - t.size.width / 2f, o.y + 4.dp.toPx()))
-    }
-    CITIES.forEach { c ->
-        val o = GeoPoint(c.lat, c.lon).px()
-        drawCircle(Vintage.inkSoft.copy(alpha = 0.7f), 2.6.dp.toPx(), o)
-        val t = measurer.measure(c.name, label.copy(fontSize = 12.sp, color = Vintage.inkSoft.copy(alpha = 0.85f)))
-        drawText(t, topLeft = Offset(o.x + 4.dp.toPx(), o.y - t.size.height / 2f))
-    }
-
     // The route: dotted ahead, solid behind, dashed red where a train or ferry carries the walker.
     val dotted = PathEffect.dashPathEffect(floatArrayOf(3.dp.toPx(), 5.dp.toPx()))
     val dashed = PathEffect.dashPathEffect(floatArrayOf(8.dp.toPx(), 5.dp.toPx()))
@@ -324,13 +310,45 @@ internal fun DrawScope.drawRealMap(
         }
     }
 
+    // Everything that takes room is recorded, so a name is only put where it covers neither a marker nor another name.
+    val occupied = ArrayList<Rect>()
+    fun reserve(center: Offset, half: Float) { occupied += Rect(center.x - half, center.y - half, center.x + half, center.y + half) }
+    val p = here.px()
+    val pinHeight = 60.dp.toPx()
+    val pinWidth = if (pin != null) pinHeight * pin.width / pin.height else 16.dp.toPx()
+    occupied += if (pin != null) Rect(p.x - pinWidth / 2, p.y - pinHeight, p.x + pinWidth / 2, p.y + 4.dp.toPx())
+    else Rect(p.x - 9.dp.toPx(), p.y - 9.dp.toPx(), p.x + 9.dp.toPx(), p.y + 9.dp.toPx())
+    route.stops.forEach { stop -> if (stop.landmark != null || stop.supply != null) reserve(stop.at.px(), 9.dp.toPx()) }
+    val sights = route.poisNear(here)
+    sights.forEach { (poi, _) -> reserve(poi.at.px(), 13.dp.toPx()) }
+
+    /** Puts [text] beside [anchor] on a parchment tag, on the first side that is free; returns false when none is. */
+    fun placeName(text: String, anchor: Offset, size: androidx.compose.ui.unit.TextUnit, color: Color, gap: Float, force: Boolean = false): Boolean {
+        val t = measurer.measure(text, label.copy(fontSize = size, color = color))
+        val padX = 4.dp.toPx(); val padY = 1.5.dp.toPx()
+        val tw = t.size.width.toFloat(); val th = t.size.height.toFloat()
+        val tops = listOf(
+            Offset(anchor.x + gap, anchor.y - th / 2),
+            Offset(anchor.x - gap - tw, anchor.y - th / 2),
+            Offset(anchor.x - tw / 2, anchor.y - gap - th),
+            Offset(anchor.x - tw / 2, anchor.y + gap),
+        )
+        val chosen = tops.firstOrNull { o ->
+            val r = Rect(o.x - padX, o.y - padY, o.x + tw + padX, o.y + th + padY)
+            r.left >= 0f && r.top >= 0f && r.right <= w && r.bottom <= h && occupied.none { it.overlaps(r) }
+        } ?: if (force) tops[0] else return false
+        val box = Rect(chosen.x - padX, chosen.y - padY, chosen.x + tw + padX, chosen.y + th + padY)
+        drawRoundRect(Vintage.parchmentLight.copy(alpha = 0.92f), box.topLeft, box.size, CornerRadius(4.dp.toPx()))
+        drawRoundRect(Vintage.edge.copy(alpha = 0.7f), box.topLeft, box.size, CornerRadius(4.dp.toPx()), style = Stroke(0.8.dp.toPx()))
+        drawText(t, topLeft = chosen)
+        occupied += box
+        return true
+    }
+
     // Small sights: only while the walker is near, fading in and out.
-    route.poisNear(here).forEach { (poi, km) ->
+    sights.forEach { (poi, km) ->
         val alpha = (1f - ((km - POI_RANGE_KM * 0.6) / (POI_RANGE_KM * 0.4)).toFloat().coerceIn(0f, 1f))
-        val o = poi.at.px()
-        drawPoiGlyph(poi.kind, o, 11.dp.toPx(), alpha)
-        val text = measurer.measure(poi.name, label.copy(fontSize = 12.sp, color = Vintage.ink.copy(alpha = alpha)))
-        drawText(text, topLeft = Offset(o.x - text.size.width / 2f, o.y + 10.dp.toPx()))
+        drawPoiGlyph(poi.kind, poi.at.px(), 11.dp.toPx(), alpha)
     }
 
     // Cards and stamps.
@@ -346,31 +364,41 @@ internal fun DrawScope.drawRealMap(
             drawRect(if (reached) Color.White else SUPPLY_COLOR, Offset(o.x - side / 2, o.y - side / 2), Size(side, side), style = Stroke(1.8.dp.toPx()))
         }
     }
+
+    // Names, most important first: the next card and the last one collected, then sights, mountains and towns.
     val next = route.next(walkedKm)?.first
     val lastCard = route.collected(walkedKm).lastOrNull()
-    listOfNotNull(next?.let { it to "下一張" }, lastCard?.let { it to "" }).forEach { (card, tag) ->
+    listOfNotNull(next?.let { it to "（下一張）" }, lastCard?.let { it to "" }).forEach { (card, tag) ->
         val o = route.stops.first { it.landmark?.id == card.id }.at.px()
-        val text = measurer.measure(card.name + if (tag.isNotEmpty()) "（$tag）" else "", label)
-        val x = if (o.x + text.size.width + 12.dp.toPx() > w) o.x - text.size.width - 9.dp.toPx() else o.x + 9.dp.toPx()
-        drawRoundRect(
-            Vintage.parchmentLight.copy(alpha = 0.88f),
-            Offset(x - 3.dp.toPx(), o.y - text.size.height / 2f - 1.dp.toPx()),
-            Size(text.size.width + 6.dp.toPx(), text.size.height + 2.dp.toPx()),
-            CornerRadius(3.dp.toPx()),
-        )
-        drawText(text, topLeft = Offset(x, o.y - text.size.height / 2f))
+        placeName(card.name + tag, o, 13.sp, Vintage.ink, 12.dp.toPx(), force = true)
+    }
+    sights.forEach { (poi, km) ->
+        val alpha = (1f - ((km - POI_RANGE_KM * 0.6) / (POI_RANGE_KM * 0.4)).toFloat().coerceIn(0f, 1f))
+        placeName(poi.name, poi.at.px(), 12.sp, Vintage.ink.copy(alpha = alpha), 15.dp.toPx())
+    }
+    PEAKS.forEach { pk ->
+        val o = GeoPoint(pk.lat, pk.lon).px()
+        val tri = Path().apply { moveTo(o.x - 5.dp.toPx(), o.y + 3.dp.toPx()); lineTo(o.x, o.y - 5.dp.toPx()); lineTo(o.x + 5.dp.toPx(), o.y + 3.dp.toPx()); close() }
+        if (occupied.none { it.contains(o) }) {
+            drawPath(tri, Vintage.inkSoft.copy(alpha = 0.7f))
+            placeName(pk.name, o, 11.sp, Vintage.inkSoft, 9.dp.toPx())
+        }
+    }
+    CITIES.forEach { c ->
+        val o = GeoPoint(c.lat, c.lon).px()
+        if (occupied.none { it.contains(o) }) {
+            drawCircle(Vintage.inkSoft.copy(alpha = 0.8f), 2.8.dp.toPx(), o)
+            placeName(c.name, o, 12.sp, Vintage.inkSoft, 7.dp.toPx())
+        }
     }
 
-    // The walker.
-    val p = here.px()
+    // The walker, on top of everything.
     if (pin != null) {
-        val height = 60.dp.toPx()
-        val width = height * pin.width / pin.height
-        drawOval(Color.Black.copy(alpha = 0.18f), Offset(p.x - width * 0.3f, p.y - 3.dp.toPx()), Size(width * 0.6f, 6.dp.toPx()))
+        drawOval(Color.Black.copy(alpha = 0.18f), Offset(p.x - pinWidth * 0.3f, p.y - 3.dp.toPx()), Size(pinWidth * 0.6f, 6.dp.toPx()))
         drawImage(
             pin,
-            dstOffset = IntOffset((p.x - width / 2f).toInt(), (p.y - height + 2.dp.toPx()).toInt()),
-            dstSize = IntSize(width.toInt(), height.toInt()),
+            dstOffset = IntOffset((p.x - pinWidth / 2f).toInt(), (p.y - pinHeight + 2.dp.toPx()).toInt()),
+            dstSize = IntSize(pinWidth.toInt(), pinHeight.toInt()),
         )
     } else {
         drawCircle(Vintage.brassLight, 8.dp.toPx(), p)
