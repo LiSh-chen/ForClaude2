@@ -45,6 +45,8 @@ class ScreenshotTest {
     @Test fun home_real_start() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 0.0), 120) }
     @Test fun home_real_mid() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0)) }
     @Test fun home_real_east() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 260.0)) }
+    @Test fun home_real_coast_ne() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 78.0)) }
+    @Test fun home_real_south_tip() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 478.0)) }
     @Test fun home_choose_route() = paparazzi.snapshot { Home(true, HomeMap.ChooseRoute, 0) }
 
     @Test fun collection_real() = paparazzi.snapshot {
