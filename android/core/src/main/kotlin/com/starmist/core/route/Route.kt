@@ -5,6 +5,9 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+/** How close the walker must be to see a small sight. */
+const val POI_RANGE_KM = 12.0
+
 data class GeoPoint(val lat: Double, val lng: Double) {
     /** Great-circle distance in kilometres. */
     fun distanceKm(other: GeoPoint): Double {
@@ -20,6 +23,12 @@ data class GeoPoint(val lat: Double, val lng: Double) {
 
 /** A collectable place on a route. [blurb] is exactly ten characters about what makes it special. */
 data class Landmark(val id: String, val name: String, val blurb: String)
+
+/** What a small roadside sight looks like on the map. */
+enum class PoiKind { HARBOR, TEMPLE, MUSEUM, SPRING, WATERFALL, PARK, THEATER, FORT, LIGHTHOUSE }
+
+/** A small sight drawn on the map only while the walker is near; it gives no card. */
+data class Poi(val id: String, val name: String, val at: GeoPoint, val kind: PoiKind)
 
 /** A place to stop and restock in a long stretch between cards: a railway station with its opening year. */
 data class Supply(val id: String, val name: String, val opened: String)
@@ -49,6 +58,11 @@ data class RouteDef(
     val description: String,
     val stops: List<Stop>,
     val roadFactor: Double = 1.2,
+    /** Small sights near the way; shown on the map when the walker is within [POI_RANGE_KM]. */
+    val pois: List<Poi> = emptyList(),
+    /** Routes that are the same way walked in the other direction share a family. */
+    val family: String = id,
+    val direction: String = "",
 ) {
     init {
         require(stops.size >= 2) { "a route needs at least two stops" }
@@ -99,6 +113,32 @@ data class RouteDef(
             }
         }
         return stops.last().at
+    }
+
+    /** Small sights within [POI_RANGE_KM] of [at], nearest first. */
+    fun poisNear(at: GeoPoint, rangeKm: Double = POI_RANGE_KM): List<Pair<Poi, Double>> =
+        pois.map { it to it.at.distanceKm(at) }.filter { it.second <= rangeKm }.sortedBy { it.second }
+
+    /**
+     * The same loop walked the other way: it starts at the first stop, visits the middle stops in
+     * reverse and ends at the last stop. A train or ferry leg stays a train or ferry leg, so the
+     * flag moves to the stop that is now reached by that leg.
+     */
+    fun counterClockwise(newId: String, newName: String, newDescription: String, directionName: String): RouteDef {
+        val n = stops.size - 1
+        val first = stops.first()
+        val last = stops.last()
+        // Forward stop j (1..n-1) is now entered from forward stop j + 1, so it inherits that leg's transport.
+        val reversed = (n - 1 downTo 1).map { j ->
+            stops[j].copy(transit = if (j + 1 <= n - 1) stops[j + 1].transit else null)
+        }
+        return copy(
+            id = newId,
+            name = newName,
+            description = newDescription,
+            stops = listOf(first.copy(transit = null)) + reversed + listOf(last.copy(transit = null)),
+            direction = directionName,
+        )
     }
 
     /** The transport used to reach stop [index], if that leg is not walked. */

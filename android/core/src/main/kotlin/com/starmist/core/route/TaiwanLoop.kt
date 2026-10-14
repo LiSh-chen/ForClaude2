@@ -19,10 +19,54 @@ object TaiwanLoop {
     private fun card(id: String, name: String, lat: Double, lng: Double, blurb: String) =
         Stop(name, GeoPoint(lat, lng), Landmark(id, name, blurb))
 
+    private fun poi(id: String, name: String, lat: Double, lng: Double, kind: PoiKind) =
+        Poi(id, name, GeoPoint(lat, lng), kind)
+
+    /** Small sights near the way, each with a source-stated coordinate (see TAIWAN_LOOP_RESEARCH.md). */
+    private val pois = listOf(
+        poi("heping", "和平島公園", 25.16100, 121.76394, PoiKind.PARK),
+        poi("lanyang", "蘭陽博物館", 24.86861, 121.83250, PoiKind.MUSEUM),
+        poi("yilan_distillery", "宜蘭酒廠", 24.75667, 121.75083, PoiKind.MUSEUM),
+        poi("luodong", "羅東林業文化園區", 24.68383, 121.77353, PoiKind.PARK),
+        poi("nanfangao", "南方澳漁港", 24.58389, 121.86639, PoiKind.HARBOR),
+        poi("luoshan", "羅山瀑布", 23.18183, 121.29519, PoiKind.WATERFALL),
+        poi("beinan", "卑南文化公園", 22.79425, 121.11644, PoiKind.PARK),
+        poi("zhiben", "知本溫泉", 22.69300, 121.01300, PoiKind.SPRING),
+        poi("cijin", "旗津燈塔", 22.61560, 120.26500, PoiKind.LIGHTHOUSE),
+        poi("loveriver", "愛河", 22.62361, 120.28972, PoiKind.PARK),
+        poi("pingtung_hall", "屏東演藝廳", 22.66378, 120.50581, PoiKind.THEATER),
+        poi("gangshan", "岡山水塔", 22.79760, 120.29560, PoiKind.PARK),
+        poi("chihkan", "赤崁樓", 22.99750, 120.20280, PoiKind.FORT),
+        poi("chimei", "奇美博物館", 22.93460, 120.22590, PoiKind.MUSEUM),
+        poi("chiayi_park", "嘉義公園", 23.48280, 120.46360, PoiKind.PARK),
+        poi("baguashan", "八卦山大佛", 24.07843, 120.54946, PoiKind.TEMPLE),
+        poi("wuqi", "梧棲漁港", 24.29320, 120.52070, PoiKind.HARBOR),
+        poi("taichung_theater", "國家歌劇院", 24.16278, 120.64056, PoiKind.THEATER),
+        poi("nanliao", "南寮漁港", 24.84950, 120.92880, PoiKind.HARBOR),
+        poi("zhongli_hall", "中壢藝術館", 24.95830, 121.22750, PoiKind.THEATER),
+        poi("zhuwei", "竹圍漁港", 25.11819, 121.24306, PoiKind.HARBOR),
+        poi("lin_garden", "板橋林家花園", 25.01028, 121.45556, PoiKind.PARK),
+        poi("hongmaocheng", "淡水紅毛城", 25.17530, 121.43320, PoiKind.FORT),
+        poi("red_house", "西門紅樓", 25.04199, 121.50674, PoiKind.THEATER),
+    )
+
+    /** The same trip walked the other way round. */
+    val counterClockwise: RouteDef by lazy {
+        route.counterClockwise(
+            newId = "taiwan_loop_ccw",
+            newName = "環島一圈（逆時針）",
+            newDescription = "從台北出發，逆時針沿西岸南下、繞過南端，再從東岸北上回到台北。淡水到八里搭渡輪、花蓮到蘇澳搭火車，這兩段不算步數。",
+            directionName = "逆時針",
+        )
+    }
+
     val route = RouteDef(
         id = "taiwan_loop",
+        family = "taiwan_loop",
+        direction = "順時針",
+        pois = pois,
         region = "台灣",
-        name = "環島一圈",
+        name = "環島一圈（順時針）",
         description = "從台北出發，順時針沿東岸南下，穿過花東縱谷、繞過恆春半島，再從西岸北上回到台北。蘇澳到花蓮搭火車、淡水到八里搭渡輪，這兩段不算步數。",
         stops = listOf(
             card("taipei101", "台北101", 25.03361, 121.56444, "高五百零八公尺的高塔"),

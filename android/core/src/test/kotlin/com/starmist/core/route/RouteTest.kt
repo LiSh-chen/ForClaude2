@@ -68,6 +68,37 @@ class RouteTest {
         assertEquals(route.supplies.size, route.supplies.map { it.first.id }.toSet().size)
     }
 
+    @Test
+    fun `the counter-clockwise loop has the same cards, stamps and two crossings`() {
+        val ccw = TaiwanLoop.counterClockwise
+        assertEquals(route.cards.map { it.first.id }.toSet(), ccw.cards.map { it.first.id }.toSet())
+        assertEquals(route.supplies.map { it.first.id }.toSet(), ccw.supplies.map { it.first.id }.toSet())
+        assertEquals("taipei101", ccw.cards.first().first.id)
+        assertEquals("finish", ccw.cards.last().first.id)
+        assertEquals(2, ccw.stops.count { it.transit != null })
+        assertEquals(route.totalKm, ccw.totalKm, 40.0)
+        assertEquals(2, Routes.families.single().size)
+        // The train leg is now Hualien -> Suao.
+        val suao = ccw.stops.indexOfFirst { it.landmark?.id == "suao" }
+        assertEquals("搭火車", ccw.stops[suao].transit)
+        assertEquals("花蓮", ccw.stops[suao - 1].name)
+    }
+
+    @Test
+    fun `no stretch of the counter-clockwise loop is longer than forty kilometres either`() {
+        val ccw = TaiwanLoop.counterClockwise
+        val points = (ccw.cards.map { it.second } + ccw.supplies.map { it.second }).sorted()
+        points.zipWithNext().forEach { (a, b) -> assertTrue(b - a <= 41.0, "gap ${"%.0f".format(b - a)} km after ${"%.0f".format(a)}") }
+    }
+
+    @Test
+    fun `small sights show only near the walker`() {
+        val near = route.poisNear(GeoPoint(25.16, 121.76))
+        assertEquals("heping", near.first().first.id)
+        assertTrue(route.poisNear(GeoPoint(23.0, 121.1)).none { it.first.id == "heping" })
+        assertTrue(route.pois.all { p -> p.id.isNotBlank() && p.name.isNotBlank() })
+    }
+
     /** Writes the card list for review into the build folder; not an assertion. */
     @Test
     fun `write review table`() {

@@ -67,7 +67,11 @@ object RouteStateCodec {
 
 /** The routes the app offers, by region. */
 object Routes {
-    val all: List<RouteDef> = listOf(TaiwanLoop.route)
+    /** Every route offered; the two directions of one loop share a [RouteDef.family]. */
+    val all: List<RouteDef> = listOf(TaiwanLoop.route, TaiwanLoop.counterClockwise)
+
+    /** Routes grouped by family, in the order they are offered. */
+    val families: List<List<RouteDef>> get() = all.groupBy { it.family }.values.toList()
 
     fun byId(id: String): RouteDef? = all.firstOrNull { it.id == id }
 }
