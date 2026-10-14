@@ -1,8 +1,9 @@
+CREATE TYPE "public"."ai_status" AS ENUM('none', 'done', 'failed', 'quota_exceeded');--> statement-breakpoint
 CREATE TYPE "public"."credential_status" AS ENUM('active', 'revoked', 'expired');--> statement-breakpoint
 CREATE TYPE "public"."industry" AS ENUM('food', 'beauty', 'medical', 'education', 'other');--> statement-breakpoint
 CREATE TYPE "public"."review_language" AS ENUM('zh-TW', 'en', 'ja', 'other');--> statement-breakpoint
 CREATE TYPE "public"."publish_status" AS ENUM('pending', 'published', 'failed', 'rejected');--> statement-breakpoint
-CREATE TYPE "public"."published_by" AS ENUM('user', 'line_user', 'auto');--> statement-breakpoint
+CREATE TYPE "public"."published_by" AS ENUM('user', 'line_user', 'auto', 'external');--> statement-breakpoint
 CREATE TYPE "public"."review_status" AS ENUM('pending', 'replied', 'skipped', 'publish_failed');--> statement-breakpoint
 CREATE TYPE "public"."sentiment" AS ENUM('positive', 'neutral', 'negative');--> statement-breakpoint
 CREATE TYPE "public"."subscription_status" AS ENUM('trialing', 'active', 'past_due', 'canceled', 'expired');--> statement-breakpoint
@@ -161,6 +162,7 @@ CREATE TABLE "reviews" (
 	"is_edited" boolean DEFAULT false NOT NULL,
 	"is_historical" boolean DEFAULT false NOT NULL,
 	"status" "review_status" DEFAULT 'pending' NOT NULL,
+	"ai_status" "ai_status" DEFAULT 'none' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "reviews_star_rating_range" CHECK ("reviews"."star_rating" between 1 and 5)
 );

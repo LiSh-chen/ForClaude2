@@ -1,5 +1,5 @@
 {
-  "id": "59c84fbf-b413-421f-ad6a-4be53e4616f4",
+  "id": "d89f8772-bb7b-4f0e-a83c-2b95ee2b593b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1299,6 +1299,14 @@
           "notNull": true,
           "default": "'pending'"
         },
+        "ai_status": {
+          "name": "ai_status",
+          "type": "ai_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'none'"
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -1627,6 +1635,16 @@
     }
   },
   "enums": {
+    "public.ai_status": {
+      "name": "ai_status",
+      "schema": "public",
+      "values": [
+        "none",
+        "done",
+        "failed",
+        "quota_exceeded"
+      ]
+    },
     "public.credential_status": {
       "name": "credential_status",
       "schema": "public",
@@ -1673,7 +1691,8 @@
       "values": [
         "user",
         "line_user",
-        "auto"
+        "auto",
+        "external"
       ]
     },
     "public.review_status": {

@@ -6,3 +6,6 @@ next-env.d.ts
 .env.*
 !.env.example
 coverage/
+.data/
+# next dev 自動產生的 agent 說明檔，不納入版控
+AGENTS.md

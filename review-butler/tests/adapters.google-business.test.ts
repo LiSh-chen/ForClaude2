@@ -8,7 +8,8 @@ const auth = { refreshToken: "t" };
 describe("fake reviews", () => {
   const reviews = generateReviews({ seed: 1, count: 300 });
   it("is deterministic for the same seed", () => {
-    expect(generateReviews({ seed: 1, count: 20 })).toEqual(generateReviews({ seed: 1, count: 20 }));
+    const now = new Date("2026-10-01T00:00:00Z");
+    expect(generateReviews({ seed: 1, count: 20, now })).toEqual(generateReviews({ seed: 1, count: 20, now }));
   });
   it("covers all star ratings, empty comments, and zh/en/ja text", () => {
     expect(new Set(reviews.map((r) => r.starRating))).toEqual(new Set([1, 2, 3, 4, 5]));

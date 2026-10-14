@@ -16,6 +16,14 @@ export function useMockAdapters(): boolean {
   return process.env.USE_MOCK_ADAPTERS !== "false";
 }
 
+/**
+ * 個別覆寫：例如階段 1 要「其他全 mock、只有 LLM 用真的」→ USE_MOCK_ADAPTERS=true 且 USE_MOCK_LLM=false。
+ * 個別變數未設定時沿用 USE_MOCK_ADAPTERS。
+ */
+function useMock(override: string | undefined): boolean {
+  return override === undefined || override === "" ? useMockAdapters() : override !== "false";
+}
+
 // 以 globalThis 保留單例，避免 Next dev 熱重載丟失 mock 的記憶體狀態。
 const g = globalThis as unknown as { __adapters?: Record<string, unknown> };
 const cache = (g.__adapters ??= {});
@@ -24,10 +32,13 @@ function once<T>(key: string, make: () => T): T {
 }
 
 export const getGoogleBusiness = (): GoogleBusinessAdapter =>
-  once("google", () => (useMockAdapters() ? new MockGoogleBusinessAdapter() : new RealGoogleBusinessAdapter()));
+  once("google", () => (useMock(process.env.USE_MOCK_GOOGLE) ? new MockGoogleBusinessAdapter() : new RealGoogleBusinessAdapter()));
 export const getLine = (): LineAdapter =>
-  once("line", () => (useMockAdapters() ? new MockLineAdapter() : new RealLineAdapter()));
+  once("line", () => (useMock(process.env.USE_MOCK_LINE) ? new MockLineAdapter() : new RealLineAdapter()));
 export const getLlm = (): LlmAdapter =>
-  once("llm", () => (useMockAdapters() ? new MockLlmAdapter() : new ClaudeLlmAdapter()));
+  once("llm", () => (useMock(process.env.USE_MOCK_LLM) ? new MockLlmAdapter() : new ClaudeLlmAdapter()));
 export const getPayment = (): PaymentAdapter =>
-  once("payment", () => (useMockAdapters() ? new MockPaymentAdapter() : new EcpayPaymentAdapter()));
+  once("payment", () => (useMock(process.env.USE_MOCK_PAYMENT) ? new MockPaymentAdapter() : new EcpayPaymentAdapter()));
+
+/** 目前的 Google adapter 是否為 mock（後台據此顯示「模擬新評論」等開發工具） */
+export const isMockGoogle = (): boolean => useMock(process.env.USE_MOCK_GOOGLE);

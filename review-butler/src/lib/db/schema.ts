@@ -29,7 +29,10 @@ export const reviewStatusEnum = pgEnum("review_status", ["pending", "replied", "
 export const sentimentEnum = pgEnum("sentiment", ["positive", "neutral", "negative"]);
 export const languageEnum = pgEnum("review_language", ["zh-TW", "en", "ja", "other"]);
 export const publishStatusEnum = pgEnum("publish_status", ["pending", "published", "failed", "rejected"]);
-export const publishedByEnum = pgEnum("published_by", ["user", "line_user", "auto"]);
+/** external = 在 Google 上原本就存在的回覆（非本系統發布） */
+export const publishedByEnum = pgEnum("published_by", ["user", "line_user", "auto", "external"]);
+/** AI 草稿狀態：none=尚未處理、done=已有草稿、failed=重試後仍失敗（請手動回覆）、quota_exceeded=額度用完 */
+export const aiStatusEnum = pgEnum("ai_status", ["none", "done", "failed", "quota_exceeded"]);
 export const subscriptionStatusEnum = pgEnum("subscription_status", [
   "trialing",
   "active",
@@ -137,6 +140,7 @@ export const reviews = pgTable(
     /** 首次匯入的歷史評論：不發通知，列在「尚未回覆的歷史評論」 */
     isHistorical: boolean("is_historical").notNull().default(false),
     status: reviewStatusEnum("status").notNull().default("pending"),
+    aiStatus: aiStatusEnum("ai_status").notNull().default("none"),
     createdAt: createdAt(),
   },
   (t) => [

@@ -12,9 +12,12 @@
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "eval:drafts": "EVAL_LIVE=1 vitest run tests/eval.live.test.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0",
+    "@electric-sql/pglite": "^0.5.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.4",
@@ -28,7 +31,6 @@
     "zod": "^4.6.6"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.5.8",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
