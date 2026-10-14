@@ -72,7 +72,7 @@ fun HomeScreen(
     val remaining = (settings.dailyGoal - steps).coerceAtLeast(0)
     val real = settings.challenge == 1
 
-    Column(Modifier.padding(padding).padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(Modifier.padding(padding).padding(horizontal = 10.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (!granted) PermissionCard(onRequestPermission, onOpenAppSettings)
         if (!hasCounter) NoticeCard("這台裝置沒有硬體計步器，目前版本無法計步。")
 
@@ -138,15 +138,17 @@ fun HomeScreen(
 
 @Composable
 private fun ChallengeButton(text: String, selected: Boolean, modifier: Modifier, onClick: () -> Unit) {
-    if (selected) Button(onClick = onClick, modifier = modifier) { Text(text) }
-    else OutlinedButton(onClick = onClick, modifier = modifier) { Text(text) }
+    val m = modifier.height(38.dp)
+    val pad = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+    if (selected) Button(onClick = onClick, modifier = m, contentPadding = pad) { Text(text, fontSize = 15.sp) }
+    else OutlinedButton(onClick = onClick, modifier = m, contentPadding = pad) { Text(text, fontSize = 15.sp) }
 }
 
 @Composable
 private fun ChallengeHeader(title: String, detail: String) {
-    Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp)) {
-        Text(title, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, fontSize = 17.sp)
-        Text(detail, style = MaterialTheme.typography.bodySmall)
+    Column(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 3.dp)) {
+        Text(title, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, fontSize = 15.sp, maxLines = 1)
+        Text(detail, fontSize = 12.sp, maxLines = 1)
     }
 }
 
@@ -163,9 +165,9 @@ private fun StepsPanel(
     onSync: () -> Unit,
 ) {
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(3.dp)) {
-        Column(Modifier.padding(horizontal = 14.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(Modifier.padding(horizontal = 12.dp, vertical = 6.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(steps.withCommas(), fontSize = 34.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, color = Vintage.ink)
+                Text(steps.withCommas(), fontSize = 30.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, color = Vintage.ink)
                 Text("/ ${goal.toLong().withCommas()} 步", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(bottom = 6.dp))
                 Spacer(Modifier.weight(1f))
                 Text("${(progress * 100).roundToInt()}%", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = Vintage.brassDark, modifier = Modifier.padding(bottom = 4.dp))
