@@ -92,6 +92,7 @@ fun ZoomWorldMap(regionIndex: Int, fraction: Double, finished: Boolean, modifier
         followKey = (regionIndex * 1000 + (fraction * 200).toInt()),
         modifier = modifier,
         initialZoom = 3.2f,
+        background = androidx.compose.ui.graphics.Color(0xFFEAD9AE),
     ) { w, h, zoom -> drawWorldMap(w, h, data, measurer, zoom) }
 }
 
@@ -201,7 +202,6 @@ internal fun DrawScope.drawWorldMap(w: Float, h: Float, data: WorldMapData, meas
             radius = radius, center = center,
         )
     }
-    drawRect(Vintage.ink.copy(alpha = 0.8f), style = Stroke(2.dp.toPx()))
 }
 
 /** Places for small things to see along each region; each shows only while the traveller is close. */

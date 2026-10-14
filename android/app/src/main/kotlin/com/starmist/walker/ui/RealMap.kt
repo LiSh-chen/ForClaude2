@@ -6,7 +6,10 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
@@ -50,51 +53,88 @@ internal fun GeoPoint.unit() = Offset(
 )
 
 /** What can be worked out once per route: the island shape and the little decorations. */
-internal class RealMapData(val island: List<Offset>, val waves: List<Offset>, val peaks: List<Pair<Offset, Float>>)
+internal class RealMapData(
+    val island: List<Offset>,
+    /** Centres of soft tinted patches that suggest the mountain belt. */
+    val relief: List<Pair<Offset, Float>>,
+    /** Small hill sketches, with a size factor. */
+    val hills: List<Pair<Offset, Float>>,
+    /** Tiny trees and grass ticks scattered over the land. */
+    val trees: List<Offset>,
+    val ticks: List<Offset>,
+    /** Fields on the western plain. */
+    val fields: List<Offset>,
+    val boats: List<Offset>,
+)
 
 @Composable
 internal fun rememberRealMapData(route: RouteDef): RealMapData = remember(route.id) {
     val island = TaiwanOutline.lonLat.map { it.unit() }
-    val waves = ArrayList<Offset>()
-    var gy = 0.02f
-    var row = 0
-    while (gy < 1f) {
-        var gx = 0.03f + (row % 2) * 0.03f
-        while (gx < 1f) {
-            val jx = ((row * 31 + (gx * 100).toInt() * 17) % 7 - 3) * 0.004f
-            val jy = ((row * 13 + (gx * 100).toInt() * 29) % 5 - 2) * 0.004f
-            val p = Offset(gx + jx, gy + jy)
-            if (!inside(p, island)) waves += p
-            gx += 0.06f
-        }
-        gy += 0.028f
-        row++
-    }
-    // A rough line along the central mountain range, only to place decorative peaks; nothing is named.
+    // A rough line along the central mountain range, only to place decoration; nothing is named.
     val ridge = listOf(
         22.3 to 120.82, 22.65 to 120.78, 23.0 to 120.90, 23.47 to 120.96, 23.8 to 121.08,
         24.15 to 121.28, 24.4 to 121.27, 24.75 to 121.45, 25.0 to 121.60,
     )
-    val peaks = ArrayList<Pair<Offset, Float>>()
+    val relief = ArrayList<Pair<Offset, Float>>()
+    val hills = ArrayList<Pair<Offset, Float>>()
     var n = 0
     for (i in 1 until ridge.size) {
         val (la, lo) = ridge[i - 1]
         val (lb, lp) = ridge[i]
-        val steps = 7
+        val steps = 10
         for (s in 0 until steps) {
             val t = s / steps.toDouble()
             val lat = la + (lb - la) * t
             val lon = lo + (lp - lo) * t
-            for (k in 0..1) {
-                val side = if ((n + k) % 2 == 0) -1 else 1
-                val spread = 0.04 + ((n * 7 + k * 5) % 6) * 0.025
-                val p = GeoPoint(lat + ((n * 3 + k) % 5 - 2) * 0.02, lon + side * spread).unit()
-                if (inside(p, island)) peaks += p to (0.75f + ((n * 5 + k * 3) % 5) * 0.12f)
+            relief += GeoPoint(lat, lon).unit() to (0.9f + (n % 3) * 0.15f)
+            for (k in 0..2) {
+                val spread = ((n * 7 + k * 11) % 9 - 4) * 0.035
+                val p = GeoPoint(lat + ((n * 3 + k * 7) % 7 - 3) * 0.018, lon + spread).unit()
+                if (inside(p, island)) hills += p to (0.7f + ((n * 5 + k * 3) % 5) * 0.1f)
                 n++
             }
         }
     }
-    RealMapData(island, waves, peaks)
+    // Scatter small trees and grass ticks on a jittered grid, thinner on the high ground.
+    val trees = ArrayList<Offset>()
+    val ticks = ArrayList<Offset>()
+    val fields = ArrayList<Offset>()
+    var gy = 0.2f
+    var row = 0
+    while (gy < 1f) {
+        var gx = 0.05f + (row % 2) * 0.012f
+        while (gx < 0.95f) {
+            val jx = ((row * 31 + (gx * 997).toInt() * 17) % 9 - 4) * 0.0025f
+            val jy = ((row * 13 + (gx * 991).toInt() * 29) % 7 - 3) * 0.0025f
+            val p = Offset(gx + jx, gy + jy)
+            if (inside(p, island)) {
+                val h = (row * 7 + (gx * 313).toInt() * 5) % 10
+                val west = p.x < ridgeX(p.y)
+                when {
+                    h < 2 -> trees += p
+                    h < 6 -> ticks += p
+                    west && h < 8 -> fields += p
+                }
+            }
+            gx += 0.013f
+        }
+        gy += 0.0085f
+        row++
+    }
+    val boats = listOf(Offset(0.12f, 0.35f), Offset(0.9f, 0.62f), Offset(0.2f, 0.78f), Offset(0.88f, 0.12f), Offset(0.93f, 0.9f))
+    RealMapData(island, relief, hills, trees, ticks, fields, boats)
+}
+
+/** The x position of the central range at height [y] on the unit square (decoration only). */
+private fun ridgeX(y: Float): Float {
+    val lat = MAP_LAT_MAX - y * (MAP_LAT_MAX - MAP_LAT_MIN)
+    val lon = when {
+        lat > 25.0 -> 121.6
+        lat > 24.4 -> 121.27 + (lat - 24.4) * 0.55
+        lat > 23.47 -> 120.96 + (lat - 23.47) * 0.33
+        else -> 120.8 + (lat - 22.3) * 0.14
+    }
+    return ((lon - MAP_LON_MIN) / (MAP_LON_MAX - MAP_LON_MIN)).toFloat()
 }
 
 private fun inside(p: Offset, poly: List<Offset>): Boolean {
@@ -124,22 +164,10 @@ internal fun DrawScope.drawRealMap(
 ) {
     fun GeoPoint.px() = unit().let { Offset(it.x * w, it.y * h) }
     fun Offset.scaled() = Offset(x * w, y * h)
-    val label = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 11.sp, color = Vintage.ink)
+    val label = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Vintage.ink)
     val here = route.positionAt(walkedKm)
 
-    // Sea: faint wave marks.
-    val waveStroke = Stroke(1.dp.toPx(), cap = StrokeCap.Round)
-    data.waves.forEach { u ->
-        val o = u.scaled()
-        val path = Path().apply {
-            moveTo(o.x - 6.dp.toPx(), o.y)
-            quadraticTo(o.x - 3.dp.toPx(), o.y - 3.dp.toPx(), o.x, o.y)
-            quadraticTo(o.x + 3.dp.toPx(), o.y + 3.dp.toPx(), o.x + 6.dp.toPx(), o.y)
-        }
-        drawPath(path, Color(0xFF7FA3A6).copy(alpha = 0.55f), style = waveStroke)
-    }
-
-    // Land.
+    // Sea: ink hatching like an old atlas, thicker near the coast.
     val island = Path().apply {
         data.island.forEachIndexed { i, u ->
             val o = u.scaled()
@@ -147,25 +175,67 @@ internal fun DrawScope.drawRealMap(
         }
         close()
     }
-    drawPath(island, Color(0xFF9DB7B7).copy(alpha = 0.55f), style = Stroke(7.dp.toPx()))
-    drawPath(island, LAND_COLOR)
-    drawPath(island, Vintage.inkSoft, style = Stroke(1.3.dp.toPx()))
-
-    // Mountains along the middle of the island.
-    data.peaks.forEach { (u, size) ->
-        val o = u.scaled()
-        val s = 7.dp.toPx() * size
-        val range = Path().apply {
-            moveTo(o.x - s * 1.3f, o.y)
-            lineTo(o.x - s * 0.5f, o.y - s * 1.3f)
-            lineTo(o.x + s * 0.1f, o.y - s * 0.3f)
-            lineTo(o.x + s * 0.6f, o.y - s * 0.95f)
-            lineTo(o.x + s * 1.4f, o.y)
-            close()
+    clipPath(island, clipOp = ClipOp.Difference) {
+        val gap = 7.dp.toPx()
+        var y = 0f
+        while (y < h) {
+            drawLine(Color(0xFF6E9396).copy(alpha = 0.22f), Offset(0f, y), Offset(w, y), 0.8.dp.toPx())
+            y += gap
         }
-        drawPath(range, Vintage.mossLight.copy(alpha = 0.75f))
-        drawPath(range, Vintage.inkSoft.copy(alpha = 0.6f), style = Stroke(0.9.dp.toPx()))
     }
+    for ((width, alpha) in listOf(16f to 0.10f, 10f to 0.14f, 5f to 0.2f)) {
+        drawPath(island, Color(0xFF6E9396).copy(alpha = alpha), style = Stroke(width.dp.toPx(), join = StrokeJoin.Round))
+    }
+    data.boats.forEach { u -> drawBoat(u.scaled(), 7.dp.toPx()) }
+    drawCompassRose(Offset(w * 0.16f, h * 0.9f), 26.dp.toPx())
+
+    // Land.
+    drawPath(island, LAND_COLOR)
+    clipPath(island) {
+        // Soft tint over the mountain belt, and flat field colour on the western plain.
+        data.relief.forEach { (u, s) ->
+            val c = u.scaled()
+            val r = w * 0.085f * s
+            drawCircle(
+                brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                    listOf(Color(0xFF9DB08A).copy(alpha = 0.42f), Color.Transparent), center = c, radius = r,
+                ),
+                radius = r, center = c,
+            )
+        }
+        data.fields.forEach { u ->
+            val o = u.scaled()
+            drawRect(Color(0xFFD9CF9C).copy(alpha = 0.55f), Offset(o.x - 3.dp.toPx(), o.y - 1.5.dp.toPx()), Size(6.dp.toPx(), 3.dp.toPx()))
+        }
+        data.ticks.forEach { u ->
+            val o = u.scaled()
+            drawLine(Vintage.inkSoft.copy(alpha = 0.35f), o, Offset(o.x - 1.5.dp.toPx(), o.y - 3.dp.toPx()), 0.8.dp.toPx())
+            drawLine(Vintage.inkSoft.copy(alpha = 0.35f), o, Offset(o.x + 1.5.dp.toPx(), o.y - 3.dp.toPx()), 0.8.dp.toPx())
+        }
+        data.trees.forEach { u ->
+            val o = u.scaled()
+            drawCircle(Vintage.mossLight.copy(alpha = 0.8f), 2.6.dp.toPx(), Offset(o.x, o.y - 3.dp.toPx()))
+            drawCircle(Vintage.inkSoft.copy(alpha = 0.55f), 2.6.dp.toPx(), Offset(o.x, o.y - 3.dp.toPx()), style = Stroke(0.7.dp.toPx()))
+            drawLine(Vintage.inkSoft.copy(alpha = 0.55f), o, Offset(o.x, o.y - 0.5.dp.toPx()), 0.8.dp.toPx())
+        }
+        // Hills: a light wash, a pen curve and a few hatch strokes, not solid shapes.
+        data.hills.forEach { (u, size) ->
+            val o = u.scaled()
+            val s = 6.dp.toPx() * size
+            drawOval(Vintage.mossLight.copy(alpha = 0.4f), Offset(o.x - s * 1.2f, o.y - s * 0.7f), Size(s * 2.4f, s * 1.1f))
+            val crest = Path().apply {
+                moveTo(o.x - s * 1.1f, o.y + s * 0.1f)
+                quadraticTo(o.x - s * 0.5f, o.y - s * 1.1f, o.x, o.y - s * 0.9f)
+                quadraticTo(o.x + s * 0.6f, o.y - s * 0.8f, o.x + s * 1.1f, o.y + s * 0.1f)
+            }
+            drawPath(crest, Vintage.inkSoft.copy(alpha = 0.6f), style = Stroke(0.9.dp.toPx(), cap = StrokeCap.Round))
+            for (k in 1..3) {
+                val x = o.x + s * (0.1f + 0.22f * k)
+                drawLine(Vintage.inkSoft.copy(alpha = 0.4f), Offset(x, o.y - s * (0.8f - 0.12f * k)), Offset(x + s * 0.12f, o.y - s * 0.05f), 0.7.dp.toPx())
+            }
+        }
+    }
+    drawPath(island, Vintage.inkSoft, style = Stroke(1.4.dp.toPx(), join = StrokeJoin.Round))
 
     // The route: dotted ahead, solid behind, dashed red where a train or ferry carries the walker.
     val dotted = PathEffect.dashPathEffect(floatArrayOf(3.dp.toPx(), 5.dp.toPx()))
@@ -192,9 +262,9 @@ internal fun DrawScope.drawRealMap(
     route.poisNear(here).forEach { (poi, km) ->
         val alpha = (1f - ((km - POI_RANGE_KM * 0.6) / (POI_RANGE_KM * 0.4)).toFloat().coerceIn(0f, 1f))
         val o = poi.at.px()
-        drawPoiGlyph(poi.kind, o, 9.dp.toPx(), alpha)
-        val text = measurer.measure(poi.name, label.copy(fontSize = 10.sp, color = Vintage.ink.copy(alpha = alpha)))
-        drawText(text, topLeft = Offset(o.x - text.size.width / 2f, o.y + 6.dp.toPx()))
+        drawPoiGlyph(poi.kind, o, 11.dp.toPx(), alpha)
+        val text = measurer.measure(poi.name, label.copy(fontSize = 12.sp, color = Vintage.ink.copy(alpha = alpha)))
+        drawText(text, topLeft = Offset(o.x - text.size.width / 2f, o.y + 10.dp.toPx()))
     }
 
     // Cards and stamps.
@@ -202,12 +272,12 @@ internal fun DrawScope.drawRealMap(
         val o = stop.at.px()
         val reached = route.cumulativeKm[i] <= walkedKm + 1e-9
         if (stop.landmark != null) {
-            drawCircle(if (reached) Vintage.moss else Vintage.parchmentLight, 5.dp.toPx(), o)
-            drawCircle(if (reached) Color.White else Vintage.moss, 5.dp.toPx(), o, style = Stroke(1.5.dp.toPx()))
+            drawCircle(if (reached) Vintage.moss else Vintage.parchmentLight, 7.dp.toPx(), o)
+            drawCircle(if (reached) Color.White else Vintage.moss, 7.dp.toPx(), o, style = Stroke(2.dp.toPx()))
         } else if (stop.supply != null) {
-            val side = 8.dp.toPx()
+            val side = 11.dp.toPx()
             drawRect(if (reached) SUPPLY_COLOR else Vintage.parchmentLight, Offset(o.x - side / 2, o.y - side / 2), Size(side, side))
-            drawRect(if (reached) Color.White else SUPPLY_COLOR, Offset(o.x - side / 2, o.y - side / 2), Size(side, side), style = Stroke(1.4.dp.toPx()))
+            drawRect(if (reached) Color.White else SUPPLY_COLOR, Offset(o.x - side / 2, o.y - side / 2), Size(side, side), style = Stroke(1.8.dp.toPx()))
         }
     }
     val next = route.next(walkedKm)?.first
@@ -228,7 +298,7 @@ internal fun DrawScope.drawRealMap(
     // The walker.
     val p = here.px()
     if (pin != null) {
-        val height = 46.dp.toPx()
+        val height = 60.dp.toPx()
         val width = height * pin.width / pin.height
         drawOval(Color.Black.copy(alpha = 0.18f), Offset(p.x - width * 0.3f, p.y - 3.dp.toPx()), Size(width * 0.6f, 6.dp.toPx()))
         drawImage(
@@ -307,6 +377,33 @@ private fun DrawScope.drawPoiGlyph(kind: PoiKind, at: Offset, u: Float, alpha: F
             drawCircle(Vintage.brass.copy(alpha = alpha), u * 0.35f, Offset(at.x, at.y - u * 0.95f))
         }
     }
+}
+
+/** A small sailing boat, drawn in pen. */
+private fun DrawScope.drawBoat(at: Offset, u: Float) {
+    val ink = Vintage.inkSoft.copy(alpha = 0.8f)
+    val hull = Path().apply { moveTo(at.x - u, at.y); lineTo(at.x + u, at.y); lineTo(at.x + u * 0.6f, at.y + u * 0.5f); lineTo(at.x - u * 0.6f, at.y + u * 0.5f); close() }
+    drawPath(hull, Vintage.parchmentLight)
+    drawPath(hull, ink, style = Stroke(1.dp.toPx()))
+    drawLine(ink, Offset(at.x, at.y), Offset(at.x, at.y - u * 1.6f), 1.dp.toPx())
+    val sail = Path().apply { moveTo(at.x + u * 0.1f, at.y - u * 1.5f); lineTo(at.x + u * 0.9f, at.y - u * 0.2f); lineTo(at.x + u * 0.1f, at.y - u * 0.2f); close() }
+    drawPath(sail, Vintage.parchmentLight)
+    drawPath(sail, ink, style = Stroke(0.9.dp.toPx()))
+}
+
+/** A small compass rose with a north mark. */
+private fun DrawScope.drawCompassRose(c: Offset, r: Float) {
+    val ink = Vintage.inkSoft.copy(alpha = 0.85f)
+    drawCircle(ink, r, c, style = Stroke(1.dp.toPx()))
+    drawCircle(ink.copy(alpha = 0.5f), r * 0.78f, c, style = Stroke(0.7.dp.toPx()))
+    val star = Path().apply {
+        moveTo(c.x, c.y - r * 1.25f); lineTo(c.x + r * 0.18f, c.y - r * 0.18f); lineTo(c.x + r * 1.25f, c.y)
+        lineTo(c.x + r * 0.18f, c.y + r * 0.18f); lineTo(c.x, c.y + r * 1.25f); lineTo(c.x - r * 0.18f, c.y + r * 0.18f)
+        lineTo(c.x - r * 1.25f, c.y); lineTo(c.x - r * 0.18f, c.y - r * 0.18f); close()
+    }
+    drawPath(star, Vintage.brassLight.copy(alpha = 0.85f))
+    drawPath(star, ink, style = Stroke(0.9.dp.toPx()))
+    drawLine(ink, Offset(c.x, c.y - r * 1.25f), Offset(c.x, c.y - r * 1.6f), 1.2.dp.toPx())
 }
 
 @Composable
