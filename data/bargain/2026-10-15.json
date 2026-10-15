@@ -3,94 +3,89 @@
  "params_version": 1,
  "picks": [
   {
-   "ticker": "ON",
-   "name": "ON Semiconductor Corporation",
-   "zh_name": "onsemi",
+   "ticker": "ORCL",
+   "name": "Oracle Corporation",
+   "zh_name": "Oracle",
    "market": "US",
-   "sector": "power_semis",
+   "sector": "cloud_software",
    "rank": 1,
-   "entry_price": 73.36,
-   "entry_date": "2026-10-14",
-   "composite": 63.19,
+   "entry_price": 134.47,
+   "entry_date": "2026-10-15",
+   "composite": 67.23,
    "scores": {
-    "sector": null,
-    "leader": 66.7,
-    "quality": 71.9,
-    "growth": 66.9,
-    "valuation": 97.0,
-    "momentum": 12.3,
+    "sector": 74.4,
+    "leader": 75.0,
+    "quality": 55.2,
+    "growth": 99.4,
+    "valuation": 100.0,
+    "momentum": 24.3,
     "news": 40.0
    },
    "target": {
-    "base": 100.85,
-    "bull": 141.18,
-    "bear": 40.34,
-    "ev": 93.79,
+    "base": 215.15,
+    "bull": 289.53,
+    "bear": 103.58,
+    "ev": 202.14,
     "confidence": "中",
-    "upside": 0.3747,
-    "ev_upside": 0.2784,
+    "upside": 0.6,
+    "ev_upside": 0.5032,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 83.51,
-      "weight": 0.4,
-      "upside": 0.1383
+      "value": 281.11,
+      "weight": 0.5,
+      "upside": 1.0905
      },
      "peg": {
-      "value": 147.48,
-      "weight": 0.15,
-      "upside": 1.0104
-     },
-     "dcf": {
-      "value": 96.02,
-      "weight": 0.2,
-      "upside": 0.3089
+      "value": 357.23,
+      "weight": 0.187,
+      "upside": 1.6565
      },
      "consensus": {
-      "value": 104.46,
-      "weight": 0.25,
-      "upside": 0.424
+      "value": 237.97,
+      "weight": 0.312,
+      "upside": 0.7697
      }
     }
    },
-   "stop": 64.56,
+   "stop": 117.42,
    "fundamentals": {
-    "market_cap": 28560414720,
-    "pe_ttm": 49.5676,
-    "pe_fwd": 16.1661,
-    "peg": 0.17,
-    "roe": 0.0831,
-    "gross_margin": 0.4278,
-    "op_margin": 0.1953,
-    "net_margin": 0.1017,
-    "rev_growth": 0.092,
-    "eps_growth": 0.366,
-    "de": 0.6506,
-    "beta": 2.052,
-    "target_mean": 104.4615,
-    "n_analysts": 26,
-    "fcf_margin": 0.2673
+    "market_cap": 407645945856,
+    "pe_ttm": 23.1048,
+    "pe_fwd": 12.2339,
+    "peg": 0.73,
+    "roe": 0.4119,
+    "gross_margin": 0.6396,
+    "op_margin": 0.3563,
+    "net_margin": 0.2636,
+    "rev_growth": 0.296,
+    "eps_growth": 0.545,
+    "de": 2.5172,
+    "beta": 1.77,
+    "target_mean": 237.9742,
+    "n_analysts": 41,
+    "fcf_margin": -0.6388
    },
    "tech": {
-    "ret_1m": 0.002185842469672572,
-    "ret_3m": -0.1674988842054136,
-    "rel_3m": -0.19207753757483526,
-    "dist200": -0.09928105007358146,
-    "vol_ann": 0.5364738251226968
+    "ret_1m": -0.057227328366476704,
+    "ret_3m": 0.06769508009506797,
+    "rel_3m": 0.029295774219192383,
+    "dist200": -0.15620624520673654,
+    "vol_ann": 0.5663284493015474
    },
    "book": "bargain",
-   "also_main": false,
-   "bargain_score": 69.0,
+   "also_main": true,
+   "bargain_score": 75.3,
    "facts": {
-    "from_high": -0.4523,
-    "pos52": 0.3197,
-    "bounce20": 0.0741,
-    "ret_1m": 0.0022,
-    "dist200": -0.0993,
-    "pe_discount": 0.2167,
-    "eps_up": 2.0661,
-    "rev_growth": 0.092,
-    "upside": 0.3747
+    "from_high": -0.5646,
+    "pos52": 0.1024,
+    "bounce20": 0.03,
+    "ret_1m": -0.0572,
+    "dist200": -0.1562,
+    "pe_discount": 0.6856,
+    "eps_up": 0.8886,
+    "rev_growth": 0.296,
+    "upside": 0.6
    }
   },
   {
@@ -100,55 +95,55 @@
    "market": "US",
    "sector": "aging_care",
    "rank": 2,
-   "entry_price": 281.62,
-   "entry_date": "2026-10-14",
-   "composite": 69.37,
+   "entry_price": 293.23,
+   "entry_date": "2026-10-15",
+   "composite": 69.09,
    "scores": {
     "sector": null,
     "leader": 100.0,
     "quality": 83.9,
     "growth": 70.6,
-    "valuation": 88.5,
-    "momentum": 8.3,
+    "valuation": 83.6,
+    "momentum": 12.5,
     "news": 40.0
    },
    "target": {
-    "base": 389.42,
-    "bull": 536.24,
-    "bear": 169.2,
-    "ev": 363.73,
+    "base": 393.53,
+    "bull": 537.18,
+    "bear": 178.05,
+    "ev": 368.39,
     "confidence": "中",
-    "upside": 0.3828,
-    "ev_upside": 0.2916,
+    "upside": 0.3421,
+    "ev_upside": 0.2563,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 298.95,
+      "value": 309.33,
       "weight": 0.4,
-      "upside": 0.0615
+      "upside": 0.0549
      },
      "peg": {
-      "value": 542.48,
+      "value": 542.19,
       "weight": 0.15,
-      "upside": 0.9263
+      "upside": 0.849
      },
      "dcf": {
       "value": 489.07,
       "weight": 0.2,
-      "upside": 0.7366
+      "upside": 0.6679
      },
      "consensus": {
       "value": 362.62,
       "weight": 0.25,
-      "upside": 0.2876
+      "upside": 0.2366
      }
     }
    },
-   "stop": 263.55,
+   "stop": 274.23,
    "fundamentals": {
-    "market_cap": 108021841920,
-    "pe_ttm": 29.2744,
-    "pe_fwd": 16.8718,
+    "market_cap": 112475127808,
+    "pe_ttm": 30.4813,
+    "pe_fwd": 17.5767,
     "peg": 1.32,
     "roe": 0.1651,
     "gross_margin": 0.6559,
@@ -163,25 +158,25 @@
     "fcf_margin": 0.159
    },
    "tech": {
-    "ret_1m": 0.0035943158260607344,
-    "ret_3m": -0.14700545907321927,
-    "rel_3m": -0.17158411244264093,
-    "dist200": -0.1344867244488933,
-    "vol_ann": 0.3573408619038713
+    "ret_1m": 0.033005212780951476,
+    "ret_3m": -0.0803808195560417,
+    "rel_3m": -0.1187801254319173,
+    "dist200": -0.09803727007714591,
+    "vol_ann": 0.36639318116534836
    },
    "book": "bargain",
    "also_main": false,
-   "bargain_score": 62.3,
+   "bargain_score": 62.5,
    "facts": {
-    "from_high": -0.2669,
-    "pos52": 0.1104,
-    "bounce20": 0.0473,
-    "ret_1m": 0.0036,
-    "dist200": -0.1345,
-    "pe_discount": 0.0508,
-    "eps_up": 0.7351,
+    "from_high": -0.2367,
+    "pos52": 0.2111,
+    "bounce20": 0.0905,
+    "ret_1m": 0.033,
+    "dist200": -0.098,
+    "pe_discount": 0.0395,
+    "eps_up": 0.7342,
     "rev_growth": 0.094,
-    "upside": 0.3828
+    "upside": 0.3421
    }
   },
   {
@@ -191,56 +186,56 @@
    "market": "US",
    "sector": "internet_platforms",
    "rank": 3,
-   "entry_price": 70.57,
-   "entry_date": "2026-10-14",
-   "composite": 59.3,
+   "entry_price": 72.61,
+   "entry_date": "2026-10-15",
+   "composite": 59.63,
    "scores": {
     "sector": 66.9,
     "leader": 0.0,
     "quality": 79.9,
     "growth": 47.4,
-    "valuation": 88.0,
-    "momentum": 16.0,
-    "news": 76.3
+    "valuation": 84.0,
+    "momentum": 23.2,
+    "news": 77.2
    },
    "target": {
-    "base": 96.13,
-    "bull": 122.6,
-    "bear": 56.42,
-    "ev": 91.5,
+    "base": 96.58,
+    "bull": 122.67,
+    "bear": 57.45,
+    "ev": 92.02,
     "confidence": "中",
-    "upside": 0.3622,
-    "ev_upside": 0.2966,
+    "upside": 0.3302,
+    "ev_upside": 0.2673,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 84.61,
+      "value": 85.8,
       "weight": 0.4,
-      "upside": 0.1989
+      "upside": 0.1817
      },
      "peg": {
       "value": 97.58,
       "weight": 0.15,
-      "upside": 0.3828
+      "upside": 0.344
      },
      "dcf": {
       "value": 123.19,
       "weight": 0.2,
-      "upside": 0.7456
+      "upside": 0.6965
      },
      "consensus": {
-      "value": 92.06,
+      "value": 91.95,
       "weight": 0.25,
-      "upside": 0.3045
+      "upside": 0.2663
      }
     }
    },
-   "stop": 66.34,
+   "stop": 68.25,
    "fundamentals": {
-    "market_cap": 293849202688,
-    "pe_ttm": 22.1918,
-    "pe_fwd": 18.5368,
-    "peg": 1.21,
+    "market_cap": 302343651328,
+    "pe_ttm": 22.8333,
+    "pe_fwd": 19.0727,
+    "peg": 1.22,
     "roe": 0.4954,
     "gross_margin": 0.4912,
     "op_margin": 0.3338,
@@ -249,30 +244,30 @@
     "eps_growth": 0.111,
     "de": 0.5524,
     "beta": 1.613,
-    "target_mean": 92.06,
+    "target_mean": 91.9489,
     "n_analysts": 45,
     "fcf_margin": 0.5249
    },
    "tech": {
-    "ret_1m": -0.0940950152436083,
-    "ret_3m": -0.050840603320423394,
-    "rel_3m": -0.07541925668984506,
-    "dist200": -0.15082817635725043,
-    "vol_ann": 0.3249239965883811
+    "ret_1m": -0.049731748064843706,
+    "ret_3m": 0.05308199889924259,
+    "rel_3m": 0.014682693023367,
+    "dist200": -0.1251469846888833,
+    "vol_ann": 0.32997592047640817
    },
    "book": "bargain",
-   "also_main": true,
-   "bargain_score": 56.1,
+   "also_main": false,
+   "bargain_score": 56.9,
    "facts": {
-    "from_high": -0.4315,
-    "pos52": 0.0615,
-    "bounce20": 0.0523,
-    "ret_1m": -0.0941,
-    "dist200": -0.1508,
-    "pe_discount": 0.2129,
+    "from_high": -0.4151,
+    "pos52": 0.0972,
+    "bounce20": 0.0828,
+    "ret_1m": -0.0497,
+    "dist200": -0.1251,
+    "pe_discount": 0.193,
     "eps_up": 0.1972,
     "rev_growth": 0.134,
-    "upside": 0.3622
+    "upside": 0.3302
    }
   }
  ]
