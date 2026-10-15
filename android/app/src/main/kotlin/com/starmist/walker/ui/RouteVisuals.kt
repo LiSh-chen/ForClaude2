@@ -64,7 +64,7 @@ fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifie
         focus = here.unit(),
         followKey = (walkedKm * 20).toInt(),
         modifier = modifier,
-        initialZoom = initialZoom ?: if (base != null) 6f else 12f,
+        initialZoom = initialZoom ?: if (base != null) 5.5f else 12f,
         maxZoom = 24f,
         background = SEA_COLOR,
     ) { w, h, _ -> drawRealMap(w, h, route, data, walkedKm, measurer, pin, base) }

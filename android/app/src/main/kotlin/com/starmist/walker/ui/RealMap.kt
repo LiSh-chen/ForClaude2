@@ -33,8 +33,8 @@ import com.starmist.core.route.RouteDef
 import com.starmist.core.route.TaiwanOutline
 import kotlin.math.cos
 
-internal const val MAP_LON_MIN = 119.95
-internal const val MAP_LON_MAX = 122.1
+internal const val MAP_LON_MIN = 119.93
+internal const val MAP_LON_MAX = 122.12
 internal const val MAP_LAT_MIN = 21.8
 internal const val MAP_LAT_MAX = 25.4
 
