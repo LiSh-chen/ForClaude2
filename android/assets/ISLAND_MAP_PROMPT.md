@@ -37,11 +37,30 @@ DO NOT draw any rivers or streams, roads, bridges, railways, buildings or landma
 - 我會先用海岸線疊圖檢查有沒有對上，必要時自動微調，讓畫面每一點都對上真實座標。
 - 再把河流、道路、路線和景點小圖放上去，給你看幾個地點的效果。
 
+## 第二步（第一步滿意後再做）：放大並加細節，分三段
+
+不要請 Gemini 一開始就畫三段再要求它們完美接在一起：三張是各自獨立生成的，邊緣的山形、顏色、筆觸不會剛好一樣，沒辦法保證接縫完美。
+比較穩的做法是**第一步整張畫好之後，再用「放大加細節」把它拆成三段**，因為三段都來自同一張圖，內容本來就一致，接縫由我處理。
+
+1. 第一步傳回 `island_ground.png` 後，我會把它切成**北、中、南三段，每段和相鄰的那段重疊約 17%**，並附上對應的草圖，傳給你三張圖（`ground_north.png`、`ground_middle.png`、`ground_south.png` 的素材）。
+2. 每一段各開一個對話，上傳風格參考兩張和這一段的圖，比例選 **3:2 橫式**、解析度選最高（4K），貼這段提示詞：
+
+```
+Upscale and refine the uploaded picture to the highest possible resolution, as the same antique hand-drawn pictorial map in the same style. Keep EVERYTHING exactly where it is: the coastline, every mountain, valley, plain and island keep their exact position, size and shape, and the picture is not cropped, shifted, rotated, mirrored or re-composed; the content at the very edges must stay the same as in the uploaded picture, because it will be joined to the neighbouring pictures.
+Only add finer detail: crisper pen hatching on the mountains, more tiny trees in the forests, finer paddy and field patterns, finer wave hatching in the sea, finer paper grain. Keep the same colours and the same brush feeling.
+Do NOT add any rivers, roads, buildings, landmarks, boats, animals, labels or text. No border, no frame.
+```
+
+3. 三段傳回後，我會用重疊部分做柔和的漸變接合，並檢查接縫與位置有沒有對上，再合成一張超高解析度的整張地圖。
+   （三段原本就是同一張圖來的，接合處不會突然變樣；如果有哪一段跑掉，我會請你重畫那一段。）
+
+這樣整座島南北約有 7000 多像素，每個像素約 55 公尺：
+- 一個畫面看 **40 公里寬**：不用放大，很清楚。
+- 一個畫面看 **15 公里寬**：約放大 3 倍，手繪水彩風格仍然偏軟，但比單張好很多。
+
 ## 關於清晰度（先講清楚）
 
-一張圖的解析度有上限：Gemini 最高約 4K，也就是整座島南北約 4096 像素，每個像素約 100 公尺。
-- 一個畫面看 **40 公里寬**（約走 7 天的路）：大約是 2 倍放大，水彩手繪風格看起來會略軟但可以接受。
+只做第一步時：一張圖最高約 4K，整座島南北約 4096 像素，每個像素約 100 公尺。
+- 一個畫面看 **40 公里寬**（約走 7 天的路）：大約 2 倍放大，手繪水彩風格看起來會略軟但可以接受。
 - 一個畫面看 **15 公里寬**：約 6 倍放大，會明顯變糊。
-
-所以預設會建議用 40 公里左右的畫面。如果之後你覺得不夠清楚，我可以再做第二步：把這張圖切成北、中、南三段，
-請 Gemini 照這張圖的樣子重畫成更精細的版本（這一步有這張當位置依據，不容易歪）。先不用做。
+做完第二步就會好很多，見上面。
