@@ -60,7 +60,7 @@ def polys(g):
     if g.geom_type=='MultiPolygon': return list(g.geoms)
     return []
 
-def render(center,width_km,out,aspect=0.92,W=920,route=None,stops=(),walker=None,seed=3):
+def render(center,width_km,out,aspect=0.92,W=920,route=None,stops=(),walker=None,seed=3,atlas=False):
     lat0,lon0=center
     kx=111.32*math.cos(math.radians(lat0));ky=110.57
     H=int(W/aspect)
@@ -93,8 +93,8 @@ def render(center,width_km,out,aspect=0.92,W=920,route=None,stops=(),walker=None
     col=np.zeros((h,w,3),np.float32)
     xs_=[s[0] for s in stops_h]
     for c in range(3): col[...,c]=np.interp(e,xs_,[s[1][c] for s in stops_h])
-    col*= (0.74+0.40*shade)[...,None]
-    sea=np.array([201,222,224],np.float32)
+    col*= ((0.88+0.22*shade) if atlas else (0.74+0.40*shade))[...,None]
+    sea=np.array([214,226,222],np.float32) if atlas else np.array([201,222,224],np.float32)
     img=np.where(land[...,None],col,sea[None,None,:])
     im=Image.fromarray(np.clip(img,0,255).astype(np.uint8))
     d=ImageDraw.Draw(im,'RGBA')
@@ -118,11 +118,11 @@ def render(center,width_km,out,aspect=0.92,W=920,route=None,stops=(),walker=None
     sub=el_s[::S*2,::S*2]
     xs2=np.arange(sub.shape[1])*S*2;ys2=np.arange(sub.shape[0])*S*2
     fig=plt.figure();axc=fig.add_axes([0,0,1,1])
-    for lev,alpha,wd in [(l,170 if l%100==0 else 85,1.6 if l%100==0 else .8) for l in range(20,3600,20)]:
+    for lev,alpha,wd in [(l,170 if l%100==0 else 85,1.6 if l%100==0 else .8) for l in (range(100,3600,100) if atlas else range(20,3600,20))]:
         if lev>=sub.max() or lev<=sub.min(): continue
         cs=plt.contour(xs2,ys2,sub,[lev]);
         for seg in cs.allsegs[0]:
-            if len(seg)>2: d.line([tuple(p) for p in seg],fill=(120,85,50,alpha),width=int(wd*S))
+            if len(seg)>2: d.line([tuple(p) for p in seg],fill=(120,85,50,alpha//2 if atlas else alpha),width=int(wd*S))
         plt.cla()
     plt.close(fig)
     # water
@@ -163,7 +163,7 @@ def render(center,width_km,out,aspect=0.92,W=920,route=None,stops=(),walker=None
     from scipy.ndimage import gaussian_filter as gf
     nz=gf(np.random.default_rng(seed).random((h//(8*S)+1,w//(8*S)+1)),2.5);nz=(nz-nz.min())/(nz.max()-nz.min())
     step=20*S
-    for gy_ in range(step//2,h,step):
+    for gy_ in (range(step//2,h,step) if not atlas else []):
         for gx_ in range(step//2,w,step):
             x=gx_+rnd.randint(-9*S,9*S);y=gy_+rnd.randint(-9*S,9*S)
             if not(0<=x<w and 0<=y<h and fm[y,x] and land[y,x] and slope[y,x]<0.95): continue
