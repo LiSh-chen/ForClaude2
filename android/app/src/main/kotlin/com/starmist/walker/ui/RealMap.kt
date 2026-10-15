@@ -294,24 +294,51 @@ internal fun DrawScope.drawRealMap(
     // Painted objects (cut out with transparent backgrounds): cards in colour once collected, sights and local colour always.
     if (base != null && icons.isNotEmpty()) {
         val kmPerW = 222.5
-        fun icon(id: String, at: GeoPoint, widthKm: Double, alpha: Float, grey: Boolean) {
+        class Item(val id: String, val at: Offset, val iw: Float, val ih: Float, val alpha: Float, val grey: Boolean, val weight: Float) {
+            var cx = at.x; var cy = at.y
+        }
+        val items = ArrayList<Item>()
+        fun add(id: String, at: GeoPoint, widthKm: Double, alpha: Float, grey: Boolean, weight: Float) {
             val bmp = icons[id] ?: return
             val iw = (w * widthKm / kmPerW).toFloat()
-            val ih = iw * bmp.height / bmp.width
-            val c = at.px()
-            val tl = Offset(c.x - iw / 2, c.y - ih / 2)
-            drawImage(
-                bmp, dstOffset = IntOffset(tl.x.toInt(), tl.y.toInt()), dstSize = IntSize(iw.toInt(), ih.toInt()), alpha = alpha,
-                colorFilter = if (grey) androidx.compose.ui.graphics.ColorFilter.colorMatrix(androidx.compose.ui.graphics.ColorMatrix().apply { setToSaturation(0.45f) }) else null,
-            )
-            occupiedIcons += Rect(tl.x, tl.y, tl.x + iw, tl.y + ih)
+            items += Item(id, at.px(), iw, iw * bmp.height / bmp.width, alpha, grey, weight)
         }
-        LOCAL_OBJECTS.forEach { icon(it.id, GeoPoint(it.lat, it.lon), it.widthKm * 1.25, 0.95f, false) }
-        route.pois.forEach { icon(it.id, it.at, 10.0, 0.98f, false) }
+        LOCAL_OBJECTS.forEach { add(it.id, GeoPoint(it.lat, it.lon), it.widthKm, 0.95f, false, 1f) }
+        route.pois.forEach { add(it.id, it.at, 7.5, 0.98f, false, 0.8f) }
         route.stops.forEachIndexed { i, stop ->
             val l = stop.landmark ?: return@forEachIndexed
             val reached = route.cumulativeKm[i] <= walkedKm + 1e-9
-            icon(l.id, stop.at, 14.0, if (reached) 1f else 0.85f, !reached)
+            add(l.id, stop.at, 10.5, if (reached) 1f else 0.85f, !reached, if (reached) 0.15f else 0.25f)
+        }
+        // Push overlapping icons apart (landmarks move least), but never far from the real spot.
+        repeat(14) {
+            for (i in items.indices) for (j in i + 1 until items.size) {
+                val a = items[i]; val b = items[j]
+                val ox = (a.iw + b.iw) / 2 * 0.9f - kotlin.math.abs(a.cx - b.cx)
+                val oy = (a.ih + b.ih) / 2 * 0.9f - kotlin.math.abs(a.cy - b.cy)
+                if (ox <= 0f || oy <= 0f) continue
+                val share = a.weight + b.weight
+                if (ox < oy) {
+                    val dir = if (a.cx <= b.cx) -1f else 1f
+                    a.cx += dir * ox * a.weight / share; b.cx -= dir * ox * b.weight / share
+                } else {
+                    val dir = if (a.cy <= b.cy) -1f else 1f
+                    a.cy += dir * oy * a.weight / share; b.cy -= dir * oy * b.weight / share
+                }
+            }
+            items.forEach {
+                it.cx = it.cx.coerceIn(it.at.x - it.iw * 1.3f, it.at.x + it.iw * 1.3f)
+                it.cy = it.cy.coerceIn(it.at.y - it.ih * 1.3f, it.at.y + it.ih * 1.3f)
+            }
+        }
+        items.sortedBy { 1f - it.weight }.forEach { it ->
+            val bmp = icons[it.id] ?: return@forEach
+            val tl = Offset(it.cx - it.iw / 2, it.cy - it.ih / 2)
+            drawImage(
+                bmp, dstOffset = IntOffset(tl.x.toInt(), tl.y.toInt()), dstSize = IntSize(it.iw.toInt(), it.ih.toInt()), alpha = it.alpha,
+                colorFilter = if (it.grey) androidx.compose.ui.graphics.ColorFilter.colorMatrix(androidx.compose.ui.graphics.ColorMatrix().apply { setToSaturation(0.45f) }) else null,
+            )
+            occupiedIcons += Rect(tl.x, tl.y, tl.x + it.iw, tl.y + it.ih)
         }
     }
 
