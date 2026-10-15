@@ -23,6 +23,23 @@ def remove_captions(cell):
     best = max(runs, key=lambda r: ink[r[0]:r[1] + 1].sum())
     arr[:best[0]] = 255; arr[best[1] + 1:] = 255
     return Image.fromarray(arr)
+def knock_out(ic):
+    """White sheet background -> transparent: flood from the border through near-white pixels, feathered."""
+    from scipy import ndimage as ndi
+    a = np.asarray(ic.convert('RGB')).astype(np.float32)
+    m = a.min(axis=2)
+    bg = m >= 228
+    lab, n = ndi.label(bg)
+    border = set(np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]]))) - {0}
+    outside = np.isin(lab, list(border))
+    # distance-based feather: 0 at the outside region, ramps up over ~3 px
+    d = ndi.distance_transform_edt(~outside)
+    alpha = np.clip(d / 3.0, 0, 1)
+    # soften nearly-white fringe pixels right at the edge
+    alpha = np.where(outside, 0, np.maximum(alpha, np.clip((250 - m) / 40.0, 0, 1) * (d < 4)))
+    rgba = np.dstack([a, alpha * 255]).astype(np.uint8)
+    return Image.fromarray(rgba, 'RGBA')
+
 for sheet in ('O1', 'O2', 'O3', 'O4'):
     im = Image.open(ROOT / f'generated/objsheets/{sheet.lower()}.jpg').convert('RGB')
     W, H = im.size; cw, ch = W / 6, H / 4
@@ -41,6 +58,7 @@ for sheet in ('O1', 'O2', 'O3', 'O4'):
         ic = cell.crop((bx0, by0, bx1, by1))
         s = 360 / max(ic.size)
         if s < 1: ic = ic.resize((round(ic.width * s), round(ic.height * s)), Image.LANCZOS)
+        ic = knock_out(ic)
         out = RES / f"art_obj_{it['id']}.webp"
         ic.save(out, quality=90)
         cells[it['id']] = ic
@@ -48,7 +66,7 @@ print(len(cells), 'icons')
 # contact sheet for checking
 ids = list(cells)
 cols = 10; rows = (len(ids) + cols - 1) // cols
-sheet = Image.new('RGB', (cols * 200, rows * 170), 'white')
+sheet = Image.new('RGB', (cols * 200, rows * 170), (150, 170, 140))
 for i, k in enumerate(ids):
-    ic = cells[k].copy(); ic.thumbnail((190, 160)); sheet.paste(ic, ((i % cols) * 200 + 5, (i // cols) * 170 + 5))
+    ic = cells[k].copy(); ic.thumbnail((190, 160)); sheet.paste(ic, ((i % cols) * 200 + 5, (i // cols) * 170 + 5), ic)
 sheet.save('/tmp/claude-0/-home-user-ForClaude2/196e5780-5a3f-5410-b95c-ebb5241111cb/scratchpad/obj_contact.png')

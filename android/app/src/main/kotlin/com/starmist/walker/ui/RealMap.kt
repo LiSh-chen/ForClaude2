@@ -5,7 +5,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ClipOp
@@ -292,7 +291,7 @@ internal fun DrawScope.drawRealMap(
 
     }
 
-    // Painted objects (white sheet background vanishes with Multiply): cards in colour once collected, sights and local colour always.
+    // Painted objects (cut out with transparent backgrounds): cards in colour once collected, sights and local colour always.
     if (base != null && icons.isNotEmpty()) {
         val kmPerW = 222.5
         fun icon(id: String, at: GeoPoint, widthKm: Double, alpha: Float, grey: Boolean) {
@@ -303,17 +302,16 @@ internal fun DrawScope.drawRealMap(
             val tl = Offset(c.x - iw / 2, c.y - ih / 2)
             drawImage(
                 bmp, dstOffset = IntOffset(tl.x.toInt(), tl.y.toInt()), dstSize = IntSize(iw.toInt(), ih.toInt()), alpha = alpha,
-                colorFilter = if (grey) androidx.compose.ui.graphics.ColorFilter.colorMatrix(androidx.compose.ui.graphics.ColorMatrix().apply { setToSaturation(0.25f) }) else null,
-                blendMode = BlendMode.Multiply,
+                colorFilter = if (grey) androidx.compose.ui.graphics.ColorFilter.colorMatrix(androidx.compose.ui.graphics.ColorMatrix().apply { setToSaturation(0.45f) }) else null,
             )
             occupiedIcons += Rect(tl.x, tl.y, tl.x + iw, tl.y + ih)
         }
-        LOCAL_OBJECTS.forEach { icon(it.id, GeoPoint(it.lat, it.lon), it.widthKm, 0.9f, false) }
-        route.pois.forEach { icon(it.id, it.at, 7.0, 0.95f, false) }
+        LOCAL_OBJECTS.forEach { icon(it.id, GeoPoint(it.lat, it.lon), it.widthKm * 1.25, 0.95f, false) }
+        route.pois.forEach { icon(it.id, it.at, 10.0, 0.98f, false) }
         route.stops.forEachIndexed { i, stop ->
             val l = stop.landmark ?: return@forEachIndexed
             val reached = route.cumulativeKm[i] <= walkedKm + 1e-9
-            icon(l.id, stop.at, 10.0, if (reached) 1f else 0.75f, !reached)
+            icon(l.id, stop.at, 14.0, if (reached) 1f else 0.85f, !reached)
         }
     }
 
