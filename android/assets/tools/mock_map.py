@@ -31,7 +31,16 @@ def tile(lat,lon):
     k=(lat,lon)
     if k not in _tiles:
         p=pathlib.Path(SCR)/'dem'/f'N{lat:02d}E{lon:03d}.hgt'
-        _tiles[k]=np.fromfile(p,dtype='>i2').reshape(3601,3601).astype(np.float32) if p.exists() else None
+        if p.exists():
+            a=np.fromfile(p,dtype='>i2').reshape(3601,3601).astype(np.float32)
+            void=a<-1000          # SRTM voids: fill from the nearest valid cell
+            if void.any():
+                from scipy.ndimage import distance_transform_edt
+                _,ind=distance_transform_edt(void,return_indices=True)
+                a=a[tuple(ind)]
+            _tiles[k]=a
+        else:
+            _tiles[k]=None
     return _tiles[k]
 def elevation(lat,lon):
     """bilinear sample of SRTM at arrays lat/lon"""

@@ -223,6 +223,10 @@ def draw_guide(tile, items, out, W=2048):
         for p in M.polys(g):
             if p.area * kx * ky * 1e6 < 300000: continue
             d.polygon([px(x, y) for x, y in p.exterior.coords], fill=(60, 130, 210, 255))
+    # land cover and lakes must not spill over the sea: repaint the sea outside the coastline
+    seaimg = Image.new('RGB', (w, h), tuple(int(v) for v in sea))
+    im = Image.composite(im, seaimg, Image.fromarray((np.asarray(land_img) > 0).astype(np.uint8) * 255))
+    ImageDraw.Draw(im).line([px(x, y) for x, y in full] + [px(*full[0])], fill=(70, 60, 50), width=3)
     im.convert('RGB').save(out, quality=92)
 
 def main():
