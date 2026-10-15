@@ -174,6 +174,21 @@ Gemini 只負責畫**素材**（山、樹、農田、地標小圖……），我
 
 ---
 
+## E 組：底圖紋理（1 張）
+
+底圖（地面本身）由我用真實資料決定哪裡是陸地、海、平原、山、森林、農田，
+再用下面這張的**紙張與水彩紋理**上色，所以底圖也會是手繪羊皮紙的質感，不是電腦地圖的樣子。
+
+### E1　紙張與水彩底色（3 欄×2 列，共 6 個）
+
+這一張的每一格要**鋪滿整格**（不要留白邊、不要任何圖案），格與格之間只留很窄的白縫。
+
+> A sheet of 6 flat texture swatches in the same hand-painted style as the uploaded reference map, 3 columns by 2 rows, each swatch filling its whole cell edge to edge with only a thin white gutter between cells. No objects, no outlines, no text, no icons, no shadows. Row 1: (1) aged cream parchment paper with visible fibres, faint creases and slight stains; (2) a light green watercolour wash with soft uneven blooms, for plains; (3) a deeper muted forest-green watercolour wash with soft uneven blooms, for forests and hills. Row 2: (4) a warm ochre-yellow watercolour wash for farmland; (5) a pale sandy beige watercolour wash with fine grain, for beaches and dry riverbeds; (6) a pale blue-grey sea wash with fine horizontal pen hatching lines and soft darker streaks, for the ocean.
+
+存檔：`generated/texture_wash.png`
+
+---
+
 ## 交給我之後
 
 我會：
@@ -181,5 +196,5 @@ Gemini 只負責畫**素材**（山、樹、農田、地標小圖……），我
 2. 按真實的地形與位置排出整張地圖（山排在山脊上、樹排在森林裡、農田排在平原上、地標排在景點座標、地方特色排在合適位置）。
 3. 先拿 3 到 4 個地點的畫面給你確認風格，再做成整條路線的地圖。
 
-建議的傳送順序：A1 → A2 → A3 → B1 → B2 → B3 → B4 → D1 → C1 → C2，
-先傳 A1、A2、A3 就可以先做出一個地點的畫面讓你確認風格，不必等全部完成。
+建議的傳送順序：E1 → A1 → A2 → A3 → B1 → B2 → B3 → B4 → D1 → C1 → C2，
+先傳 E1、A1、A2、A3 就可以先做出一個地點的畫面讓你確認風格，不必等全部完成。
