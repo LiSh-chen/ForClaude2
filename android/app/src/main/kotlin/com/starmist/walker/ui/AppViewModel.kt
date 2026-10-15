@@ -219,6 +219,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     /** Converts steps counted since the last time into travel along the route. */
     fun settleJourney(live: Boolean = false) {
         viewModelScope.launch {
+            // Each world only moves while it is the one being walked; steps taken in the other world do not count here.
+            if (container.settings.current().challenge != 0) {
+                container.journey.skipTo(repository.allTimeTotal())
+                return@launch
+            }
             val result = container.journey.settle(engine, repository.allTimeTotal())
             if (live) {
                 // Steps taken with the app open: show each find as it happens instead of a summary.
@@ -269,6 +274,29 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun dismissRouteEvent() = _pendingRouteEvents.update { it.drop(1) }
 
+    /**
+     * Changes which world is being walked. Steps so far are first settled into the world being left, and the other
+     * world's counter jumps to now, so each world only grows with the steps taken while it was chosen.
+     */
+    fun switchChallenge(value: Int) {
+        viewModelScope.launch {
+            val total = repository.allTimeTotal()
+            if (container.settings.current().challenge == value) return@launch
+            if (value == 1) {
+                container.journey.settle(engine, total)
+                container.routes.skipTo(total)
+            } else {
+                container.routes.flow.first()?.let { state ->
+                    Routes.byId(state.routeId)?.let {
+                        container.routes.settle(it, total, BodyMetrics.strideMeters(container.settings.current().profile))
+                    }
+                }
+                container.journey.skipTo(total)
+            }
+            updateSettings { it.copy(challenge = value) }
+        }
+    }
+
     fun startRoute(routeId: String) {
         val route = Routes.byId(routeId) ?: return
         viewModelScope.launch {
@@ -287,6 +315,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     /** Turns the steps counted since the last time into distance along the route and queues what was passed. */
     fun settleRoute() {
         viewModelScope.launch {
+            if (container.settings.current().challenge != 1) {
+                container.routes.skipTo(repository.allTimeTotal())
+                return@launch
+            }
             val state = container.routes.flow.first() ?: return@launch
             val route = Routes.byId(state.routeId) ?: return@launch
             val stride = BodyMetrics.strideMeters(container.settings.current().profile)

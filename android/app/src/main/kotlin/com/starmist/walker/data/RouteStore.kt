@@ -39,6 +39,14 @@ class RouteStore(private val context: Context) {
         return result
     }
 
+    /** Counts the steps up to now as walked elsewhere (in the other world), so they do not move this route. */
+    suspend fun skipTo(allTimeSteps: Long) {
+        context.routeDataStore.edit { prefs ->
+            val current = RouteStateCodec.decode(prefs[key]) ?: return@edit
+            prefs[key] = RouteStateCodec.encode(current.copy(consumedSteps = allTimeSteps))
+        }
+    }
+
     suspend fun clear() {
         context.routeDataStore.edit { it.remove(key) }
     }

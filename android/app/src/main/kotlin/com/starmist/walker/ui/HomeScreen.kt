@@ -98,7 +98,7 @@ fun HomeScreen(
         granted = granted,
         hasCounter = hasCounter,
         map = map,
-        onChallenge = { value -> vm.updateSettings { it.copy(challenge = value) } },
+        onChallenge = { value -> vm.switchChallenge(value) },
         onRequestPermission = onRequestPermission,
         onOpenAppSettings = onOpenAppSettings,
         onSync = { vm.refresh(announce = true) },

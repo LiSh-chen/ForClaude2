@@ -36,6 +36,14 @@ class JourneyStore(private val context: Context) {
         return result
     }
 
+    /** Counts the steps up to now as walked elsewhere (on the real route), so they do not move the fantasy journey. */
+    suspend fun skipTo(allTimeSteps: Long) {
+        context.journeyDataStore.edit { prefs ->
+            val current = JourneyStateCodec.decode(prefs[key]) ?: return@edit
+            prefs[key] = JourneyStateCodec.encode(current.copy(consumed = allTimeSteps))
+        }
+    }
+
     suspend fun resolve(engine: JourneyEngine, encounterIndex: Int, chooseA: Boolean): Resolution? {
         var resolution: Resolution? = null
         context.journeyDataStore.edit { prefs ->
