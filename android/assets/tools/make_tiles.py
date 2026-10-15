@@ -213,13 +213,13 @@ def draw_guide(tile, items, out, W=2048):
     d = ImageDraw.Draw(im, 'RGBA')
     d.line([px(x, y) for x, y in full] + [px(*full[0])], fill=(70, 60, 50, 255), width=3)
     for r in M.fetch('base', 'land_cover', bbox, ['subtype', 'geometry']):
-        c = {'forest': (70, 120, 60, 80), 'crop': (235, 210, 90, 120), 'urban': (205, 120, 120, 130), 'wetland': (90, 160, 170, 130), 'barren': (210, 200, 180, 90)}.get(r['subtype'])
+        c = {'forest': (70, 120, 60, 80), 'crop': (235, 210, 90, 120), 'urban': (205, 120, 120, 130), 'wetland': (90, 160, 170, 130)}.get(r['subtype'])
         if not c: continue
         for p in M.polys(wkb.loads(r['geometry'])): d.polygon([px(x, y) for x, y in p.exterior.coords], fill=c)
     # big lakes and reservoirs stay (they are ground); rivers, roads and landmarks are added later by the app
     for r in M.fetch('base', 'water', bbox, ['class', 'geometry']):
         g = wkb.loads(r['geometry'])
-        if g.geom_type not in ('Polygon', 'MultiPolygon') or r['class'] in ('pond', 'swimming_pool', 'basin', 'drain', 'ditch', 'canal'): continue
+        if g.geom_type not in ('Polygon', 'MultiPolygon') or r['class'] not in ('lake', 'reservoir', 'river'): continue
         for p in M.polys(g):
             if p.area * kx * ky * 1e6 < 300000: continue
             d.polygon([px(x, y) for x, y in p.exterior.coords], fill=(60, 130, 210, 255))
