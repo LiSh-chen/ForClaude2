@@ -59,7 +59,7 @@ data class RouteDef(
     val name: String,
     val description: String,
     val stops: List<Stop>,
-    val roadFactor: Double = 1.15,
+    val roadFactor: Double = 1.02,
     /** Small sights near the way; shown on the map when the walker is within [POI_RANGE_KM]. */
     val pois: List<Poi> = emptyList(),
     /** Routes that are the same way walked in the other direction share a family. */
