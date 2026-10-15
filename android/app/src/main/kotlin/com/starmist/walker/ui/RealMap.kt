@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ClipOp
@@ -190,11 +191,13 @@ internal fun DrawScope.drawRealMap(
     measurer: TextMeasurer,
     pin: ImageBitmap?,
     base: ImageBitmap? = null,
+    icons: Map<String, ImageBitmap?> = emptyMap(),
 ) {
     fun GeoPoint.px() = unit().let { Offset(it.x * w, it.y * h) }
     fun Offset.scaled() = Offset(x * w, y * h)
     val label = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Vintage.ink)
     val here = route.positionAt(walkedKm)
+    val occupiedIcons = ArrayList<Rect>()
 
     // Sea: ink hatching like an old atlas, thicker near the coast.
     val island = Path().apply {
@@ -289,6 +292,31 @@ internal fun DrawScope.drawRealMap(
 
     }
 
+    // Painted objects (white sheet background vanishes with Multiply): cards in colour once collected, sights and local colour always.
+    if (base != null && icons.isNotEmpty()) {
+        val kmPerW = 222.5
+        fun icon(id: String, at: GeoPoint, widthKm: Double, alpha: Float, grey: Boolean) {
+            val bmp = icons[id] ?: return
+            val iw = (w * widthKm / kmPerW).toFloat()
+            val ih = iw * bmp.height / bmp.width
+            val c = at.px()
+            val tl = Offset(c.x - iw / 2, c.y - ih / 2)
+            drawImage(
+                bmp, dstOffset = IntOffset(tl.x.toInt(), tl.y.toInt()), dstSize = IntSize(iw.toInt(), ih.toInt()), alpha = alpha,
+                colorFilter = if (grey) androidx.compose.ui.graphics.ColorFilter.colorMatrix(androidx.compose.ui.graphics.ColorMatrix().apply { setToSaturation(0.25f) }) else null,
+                blendMode = BlendMode.Multiply,
+            )
+            occupiedIcons += Rect(tl.x, tl.y, tl.x + iw, tl.y + ih)
+        }
+        LOCAL_OBJECTS.forEach { icon(it.id, GeoPoint(it.lat, it.lon), it.widthKm, 0.9f, false) }
+        route.pois.forEach { icon(it.id, it.at, 7.0, 0.95f, false) }
+        route.stops.forEachIndexed { i, stop ->
+            val l = stop.landmark ?: return@forEachIndexed
+            val reached = route.cumulativeKm[i] <= walkedKm + 1e-9
+            icon(l.id, stop.at, 10.0, if (reached) 1f else 0.75f, !reached)
+        }
+    }
+
     // The route: dotted ahead, solid behind, dashed red where a train or ferry carries the walker.
     val dotted = PathEffect.dashPathEffect(floatArrayOf(3.dp.toPx(), 5.dp.toPx()))
     val dashed = PathEffect.dashPathEffect(floatArrayOf(8.dp.toPx(), 5.dp.toPx()))
@@ -376,6 +404,7 @@ internal fun DrawScope.drawRealMap(
         val alpha = (1f - ((km - POI_RANGE_KM * 0.6) / (POI_RANGE_KM * 0.4)).toFloat().coerceIn(0f, 1f))
         placeName(poi.name, poi.at.px(), 12.sp, Vintage.ink.copy(alpha = alpha), 15.dp.toPx())
     }
+    occupied += occupiedIcons
     PEAKS.forEach { pk ->
         val o = GeoPoint(pk.lat, pk.lon).px()
         val tri = Path().apply { moveTo(o.x - 5.dp.toPx(), o.y + 3.dp.toPx()); lineTo(o.x, o.y - 5.dp.toPx()); lineTo(o.x + 5.dp.toPx(), o.y + 3.dp.toPx()); close() }
