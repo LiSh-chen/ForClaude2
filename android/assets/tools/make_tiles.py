@@ -216,28 +216,13 @@ def draw_guide(tile, items, out, W=2048):
         c = {'forest': (70, 120, 60, 80), 'crop': (235, 210, 90, 120), 'urban': (205, 120, 120, 130), 'wetland': (90, 160, 170, 130), 'barren': (210, 200, 180, 90)}.get(r['subtype'])
         if not c: continue
         for p in M.polys(wkb.loads(r['geometry'])): d.polygon([px(x, y) for x, y in p.exterior.coords], fill=c)
+    # big lakes and reservoirs stay (they are ground); rivers, roads and landmarks are added later by the app
     for r in M.fetch('base', 'water', bbox, ['class', 'geometry']):
-        g = wkb.loads(r['geometry']); cl = r['class']
-        if cl in ('drain', 'ditch', 'swimming_pool', 'basin', 'canal', 'pond'): continue
-        if g.geom_type in ('LineString', 'MultiLineString'):
-            wd = {'river': 5, 'stream': 2}.get(cl, 2)
-            for pts in M.geom_pts(g): d.line([px(x, y) for x, y in pts], fill=(40, 110, 200, 255), width=wd)
-        else:
-            for p in M.polys(g):
-                if p.area * kx * ky * 1e6 < 20000: continue
-                d.polygon([px(x, y) for x, y in p.exterior.coords], fill=(60, 130, 210, 255))
-    roads = M.fetch('transportation', 'segment', bbox, ['class', 'geometry'], pc.field('subtype') == 'road')
-    for r in roads:
-        cl = r['class']
-        if cl not in ('primary', 'trunk', 'secondary'): continue
         g = wkb.loads(r['geometry'])
-        if g.geom_type == 'LineString': d.line([px(x, y) for x, y in g.coords], fill=(120, 70, 30, 255), width=4 if cl != 'secondary' else 3)
-    font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 34)
-    for n, (name, lat, lon, what, kind) in enumerate(items, 1):
-        x, y = px(lon, lat)
-        R = 30 if kind == 'landmark' else 24
-        d.ellipse([x - R, y - R, x + R, y + R], fill=(205, 40, 40, 255), outline=(255, 255, 255, 255), width=3)
-        d.text((x, y), str(n), fill='white', font=font, anchor='mm')
+        if g.geom_type not in ('Polygon', 'MultiPolygon') or r['class'] in ('pond', 'swimming_pool', 'basin', 'drain', 'ditch', 'canal'): continue
+        for p in M.polys(g):
+            if p.area * kx * ky * 1e6 < 300000: continue
+            d.polygon([px(x, y) for x, y in p.exterior.coords], fill=(60, 130, 210, 255))
     im.convert('RGB').save(out, quality=92)
 
 def main():
@@ -267,19 +252,18 @@ def main():
           '   「The second uploaded painted picture is the neighbouring tile: continue the same landscape style, palette and brush work so the two join seamlessly; do not copy its content.」',
           '3. 貼該塊的提示詞。比例選 **1:1 正方形**，解析度選最高（越高越好，至少 2048 像素）。',
           '4. 存成 `generated/tile_XX.png` 傳給我（可一次傳幾塊）。我會用海岸線疊圖檢查有沒有對上，歪掉的會請你重畫。',
-          '5. 草圖上的紅圈數字只是定位用，不能畫進成品；成品要鋪滿整張正方形，沒有邊框、沒有指北針、沒有文字。',
+          '5. 成品要鋪滿整張正方形，沒有邊框、沒有指北針、沒有文字，也**不要畫河、路、橋、建築、船**（這些我之後會精準地放上去）。',
           '']
     for k, tile, items, lst in prompt_lines:
-        md += [f'## 第 {k:02d} 塊（中心 {tile[0]:.3f}°N, {tile[1]:.3f}°E）', f'草圖：`mapguide/tiles/tile_{k:02d}_guide.jpg`　存檔：`generated/tile_{k:02d}.png`', '', '```', PROMPT.format(items=lst), '```', '']
+        md += [f'## 第 {k:02d} 塊（中心 {tile[0]:.3f}°N, {tile[1]:.3f}°E）', f'草圖：`mapguide/tiles/tile_{k:02d}_guide.jpg`　存檔：`generated/tile_{k:02d}.png`', '', '```', PROMPT, '```', '']
     (ROOT / 'MAP_TILES_PROMPTS.md').write_text('\n'.join(md))
     print(len(tiles), 'tiles')
 
-PROMPT = """Repaint the uploaded guide picture as a richly detailed antique hand-drawn pictorial map, in exactly the style of the two style reference images (fine dark-brown pen and ink, light watercolour wash, aged parchment, gentle grain). The guide is a flat data map: pale blue = sea, thick dark line = coastline, deep blue lines and patches = rivers and lakes, brown lines = roads, shaded relief = hills and mountains, light green patches = forest, yellow patches = farmland, pink patches = towns, red numbered circles = landmarks to paint (the circles and numbers are NOT part of the picture).
-Keep the coastline, rivers, roads and the position of every hill EXACTLY where they are in the guide, same framing, square, full bleed (the picture fills the whole square, no border, no frame, no margin, no compass, no title). Seen from a slightly raised top-down view.
-Paint the terrain: pen-hatched hills and mountains following the shaded relief (snow patches only on the very highest peaks), tiny trees in the forest patches, a patchwork of paddies and fields in the yellow farmland, small clusters of old roofs only in the pink town patches (few, not dense), thin pen roads, sea with fine horizontal hatching and a few wave marks near the coast.
-Paint each numbered landmark as a small illustrated vignette standing on the ground at its circle, about 6% of the picture width, recognisable but integrated into the landscape (no text on signs, no labels):
-{items}
-No text, no letters, no numbers anywhere in the picture."""
+PROMPT = """Repaint the uploaded guide picture as an antique hand-drawn pictorial map of the GROUND ONLY, in exactly the style of the two style reference images (fine dark-brown pen and ink, light watercolour wash, aged parchment, gentle grain).
+The guide is a flat data map: pale blue = sea, thin dark line = coastline, blue patches = lakes, shaded relief = hills and mountains, light green patches = forest, yellow patches = farmland, pink patches = towns.
+Keep the coastline and the position and shape of every hill, valley, plain and lake EXACTLY where they are in the guide: same framing, a full-bleed square (the picture fills the whole square: no border, no frame, no margin, no compass, no title). Seen from a slightly raised top-down view.
+Paint: pen-hatched hills and mountains that follow the shaded relief (snow patches only on the very highest peaks), tiny trees in the forest patches, a calm patchwork of paddies and fields in the yellow farmland, a soft warm wash in the pink town patches with only a very few tiny roofs (keep towns light and uncluttered), the sea with fine horizontal hatching and a few wave marks near the coast.
+DO NOT draw any rivers or streams, roads, bridges, railways, large buildings, landmarks, boats, ships, animals, labels, numbers or text: those will be placed on top later, so the landscape underneath must be quiet and free of such things."""
 
 if __name__ == '__main__':
     main()
