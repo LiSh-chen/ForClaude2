@@ -1,160 +1,150 @@
 # 真實世界地圖：物件素材（給 Gemini 的提示詞）
 
-做法：**地面（山、平原、海、森林、農田）**由另一份「分區重畫」提示詞（`MAP_TILES_PROMPTS.md`）請 Gemini 畫成底圖，
-這份提示詞則畫**物件**：景點地標小圖和當地特色。物件由我按真實座標放到底圖上，
-河流、道路和路線也由我用程式精準畫上去，所以位置不會歪。
+物件（景點地標、路上小景點、當地特色）一共 **4 張**，每張 24 個，6 欄×4 列。
+位置全部由我按真實座標放，所以每個小圖只要畫好「樣子」，不需要管它在哪裡。
 
-## 通則（每個對話都一樣）
+## 通則
 
-1. 每個對話都上傳兩張**風格參考圖**：`previews/2_compass.jpg` 和 `generated/real_map_base.png`。
-2. 先貼「風格前綴」，再貼該張的提示詞。
-3. **背景一律純白**（#FFFFFF），素材之間留足空白，不要地面陰影、不要邊框、不要格線、不要文字、不要編號。
-   （我會用「正片疊底」把白色去掉，所以素材的線條與水彩會自然融進羊皮紙，不用去背。）
-4. 格子數量與順序以提示詞為準，由左到右、由上到下。每格大小一致，素材置中，互不重疊。
-5. 解析度選最高；比例選 4:3 橫式（4 欄×3 列）。
-6. 存檔名依各張的「存檔」欄，放在 `assets/generated/`，一次傳給我一組即可。
+1. 每個對話上傳兩張**風格參考圖**：`previews/2_compass.jpg` 和 `generated/real_map_base.png`。
+2. 比例選 **3:2 橫式**，解析度選最高。每個小圖最後在螢幕上只有約 100 像素大，所以一格 300 像素就夠。
+3. **背景純白**，格子之間留足空白，不要地面陰影、邊框、格線、文字、編號。（我用「正片疊底」把白色去掉，不用去背。）
+4. 格子由左到右、由上到下；每格大小一致，主體置中，互不重疊，主體佔格子約 70%。
+5. 一次畫 24 個，Gemini 偶爾會漏畫或畫錯。收到後我會逐格檢查，錯的那幾個再補畫（我會告訴你是哪幾格）。
 
 ### 風格前綴（每個提示詞前面都貼）
 
 > Antique atlas illustration in the same hand-drawn style as the two uploaded reference images: fine dark-brown pen-and-ink line work with a light watercolour wash in muted greens, ochres, browns and soft blues, slightly imperfect lines, gentle paper-like grain, no digital gloss, no neon colours, no 3D rendering. Seen from a slightly raised top-down view like an old pictorial map. Plain pure white background. No text, no letters, no numbers, no frames, no ground shadows.
 
----
+## O1　景點地標（1–24）
 
-## B 組：景點地標小圖（46 個，4 張，每張 12 個，最後一張 10 個）
+```
+A sheet of 24 separate pictorial map icons, 6 columns by 4 rows, in reading order, each centred in its own equal cell with generous white space around it. Each icon shows the subject as a small illustration with a tiny irregular patch of watercolour ground under it, like a drawing on an antique map, recognisable when printed about 2 cm wide. Same scale, same slightly raised viewing angle and same style for every icon. Do not draw any text, signs with writing, numbers or borders.
+The icons, in order:
+1. 台北101: the tall segmented tower with stacked pagoda-like sections, small trees at its base
+2. 基隆廟口: a temple (Dianji Temple) gate with rows of small lantern-lit food stalls in front, a harbour behind
+3. 九份: a steep hillside of old teahouses with red lanterns and stone steps down to the sea
+4. 福隆: a wide sandy beach where a river meets the ocean, a long sandbar, small umbrellas
+5. 三貂角: a white lighthouse standing on a green headland above the sea
+6. 頭城老街: a row of old brick shophouses with arcaded fronts and baroque-style facades
+7. 傳統藝術中心: a traditional Chinese courtyard complex with curved roofs beside a canal, a small bridge
+8. 蘇澳冷泉: a round stone spring pool with bubbles rising and a few people soaking, cool blue water
+9. 七星潭: a crescent-shaped bay with a pebble beach, a few kites in the air
+10. 松園別館: a two-storey Japanese-era wooden villa with a tiled roof among old pine trees
+11. 林田山: a wooden forestry village on a hillside with a small logging railway and stacked logs
+12. 瑞穗北回歸線標: a small white stone monument with a ring-shaped top on a hill (Tropic of Cancer marker)
+13. 玉里: a steaming bowl of noodles in front of a small railway station building
+14. 池上: a green rice field with a small railway station and a lunch box (bento) in the foreground
+15. 關山: a bicycle on a path circling a rice field, mountains behind
+16. 鹿野高台: a hot-air balloon rising over green tea terraces, a lookout deck
+17. 史前博物館: a modern museum building with a curved glass roof and a stone-age mural wall
+18. 太麻里: a coast with the first golden light of sunrise over the Pacific, a small seaside shrine
+19. 壽卡: a mountain pass road winding up between steep forested slopes, a small roadside shrine
+20. 車城福安宮: a Taiwanese Earth God temple with a curved swallowtail roof and a very large golden statue of the Earth God beside it
+21. 恆春古城: a stone city gate with a tower and thick curved walls, a quiet street
+22. 鵝鑾鼻: a white lighthouse on a grassy coral-limestone cape, the sea beyond
+23. 貓鼻頭: a rock on the shore shaped like a crouching cat, surrounded by waves
+24. 海生館: a modern aquarium building with a large whale sculpture and waves
+```
 
-每個景點在地圖上都會有一張對應的小圖，位置就是該景點的真實座標。
-請把每個小圖畫成**像古地圖上的圖示**：一個建築或景物為主體，周圍一小塊淡水彩地面（不要塊狀底色），
-大小一致，主體約佔格子的 70%。
+存檔：`generated/objects_o1.png`
 
-統一提示詞（每張都用，只換編號清單）：
+## O2　景點地標（25–46）
 
-> A sheet of 12 separate pictorial map icons of famous places in Taiwan, 4 columns by 3 rows, in reading order, each centred in its own equal cell. Each icon shows the place's most recognisable building or scene as a small illustration with a tiny irregular patch of watercolour ground under it, like a landmark drawn on an antique map, with enough detail to be recognised when printed about 2 cm wide. The 12 icons, in order: [list below]. Keep the same scale, viewing angle (slightly raised) and style for all icons. Do not draw any text or signs with writing.
+```
+A sheet of 22 separate pictorial map icons, 6 columns by 4 rows, in reading order, each centred in its own equal cell with generous white space around it. Each icon shows the subject as a small illustration with a tiny irregular patch of watercolour ground under it, like a drawing on an antique map, recognisable when printed about 2 cm wide. Same scale, same slightly raised viewing angle and same style for every icon. Do not draw any text, signs with writing, numbers or borders. The last 2 cell(s) are left empty (plain white).
+The icons, in order:
+1. 枋寮: a small railway station with a steam train passing, the sea in the background
+2. 東港: a temple with a large decorated wooden ceremonial ship (Wangchuan) on a harbour shore
+3. 高雄駁二: old brick warehouses turned into an art area with colourful art installations, a harbour crane
+4. 蓮池潭: a lake with the Dragon and Tiger Pagodas on the shore, a zigzag bridge
+5. 橋頭糖廠: an old sugar mill with a tall chimney, a small sugarcane train and cane fields
+6. 安平古堡: a red-brick fort with a watchtower and thick walls, old banyan trees
+7. 井仔腳鹽田: tile-floored salt pans in a grid, small white salt pyramids, the sea edge
+8. 布袋: a fishing harbour with a ferry and fishing boats, a small lighthouse
+9. 朴子配天宮: a large Mazu temple with an ornate multi-layered roof, red lanterns
+10. 水上北回歸線標: a small white monument with a ring symbol on flat farmland (Tropic of Cancer marker)
+11. 檜意森活村: Japanese-era wooden houses with tiled roofs among tall cypress trees
+12. 西螺大橋: a very long steel truss bridge crossing a wide braided river
+13. 鹿港老街: a very narrow alley between tall red-brick walls with a tiny strip of sky
+14. 彰化扇形車庫: a semicircular steam-locomotive depot with a locomotive on a turntable
+15. 高美濕地: a row of white wind turbines on a tidal flat at sunset, shallow pools reflecting the sky
+16. 大甲鎮瀾宮: a large Mazu temple with a procession of small figures carrying a palanquin
+17. 通霄精鹽廠: a salt factory building with big white salt piles and a small train
+18. 新竹城隍廟: a large city-god temple with a colourful carved roof and a courtyard
+19. 桃園神社: a Japanese shrine with a torii gate, stone lanterns and a stair path through trees
+20. 十三行博物館: a modern dark-roofed museum with a long ribbon-shaped structure beside the Tamsui river mouth
+21. 迪化街: an old merchant street with arched baroque facades, hanging dried goods and lanterns
+22. 回到台北: a cosy small house with a lantern light and a front garden (the end of the journey)
+```
 
-### B1（景點 1–12）
+存檔：`generated/objects_o2.png`
 
-1. Taipei 101: the tall segmented tower with stacked pagoda-like sections, small trees at its base
-2. Keelung Miaokou night market: a temple (Dianji Temple) gate with rows of small lantern-lit food stalls in front
-3. Jiufen: a steep hillside of old teahouses with red lanterns and stone steps down to the sea
-4. Fulong: a wide sandy beach where a river meets the ocean, a long sandbar, small umbrellas
-5. Sandiaojiao: a white lighthouse standing on a green headland above the sea
-6. Toucheng Old Street: a row of old brick shophouses with arcaded fronts and baroque-style decorated facades
-7. National Center for Traditional Arts: a traditional Chinese courtyard complex with curved roofs beside a canal, a small bridge
-8. Su'ao cold spring: a round stone spring pool with bubbles rising and a few people soaking, steam-free, cool blue water
-9. Qixingtan: a crescent-shaped bay with a pebble beach and calm water, a few kites in the air
-10. Pine Garden (Hualien): a two-storey Japanese-era wooden villa with a tiled roof among old pine trees
-11. Lintienshan: a wooden forestry village on a hillside with a small logging railway line and stacked logs
-12. Ruisui Tropic of Cancer marker: a small white stone monument on a hill with a ring-shaped top, mountains behind
+## O3　路上小景點（24 個）
 
-存檔：`generated/icons_b1.png`
+```
+A sheet of 24 separate pictorial map icons, 6 columns by 4 rows, in reading order, each centred in its own equal cell with generous white space around it. Each icon shows the subject as a small illustration with a tiny irregular patch of watercolour ground under it, like a drawing on an antique map, recognisable when printed about 2 cm wide. Same scale, same slightly raised viewing angle and same style for every icon. Do not draw any text, signs with writing, numbers or borders.
+The icons, in order:
+1. 和平島公園: a rocky coast with strange wave-eroded stone shapes and a small park
+2. 蘭陽博物館: a modern building shaped like a cuesta rock slope, beside the sea
+3. 宜蘭酒廠: an old factory building with a tall chimney and large wooden barrels
+4. 羅東林業文化園區: a wooden log pond with stacked logs and a small steam train
+5. 南方澳漁港: a bridge over a colourful fishing harbour full of boats
+6. 羅山瀑布: a high narrow waterfall in a green valley with a small bridge
+7. 卑南文化公園: stone slab ruins in a grass park under a big sky
+8. 知本溫泉: a steaming outdoor hot spring pool among trees
+9. 旗津燈塔: a white lighthouse on a sandy spit at the harbour mouth
+10. 愛河: a calm river with small boats and willow trees, bridges
+11. 屏東演藝廳: a modern curved building with a green roof
+12. 岡山水塔: an old brick water tower among low houses
+13. 赤崁樓: a red-brick tower with a curved roof among old trees
+14. 奇美博物館: a neoclassical white museum with columns and a large fountain
+15. 嘉義公園: a park with a tall shrine-like pavilion and old trees
+16. 八卦山大佛: a very large seated Buddha statue on a hill above a city
+17. 梧棲漁港: a harbour with many moored fishing boats and a small market
+18. 國家歌劇院: a futuristic white curved building with cave-like openings
+19. 南寮漁港: a harbour with a long seaside cycle path and small boats
+20. 中壢藝術館: a small modern brick arts hall with a courtyard
+21. 竹圍漁港: a small harbour with an old wharf and fishing nets
+22. 板橋林家花園: a classical Chinese garden with a pavilion, a pond and a curved bridge
+23. 淡水紅毛城: a red fort with a flag on a hill by the river mouth
+24. 西門紅樓: an octagonal red-brick Japanese-era building with a small plaza
+```
 
-### B2（景點 13–24）
+存檔：`generated/objects_o3.png`
 
-13. Yuli: a steaming bowl of noodles in front of a small railway station building
-14. Chishang: a green rice field with a small railway station and a lunch box (bento) in the foreground
-15. Guanshan: a bicycle on a path circling a rice field, mountains behind
-16. Luye highland: a hot-air balloon rising over green tea terraces, a lookout deck
-17. National Museum of Prehistory (Taitung): a modern museum building with a curved glass roof and a stone-age mural wall
-18. Taimali: a coast with the first golden light of sunrise over the Pacific, a small seaside shrine, sun rays
-19. Shouka: a mountain pass road winding up between steep forested slopes, a small roadside shrine
-20. Checheng Fu'an Temple: a Taiwanese Earth God temple with a curved swallowtail roof and a very large golden statue of the Earth God beside it
-21. Hengchun old town: a stone city gate with a tower and thick curved walls, a quiet street
-22. Eluanbi: a white lighthouse on a grassy coral-limestone cape, the sea beyond
-23. Maobitou: a rock on the shore shaped like a crouching cat, surrounded by waves
-24. National Museum of Marine Biology and Aquarium: a modern aquarium building with a large whale sculpture and waves
+## O4　沿路當地特色（24 個）
 
-存檔：`generated/icons_b2.png`
+```
+A sheet of 24 separate pictorial map icons, 6 columns by 4 rows, in reading order, each centred in its own equal cell with generous white space around it. Each icon shows the subject as a small illustration with a tiny irregular patch of watercolour ground under it, like a drawing on an antique map, recognisable when printed about 2 cm wide. Same scale, same slightly raised viewing angle and same style for every icon. Do not draw any text, signs with writing, numbers or borders.
+The icons, in order:
+1. Pinglin tea hills: terraced hillsides of tea plantations with neat curved rows and a small tea factory hut
+2. Beitou hot springs: steam rising from a valley of hot springs with small bathhouses
+3. Tamsui sunset ferry: a small passenger ferry crossing a wide river mouth at sunset
+4. Datun-side duck pond area (Taoyuan ponds): many small round irrigation ponds scattered in farmland
+5. Lanyang plain paddies: a patchwork of green rice paddies with a water buffalo and an egret
+6. Ruisui ranch: a green hillside pasture with a group of cows
+7. Chishang paddies: wide golden rice fields with a long straight farm road and a lone tree
+8. Linbian wax-apple farms: orchards of wax-apple trees with netting and a roadside fruit stand
+9. Kenting beach dunes: a white sand beach with dunes, windswept grass and a few palms
+10. Qigu lagoon oyster racks: oyster-farm racks in a shallow lagoon with a few small boats
+11. Dongshi oyster racks: oyster-farm racks on a tidal flat with fishermen
+12. Mailiao wind turbines: a row of white wind turbines along a coastal dike
+13. Wanggong oyster fields: tidal flats with oyster racks and a small fishing hamlet
+14. Tianwei flower garden: rows of colourful flower fields and greenhouses
+15. Yuanli grass-weaving fields: low rush-grass fields and a small weaving house
+16. Miaoli coastal wind turbines: a row of wind turbines on a coastal plain
+17. Hsinchu windy coast: a windswept coast with wind-bent pines and a cycle path
+18. Water buffalo: a water buffalo standing in a flooded rice paddy with an egret
+19. Pineapple field: a pineapple field with rows of spiky plants
+20. Lotus pond: a lotus pond with pink flowers and large round leaves
+21. Roadside Earth God shrine: a small roadside Earth God shrine with incense and a banyan tree
+22. Railway bridge: a train crossing a small iron bridge over a river
+23. Temple fair: a small roadside temple fair with colourful banners and lanterns
+24. Betel-nut stand: a roadside betel-nut stand with a tiny shop and tall palms
+```
 
-### B3（景點 25–36）
-
-25. Fangliao: a small railway station with a steam train passing, sea in the background
-26. Donggang: a temple with a large decorated wooden ceremonial ship (Wangchuan) on a harbour shore
-27. Pier-2 Art Center (Kaohsiung): old brick warehouses turned into an art area, with a few colourful art installations, a harbour crane
-28. Lotus Pond: a lake with the Dragon and Tiger Pagodas on the shore, a zigzag bridge
-29. Qiaotou Sugar Refinery: an old sugar mill with a tall chimney, a small sugarcane train and cane fields
-30. Anping Fort (Zeelandia): a red-brick fort with a watchtower and thick walls, old banyan trees
-31. Jingzijiao salt pans: tile-floored salt pans in a grid, small white salt pyramids, a sea edge
-32. Budai: a fishing harbour with a ferry and fishing boats, a small lighthouse
-33. Peitian Temple (Puzi): a large Mazu temple with an ornate multi-layered roof, red lanterns
-34. Shuishang Tropic of Cancer marker: a small white monument with a ring symbol on flat farmland
-35. Hinoki Village (Chiayi): Japanese-era wooden houses with tiled roofs among tall cypress trees
-36. Xiluo Bridge: a very long steel truss bridge crossing a wide braided river
-
-存檔：`generated/icons_b3.png`
-
-### B4（景點 37–46，最後兩格留空白）
-
-37. Lukang Old Street: a very narrow alley between tall red-brick walls with a tiny strip of sky
-38. Changhua Roundhouse: a semicircular steam-locomotive depot with a locomotive on a turntable
-39. Gaomei Wetlands: a row of white wind turbines on a tidal flat at sunset, shallow pools reflecting the sky
-40. Dajia Zhenlan Temple: a large Mazu temple with a procession of small figures carrying a palanquin
-41. Tongxiao Salt Works: a salt factory building with big white salt piles and a small train
-42. Hsinchu City God Temple: a large city-god temple with a colourful carved roof and a courtyard
-43. Taoyuan Shrine: a Japanese shrine with a torii gate, stone lanterns and a stair path through trees
-44. Shihsanhang Museum: a modern dark-roofed museum with a long ribbon-shaped structure beside the Tamsui river mouth
-45. Dihua Street: an old merchant street with arched baroque facades and hanging dried goods, lanterns
-46. Home in Taipei: a cosy small house with a lantern light and a front garden (the finish of the journey)
-(cells 11 and 12 left empty)
-
-存檔：`generated/icons_b4.png`
-
----
-
-## C 組：路上小景點（24 個，2 張，每張 12 個）
-
-這些是「不是景點卡、但沿路看得到」的地方，畫得比 B 組小一點、簡單一點。
-統一提示詞與 B 組相同，只是改成「Each icon is simpler and smaller than a landmark, like a minor sight on the way」。
-
-### C1（1–12）
-
-1. Heping Island Park: a rocky coast with strange wave-eroded stone shapes and a small park
-2. Lanyang Museum: a modern building shaped like a cuesta rock slope, beside the sea
-3. Yilan distillery: an old factory building with a tall chimney and large wooden barrels
-4. Luodong Forestry Culture Park: a wooden log pond with stacked logs and a small steam train
-5. Nanfang'ao fishing harbour: a bridge over a colourful fishing harbour full of boats
-6. Luoshan waterfall: a high narrow waterfall in a green valley with a small bridge
-7. Beinan Cultural Park: stone slab ruins in a grass park under a big sky
-8. Zhiben hot spring: a steaming outdoor spring pool among trees
-9. Cijin lighthouse: a white lighthouse on a sandy spit at the harbour mouth
-10. Love River: a calm river with small boats and willow trees, bridges
-11. Pingtung Performing Arts Center: a modern curved building with a green roof
-12. Gangshan water tower: an old brick water tower among low houses
-
-存檔：`generated/icons_c1.png`
-
-### C2（13–24）
-
-13. Chihkan Tower: a red-brick tower with a curved roof among old trees
-14. Chimei Museum: a neoclassical white museum with columns and a large fountain
-15. Chiayi Park: a park with a tall shrine-like pavilion and old trees
-16. Baguashan Buddha: a very large seated Buddha statue on a hill above a city
-17. Wuqi fishing harbour: a harbour with many moored fishing boats and a small market
-18. National Taichung Theater: a futuristic white curved building with cave-like openings
-19. Nanliao fishing harbour: a harbour with a long seaside cycle path and small boats
-20. Zhongli Arts Center: a small modern brick arts hall with a courtyard
-21. Zhuwei fishing harbour: a small harbour with an old wharf and fishing nets
-22. Lin Family Garden: a classical Chinese garden with a pavilion, a pond and a curved bridge
-23. Hongmaocheng (Fort San Domingo): a red fort with a flag on a hill by the river mouth
-24. Red House Theater (Ximen): an octagonal red-brick Japanese-era building with a small plaza
-
-存檔：`generated/icons_c2.png`
-
----
-
-## D 組：沿路的當地特色（不是景點，但畫在地圖上更有味道）
-
-我會按位置把這些貼在對應地方（例如檳榔樹在南部、蚵架在彰化外海、茶園在北部丘陵、風車在苗栗海邊……）。
-
-### D1（4 欄×3 列，共 12 個）
-
-> A sheet of 12 separate small scenes of everyday Taiwan countryside for an old pictorial map, 4 columns by 3 rows, each centred in its own equal cell. (1) a tea plantation on a hillside with neat curved rows and a small tea factory hut; (2) a water buffalo standing in a flooded rice paddy with an egret; (3) a roadside betel-nut stand with a tiny shop and tall palms; (4) a farmer harvesting golden rice with a straw hat; (5) a small row of wind turbines along a seaside dike; (6) a pineapple field with rows of spiky plants; (7) a lotus pond with pink flowers and large round leaves; (8) a small roadside Earth God shrine with incense and a banyan tree; (9) a train crossing a small iron bridge over a river; (10) an old fishing boat on a beach pulled up on sand with nets; (11) a group of cows on a green hillside pasture; (12) a small roadside temple fair with colourful banners and lanterns. Same pen-and-wash style as the reference map.
-
-存檔：`generated/sprite_local.png`
-
----
+存檔：`generated/objects_o4.png`
 
 ## 交給我之後
 
-我會：
-1. 把每張素材切開（白色當作透明，用「正片疊底」融進底圖）。
-2. 把每個素材放在真實座標上，大小統一；河流、道路、路線我用程式畫上去。
-3. 先拿 3 到 4 個地點的畫面給你確認，再做成整條路線的地圖。
+我會把每一格切開、白色當透明，依真實座標放到地圖上，先給你看 3 到 4 個地點的效果。
