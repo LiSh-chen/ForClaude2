@@ -23,14 +23,14 @@ KM = W / 222.5   # base pixels per km
 line, cards, pois = T.parse_route()
 objs = []   # id, name, desc, x, y, width_px, weight
 for cid, (name, lat, lon) in cards.items():
-    if cid in T.SIGHTS: x, y = px(lat, lon); objs.append(dict(id=cid, name=name, desc=T.SIGHTS[cid], x=x, y=y, w=10.5 * KM, weight=0.15, kind='landmark'))
+    if cid in T.SIGHTS: x, y = px(lat, lon); objs.append(dict(id=cid, name=name, desc=T.SIGHTS[cid], x=x, y=y, w=8 * KM, weight=0.02, kind='landmark', maxmove=1.5 * KM))
 for pid, (name, lat, lon) in pois.items():
-    if pid in T.POIS: x, y = px(lat, lon); objs.append(dict(id=pid, name=name, desc=T.POIS[pid], x=x, y=y, w=7.5 * KM, weight=0.8, kind='sight'))
+    if pid in T.POIS: x, y = px(lat, lon); objs.append(dict(id=pid, name=name, desc=T.POIS[pid], x=x, y=y, w=6 * KM, weight=0.05, kind='sight', maxmove=1.5 * KM))
 EXTRA_POS = [(23.28, 120.31), (23.55, 120.43), (23.31, 120.33), (24.70, 120.88), (24.34, 120.60), (23.57, 120.30), (22.40, 120.58)]
 for i, (n, la, lo, d) in enumerate(T.LOCAL):
-    x, y = px(la, lo); objs.append(dict(id=f'local_{i}', name=n, desc=d, x=x, y=y, w=10 * KM, weight=1.0, kind='local'))
+    x, y = px(la, lo); objs.append(dict(id=f'local_{i}', name=n, desc=d, x=x, y=y, w=7 * KM, weight=1.0, kind='local', maxmove=7 * KM))
 for i, ((n, d), (la, lo)) in enumerate(zip(P.EXTRA, EXTRA_POS)):
-    x, y = px(la, lo); objs.append(dict(id=f'extra_{i}', name=n, desc=d, x=x, y=y, w=9 * KM, weight=1.0, kind='local'))
+    x, y = px(la, lo); objs.append(dict(id=f'extra_{i}', name=n, desc=d, x=x, y=y, w=5 * KM, weight=1.0, kind='local', maxmove=7 * KM))
 for o in objs: o['h'] = o['w'] * 0.8; o['x0'], o['y0'] = o['x'], o['y']
 
 # push overlapping footprints apart (landmarks move least), never far from the true spot
@@ -45,7 +45,7 @@ for _ in range(30):
             else:
                 d = -1 if a['y'] <= b['y'] else 1; a['y'] += d * oy * a['weight'] / s; b['y'] -= d * oy * b['weight'] / s
     for o in objs:
-        o['x'] = min(max(o['x'], o['x0'] - o['w'] * 1.2), o['x0'] + o['w'] * 1.2); o['y'] = min(max(o['y'], o['y0'] - o['h'] * 1.2), o['y0'] + o['h'] * 1.2)
+        m = o['maxmove']; o['x'] = min(max(o['x'], o['x0'] - m), o['x0'] + m); o['y'] = min(max(o['y'], o['y0'] - m), o['y0'] + m)
 
 # three bands of 3:2 (1116 x 744) with 116 px overlap; seams sit where no footprint is
 BH = round(W * 2 / 3)

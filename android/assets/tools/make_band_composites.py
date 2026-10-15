@@ -12,7 +12,7 @@ for n, (s, (t0, t1)) in enumerate(zip(G.starts, G.terr), 1):
     mine = sorted([o for o in G.objs if t0 <= o['y'] < t1], key=lambda o: o['y'])
     for o in mine:
         ic = Image.open(RES / f"art_obj_{o['id']}.webp").convert('RGBA')
-        iw = round(o['w'] * G.SC * 1.15); ih = round(iw * ic.height / ic.width)
+        iw = round(o['w'] * G.SC); ih = round(iw * ic.height / ic.width)
         ic = ic.resize((iw, ih), Image.LANCZOS)
         x, y = round(o['x'] * G.SC - iw / 2), round((o['y'] - s) * G.SC - ih / 2)
         shadow = Image.new('RGBA', ic.size, (60, 45, 30, 0)); shadow.putalpha(ic.getchannel('A').point(lambda v: int(v * 0.35)).filter(ImageFilter.GaussianBlur(5)))
