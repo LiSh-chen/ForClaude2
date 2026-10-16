@@ -601,3 +601,34 @@ def test_macro_factors_have_short_values_and_journal_section_is_compact():
     md = (C.path("journal") / f"{d}.md").read_text(encoding="utf-8")
     sec = md.split("## 一之二、總經與市場環境")[1].split("\n## ")[0]
     assert len([x for x in sec.splitlines() if x.strip()]) <= 32 and "| 因子 | 分數 | 狀態 | 數據 |" in sec     # 精簡：一張表＋幾行重點
+
+
+def _pos(d, t, sec, mkt, r, a, **kw):
+    return {"book": "main", "date": d, "ticker": t, "name": t, "sector": sec, "market": mkt, "rlast": r, "alast": a, "stop_hit": kw.get("stop", False), "n_days": 5, "target_upside": 0.2, **kw}
+
+
+def test_health_dedups_repeats_flags_concentration_and_blocks_tuning_on_small_samples():
+    from ijournal.health import build_health, schedule
+    P = C.load_params()
+    pos = [_pos(f"2026-10-0{d}", t, "ai_chips" if t in ("NVDA", "TSM") else "cloud_software", "US", -0.06, -0.04, stop=True) for d in range(1, 8) for t in ("NVDA", "TSM", "ORCL")]
+    pos += [_pos("2026-10-01", "2330.TW", "ai_chips", "TW", 0.02, 0.03)]
+    h = build_health({"positions": pos}, P, [], ["2026-10-10-weekly"], {"ai_chips": "AI 晶片"}, dt.date(2026, 10, 16))
+    assert h["n_picks"] == 22 and h["n_unique"] == 4                                           # 同一檔每天重複推薦不當成獨立樣本
+    assert h["verdict"]["level"] == "sample" and "樣本太少" in h["verdict"]["label"]
+    txt = "\n".join(f["text"] for f in h["findings"])
+    assert "不同股票" in txt and "拖累整體" in txt and "集中在" in txt and "參考停損" in txt and "不自動調參" in txt
+    assert h["progress"]["matured"] == 0 and h["actions"]                                       # 有結構性建議（讓檢討不只是描述）
+    s = schedule(dt.date(2026, 10, 16), ["2026-10-10-weekly"], [], P)                          # 週五 → 下次 10/17（週六）、每月首個週六 11/07
+    assert s["next_weekly"] == "2026-10-17" and s["next_monthly"] == "2026-11-07" and s["last_review"] == "2026-10-10"
+    # 到期樣本夠多、不同股票夠多、且落後大盤 → weak；不夠 → 不下結論
+    many = [_pos("2026-09-01", f"T{i}", "x", "US", -0.05, -0.04, r20=-0.05) for i in range(45)]
+    assert build_health({"positions": many}, P, [], [], {}, dt.date(2026, 10, 16))["verdict"]["level"] == "weak"
+
+
+def test_tuning_requires_independent_samples_not_repeated_picks():
+    from ijournal.tuning import apply_tuning
+    P = C.load_params()
+    diag = {"ic_dates": 0, "method_ic_dates": 0, "factor_ic": {}, "method_ic": {}, "n_matured": 60, "n_matured_unique": 8, "bias": -0.2}
+    res = apply_tuning(diag, "2026-11-07")
+    assert not res["changed"] and any("不同股票" in x for x in res["skipped"])                 # 60 筆但只有 8 檔 → 不調參
+    assert P["tuning"]["min_unique_tickers"] >= 10
