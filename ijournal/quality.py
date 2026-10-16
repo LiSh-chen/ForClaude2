@@ -50,7 +50,7 @@ def _chk(code: str, label: str, level: str, detail: str) -> dict:
 
 
 def assess(*, universe: dict, feats: dict, basis: dict, rows: dict, prices: dict, news_log: list, data_report: dict | None,
-           params: dict, now: dt.datetime | None = None) -> dict:
+           params: dict, now: dt.datetime | None = None, macro: dict | None = None) -> dict:
     """回傳 {level, checks:[...], issues:[非 ok 的 checks], stats}。now=None（回補/demo）時略過『新鮮度』檢查。"""
     q = params["quality"]
     checks: list[dict] = []
@@ -104,6 +104,20 @@ def assess(*, universe: dict, feats: dict, basis: dict, rows: dict, prices: dict
         if tw.get("wrong_suffix"):
             checks.append(_chk("universe_suffix", "股票清單代號", "warn", "上市／上櫃別與官方不符（Yahoo 會查不到，請修正 config）：" + "、".join(tw["wrong_suffix"][:6])))
         checks.append(_chk("tw_cross", "台股官方資料校正", lvl, f"官方 {tw['date']}：與 Yahoo 一致 {tw['agree']} 檔、修正 {tw['overridden']} 檔（差異率 {rate:.0%}）、補缺 {tw['appended']} 檔、官方查無 {tw['missing']} 檔" + (f"；來源問題：{'、'.join(tw['errors'])}" if tw.get("errors") else "")))
+
+    # 3b) 總經資料（只警示，不阻擋發佈：缺資料時總經分數會偏低估風險，因此要讓使用者知道）
+    if macro is not None:
+        cv = macro["coverage"]
+        frac = cv["ok"] / max(1, cv["total"])
+        lvl = "warn" if frac < params["macro"]["min_coverage"] or cv["fred_errors"] or not cv["contracts"] else "ok"
+        bits = []
+        if cv["missing"]:
+            bits.append("缺：" + "、".join(cv["missing"]))
+        if cv["fred_errors"]:
+            bits.append("FRED：" + "；".join(cv["fred_errors"][:3]))
+        if not cv["contracts"]:
+            bits.append("聯邦基金期貨無資料（升息機率無法推算）")
+        checks.append(_chk("macro", "總經資料", lvl, f"{cv['ok']}／{cv['total']} 項因子有資料" + ("；" + "；".join(bits) if bits else "")))
 
     # 4) 美股暫定收盤補值
     us = (data_report or {}).get("us")

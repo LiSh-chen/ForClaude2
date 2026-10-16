@@ -94,6 +94,11 @@ class LiveProvider:
                     continue
         return out
 
+    # ---- 總經（FRED 公開 CSV；單一序列失敗不影響其他）
+    def macro_fred(self, cfg: dict, today: dt.date):
+        from . import datafix, macro
+        return macro.fetch_fred(cfg, lambda u: datafix.fetch_text(u, tries=2, timeout=20, headers=datafix.API_UA), today)
+
     # ---- 基本面
     def fundamentals(self, ticker: str) -> dict:
         import yfinance as yf
@@ -133,6 +138,11 @@ class LiveProvider:
 
 
 # ---------------------------------------------------------------- Demo（合成資料；絕不可當成真實行情）
+# 示範模式的總經指標：合理的水準與波動（僅供驗證流程，非真實行情）
+DEMO_MACRO_BASE = {"^TNX": (4.3, 0.012), "^IRX": (4.0, 0.004), "^FVX": (4.2, 0.012), "^TYX": (4.6, 0.01), "DX-Y.NYB": (103.0, 0.004), "CL=F": (80.0, 0.02),
+                   "GC=F": (2400.0, 0.01), "HYG": (77.0, 0.003), "LQD": (105.0, 0.004), "TLT": (90.0, 0.008), "^MOVE": (100.0, 0.02), "ZQ=F": (96.1, 0.0003)}
+
+
 class DemoProvider:
     """以代號雜湊做種子的確定性合成資料。目的：在沒有網路的環境驗證整條流程。"""
     name = "demo"
@@ -154,12 +164,26 @@ class DemoProvider:
             vol = r.uniform(0.008, 0.03)
             ret = np.array([r.gauss(drift, vol) for _ in range(len(idx))])
             base = r.uniform(20, 800) if market_of(t) == "US" else r.uniform(30, 1500)
+            if t in DEMO_MACRO_BASE or t.startswith("ZQ"):
+                base, vol = DEMO_MACRO_BASE.get(t, (96.0, 0.0004))[0], DEMO_MACRO_BASE.get(t, (96.0, 0.0004))[1]
+                ret = np.array([r.gauss(0, vol) for _ in range(len(idx))])
             close = base * np.exp(np.cumsum(ret))
             hi = close * (1 + np.abs(np.array([r.gauss(0, vol / 2) for _ in idx])))
             lo = close * (1 - np.abs(np.array([r.gauss(0, vol / 2) for _ in idx])))
             vols = np.array([r.uniform(0.5, 1.5) for _ in idx]) * (2e6 if market_of(t) == "US" else 8e6)
             out[t] = pd.DataFrame({"Open": close, "High": hi, "Low": lo, "Close": close, "Volume": vols}, index=idx)
         return out
+
+    def macro_fred(self, cfg: dict, today: dt.date):
+        months = pd.date_range(end=pd.Timestamp(today).replace(day=1), periods=16, freq="MS")
+        r = self._rng("fred")
+        cpi = [300.0 * (1 + 0.0025) ** i * (1 + r.uniform(-0.001, 0.001)) for i in range(16)]
+        core = [310.0 * (1 + 0.0028) ** i for i in range(16)]
+        pay = [158000 + 90 * i for i in range(16)]
+        out = {"cpi": [(d.date(), v) for d, v in zip(months, cpi)], "core_cpi": [(d.date(), v) for d, v in zip(months, core)],
+               "unrate": [(d.date(), 4.0 + 0.02 * i) for i, d in enumerate(months)], "payems": [(d.date(), v) for d, v in zip(months, pay)],
+               "effr": [(today, 3.88)], "target_upper": [(today, 4.0)], "us2y": [(today, 4.5)], "breakeven": [(today, 2.3)]}
+        return out, []
 
     def fundamentals(self, ticker: str) -> dict:
         r = self._rng("f" + ticker)

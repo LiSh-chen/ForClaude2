@@ -2,6 +2,7 @@
 from __future__ import annotations
 import datetime as dt
 
+from .macro import headline_text
 from .utils import big, isnum, md_escape, num, pct
 
 MKT = {"TW": "台股", "US": "美股"}
@@ -157,6 +158,54 @@ def thesis(r: dict, sec: dict | None, ctx: dict) -> tuple[str, list[str]]:
     return "\n\n".join(parts), [x["t"] for x in a["risks_now"]] + [x["t"] for x in a["risks_watch"]]
 
 
+def macro_lines(m: dict) -> list[str]:
+    """日誌的『總經與市場環境』段落。"""
+    L = []
+    A = L.append
+    A("## 一之二、總經與市場環境\n")
+    A(f"**{headline_text(m)}**。風險分數 0–100，越高越需要謹慎；分成『已發生（市場數據已經反映）』與『尚未發生（預期與事件）』兩群，避免把預期當成已發生的事實。\n")
+    for grp, title in (("happened", "已發生：市場數據顯示的壓力"), ("ahead", "尚未發生：市場預期與可能的事件")):
+        A(f"**{title}**\n")
+        A("| 因子 | 風險分 | 狀態 | 目前數據 |")
+        A("|---|---|---|---|")
+        for f in m["factors"]:
+            if f["group"] == grp:
+                st = {"risk": "⚠ 偏高", "watch": "留意", "ok": "正常", None: "—"}[f["state"]]
+                A(f"| {f['label']}{'（台股）' if f['tw_only'] else ''} | {num(f['score'], 0)} | {st} | {md_escape(f['value'])} |")
+        A("")
+    fed = m["fed"]
+    if fed.get("meetings"):
+        A("**聯準會利率路徑（市場隱含，來自聯邦基金期貨）**\n")
+        A(f"目前有效聯邦基金利率 {num(fed['effr'], 2)}%" + (f"（目標區間上緣 {num(fed['target_upper'], 2)}%）" if isnum(fed.get("target_upper")) else "") + "。\n")
+        A("| FOMC 決議日 | 距今 | 會後隱含利率 | 本次變動 | 25bp 機率 | 累計 |")
+        A("|---|---|---|---|---|---|")
+        for x in fed["meetings"]:
+            A(f"| {x['date']} | {x['days']} 天 | {x['after']:.2f}% | {x['delta_bp']:+.0f}bp（{'升息' if x['dir'] == 'hike' else '降息' if x['dir'] == 'cut' else '持平'}） | {x['prob'] * 100:.0f}% | {x['cum_bp']:+.0f}bp |")
+        A("\n> 這是『市場定價』（含少量期限溢酬），不是聯準會的承諾；數字會隨每日資料變動。\n")
+    ov = m["overlay"]
+    A("**對選股的影響**\n")
+    for k, nm in (("US", "美股"), ("TW", "台股")):
+        o = ov[k]
+        if o["extra_upside"] or o["sens_extra"]:
+            A(f"- {nm}環境「{o['label']}」→ 推薦門檻提高：一般股目標價上檔需再多 {o['extra_upside'] * 100:.0f} 個百分點，高估值（預估本益比 > {o['pe']}）或高 Beta（> {o['beta']}）股需多 {(o['extra_upside'] + o['sens_extra']) * 100:.0f} 個百分點。")
+        else:
+            A(f"- {nm}環境「{o['label']}」→ 不調整推薦門檻。")
+    A("")
+    if m["events"]:
+        A("**接下來要留意的事件（尚未發生）**\n")
+        for e in m["events"]:
+            A(f"- {e['date']}{'（' + str(e['days']) + ' 天後）' if e['days'] is not None else ''}：{e['name']}——{e['note']}")
+        A("")
+    if m["headlines"]:
+        A("**相關新聞**\n")
+        for h in m["headlines"]:
+            A(f"- [{md_escape(h['title'])}]({h['link']})（{md_escape(h['source'])}｜{h['theme']}）" if h["link"] else f"- {md_escape(h['title'])}（{md_escape(h['source'])}｜{h['theme']}）")
+        A("")
+    cv = m["coverage"]
+    A(f"> 資料涵蓋 {cv['ok']}／{cv['total']} 項因子" + (f"；缺：{'、'.join(cv['missing'])}" if cv["missing"] else "") + "。總經因子是風險提示，不是對漲跌的預測。\n")
+    return L
+
+
 def write_journal(date: str, ctx: dict) -> str:
     p, uni, sec_scores, picks, rows = ctx["params"], ctx["uni"], ctx["sec_scores"], ctx["picks"], ctx["rows"]
     secs = {s["id"]: s for s in uni["sectors"]}
@@ -192,6 +241,9 @@ def write_journal(date: str, ctx: dict) -> str:
             why = "、".join(f"{w} {c}" for w, c in st["reasons"].items()) or "—"
             A(f"- **{MKT[m]}**：**{k}／{N} 檔**——合格標的不足，不為湊數放寬門檻、也不改從其他產業補位。重點產業共 {st['candidates']} 檔候選，未入選原因：{why}。")
     A("")
+
+    if ctx.get("macro"):
+        L.extend(macro_lines(ctx["macro"]))
 
     # 1 大盤
     A("## 二、市場概況\n")

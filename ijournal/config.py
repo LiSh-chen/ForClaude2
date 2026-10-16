@@ -71,5 +71,9 @@ def load_universe() -> dict:
     return {"sectors": raw["sectors"], "themes": themes, "stocks": stocks, "benchmarks": raw["benchmarks"], "reference": raw["reference"], "indices": raw["indices"]}
 
 
+def load_macro() -> dict:
+    return load_json(CONFIG_DIR / "macro.json")
+
+
 def load_sources() -> dict:
     return load_json(CONFIG_DIR / "sources.json")

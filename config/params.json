@@ -153,5 +153,41 @@
       "explosive": 0.25,
       "turn": 0.15
     }
+  },
+  "macro": {
+    "weights": {
+      "rate_shock": 0.18,
+      "vol": 0.14,
+      "equity": 0.16,
+      "usd": 0.06,
+      "oil": 0.06,
+      "credit": 0.06,
+      "fed": 0.14,
+      "inflation": 0.12,
+      "growth": 0.08
+    },
+    "tw_blend": 0.4,
+    "levels": {
+      "watch": 30,
+      "warn": 50,
+      "high": 65
+    },
+    "state_watch": 33,
+    "state_risk": 66,
+    "overlay": {
+      "extra_upside": {
+        "watch": 0.0,
+        "warn": 0.05,
+        "high": 0.1
+      },
+      "sensitive_extra": {
+        "watch": 0.0,
+        "warn": 0.05,
+        "high": 0.1
+      },
+      "pe_sensitive": 35,
+      "beta_sensitive": 1.5
+    },
+    "min_coverage": 0.6
   }
 }

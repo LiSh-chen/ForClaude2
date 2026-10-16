@@ -481,3 +481,71 @@ def test_holiday_aware_freshness_taiwan_national_day_and_nyse_rules():
     assert chk["fresh_TW"]["level"] == "ok" and "10/09 休市" in chk["fresh_TW"]["msg"] and chk["fresh_US"]["level"] == "ok"
     r = assess(**_qctx(data_report={"tw": dict(rep, holidays=[]), "us": None, "errors": []}, **base))
     assert {c["code"]: c for c in r["checks"]}["fresh_TW"]["level"] == "warn"
+
+
+def _px(vals):
+    idx = pd.bdate_range(end="2026-10-15", periods=len(vals))
+    return pd.DataFrame({"Open": vals, "High": vals, "Low": vals, "Close": vals, "Volume": 1.0}, index=idx)
+
+
+def test_macro_fed_path_probabilities_and_fred_parsing():
+    from ijournal import macro as M
+    assert M.ff_tickers(dt.date(2026, 11, 3), 3) == {"2026-11": "ZQX26.CBT", "2026-12": "ZQZ26.CBT", "2027-01": "ZQF27.CBT"}
+    rows = M.parse_fred_csv("observation_date,DFF\n2026-10-13,3.88\n2026-10-14,.\n2026-10-15,3.88\n")
+    assert rows == [(dt.date(2026, 10, 13), 3.88), (dt.date(2026, 10, 15), 3.88)]
+    cfg = {"fomc_decisions": ["2026-10-28", "2026-12-09", "2027-01-27"]}
+    pr = {"ZQX26.CBT": _px([96.05] * 5), "ZQZ26.CBT": _px([95.89] * 5), "ZQF27.CBT": _px([95.89] * 5)}   # 11月 3.95%、12月 4.11%、1月 4.11%
+    fed = M.fed_path(pr, {"effr": [(dt.date(2026, 10, 15), 3.88)], "target_upper": [(dt.date(2026, 10, 15), 4.0)]}, cfg, dt.date(2026, 10, 15))
+    ms = fed["meetings"]
+    assert [m["date"] for m in ms] == ["2026-10-28", "2026-12-09"]            # 2027-02 合約不存在 → 停止，不編造
+    assert ms[0]["delta_bp"] == 7.0 and ms[0]["prob"] == 0.28 and ms[0]["dir"] == "hike"
+    assert ms[1]["delta_bp"] == 16.0 and ms[1]["cum_bp"] == 23.0
+    cut = M.fed_path({"ZQX26.CBT": _px([96.30] * 5)}, {"effr": [(dt.date(2026, 10, 15), 3.88)]}, cfg, dt.date(2026, 10, 15))
+    assert cut["meetings"][0]["dir"] == "cut" and cut["meetings"][0]["delta_bp"] < 0
+
+
+def test_macro_inflation_factors_and_regime_overlay():
+    from ijournal import macro as M
+    months = pd.date_range("2025-09-01", periods=13, freq="MS")
+    cpi = [(d.date(), 300.0 * (1.003 ** i)) for i, d in enumerate(months)]
+    cpi[-1] = (cpi[-1][0], cpi[-2][1] * 1.0065)                              # 最新一個月 +0.65%
+    infl = M.inflation_labor({"cpi": cpi, "core_cpi": [(d, v) for d, v in cpi], "unrate": [(d.date(), 4.0 + 0.05 * i) for i, d in enumerate(months)],
+                              "payems": [(d.date(), 158000 + 20 * i) for i, d in enumerate(months)]})
+    assert abs(infl["headline"]["mom"] - 0.0065) < 1e-9 and infl["headline"]["yoy"] > 0.03 and infl["unrate"]["above_12m_low"] > 0.5
+    mp = C.load_params()["macro"]
+    F = M.factors({}, {"meetings": []}, infl, mp)
+    f = {x["id"]: x for x in F}
+    assert f["inflation"]["group"] == "ahead" and f["inflation"]["state"] in ("watch", "risk") and f["vol"]["score"] is None   # 沒價格資料 → 不編造分數
+    assert M.level_of(10, mp) == "normal" and M.level_of(35, mp) == "watch" and M.level_of(55, mp) == "warn" and M.level_of(70, mp) == "high"
+    ov = M.overlay({"US": 70.0, "TW": 20.0}, mp)
+    assert ov["US"]["extra_upside"] == mp["overlay"]["extra_upside"]["high"] and ov["TW"]["extra_upside"] == 0.0
+    assert M.rate_sensitive({"pe_fwd": 50}, ov["US"]) and M.rate_sensitive({"beta": 2.0}, ov["US"]) and not M.rate_sensitive({"pe_fwd": 20, "beta": 1.0}, ov["US"])
+
+
+def test_macro_overlay_raises_pick_threshold_and_names_the_reason():
+    from ijournal.selection import eligible
+    row = {"market": "US", "val": {"spread": 0.1, "upside": 0.12}, "f": {"market_cap": 5e11, "pe_fwd": 45, "beta": 1.0, "eps_ttm_px": 3.0, "eps_fwd_px": 4.0},
+           "pf": {"turnover": 5e9}, "scores": {"quality": 80.0, "leader": 100.0}}
+    p = C.load_params()
+    assert eligible(row, p)[0]                                                  # 無總經調整：通過
+    ov = {"US": {"level": "warn", "label": "警戒", "extra_upside": 0.05, "sens_extra": 0.05, "pe": 35, "beta": 1.5}}
+    ok, why = eligible(row, {**p, "_overlay": ov})                              # 高估值股：門檻 +10pp（5%→15%），上檔 12% 不夠
+    assert not ok and "總經警戒" in why and "高估值" in why
+    row["f"]["pe_fwd"] = 20
+    assert eligible(row, {**p, "_overlay": ov})[0]                              # 一般股只 +5pp（10%），12% 仍通過
+
+
+def test_macro_in_pipeline_snapshot_journal_and_quality_warning():
+    from ijournal.daily import run_daily
+    from ijournal.quality import assess
+    d = run_daily(DemoProvider(end=dt.date(2026, 9, 30)), asof="2026-07-27")
+    md = (C.path("journal") / f"{d}.md").read_text(encoding="utf-8")
+    assert "總經與市場環境" in md and "已發生" in md and "尚未發生" in md
+    sn = C.load_json(C.path("data") / "snapshots" / f"{d}.json")
+    m = sn["macro"]
+    assert {"US", "TW"} <= set(m["scores"]) and {f["group"] for f in m["factors"]} == {"happened", "ahead"} and m["overlay"]["US"]["label"]
+    assert C.load_json(C.path("data") / "macro" / f"{d}.json")["date"] == d
+    # 資料缺漏要警示：沒有任何因子資料 → 品質檢查出現 macro warn
+    c = _qctx(macro={"coverage": {"ok": 2, "total": 11, "missing": ["殖利率衝擊"], "fred_errors": ["CPIAUCSL 無資料"], "contracts": 0}})
+    r = assess(**c)
+    assert any(i["code"] == "macro" and i["level"] == "warn" for i in r["issues"]) and r["level"] == "warn"

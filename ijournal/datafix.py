@@ -113,13 +113,17 @@ def parse_twse_holidays(text: str) -> set[dt.date]:
     return out
 
 
+# FRED 會讓『像瀏覽器』的 User-Agent 逾時（疑似反爬蟲），改用誠實的程式識別即可正常回應
+API_UA = {"User-Agent": "invest-journal/1.0 (+https://github.com/LiSh-chen/ForClaude2)"}
+
+
 # ---------------------------------------------------------------- 網路（可注入以便測試）
-def fetch_text(url: str, tries: int = 3, timeout: int = 40) -> str:
+def fetch_text(url: str, tries: int = 3, timeout: int = 40, headers: dict | None = None) -> str:
     import requests
     last = None
     for i in range(tries):
         try:
-            r = requests.get(url, headers=UA, timeout=timeout)
+            r = requests.get(url, headers=headers or UA, timeout=timeout)
             r.raise_for_status()
             if "因為安全性考量" in r.text[:400]:
                 raise RuntimeError("來源以安全性擋頁拒絕自動化請求")

@@ -214,6 +214,8 @@ function keyStrip(sn) {
       : keyCell(`${MK[m]}首選`, '今日無合格標的', [h('span', {class: 'muted'}, '不硬補滿；點看原因')], [], () => shortageDrawer(m, sn.shortage[m], ''), true); });
   const hot = ['TW', 'US'].map(m => [m, sn.sectors[m][0]]).filter(x => x[1]);
   if (hot.length) cells.push(h('div', {class: 'key'}, h('span', {class: 'kl'}, '最熱產業'), hot.map(([m, x]) => h('button', {type: 'button', class: 'kline', on: {click: () => sectorDrawer(x, m)}}, h('span', {class: 'muted'}, MK[m] + ' '), h('b', null, x.name), h('span', {class: 'num'}, ` ${nz(x.score, 0)}`)))));
+  if (sn.macro) cells.push(h('button', {type: 'button', class: 'key lvkey lv-' + (['high', 'warn', 'watch', 'normal'].find(k => k === sn.macro.overlay.US.level || k === sn.macro.overlay.TW.level)), on: {click: () => go('macro')}}, h('span', {class: 'kl'}, '總經環境'),
+    ['US', 'TW'].map(m => h('span', {class: 'kline'}, h('span', {class: 'muted'}, MK[m] + ' '), h('b', null, sn.macro.overlay[m].label), h('span', {class: 'num'}, ` ${nz(sn.macro.scores[m], 0)}`))), h('span', {class: 'ks muted'}, '已發生 vs 預期')));
   const th = sn.emerging && sn.emerging.themes[0];
   if (th) cells.push(keyCell('前瞻首選趨勢', th.name, [h('span', {class: 'num'}, `分數 ${nz(th.score, 0)}`), h('span', {class: 'muted'}, `　證據級${th.tier}・${th.status}`)], [], () => themeDrawer(th)));
   return h('div', {class: 'keys', role: 'list', 'aria-label': '今日重點'}, cells);
@@ -224,6 +226,8 @@ function overview() {
     root.append(h('div', {class: 'basisbar', role: 'note'}, h('b', null, '行情基準：已收盤價，非盤中'),
       h('span', {class: 'chip', tip: '台股最近一個已收盤的交易日'}, `台股 ${sn.basis.TW.slice(5)} 收盤`), h('span', {class: 'chip', tip: prov ? '美股收盤價為暫定值，下次更新換成正式資料' : '美股最近一個已收盤的交易日'}, `美股 ${sn.basis.US.slice(5)} 收盤${prov ? '（暫定）' : ''}`),
       h('span', {class: 'muted sm'}, same ? `報告日 ${sn.date}` : `報告日 ${sn.date}＝兩市場較新的收盤日；台股／美股日期不同代表其中一邊休市或尚未收盤`))); }
+  if (sn.macro && ['warn', 'high'].some(k => k === sn.macro.overlay.US.level || k === sn.macro.overlay.TW.level))
+    root.append(h('button', {type: 'button', class: 'macrobanner', on: {click: () => go('macro')}}, h('b', null, '⚠ 總經環境提示：'), sn.macro.headline, '；已因此提高推薦門檻。點此看原因 →'));
   root.append(h('div', {class: 'sec', style: 'margin-top:4px'}, h('h2', null, '今日重點'), h('span', {class: 'sub'}, `資料日 ${sn.date}；點任一格看詳細`)), keyStrip(sn));
   root.append(h('div', {class: 'sec'}, h('h2', null, '市場')), h('div', {class: 'tiles'}, sn.indices.map(indexTile)));
   if (sn.summary) root.append(h('div', {class: 'note', style: 'margin-top:10px'}, 'AI 摘要：' + sn.summary));
@@ -301,6 +305,65 @@ function scatterBargain(list) {
     svg.append(s('text', {x: X(-p.bargain.facts.from_high) + 9, y: Y(p.target.upside) - 8, style: 'font-size:10px'}, p.ticker.replace(/\.(TW|TWO)$/, ''))); });
   return svg;
 }
+/* ---------- 總經 ---------- */
+const LV = {normal: '正常', watch: '留意', warn: '警戒', high: '高風險'};
+const ST = {ok: ['正常', 'ok'], watch: ['留意', 'watch'], risk: ['⚠ 偏高', 'risk']};
+function gauge(score, lv) {
+  const pos = isNum(score) ? Math.max(0, Math.min(100, score)) : 0;
+  return h('div', {class: 'gauge', role: 'img', 'aria-label': `風險分數 ${nz(score, 0)}，${LV[lv]}`}, h('i', {class: 'g1'}), h('i', {class: 'g2'}), h('i', {class: 'g3'}), h('i', {class: 'g4'}), h('b', {class: 'gp', style: `left:${pos}%`}));
+}
+function factorDrawer(f, m) {
+  openDrawer(f.label, `${f.group === 'happened' ? '已發生（市場數據）' : '尚未發生（預期與事件）'}｜風險分 ${nz(f.score, 0)}｜${(ST[f.state] || ['—'])[0]}`, [
+    h('div', {class: 'kpis'}, kpi('目前數據', f.value), kpi('風險分（0–100）', nz(f.score, 0), '≥66 偏高、≥33 留意')), h('p', {class: 'p'}, f.detail),
+    f.group === 'ahead' ? h('div', {class: 'note'}, '這一類是『預期』：市場正在為尚未發生的事情定價，結果可能比預期更好或更差，所以只列為風險提示，不當成已發生的事實。') : h('div', {class: 'note'}, '這一類是『已經發生』的市場數據，價格已經反映，但可能還會延續。'),
+    f.id === 'fed' ? fedChart(m.fed) : null]);
+}
+function fedChart(fed) {
+  const ms = fed.meetings || []; if (!ms.length || !isNum(fed.effr)) return h('p', {class: 'muted'}, '無聯邦基金期貨資料。');
+  const W = 560, H = 230, L = 44, R = 12, T = 22, B = 44, vals = [fed.effr, ...ms.map(x => x.after)], lo = Math.floor((Math.min(...vals) - .1) * 10) / 10, hi = Math.ceil((Math.max(...vals) + .1) * 10) / 10;
+  const Y = v => T + (H - T - B) * (1 - (v - lo) / (hi - lo)), bw = Math.min(54, (W - L - R) / ms.length - 14);
+  const svg = s('svg', {viewBox: `0 0 ${W} ${H}`, width: '100%', role: 'img', 'aria-label': '市場隱含的政策利率路徑'});
+  for (let i = 0; i <= 4; i++) { const v = lo + (hi - lo) * i / 4; svg.append(s('line', {x1: L, x2: W - R, y1: Y(v), y2: Y(v), style: 'stroke:var(--grid)'}), s('text', {x: L - 5, y: Y(v) + 4, 'text-anchor': 'end'}, v.toFixed(2) + '%')); }
+  ms.forEach((x, i) => { const cx = L + (W - L - R) * (i + .5) / ms.length, y = Y(x.after), c = s('rect', {x: cx - bw / 2, y, width: bw, height: Math.max(1, Y(lo) - y), rx: 4, style: 'fill:var(--accent);opacity:.85', 'data-tip': `${x.date} 會議後隱含利率 ${x.after.toFixed(2)}%\n本次 ${x.delta_bp >= 0 ? '+' : ''}${x.delta_bp.toFixed(0)}bp｜25bp 機率約 ${(x.prob * 100).toFixed(0)}%\n累計 ${x.cum_bp >= 0 ? '+' : ''}${x.cum_bp.toFixed(0)}bp`});
+    svg.append(c, s('text', {x: cx, y: y - 6, 'text-anchor': 'middle', style: 'font-weight:700;fill:var(--ink)'}, `${x.delta_bp >= 0 ? '+' : ''}${x.delta_bp.toFixed(0)}bp`), s('text', {x: cx, y: H - 26, 'text-anchor': 'middle'}, x.date.slice(2)), s('text', {x: cx, y: H - 12, 'text-anchor': 'middle', style: 'fill:var(--muted)'}, `${(x.prob * 100).toFixed(0)}% ${x.dir === 'hike' ? '升' : x.dir === 'cut' ? '降' : '平'}`)); });
+  svg.append(s('line', {x1: L, x2: W - R, y1: Y(fed.effr), y2: Y(fed.effr), style: 'stroke:var(--warn);stroke-dasharray:5 4;stroke-width:1.5'}), s('text', {x: L + 4, y: Y(fed.effr) - 5, 'text-anchor': 'start', style: 'fill:var(--warn);font-weight:700'}, `目前 ${fed.effr.toFixed(2)}%`));
+  return h('div', null, svg, h('p', {class: 'muted sm'}, '長條＝各次 FOMC 後的市場隱含政策利率（由聯邦基金期貨推算）；虛線＝目前有效利率；下方為該次升／降息 25bp 的機率。這是市場定價，不是聯準會的承諾。'));
+}
+function factorRow(f, m) {
+  const [lab, cls] = ST[f.state] || ['—', 'ok'];
+  return h('button', {type: 'button', class: 'frow ' + cls, on: {click: () => factorDrawer(f, m)}, tip: f.detail},
+    h('span', {class: 'fl'}, f.label + (f.tw_only ? '（台股）' : '')), h('span', {class: 'ft'}, h('i', {style: `width:${isNum(f.score) ? f.score : 0}%`})), h('span', {class: 'fs num'}, nz(f.score, 0)), h('span', {class: 'fc'}, lab), h('span', {class: 'fv'}, f.value));
+}
+function regimeCard(mk, m) {
+  const o = m.overlay[mk], sc = m.scores[mk], up = o.extra_upside * 100, sup = (o.extra_upside + o.sens_extra) * 100;
+  return h('div', {class: 'card regime lv-' + o.level},
+    h('div', {class: 'rh'}, h('span', {class: 'muted'}, MK[mk] + '環境'), h('b', {class: 'rl'}, o.label), h('span', {class: 'num rs'}, nz(sc, 0) + ' 分')), gauge(sc, o.level),
+    h('div', {class: 'sm', style: 'margin-top:8px'}, o.extra_upside || o.sens_extra ? [h('b', null, '推薦門檻已提高：'), `一般股目標價上檔需再多 ${up.toFixed(0)} 個百分點；高估值／高 Beta 股多 ${sup.toFixed(0)} 個百分點。`] : '目前不調整推薦門檻（僅在「警戒」以上才會提高）。'));
+}
+function macroView() {
+  const m = S.snap.macro, root = h('div');
+  if (!m) return h('div', {class: 'empty'}, '此日期沒有總經資料。');
+  root.append(h('div', {class: 'note'}, h('b', null, '股價之外的環境風險：'), '把「已經發生」（殖利率、波動率、股市、美元、油價）和「尚未發生」（升息機率、通膨、就業與重要事件）分開看，避免把預期當成事實。分數越高越需要謹慎；它是風險提示，不是漲跌預測，只在「警戒」以上才會提高推薦門檻。',
+    h('div', {class: 'muted sm', style: 'margin-top:4px'}, `資料涵蓋 ${m.coverage.ok}／${m.coverage.total} 項因子；來源：Yahoo（殖利率、VIX、美元、油價、聯邦基金期貨）、FRED（CPI、就業、基準利率）。`)));
+  root.append(h('div', {class: 'sec'}, h('h2', null, '環境等級'), h('span', {class: 'sub'}, '0–100：<30 正常、30–50 留意、50–65 警戒、≥65 高風險')), h('div', {class: 'grid g2'}, regimeCard('US', m), regimeCard('TW', m)));
+  const grp = (g, t, sub) => [h('div', {class: 'sec'}, h('h2', null, t), h('span', {class: 'sub'}, sub)), h('div', {class: 'card'}, h('div', {class: 'frows'}, m.factors.filter(f => f.group === g).map(f => factorRow(f, m))))];
+  root.append(...grp('happened', '已發生：市場數據顯示的壓力', '價格已經反映；點任一列看說明'), ...grp('ahead', '尚未發生：市場預期與可能的事件', '預期可能比實際更好或更差；點任一列看說明與利率路徑'));
+  if (m.fed && (m.fed.meetings || []).length) root.append(h('div', {class: 'sec'}, h('h2', null, '市場預期的利率路徑'), h('span', {class: 'sub'}, '聯邦基金期貨隱含，非聯準會承諾')), h('div', {class: 'card'}, h('div', {style: 'max-width:680px'}, fedChart(m.fed))));
+  const inf = m.inflation || {}, tiles = [];
+  if (inf.headline) tiles.push(['CPI 年增', pct(inf.headline.yoy, 1, false), `月增 ${pct(inf.headline.mom, 2)}（${(inf.headline.date || '').slice(0, 7)}）`]);
+  if (inf.core) tiles.push(['核心 CPI 月增', pct(inf.core.mom, 2), `前月 ${pct(inf.core.prev_mom, 2)}；近3月年化 ${pct(inf.core.ann3m, 1, false)}`]);
+  if (inf.unrate) tiles.push(['失業率', nz(inf.unrate.value, 1) + '%', `較12個月低點 +${nz(inf.unrate.above_12m_low, 1)}`]);
+  if (inf.payrolls) tiles.push(['非農（近3月平均）', `${inf.payrolls.avg3m_k >= 0 ? '+' : ''}${Math.round(inf.payrolls.avg3m_k)} 千人`, `最新一個月 ${inf.payrolls.last_k >= 0 ? '+' : ''}${Math.round(inf.payrolls.last_k)} 千人`]);
+  if (isNum(inf.breakeven)) tiles.push(['10年期通膨預期', nz(inf.breakeven, 2) + '%', '市場隱含的長期通膨']);
+  if (isNum(inf.us2y)) tiles.push(['2年期殖利率', nz(inf.us2y, 2) + '%', '對政策利率預期最敏感']);
+  if (tiles.length) root.append(h('div', {class: 'sec'}, h('h2', null, '通膨與就業（已公布）')), h('div', {class: 'tiles'}, tiles.map(([a, b, c]) => h('div', {class: 'tile'}, h('div', {class: 'lb'}, a), h('div', {class: 'v num'}, b), h('div', {class: 'd muted'}, c)))));
+  const NM = {'^TNX': '美債10年', '^IRX': '美債3個月', 'DX-Y.NYB': '美元指數', 'CL=F': '原油', '^VIX': 'VIX', '^GSPC': 'S&P 500', '^SOX': '費城半導體'};
+  const mk = Object.entries(m.series || {}).filter(([, v]) => v && v.length > 5);
+  if (mk.length) root.append(h('div', {class: 'sec'}, h('h2', null, '關鍵市場指標（近 60 日）')), h('div', {class: 'tiles'}, mk.map(([t, v]) => h('div', {class: 'tile'}, h('div', {class: 'lb'}, NM[t] || t), h('div', {class: 'v num'}, nz(v[v.length - 1], 2)), h('div', {class: 'd muted'}, `5日 ${v.length > 5 ? (v[v.length - 1] - v[v.length - 6] >= 0 ? '+' : '') + nz(v[v.length - 1] - v[v.length - 6], 2) : '—'}`), spark(v, 150, 30)))));
+  if ((m.events || []).length) root.append(h('div', {class: 'sec'}, h('h2', null, '接下來要留意的事件'), h('span', {class: 'sub'}, '尚未發生')), h('div', {class: 'card'}, h('ul', null, m.events.map(e => h('li', null, h('b', null, e.date + (e.days != null ? `（${e.days} 天後）` : '')), ' ', e.name, h('span', {class: 'muted sm'}, `　${e.note}`))))));
+  if ((m.headlines || []).length) root.append(h('div', {class: 'sec'}, h('h2', null, '相關新聞')), h('div', {class: 'card'}, h('ul', null, m.headlines.map(x => h('li', null, safeUrl(x.link) ? h('a', {href: x.link, target: '_blank', rel: 'noopener noreferrer'}, x.title) : x.title, h('span', {class: 'muted sm'}, ` ｜${x.source}｜${x.theme}`))))));
+  return root;
+}
 function perfView() {
   const P = S.perf, root = h('div');
   const pos = (P && P.positions || []).filter(p => (p.book || 'main') === S.pm), summ = S.pm === 'main' ? (P && P.summary) : (P && P[S.pm] && P[S.pm].summary);
@@ -356,7 +419,7 @@ function renderQuality() {
 }
 
 /* ---------- 框架 ---------- */
-const TABS = [['overview', '總覽'], ['emerging', '前瞻專區'], ['bargain', '便宜好貨'], ['perf', '績效']];
+const TABS = [['overview', '總覽'], ['macro', '總經'], ['emerging', '前瞻專區'], ['bargain', '便宜好貨'], ['perf', '績效']];
 function go(t) { S.tab = t; history.replaceState(null, '', '#' + t); render(); window.scrollTo(0, 0); }
 function renderTabs() { const el = document.getElementById('tabs'); el.replaceChildren(...TABS.map(([k, l]) => h('button', {type: 'button', role: 'tab', 'aria-selected': S.tab === k, on: {click: () => go(k)}}, l))); }
 function render() {
@@ -368,7 +431,7 @@ function render() {
   if (sn.generated_at) { const d = new Date(sn.generated_at); uc.hidden = false; uc.textContent = '更新 ' + d.toLocaleString('zh-TW', {timeZone: 'Asia/Taipei', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false}); uc.title = `產生時間（台灣時間）。行情截至：台股 ${sn.basis ? sn.basis.TW : '—'} 收盤、美股 ${sn.basis ? sn.basis.US : '—'} 收盤` + ((sn.data_notes || []).length ? '\n' + sn.data_notes.join('\n') : ''); } else uc.hidden = true;
   ch.textContent = `新聞 ${sn.news.ok}/${sn.news.total} 來源`; ch.title = sn.news.failed.length ? '失敗：' + sn.news.failed.join('、') : '全部來源正常';
   document.getElementById('demo').hidden = sn.provider !== 'demo';
-  const body = S.tab === 'emerging' ? emergingView() : S.tab === 'bargain' ? bargainView() : S.tab === 'perf' ? perfView() : overview();
+  const body = S.tab === 'emerging' ? emergingView() : S.tab === 'bargain' ? bargainView() : S.tab === 'macro' ? macroView() : S.tab === 'perf' ? perfView() : overview();
   const d = sn.date, foot = h('div', {class: 'foot'}, h('a', {href: `journal/${d}.html`}, '完整研究日誌'), sn.emerging && h('a', {href: `emerging/${d}.html`}, '完整前瞻報告'), sn.bargain && h('a', {href: `bargain/${d}.html`}, '完整便宜好貨報告'), h('a', {href: 'archive.html'}, '歷史日誌'), h('a', {href: 'reviews.html'}, '檢討報告'), h('a', {href: 'methodology.html'}, '方法論'),
     h('span', null, `參數 v${sn.params_version}｜漲跌：紅▲漲、藍▼跌（色盲友善）｜僅供研究，不構成投資建議`));
   v.replaceChildren(body, foot);
