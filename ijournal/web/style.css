@@ -252,3 +252,12 @@ button.card.regime{display:block;width:100%;text-align:left;color:inherit;font:i
 .ev b{font-size:22px;grid-row:span 2}.ev.soon{box-shadow:inset 0 0 0 2px var(--warn)}
 @media(max-width:700px){.rmini{grid-template-columns:1fr 1fr}.frow2{grid-template-columns:1fr 70px 28px 74px}}
 @media(max-width:700px){.top .ctl{flex-wrap:wrap;width:100%;row-gap:6px}.top .tabs{order:2;width:100%;flex:none}}
+
+.rrow{display:flex;align-items:center;gap:16px;margin:10px 0 4px;flex-wrap:wrap}.rstats{display:grid;gap:6px;font-size:13px}.rstats .lb{display:block;color:var(--ink2);font-size:11.5px}.rbig{font-size:22px}
+.orb{flex:none;display:block}.orb .og{fill:var(--surface);stroke:none}.orb .oc{fill:none;stroke:var(--axis);stroke-width:2}.orb .otk{stroke:var(--axis);stroke-width:1;stroke-dasharray:3 4;opacity:.7}
+.orb .w{fill:var(--accent);opacity:.8}.orb .w2{opacity:.4}.orb.lv-warn .w,.orb.lv-high .w{fill:var(--warn)}
+.orb .w1{animation:slosh 7s linear infinite}.orb .w2{animation:slosh 5s linear infinite}
+@keyframes slosh{from{transform:translateX(0)}to{transform:translateX(calc(-1 * var(--sz)))}}
+@media(prefers-reduced-motion:reduce){.orb .w1,.orb .w2{animation:none}}
+.orb .ot{font-weight:700;fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.orbbox{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px}

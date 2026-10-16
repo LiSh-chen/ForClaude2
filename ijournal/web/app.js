@@ -331,22 +331,31 @@ function fedChart(fed, compact) {
   return h('div', null, svg, compact ? null : h('p', {class: 'muted sm'}, '長條＝各次 FOMC 後的市場隱含政策利率（由聯邦基金期貨推算）；虛線＝目前有效利率；下方為該次升／降息 25bp 的機率。這是市場定價，不是聯準會的承諾。'));
 }
 const dots = (n, N = 5) => h('span', {class: 'dots', role: 'img', 'aria-label': `分 ${n} 批進場`}, '●'.repeat(n) + '○'.repeat(Math.max(0, N - n)));
+let orbN = 0;
+function orb(frac, lv, size = 104) { // 水位球：球內的水＝建議持股水位，空的部分＝保留現金
+  const id = 'orb' + (orbN++), R = size / 2 - 3, c = size / 2, level = c - R + (1 - Math.max(0, Math.min(1, frac))) * 2 * R, A = frac >= 1 ? 0 : 3.2, pc = Math.round(frac * 100);
+  const wave = (ph, cls) => { let d = `M0,${size}`; for (let x = 0; x <= 2 * size; x += 4) d += `L${x},${(level + A * Math.sin(x / size * 2 * Math.PI + ph)).toFixed(1)}`; return s('path', {d: d + `L${2 * size},${size}Z`, class: 'w ' + cls, style: `--sz:${size}px`}); };
+  return s('svg', {viewBox: `0 0 ${size} ${size}`, width: size, height: size, class: 'orb lv-' + lv, role: 'img', 'aria-label': `建議持股水位 ${pc}%，其餘 ${100 - pc}% 保留現金`},
+    s('defs', null, s('clipPath', {id}, s('circle', {cx: c, cy: c, r: R}))), s('circle', {class: 'og', cx: c, cy: c, r: R}),
+    s('g', {'clip-path': `url(#${id})`}, wave(0, 'w1'), wave(2.2, 'w2'), s('line', {class: 'otk', x1: c - R, x2: c + R, y1: c, y2: c})),
+    s('circle', {class: 'oc', cx: c, cy: c, r: R}), s('text', {class: 'ot', x: c, y: c + 8, 'text-anchor': 'middle', style: `font-size:${(size / 4.4).toFixed(0)}px`}, pc + '%'));
+}
 function postureDrawer(k, m) {
-  const ps = m.posture[k];
+  const ps = m.posture[k], pc = Math.round(ps.exposure * 100);
   openDrawer(`${MK[k]}環境「${ps.label}」：操作建議`, '依風險等級的機械式建議；研究參考，不是個人化的投資建議', [
+    h('div', {class: 'orbbox'}, orb(ps.exposure, ps.level, 150), h('div', null, h('div', {class: 'big', style: 'font-size:22px;font-weight:700'}, `建議持股水位 ≤ ${pc}%`), h('div', {class: 'muted'}, pc < 100 ? `其餘 ${100 - pc}% 保留現金（相對於你的原計畫）` : '依原計畫配置'), h('div', {style: 'margin-top:6px'}, '分批進場 ', dots(ps.batches), h('span', {class: 'muted'}, `　高估值／高Beta 單檔比重 ×${ps.sens_mult}`)))),
     h('ul', null, ps.actions.map(a => h('li', null, a))),
     ps.drivers.length ? sec('主要驅動因子', h('ul', null, ps.drivers.map(d => h('li', null, d)))) : null,
     h('div', {class: 'note'}, '建議持股水位、分批與比重倍數皆為初始設定，未經回測；「原計畫」指你自己決定的總投入。')]);
 }
 function regimeCard(mk, m) {
   const o = m.overlay[mk], sc = m.scores[mk], ps = m.posture[mk], exp = Math.round(ps.exposure * 100);
-  return h('button', {type: 'button', class: 'card regime lv-' + o.level, on: {click: () => postureDrawer(mk, m)}, 'aria-label': `${MK[mk]}環境 ${o.label} ${nz(sc, 0)} 分，點擊看操作建議`},
+  return h('button', {type: 'button', class: 'card regime lv-' + o.level, on: {click: () => postureDrawer(mk, m)}, 'aria-label': `${MK[mk]}環境 ${o.label} ${nz(sc, 0)} 分，建議持股水位 ${exp}%，點擊看操作建議`},
     h('div', {class: 'rh'}, h('span', {class: 'muted'}, MK[mk]), h('b', {class: 'rl'}, o.label), h('span', {class: 'num rs'}, nz(sc, 0))), gauge(sc, o.level),
-    h('div', {class: 'rmini'},
-      h('div', null, h('span', {class: 'lb'}, '建議持股水位'), h('div', {class: 'expo', tip: `原計畫的 ${exp}% 以下`}, h('i', {style: `width:${exp}%`}), h('b', null, `≤${exp}%`))),
-      h('div', null, h('span', {class: 'lb'}, '分批進場'), dots(ps.batches)),
-      h('div', null, h('span', {class: 'lb'}, '高估值／高Beta 比重'), h('b', {class: 'num'}, `×${ps.sens_mult}`))),
-    h('span', {class: 'muted sm'}, '點擊看操作建議'));
+    h('div', {class: 'rrow'}, orb(ps.exposure, o.level),
+      h('div', {class: 'rstats'}, h('div', null, h('span', {class: 'lb'}, '建議持股水位'), h('b', {class: 'rbig num'}, `≤${exp}%`), exp < 100 ? h('span', {class: 'muted sm'}, `　其餘 ${100 - exp}% 現金`) : null),
+        h('div', null, h('span', {class: 'lb'}, '分批進場'), dots(ps.batches)), h('div', null, h('span', {class: 'lb'}, '高估值／高Beta 比重'), h('b', {class: 'num'}, `×${ps.sens_mult}`)),
+        h('span', {class: 'muted sm'}, '點擊看操作建議'))));
 }
 function kp(label, big, sub, state, onClick, series) {
   return h('button', {type: 'button', class: 'tile kp' + (state === 'risk' ? ' hot' : state === 'watch' ? ' warm' : ''), on: {click: onClick || (() => {})}},
