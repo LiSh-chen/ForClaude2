@@ -632,3 +632,19 @@ def test_tuning_requires_independent_samples_not_repeated_picks():
     res = apply_tuning(diag, "2026-11-07")
     assert not res["changed"] and any("不同股票" in x for x in res["skipped"])                 # 60 筆但只有 8 檔 → 不調參
     assert P["tuning"]["min_unique_tickers"] >= 10
+
+
+def test_strategy_compare_uses_common_window_and_dedups_and_upside_hypothesis():
+    from ijournal.health import strategy_compare, upside_buckets
+    pos = [_pos("2026-10-06", "A", "s", "US", -0.05, -0.04, book="main", target_upside=0.5), _pos("2026-10-07", "A", "s", "US", -0.04, -0.03, book="main", target_upside=0.5),
+           _pos("2026-10-08", "B", "s", "US", -0.01, -0.02, book="main", target_upside=0.1), _pos("2026-10-09", "B", "s", "US", -0.01, -0.02, book="main", target_upside=0.1),
+           _pos("2026-10-08", "C", "s", "US", 0.05, 0.06, book="bargain", target_upside=0.2), _pos("2026-10-09", "C", "s", "US", 0.05, 0.06, book="bargain", target_upside=0.2),
+           _pos("2026-10-08", "D", "s", "US", 0.0, 0.0, book="emerging", target_upside=0.3)]
+    sc = strategy_compare({"positions": pos})
+    assert sc["since"] == "2026-10-08"                                              # 以最晚開始追蹤的專區為準，三者才可比
+    rows = {r["book"]: r for r in sc["rows"]}
+    assert rows["main"]["n"] == 1 and rows["bargain"]["n"] == 1                       # 同一檔每天重複推薦只計一次；起算日前的 A 不計入
+    assert abs(rows["bargain"]["alpha"] - 0.06) < 1e-9 and strategy_compare({"positions": pos[:2]})["rows"] == []
+    many = [_pos("2026-10-06", f"H{i}", "s", "US", -0.1, -0.1, target_upside=0.6) for i in range(3)] + [_pos("2026-10-06", f"L{i}", "s", "US", 0.0, 0.01, target_upside=0.1) for i in range(3)]
+    ub = upside_buckets({"positions": many})
+    assert ub and ub["n_hi"] == 3 and ub["alpha_hi"] < ub["alpha_lo"] and upside_buckets({"positions": many[:4]}) is None   # 每組至少 3 檔才做假設追蹤
