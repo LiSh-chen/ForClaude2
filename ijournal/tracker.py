@@ -152,5 +152,10 @@ def run_tracker(provider) -> dict:
             "emerging": {"summary": summarize(emg_pos), "n": len(emg_pos)},
             "bargain": {"summary": summarize(bar_pos), "n": len(bar_pos)}, "macro": macro_eval}
     C.save_json(data / "performance.json", perf)
+    try:
+        from .health import write_health
+        write_health(perf)
+    except Exception as ex:  # noqa: BLE001
+        print(f"[track] 績效健檢產生失敗（略過）：{ex!r}")
     print(f"[track] 追蹤 {len(positions)} 筆推薦；候選池 {sum(len(v) for v in pool.values())} 筆觀察。")
     return perf

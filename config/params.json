@@ -86,7 +86,8 @@
     ],
     "shrink_step": 0.05,
     "bias_threshold": 0.05,
-    "min_matured_picks": 40
+    "min_matured_picks": 40,
+    "min_unique_tickers": 20
   },
   "emerging": {
     "top_themes": 4,

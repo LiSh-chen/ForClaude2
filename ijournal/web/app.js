@@ -409,15 +409,29 @@ function valuationBody(m) {
   return [h('div', {class: 'kpis'}, ['US', 'TW'].map(k => v[k] && isNum(v[k].rf) ? kpi(`${MK[k]} 無風險利率`, pct(v[k].rf, 2, false), `原設定 ${pct(v[k].rf_base, 2, false)}；PEG ×${nz(v[k].peg_factor, 2)}；上檔門檻 ≥${pct(Math.max(v[k].hurdle, .05), 1, false)}`) : null)),
     h('ul', null, h('li', null, 'DCF：折現率採即時殖利率，利率升 → 目標價下修'), h('li', null, 'PEG：合理倍數隨利率偏離基準下修（每高 1pp 約 −8%）'), h('li', null, '同業相對本益比：不調整（同業價格已反映目前利率）'), h('li', null, '推薦上檔底線：≥ 無風險利率 ＋ 3pp（機會成本），且不低於 5%'), h('li', null, '警戒以上：bull／bear 區間加寬、推薦門檻再提高'))];
 }
+function healthCard(hl) {
+  if (!hl || !hl.verdict) return null;
+  const V = {sample: ['樣本不足', 'watch'], weak: ['落後大盤', 'risk'], ok: ['正常', 'ok']}[hl.verdict.level] || ['—', 'ok'], pr = hl.progress || {}, sc = hl.schedule || {};
+  const bar = (label, a, b) => h('div', {class: 'prog'}, h('span', {class: 'lb'}, label), h('div', {class: 'tr'}, h('div', {class: 'fi', style: `width:${Math.min(100, b ? a / b * 100 : 0)}%`})), h('b', {class: 'num'}, `${a}／${b}`));
+  return h('div', {class: 'card health ' + V[1]},
+    h('div', {class: 'hh'}, h('b', {class: 'hv'}, '系統健檢：' + V[0]), h('span', {class: 'muted sm'}, `${hl.first_date || ''} ～ ${hl.last_date || ''}`)),
+    h('p', {class: 'hl2'}, hl.verdict.label),
+    h('ul', {class: 'hf'}, (hl.findings || []).filter(f => f.level === 'warn').map(f => h('li', null, '⚠ ' + f.text))),
+    pr.need ? h('div', {class: 'progs'}, bar('到期推薦（20日）', pr.matured, pr.need), bar('不同股票', pr.matured_unique, pr.need_unique), h('span', {class: 'muted sm'}, '達標前不自動調參，避免追著雜訊跑')) : null,
+    h('div', {class: 'sched sm'}, h('span', null, '每週六檢討　每月首個週六調參'), h('span', {class: 'muted'}, `上次 ${sc.last_review || '—'}　下次 ${sc.next_weekly || '—'}　參數 v${sc.params_version || 1}`), h('a', {href: 'reviews.html'}, '看檢討報告 →')),
+    (hl.actions || []).length ? h('details', null, h('summary', {class: 'sm'}, `系統建議的改進（${hl.actions.length}）`), h('ul', null, hl.actions.map(a => h('li', null, a)))) : null,
+    h('details', null, h('summary', {class: 'sm'}, '更多觀察'), h('ul', null, (hl.findings || []).filter(f => f.level !== 'warn').map(f => h('li', null, f.text)))));
+}
 function perfView() {
   const P = S.perf, root = h('div');
   const pos = (P && P.positions || []).filter(p => (p.book || 'main') === S.pm), summ = S.pm === 'main' ? (P && P.summary) : (P && P[S.pm] && P[S.pm].summary);
   const seg = h('div', {class: 'seg', role: 'group', 'aria-label': '範圍'}, [['main', '主榜'], ['emerging', '前瞻專區'], ['bargain', '便宜好貨']].map(([k, l]) => h('button', {type: 'button', 'aria-pressed': S.pm === k, on: {click: () => { S.pm = k; render(); }}}, l)));
   root.append(h('div', {class: 'sec'}, h('h2', null, '績效追蹤'), seg, h('span', {class: 'sub'}, '進場價＝推薦日收盤；報酬未計成本；基準＝台股加權／S&P 500')));
+  if (S.pm === 'main') { const hc = healthCard(S.health); if (hc) root.append(hc); }
   if (!pos.length) { root.append(h('div', {class: 'empty'}, '尚無追蹤資料：推薦後需累積交易日才會出現績效。')); return root; }
   const done = h => summ && summ[h] && summ[h].n ? summ[h] : null, s5 = done('5'), s20 = done('20'), s60 = done('60');
   const last = pos.reduce((a, b) => (a.date > b.date ? a : b)).date;
-  root.append(h('div', {class: 'kpis', style: 'margin-top:8px'}, kpi('追蹤中推薦', pos.length + ' 筆'),
+  root.append(h('div', {class: 'kpis', style: 'margin-top:8px'}, kpi('追蹤中推薦', `${pos.length} 筆（${new Set(pos.map(p => p.ticker)).size} 檔）`, '同一檔股票每天重複推薦會重複計入，括號內為不同股票數'),
     kpi('5日平均超額', s5 ? pct(s5.avg_alpha) : '待累積', s5 ? `${s5.n} 筆到期；贏大盤 ${pct(s5.win_alpha, 0, false)}` : '需 5 個交易日'), kpi('20日平均超額', s20 ? pct(s20.avg_alpha) : '待累積', s20 ? `${s20.n} 筆到期；贏大盤 ${pct(s20.win_alpha, 0, false)}` : '需 20 個交易日'),
     kpi('60日平均超額', s60 ? pct(s60.avg_alpha) : '待累積', s60 ? `${s60.n} 筆到期` : '需 60 個交易日')));
   const coh = (P.cohorts || []).filter(c => (c.book || 'main') === S.pm && isNum(c.avg_alpha)).sort((a, b) => a.date < b.date ? -1 : 1).slice(-40);
@@ -490,6 +504,7 @@ async function init() {
   try { S.idx = (await getJSON('data/index.json')).dates; } catch (e) { document.getElementById('view').replaceChildren(h('div', {class: 'empty'}, location.protocol === 'file:' ? '請透過網址（http/https）開啟，直接開檔無法載入資料。' : '尚無資料。第一份日誌會在排程首次執行後出現。')); renderTabs(); return; }
   try { S.perf = await getJSON('data/performance.json'); } catch (e) { S.perf = null; }
   try { S.status = await getJSON('data/status.json'); } catch (e) { S.status = null; }
+  try { S.health = await getJSON('data/health.json'); } catch (e) { S.health = null; }
   const sel = document.getElementById('date'); sel.replaceChildren(...S.idx.map(x => h('option', {value: x.date}, x.date))); sel.addEventListener('change', () => loadDate(sel.value));
   if (S.idx.length) await loadDate(S.idx[0].date); else render();
 }

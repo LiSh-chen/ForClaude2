@@ -77,6 +77,8 @@ def write_dashboard(out: Path, data: Path) -> None:
     C.save_json(out / "data" / "index.json", {"dates": dates})
     st = C.load_json(data / "pipeline_status.json")
     C.save_json(out / "data" / "status.json", st if st else {})
+    hl = C.load_json(data / "health.json")
+    C.save_json(out / "data" / "health.json", hl if hl else {})
     perf = C.load_json(data / "performance.json")
     C.save_json(out / "data" / "performance.json", perf if perf else {"positions": [], "cohorts": [], "summary": {}})
 

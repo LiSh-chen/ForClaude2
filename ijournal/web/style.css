@@ -261,3 +261,9 @@ button.card.regime{display:block;width:100%;text-align:left;color:inherit;font:i
 @media(prefers-reduced-motion:reduce){.orb .w1,.orb .w2{animation:none}}
 .orb .ot{font-weight:700;fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
 .orbbox{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+
+.card.health{margin-top:10px}.card.health.risk{border:2px solid var(--warn)}.card.health.watch{box-shadow:inset 4px 0 0 var(--warn)}
+.health .hh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.health .hv{font-size:18px}.health .hl2{margin:6px 0 4px;font-size:15px;font-weight:600}
+.health .hf{margin:4px 0 8px;padding-left:18px}.health .progs{display:grid;gap:6px;max-width:520px;margin:6px 0}
+.health .prog{display:grid;grid-template-columns:120px 1fr 64px;gap:8px;align-items:center;font-size:13px}.health .prog .tr{height:8px;border-radius:4px;background:var(--grid);overflow:hidden}.health .prog .fi{height:100%;background:var(--accent)}
+.health .sched{display:flex;gap:14px;flex-wrap:wrap;align-items:baseline;margin-top:8px;padding-top:8px;border-top:1px solid var(--grid)}

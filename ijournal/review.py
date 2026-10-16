@@ -61,7 +61,7 @@ def diagnostics(min_obs: int, horizon: int, params: dict) -> dict:
     exp = lambda p: (1 + p["target_upside"]) ** (horizon / 250) - 1
     bias = mean([p[f"r{horizon}"] - exp(p) for p in pos])
     return {"ic_dates": ic_dates, "method_ic_dates": mdates, "factor_ic": {k: mean(v) for k, v in factor_ics.items()},
-            "method_ic": {k: mean(v) for k, v in method_ics.items()}, "comp_ic": mean(comp_ic), "n_matured": len(pos), "bias": bias,
+            "method_ic": {k: mean(v) for k, v in method_ics.items()}, "comp_ic": mean(comp_ic), "n_matured": len(pos), "n_matured_unique": len({p["ticker"] for p in pos}), "bias": bias,
             "sel_alpha": mean(sel_alpha), "pool_alpha": mean(pool_alpha), "focus_alpha": mean(focus_alpha), "n_sel": len(sel_alpha), "n_pool": len(pool_alpha),
             "perf": perf, "horizon": horizon}
 
@@ -84,6 +84,18 @@ def run_review(period: str, tune: bool = False, date: str | None = None, min_dat
     A(f"> 追蹤中推薦 {len(pos)} 筆，涵蓋 {len({p['date'] for p in pos})} 個推薦日。參數版本 v{params['version']}。僅供研究，不構成投資建議。\n")
     if not pos:
         A("目前尚無推薦紀錄可供檢討。\n")
+    # 0 一頁摘要（與儀表板績效頁頂端共用同一份健檢）
+    from .health import build_health
+    hl = build_health(perf, params, C.load_json(C.history_path(), []), sorted(f.stem for f in C.path("reviews").glob("*.md")), sname, dt.date.fromisoformat(date))
+    A("## 零、一頁摘要\n")
+    A(f"**{hl['verdict']['label']}**\n")
+    for fd in hl["findings"]:
+        A(f"- {'⚠ ' if fd['level'] == 'warn' else ''}{fd['text']}")
+    if hl.get("actions"):
+        A("\n**建議的結構性改進（需決定後才會實作）**\n")
+        for a_ in hl["actions"]:
+            A(f"- {a_}")
+    A("")
     # 1 總覽
     A("## 一、績效總覽（相對大盤）\n")
     A("基準：台股對加權指數、美股對 S&P 500。進場價為推薦日收盤價（未計交易成本與稅費，實際績效會更低）。\n")

@@ -39,7 +39,8 @@ def apply_tuning(diag: dict, date: str, min_dates: int | None = None) -> dict:
         changes += [f"估值方法權重 {x}" for x in c2]
     else:
         skipped.append(f"估值方法權重：僅 {diag['method_ic_dates']} 個有效日期（門檻 {md}），維持不變")
-    if diag["n_matured"] >= t["min_matured_picks"] and isnum(diag["bias"]):
+    mu = t.get("min_unique_tickers", 0)
+    if diag["n_matured"] >= t["min_matured_picks"] and diag.get("n_matured_unique", 10 ** 9) >= mu and isnum(diag["bias"]):
         lo, hi = t["shrink_bounds"]
         s0 = p["target_shrink"]
         if diag["bias"] < -t["bias_threshold"]:
@@ -49,7 +50,7 @@ def apply_tuning(diag: dict, date: str, min_dates: int | None = None) -> dict:
         if new["target_shrink"] != s0:
             changes.append(f"target_shrink: {s0:.2f}→{new['target_shrink']:.2f}（20 日實現報酬相對目標價隱含路徑的平均偏差 {diag['bias'] * 100:+.1f}pp）")
     else:
-        skipped.append(f"目標價折減：僅 {diag['n_matured']} 筆到期推薦（門檻 {t['min_matured_picks']}），維持不變")
+        skipped.append(f"目標價折減：僅 {diag['n_matured']} 筆到期推薦、{diag.get('n_matured_unique', 0)} 檔不同股票（門檻 {t['min_matured_picks']} 筆、{mu} 檔；同一檔每天重複推薦不算獨立樣本），維持不變")
     if changes:
         new["version"] = p["version"] + 1
         new["updated"] = date
