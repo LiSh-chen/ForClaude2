@@ -188,6 +188,45 @@
       "pe_sensitive": 35,
       "beta_sensitive": 1.5
     },
-    "min_coverage": 0.6
+    "min_coverage": 0.6,
+    "valuation": {
+      "rf_bounds": [
+        0.02,
+        0.08
+      ],
+      "rf_pass_tw": 0.5,
+      "peg_sens_per_pt": 0.08,
+      "peg_factor_bounds": [
+        0.8,
+        1.05
+      ],
+      "disp_add": {
+        "normal": 0.0,
+        "watch": 0.0,
+        "warn": 0.02,
+        "high": 0.04
+      }
+    },
+    "posture": {
+      "exposure": {
+        "normal": 1.0,
+        "watch": 0.85,
+        "warn": 0.7,
+        "high": 0.5
+      },
+      "batches": {
+        "normal": 2,
+        "watch": 3,
+        "warn": 4,
+        "high": 5
+      },
+      "sens_mult": {
+        "normal": 1.0,
+        "watch": 0.8,
+        "warn": 0.5,
+        "high": 0.25
+      },
+      "event_days": 7
+    }
   }
 }

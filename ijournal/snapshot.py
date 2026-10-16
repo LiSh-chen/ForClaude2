@@ -53,7 +53,7 @@ def stock_obj(r: dict, sec: dict | None, risk_ctx: dict, prices: dict, names: di
 def _macro_compact(m: dict) -> dict:
     inf = m["inflation"]
     return {"asof": m["asof"], "scores": m["scores"], "overlay": m["overlay"], "headline": M.headline_text(m), "factors": m["factors"],
-            "fed": m["fed"], "events": m["events"], "headlines": m["headlines"], "coverage": m["coverage"], "series": m["series"], "levels": m["levels_now"],
+            "fed": m["fed"], "posture": m["posture"], "valuation": m["valuation"], "events": m["events"], "headlines": m["headlines"], "coverage": m["coverage"], "series": m["series"], "levels": m["levels_now"],
             "inflation": {k: inf.get(k) for k in ("headline", "core", "unrate", "payrolls", "breakeven", "us2y")}}
 
 
@@ -73,6 +73,8 @@ def _macro_risks(o: dict, r: dict, m: dict) -> None:
         watch.append({"t": f"{nxt['date']} FOMC 利率決議：市場定價{'升息' if nxt['dir'] == 'hike' else '降息' if nxt['dir'] == 'cut' else '持平'}機率約 {nxt['prob'] * 100:.0f}%；若結果或談話比預期鷹派，{'高估值股通常跌幅較大' if sens else '大盤與成長股可能同步下跌'}。", "news": []})
     o["risks_now"] = now + o["risks_now"]
     o["risks_watch"] = watch + o["risks_watch"]
+    ps = m["posture"][r["market"]]
+    o["macro"] = {"level": ov["level"], "label": ov["label"], "sensitive": bool(sens), "size_mult": ps["sens_mult"] if sens else 1.0, "exposure": ps["exposure"]}
 
 
 def build(date: str, ctx: dict, emg: dict | None, prices: dict, bar: dict | None = None) -> dict:

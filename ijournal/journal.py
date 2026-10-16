@@ -183,6 +183,22 @@ def macro_lines(m: dict) -> list[str]:
             A(f"| {x['date']} | {x['days']} 天 | {x['after']:.2f}% | {x['delta_bp']:+.0f}bp（{'升息' if x['dir'] == 'hike' else '降息' if x['dir'] == 'cut' else '持平'}） | {x['prob'] * 100:.0f}% | {x['cum_bp']:+.0f}bp |")
         A("\n> 這是『市場定價』（含少量期限溢酬），不是聯準會的承諾；數字會隨每日資料變動。\n")
     ov = m["overlay"]
+    A("**整體操作建議（依風險等級的機械式建議，研究參考；不是個人化的投資建議）**\n")
+    for k, nm in (("US", "美股"), ("TW", "台股")):
+        ps = m["posture"][k]
+        A(f"- **{ps['headline']}**" + (f"。主要驅動：{'；'.join(ps['drivers'])}" if ps["drivers"] else ""))
+        for a in ps["actions"]:
+            A(f"  - {a}")
+    A("")
+    vc = m["valuation"]
+    A("**利率如何影響目標價**\n")
+    for k, nm in (("US", "美股"), ("TW", "台股")):
+        v = vc[k]
+        if "rf" in v:
+            A(f"- {nm}：DCF 無風險利率 {v['rf'] * 100:.2f}%（原設定 {v['rf_base'] * 100:.2f}%）；PEG 合理倍數 ×{v['peg_factor']:.2f}" + (f"；bull／bear 情境區間加寬 {v['disp_add'] * 100:.0f} 個百分點" if v["disp_add"] else "") + "。同業相對本益比不調整（同業價格已反映目前利率）。")
+        else:
+            A(f"- {nm}：無殖利率資料，沿用原設定的無風險利率。")
+    A("")
     A("**對選股的影響**\n")
     for k, nm in (("US", "美股"), ("TW", "台股")):
         o = ov[k]

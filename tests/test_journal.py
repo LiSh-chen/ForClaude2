@@ -549,3 +549,26 @@ def test_macro_in_pipeline_snapshot_journal_and_quality_warning():
     c = _qctx(macro={"coverage": {"ok": 2, "total": 11, "missing": ["殖利率衝擊"], "fred_errors": ["CPIAUCSL 無資料"], "contracts": 0}})
     r = assess(**c)
     assert any(i["code"] == "macro" and i["level"] == "warn" for i in r["issues"]) and r["level"] == "warn"
+
+
+def test_rate_adjusted_valuation_and_posture():
+    from ijournal import macro as M
+    mp = C.load_params()
+    f = {"eps_fwd_px": 5.0, "eps_ttm_px": 4.0, "fcf_ps": 4.0, "same_ccy": True, "beta": 1.2, "target_mean": None, "n_analysts": 0, "pe_fwd": 20.0, "eps_growth": 0.2, "rev_growth": 0.15}
+    pf = {"vol_ann": 0.3}
+    peers = {"pe": 22.0, "g": 0.1, "n": 5}
+    base = value_stock(100.0, f, pf, "US", peers, mp)
+    hi = M.valuation_ctx({"^TNX": _px([5.2] * 30)}, {"US": {"level": "warn"}, "TW": {"level": "warn"}}, mp["macro"], mp["valuation"]["rf"])
+    assert abs(hi["US"]["rf"] - 0.052) < 1e-9 and hi["TW"]["rf"] < hi["US"]["rf"] and hi["US"]["peg_factor"] < 1 and hi["US"]["disp_add"] == 0.02
+    adj = value_stock(100.0, f, pf, "US", peers, {**mp, "_macro_val": hi})
+    assert adj["methods"]["dcf"]["value"] < base["methods"]["dcf"]["value"]                 # 利率升 → DCF 下修
+    assert adj["methods"]["peg"]["value"] < base["methods"]["peg"]["value"]                 # PEG 倍數下修
+    assert abs(adj["methods"]["pe"]["value"] - base["methods"]["pe"]["value"]) < 1e-9       # 同業相對本益比不調整
+    assert "採即時殖利率" in adj["methods"]["dcf"]["detail"] and "利率調整" in adj["methods"]["peg"]["detail"]
+    assert adj["bear"] < base["bear"] and adj["base"] < base["base"]                        # 下檔更大、目標價較低
+    assert M.valuation_ctx({}, {"US": {"level": "normal"}, "TW": {"level": "normal"}}, mp["macro"], mp["valuation"]["rf"])["US"].get("rf") is None   # 無殖利率資料 → 沿用原設定
+    # 操作建議：等級越高，水位越低、分批越多、高風險標的比重越小；FOMC 7 天內加上『決議前不宜重壓』
+    ov = M.overlay({"US": 70.0, "TW": 10.0}, mp["macro"])
+    ps = M.posture([], {"meetings": [{"date": "2026-10-28", "days": 5, "dir": "hike", "prob": 0.6}]}, ov, mp["macro"])
+    assert ps["US"]["exposure"] == 0.5 and ps["US"]["batches"] == 5 and ps["US"]["sens_mult"] == 0.25 and ps["TW"]["exposure"] == 1.0
+    assert any("決議前不宜重壓" in a for a in ps["US"]["actions"]) and "正常配置" in ps["TW"]["headline"]

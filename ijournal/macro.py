@@ -15,7 +15,7 @@ import re
 
 import pandas as pd
 
-from .utils import avg, isnum, lin, wavg
+from .utils import avg, clip, isnum, lin, wavg
 
 MONTH_CODE = "FGHJKMNQUVXZ"
 LEVELS = [("normal", "正常"), ("watch", "留意"), ("warn", "警戒"), ("high", "高風險")]
@@ -260,6 +260,49 @@ def overlay(scores: dict, p: dict) -> dict:
     return out
 
 
+def valuation_ctx(prices: dict, overlay_: dict, p: dict, base_rf: dict) -> dict:
+    """利率如何進入目標價：①DCF 的無風險利率改用即時美債殖利率（台股只傳導一部分）；②PEG 的合理倍數隨利率相對基準的偏離下修；
+    ③警戒以上加寬 bull／bear 情境區間。同業相對本益比不調整（同業價格本來就反映目前利率）。"""
+    vp, y = p["valuation"], _last(prices, "^TNX")
+    out = {}
+    for m in ("US", "TW"):
+        d = {"rf_base": base_rf[m], "disp_add": vp["disp_add"][overlay_[m]["level"]]}
+        if isnum(y) and 0.5 < y < 15:                       # ^TNX 以百分比報價
+            us = y / 100.0
+            rf = us if m == "US" else base_rf[m] + vp["rf_pass_tw"] * (us - base_rf["US"])
+            rf = clip(rf, vp["rf_bounds"][0] if m == "US" else 0.0, vp["rf_bounds"][1])
+            d["rf"] = rf
+            d["peg_factor"] = clip(1 - vp["peg_sens_per_pt"] * (rf - base_rf[m]) * 100, *vp["peg_factor_bounds"])
+        out[m] = d
+    return out
+
+
+def posture(F: list[dict], fed: dict, overlay_: dict, p: dict, today_events: list[dict] | None = None) -> dict:
+    """把風險等級轉成『整體操作建議』（機械式、研究參考，不是個人化投資建議）：持股水位、分批次數、高風險標的比重、重要事件前的做法。"""
+    pp = p["posture"]
+    out = {}
+    nxt = (fed.get("meetings") or [None])[0]
+    for m, nm in (("US", "美股"), ("TW", "台股")):
+        o = overlay_[m]
+        lv = o["level"]
+        exposure, batches, sens = pp["exposure"][lv], pp["batches"][lv], pp["sens_mult"][lv]
+        pool = [f for f in F if f["score"] is not None and (m == "TW" or not f["tw_only"]) and f["state"] in ("watch", "risk")]
+        drivers = [f"{f['label']}（{f['value']}）" for f in sorted(pool, key=lambda f: -f["score"])[:3]]
+        acts = []
+        if lv == "normal":
+            acts.append("環境正常：依推薦名單正常配置，仍建議分 2 批進場。")
+        else:
+            acts.append(f"整體持股水位建議在原計畫的 {exposure * 100:.0f}% 以下（例如原計畫 10 成 → {exposure * 10:.1f} 成），其餘保留現金。")
+            acts.append(f"分 {batches} 批以上進場，避免一次買足。")
+            if sens < 1:
+                acts.append(f"高估值（預估本益比 > {o['pe']}）或高 Beta（> {o['beta']}）的標的，單檔比重再乘以 {sens:.2f}。")
+        if nxt and nxt["days"] <= pp["event_days"]:
+            acts.append(f"FOMC 決議（{nxt['date']}）只剩 {nxt['days']} 天：決議前不宜重壓，等結果與談話落地後再調整。")
+        out[m] = {"level": lv, "label": o["label"], "exposure": exposure, "batches": batches, "sens_mult": sens, "drivers": drivers, "actions": acts,
+                  "headline": f"{nm}環境「{o['label']}」：" + ("正常配置" if lv == "normal" else f"建議持股水位 ≤ 原計畫 {exposure * 100:.0f}%、分 {batches} 批進場")}
+    return out
+
+
 def rate_sensitive(f: dict, ov: dict) -> bool:
     return (isnum(f.get("pe_fwd")) and f["pe_fwd"] > ov["pe"]) or (isnum(f.get("beta")) and f["beta"] > ov["beta"])
 
@@ -295,16 +338,17 @@ def headlines(items: list[dict], cfg: dict, n: int = 8) -> list[dict]:
 
 
 # ---------------------------------------------------------------- 主函式
-def analyze(prices: dict, fred: dict, items: list[dict], cfg: dict, p: dict, today: dt.date, fred_errors: list[str] | None = None) -> dict:
+def analyze(prices: dict, fred: dict, items: list[dict], cfg: dict, p: dict, today: dt.date, fred_errors: list[str] | None = None, base_rf: dict | None = None) -> dict:
     fed = fed_path(prices, fred, cfg, today)
     infl = inflation_labor(fred)
     F = factors(prices, fed, infl, p)
     sc = score_all(F, p)
     ov = overlay(sc, p)
+    base_rf = base_rf or {"US": 0.042, "TW": 0.016}
     ok = sum(1 for f in F if f["score"] is not None)
     miss = [f["label"] for f in F if f["score"] is None]
     keys = ("^TNX", "^IRX", "DX-Y.NYB", "CL=F", "^VIX", "^GSPC", "^SOX")
-    return {"asof": str(today), "scores": sc, "overlay": ov, "factors": F, "fed": fed, "inflation": infl, "events": events(fed, infl, today),
+    return {"asof": str(today), "scores": sc, "overlay": ov, "valuation": valuation_ctx(prices, ov, p, base_rf), "posture": posture(F, fed, ov, p), "factors": F, "fed": fed, "inflation": infl, "events": events(fed, infl, today),
             "headlines": headlines(items, cfg), "coverage": {"ok": ok, "total": len(F), "missing": miss, "fred_errors": fred_errors or [], "contracts": fed.get("n_contracts", 0)},
             "series": {t: _series(prices, t) for t in keys},
             "levels_now": {"us10y": _last(prices, "^TNX"), "us3m": _last(prices, "^IRX"), "us30y": _last(prices, "^TYX"), "vix": _last(prices, "^VIX")}}

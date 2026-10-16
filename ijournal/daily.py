@@ -99,8 +99,8 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
             today = pd.Timestamp(date).date()
             fred, ferr = provider.macro_fred(mcfg, today)
             fred = {k: [(d, v) for d, v in rows if d <= today] for k, rows in fred.items()}
-            macro_res = M.analyze(prices, fred, items, mcfg, params["macro"], today, ferr)
-            params = {**params, "_overlay": macro_res["overlay"]}
+            macro_res = M.analyze(prices, fred, items, mcfg, params["macro"], today, ferr, params["valuation"]["rf"])
+            params = {**params, "_overlay": macro_res["overlay"], "_macro_val": macro_res["valuation"]}
             print(f"[daily] 總經環境：{M.headline_text(macro_res)}；涵蓋 {macro_res['coverage']['ok']}/{macro_res['coverage']['total']} 項" + (f"；FRED 問題：{'、'.join(ferr)}" if ferr else ""))
     except Exception as ex:  # noqa: BLE001
         print(f"[daily] 總經分析失敗（略過，不調整門檻）：{ex!r}")
