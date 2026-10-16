@@ -36,6 +36,41 @@ def schedule(today: dt.date, reviews: list[str], history: list[dict], params: di
             "params_version": params["version"], "last_change": {"date": ch["date"], "version": ch["version"], "changes": ch["changes"]} if ch else None}
 
 
+BOOKS = (("main", "主榜"), ("emerging", "前瞻專區"), ("bargain", "便宜好貨"))
+
+
+def strategy_compare(perf: dict) -> dict:
+    """三個策略放在同一個尺上比：只看『三者都已經在追蹤』的同一段期間、每檔股票只計首次推薦（不讓重複推薦灌水）。
+    各專區開始追蹤的日子不同、每天重複推薦的次數也不同，直接比較各分頁的數字會誤導。"""
+    allpos = [p for p in perf.get("positions", []) if p.get("book", "main") in dict(BOOKS)]
+    starts = {b: min((p["date"] for p in allpos if p.get("book", "main") == b), default=None) for b, _ in BOOKS}
+    have = {b: d for b, d in starts.items() if d}
+    if len(have) < 2:
+        return {"rows": [], "since": None}
+    since = max(have.values())
+    rows = []
+    for b, name in BOOKS:
+        first = {}
+        for p in sorted((p for p in allpos if p.get("book", "main") == b and p["date"] >= since), key=lambda p: p["date"]):
+            first.setdefault(p["ticker"], p)
+        al = [p["alast"] for p in first.values() if isnum(p.get("alast"))]
+        if al:
+            rows.append({"book": b, "name": name, "n": len(al), "alpha": sum(al) / len(al), "ret": _avg([p["rlast"] for p in first.values()]), "win": sum(1 for x in al if x > 0) / len(al)})
+    return {"rows": rows, "since": since}
+
+
+def upside_buckets(perf: dict, cut: float = 0.45) -> dict | None:
+    """假設追蹤：模型算出『特別高的上檔』的標的，後續表現是否特別差（可能是估值失真或高波動題材）。樣本小時只描述、不下結論。"""
+    first = {}
+    for p in sorted((p for p in perf.get("positions", []) if isnum(p.get("alast")) and isnum(p.get("target_upside"))), key=lambda p: p["date"]):
+        first.setdefault((p.get("book", "main"), p["ticker"]), p)
+    hi = [p["alast"] for p in first.values() if p["target_upside"] >= cut]
+    lo = [p["alast"] for p in first.values() if p["target_upside"] < cut]
+    if len(hi) < 3 or len(lo) < 3:
+        return None
+    return {"cut": cut, "n_hi": len(hi), "alpha_hi": sum(hi) / len(hi), "n_lo": len(lo), "alpha_lo": sum(lo) / len(lo)}
+
+
 def build_health(perf: dict, params: dict, history: list[dict], reviews: list[str], sector_names: dict, today: dt.date | None = None) -> dict:
     today = today or dt.date.today()
     t = params["tuning"]
@@ -98,6 +133,13 @@ def build_health(perf: dict, params: dict, history: list[dict], reviews: list[st
     if not enough:
         F.append({"level": "info", "text": f"調整系統所需的樣本還不夠：到期 {len(matured)}／{prog['need']} 筆、不同股票 {n_mat_u}／{prog['need_unique']} 檔。在此之前不自動調參，避免追著雜訊跑。"})
     F.append({"level": "info", "text": f"檢討機制：每週六產生檢討報告；每月第一個週六在樣本足夠時調整參數（上次檢討 {out['schedule']['last_review'] or '尚無'}、下次 {out['schedule']['next_weekly']}）。"})
+    sc = strategy_compare(perf)
+    out["strategies"] = sc
+    ub = upside_buckets(perf)
+    if ub:
+        out["upside_buckets"] = ub
+        if ub["alpha_hi"] - ub["alpha_lo"] <= -0.03:
+            F.append({"level": "warn", "text": f"假設追蹤：目標價上檔 ≥{ub['cut']:.0%} 的 {ub['n_hi']} 檔平均超額 {pc(ub['alpha_hi'])}，其餘 {ub['n_lo']} 檔 {pc(ub['alpha_lo'])}。樣本很小且同在一段行情，先持續觀察，累積到各 20 檔以上再決定是否收緊上檔上限。"})
     # --- 結構性建議（讓檢討不只是描述）
     acts = []
     if top and top[0][1] / len(pos) >= 0.25:
