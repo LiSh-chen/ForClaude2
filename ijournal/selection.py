@@ -126,12 +126,14 @@ def eligible(r: dict, p: dict) -> tuple[bool, str]:
         return False, "市值過小"
     if pf["turnover"] < s["min_avg_turnover"][m]:
         return False, "流動性不足"
-    if r["val"]["upside"] < s["min_upside"]:
-        return False, "目標價上檔空間不足"
+    mv = (p.get("_macro_val") or {}).get(m) or {}
+    floor = max(s["min_upside"], mv.get("hurdle", 0.0))        # 底線隨利率：上檔至少要高過（無風險利率＋風險補償）
+    if r["val"]["upside"] < floor:
+        return False, "目標價上檔空間不足" if floor <= s["min_upside"] else f"上檔未達利率門檻（{floor * 100:.1f}%）"
     ov = (p.get("_overlay") or {}).get(m)
     if ov and (ov["extra_upside"] or ov["sens_extra"]):
         sens = (isnum(f.get("pe_fwd")) and f["pe_fwd"] > ov["pe"]) or (isnum(f.get("beta")) and f["beta"] > ov["beta"])
-        if r["val"]["upside"] < s["min_upside"] + ov["extra_upside"] + (ov["sens_extra"] if sens else 0.0):
+        if r["val"]["upside"] < floor + ov["extra_upside"] + (ov["sens_extra"] if sens else 0.0):
             return False, f"總經{ov['label']}：{'高估值／高Beta股' if sens else '一般股'}需更大安全邊際"
     if sc["quality"] is None or sc["quality"] < s["min_quality_score"]:
         return False, "財務品質不足"

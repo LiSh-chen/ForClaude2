@@ -38,7 +38,8 @@ def eligible(r: dict, p: dict) -> tuple[bool, str]:
     if v["spread"] > b["max_method_spread"]:
         return False, "各估值方法分歧過大"
     ov = (p.get("_overlay") or {}).get(m) or {}
-    if v["upside"] < b["min_upside"] + ov.get("extra_upside", 0.0):
+    hurdle = ((p.get("_macro_val") or {}).get(m) or {}).get("hurdle", 0.0)
+    if v["upside"] < max(b["min_upside"], hurdle) + ov.get("extra_upside", 0.0):
         return False, "目標價上檔空間不足" if not ov.get("extra_upside") else f"總經{ov['label']}：上檔需更大安全邊際"
     if sc["quality"] is None or sc["quality"] < b["min_quality_score"]:
         return False, "財務品質不足（疑似價值陷阱）"

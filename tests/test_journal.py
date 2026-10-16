@@ -572,3 +572,32 @@ def test_rate_adjusted_valuation_and_posture():
     ps = M.posture([], {"meetings": [{"date": "2026-10-28", "days": 5, "dir": "hike", "prob": 0.6}]}, ov, mp["macro"])
     assert ps["US"]["exposure"] == 0.5 and ps["US"]["batches"] == 5 and ps["US"]["sens_mult"] == 0.25 and ps["TW"]["exposure"] == 1.0
     assert any("決議前不宜重壓" in a for a in ps["US"]["actions"]) and "正常配置" in ps["TW"]["headline"]
+
+
+def test_dynamic_rate_hurdle_blocks_upside_below_risk_free_plus_premium():
+    from ijournal import macro as M
+    from ijournal.selection import eligible
+    mp = C.load_params()
+    ctx = M.valuation_ctx({"^TNX": _px([5.09] * 30)}, {"US": {"level": "watch"}, "TW": {"level": "watch"}}, mp["macro"], mp["valuation"]["rf"])
+    assert abs(ctx["US"]["hurdle"] - 0.0809) < 1e-9 and abs(ctx["TW"]["hurdle"] - 0.050449999999999995) < 1e-9   # 美股門檻 8.09%；台股約 5.04%（與基本門檻 5% 幾乎相同）
+    row = {"market": "US", "val": {"spread": 0.1, "upside": 0.054}, "f": {"market_cap": 5e11, "pe_fwd": 20, "beta": 1.0, "eps_ttm_px": 3.0, "eps_fwd_px": 4.0},
+           "pf": {"turnover": 5e9}, "scores": {"quality": 80.0, "leader": 100.0}}
+    assert eligible(row, mp)[0]                                                               # 沒有利率資料：5.4% > 基本門檻 5% → 通過
+    ok, why = eligible(row, {**mp, "_macro_val": ctx})
+    assert not ok and "利率門檻" in why                                                         # 利率 5.09%：5.4% < 8.09% → 擋下
+    row["val"]["upside"] = 0.09
+    assert eligible(row, {**mp, "_macro_val": ctx})[0]                                        # 9% ≥ 8.09% → 通過
+    row["market"], row["val"]["upside"] = "TW", 0.054
+    assert eligible(row, {**mp, "_macro_val": ctx})[0]                                        # 台股門檻約 5.04%：5.4% 仍通過
+    assert M.valuation_ctx({}, {"US": {"level": "normal"}, "TW": {"level": "normal"}}, mp["macro"], mp["valuation"]["rf"])["US"].get("hurdle") is None
+
+
+def test_macro_factors_have_short_values_and_journal_section_is_compact():
+    from ijournal.daily import run_daily
+    d = run_daily(DemoProvider(end=dt.date(2026, 9, 30)), asof="2026-07-28")
+    sn = C.load_json(C.path("data") / "snapshots" / f"{d}.json")
+    assert all(f.get("short") for f in sn["macro"]["factors"] if f["score"] is not None)            # 每個因子都有一句話的短數據（圖表用）
+    assert {"valuation", "posture"} <= set(sn["macro"])
+    md = (C.path("journal") / f"{d}.md").read_text(encoding="utf-8")
+    sec = md.split("## 一之二、總經與市場環境")[1].split("\n## ")[0]
+    assert len([x for x in sec.splitlines() if x.strip()]) <= 32 and "| 因子 | 分數 | 狀態 | 數據 |" in sec     # 精簡：一張表＋幾行重點

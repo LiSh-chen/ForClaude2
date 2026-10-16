@@ -238,6 +238,14 @@ def factors(prices: dict, fed: dict, infl: dict, p: dict) -> list[dict]:
     add("tw_fx", "台幣貶值（資金面）", "happened", lin(twd, 0.0, 0.03), f"美元兌台幣 20日 {twd * 100:+.1f}%" if isnum(twd) else "無資料", "台幣快速貶值常伴隨外資賣超。", tw=True)
     add("tw_semi", "費半與加權指數", "happened", wavg([(lin(-sox5 if isnum(sox5) else None, 0, 0.10), 0.6), (lin(-taiex5 if isnum(taiex5) else None, 0, 0.05), 0.4)]),
         f"費半 5日 {sox5 * 100:+.1f}%；加權 5日 {taiex5 * 100:+.1f}%" if isnum(sox5) and isnum(taiex5) else "無資料", "台股高度連動費半（AI 供應鏈）。", tw=True)
+    sp = lambda x, d=1: f"{x * 100:+.{d}f}%" if isnum(x) else "—"
+    short = {"rate_shock": f"{y10:.2f}% {_fmt_bp(c20)}" if isnum(y10) else "—", "vol": f"{vix:.1f}" if isnum(vix) else "—",
+             "equity": f"費半 {sp(sox5)}", "usd": sp(dx), "oil": sp(oil), "credit": sp(cr),
+             "fed": (f"{m['prob'] * 100:.0f}% {m['date'][5:]}" if m else "—"),
+             "inflation": (f"年增 {hc['yoy'] * 100:.1f}%" if hc and isnum(hc.get("yoy")) else "—"),
+             "growth": (f"失業 {ur['value']:.1f}%" if ur else "—"), "tw_fx": sp(twd), "tw_semi": f"費半 {sp(sox5)}"}
+    for f in F:
+        f["short"] = short.get(f["id"], "")
     return F
 
 
@@ -272,6 +280,8 @@ def valuation_ctx(prices: dict, overlay_: dict, p: dict, base_rf: dict) -> dict:
             rf = us if m == "US" else base_rf[m] + vp["rf_pass_tw"] * (us - base_rf["US"])
             rf = clip(rf, vp["rf_bounds"][0] if m == "US" else 0.0, vp["rf_bounds"][1])
             d["rf"] = rf
+            d["hurdle"] = rf + vp["hurdle_premium"]          # 機會成本：預期上檔至少要高過無風險利率再加風險補償
+            d["hurdle"] = rf + vp["hurdle_premium"]          # 機會成本：預期上檔至少要高過無風險利率再加風險補償，否則不如買公債
             d["peg_factor"] = clip(1 - vp["peg_sens_per_pt"] * (rf - base_rf[m]) * 100, *vp["peg_factor_bounds"])
         out[m] = d
     return out

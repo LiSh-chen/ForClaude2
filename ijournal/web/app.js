@@ -319,56 +319,88 @@ function factorDrawer(f, m) {
     f.group === 'ahead' ? h('div', {class: 'note'}, '這一類是『預期』：市場正在為尚未發生的事情定價，結果可能比預期更好或更差，所以只列為風險提示，不當成已發生的事實。') : h('div', {class: 'note'}, '這一類是『已經發生』的市場數據，價格已經反映，但可能還會延續。'),
     f.id === 'fed' ? fedChart(m.fed) : null]);
 }
-function fedChart(fed) {
+function fedChart(fed, compact) {
   const ms = fed.meetings || []; if (!ms.length || !isNum(fed.effr)) return h('p', {class: 'muted'}, '無聯邦基金期貨資料。');
-  const W = 560, H = 230, L = 44, R = 12, T = 22, B = 44, vals = [fed.effr, ...ms.map(x => x.after)], lo = Math.floor((Math.min(...vals) - .1) * 10) / 10, hi = Math.ceil((Math.max(...vals) + .1) * 10) / 10;
+  const W = 600, H = 230, L = 44, R = 70, T = 22, B = 44, vals = [fed.effr, ...ms.map(x => x.after)], lo = Math.floor((Math.min(...vals) - .1) * 10) / 10, hi = Math.ceil((Math.max(...vals) + .1) * 10) / 10;
   const Y = v => T + (H - T - B) * (1 - (v - lo) / (hi - lo)), bw = Math.min(54, (W - L - R) / ms.length - 14);
   const svg = s('svg', {viewBox: `0 0 ${W} ${H}`, width: '100%', role: 'img', 'aria-label': '市場隱含的政策利率路徑'});
   for (let i = 0; i <= 4; i++) { const v = lo + (hi - lo) * i / 4; svg.append(s('line', {x1: L, x2: W - R, y1: Y(v), y2: Y(v), style: 'stroke:var(--grid)'}), s('text', {x: L - 5, y: Y(v) + 4, 'text-anchor': 'end'}, v.toFixed(2) + '%')); }
   ms.forEach((x, i) => { const cx = L + (W - L - R) * (i + .5) / ms.length, y = Y(x.after), c = s('rect', {x: cx - bw / 2, y, width: bw, height: Math.max(1, Y(lo) - y), rx: 4, style: 'fill:var(--accent);opacity:.85', 'data-tip': `${x.date} 會議後隱含利率 ${x.after.toFixed(2)}%\n本次 ${x.delta_bp >= 0 ? '+' : ''}${x.delta_bp.toFixed(0)}bp｜25bp 機率約 ${(x.prob * 100).toFixed(0)}%\n累計 ${x.cum_bp >= 0 ? '+' : ''}${x.cum_bp.toFixed(0)}bp`});
     svg.append(c, s('text', {x: cx, y: y - 6, 'text-anchor': 'middle', style: 'font-weight:700;fill:var(--ink)'}, `${x.delta_bp >= 0 ? '+' : ''}${x.delta_bp.toFixed(0)}bp`), s('text', {x: cx, y: H - 26, 'text-anchor': 'middle'}, x.date.slice(2)), s('text', {x: cx, y: H - 12, 'text-anchor': 'middle', style: 'fill:var(--muted)'}, `${(x.prob * 100).toFixed(0)}% ${x.dir === 'hike' ? '升' : x.dir === 'cut' ? '降' : '平'}`)); });
-  svg.append(s('line', {x1: L, x2: W - R, y1: Y(fed.effr), y2: Y(fed.effr), style: 'stroke:var(--warn);stroke-dasharray:5 4;stroke-width:1.5'}), s('text', {x: L + 4, y: Y(fed.effr) - 5, 'text-anchor': 'start', style: 'fill:var(--warn);font-weight:700'}, `目前 ${fed.effr.toFixed(2)}%`));
-  return h('div', null, svg, h('p', {class: 'muted sm'}, '長條＝各次 FOMC 後的市場隱含政策利率（由聯邦基金期貨推算）；虛線＝目前有效利率；下方為該次升／降息 25bp 的機率。這是市場定價，不是聯準會的承諾。'));
+  svg.append(s('line', {x1: L, x2: W - R, y1: Y(fed.effr), y2: Y(fed.effr), style: 'stroke:var(--warn);stroke-dasharray:5 4;stroke-width:1.5'}), s('text', {x: W - R + 6, y: Y(fed.effr) + 4, 'text-anchor': 'start', style: 'fill:var(--warn);font-weight:700'}, `目前 ${fed.effr.toFixed(2)}%`));
+  return h('div', null, svg, compact ? null : h('p', {class: 'muted sm'}, '長條＝各次 FOMC 後的市場隱含政策利率（由聯邦基金期貨推算）；虛線＝目前有效利率；下方為該次升／降息 25bp 的機率。這是市場定價，不是聯準會的承諾。'));
 }
-function factorRow(f, m) {
-  const [lab, cls] = ST[f.state] || ['—', 'ok'];
-  return h('button', {type: 'button', class: 'frow ' + cls, on: {click: () => factorDrawer(f, m)}, tip: f.detail},
-    h('span', {class: 'fl'}, f.label + (f.tw_only ? '（台股）' : '')), h('span', {class: 'ft'}, h('i', {style: `width:${isNum(f.score) ? f.score : 0}%`})), h('span', {class: 'fs num'}, nz(f.score, 0)), h('span', {class: 'fc'}, lab), h('span', {class: 'fv'}, f.value));
+const dots = (n, N = 5) => h('span', {class: 'dots', role: 'img', 'aria-label': `分 ${n} 批進場`}, '●'.repeat(n) + '○'.repeat(Math.max(0, N - n)));
+function postureDrawer(k, m) {
+  const ps = m.posture[k];
+  openDrawer(`${MK[k]}環境「${ps.label}」：操作建議`, '依風險等級的機械式建議；研究參考，不是個人化的投資建議', [
+    h('ul', null, ps.actions.map(a => h('li', null, a))),
+    ps.drivers.length ? sec('主要驅動因子', h('ul', null, ps.drivers.map(d => h('li', null, d)))) : null,
+    h('div', {class: 'note'}, '建議持股水位、分批與比重倍數皆為初始設定，未經回測；「原計畫」指你自己決定的總投入。')]);
 }
 function regimeCard(mk, m) {
-  const o = m.overlay[mk], sc = m.scores[mk], up = o.extra_upside * 100, sup = (o.extra_upside + o.sens_extra) * 100;
-  return h('div', {class: 'card regime lv-' + o.level},
-    h('div', {class: 'rh'}, h('span', {class: 'muted'}, MK[mk] + '環境'), h('b', {class: 'rl'}, o.label), h('span', {class: 'num rs'}, nz(sc, 0) + ' 分')), gauge(sc, o.level),
-    h('div', {class: 'sm', style: 'margin-top:8px'}, o.extra_upside || o.sens_extra ? [h('b', null, '推薦門檻已提高：'), `一般股目標價上檔需再多 ${up.toFixed(0)} 個百分點；高估值／高 Beta 股多 ${sup.toFixed(0)} 個百分點。`] : '目前不調整推薦門檻（僅在「警戒」以上才會提高）。'));
+  const o = m.overlay[mk], sc = m.scores[mk], ps = m.posture[mk], exp = Math.round(ps.exposure * 100);
+  return h('button', {type: 'button', class: 'card regime lv-' + o.level, on: {click: () => postureDrawer(mk, m)}, 'aria-label': `${MK[mk]}環境 ${o.label} ${nz(sc, 0)} 分，點擊看操作建議`},
+    h('div', {class: 'rh'}, h('span', {class: 'muted'}, MK[mk]), h('b', {class: 'rl'}, o.label), h('span', {class: 'num rs'}, nz(sc, 0))), gauge(sc, o.level),
+    h('div', {class: 'rmini'},
+      h('div', null, h('span', {class: 'lb'}, '建議持股水位'), h('div', {class: 'expo', tip: `原計畫的 ${exp}% 以下`}, h('i', {style: `width:${exp}%`}), h('b', null, `≤${exp}%`))),
+      h('div', null, h('span', {class: 'lb'}, '分批進場'), dots(ps.batches)),
+      h('div', null, h('span', {class: 'lb'}, '高估值／高Beta 比重'), h('b', {class: 'num'}, `×${ps.sens_mult}`))),
+    h('span', {class: 'muted sm'}, '點擊看操作建議'));
+}
+function kp(label, big, sub, state, onClick, series) {
+  return h('button', {type: 'button', class: 'tile kp' + (state === 'risk' ? ' hot' : state === 'watch' ? ' warm' : ''), on: {click: onClick || (() => {})}},
+    h('div', {class: 'lb'}, (state === 'risk' ? '⚠ ' : '') + label), h('div', {class: 'v num'}, big), h('div', {class: 'd muted'}, sub), series ? spark(series, 150, 28) : null);
+}
+function factorBars(group, m) {
+  const fs = m.factors.filter(f => f.group === group), top = new Set(fs.filter(f => f.state === 'risk' || f.state === 'watch').sort((a, b) => b.score - a.score).slice(0, 2).map(f => f.id));
+  return h('div', {class: 'frows'}, fs.map(f => h('button', {type: 'button', class: 'frow2 ' + (f.state || 'ok') + (top.has(f.id) ? ' top' : ''), on: {click: () => factorDrawer(f, m)}, tip: f.value},
+    h('span', {class: 'fl'}, (top.has(f.id) ? '★ ' : '') + f.label + (f.tw_only ? '（台）' : '')),
+    h('span', {class: 'ft', 'aria-hidden': 'true'}, h('i', {class: 'tk1'}), h('i', {class: 'tk2'}), h('b', {style: `width:${isNum(f.score) ? f.score : 0}%`})),
+    h('span', {class: 'fs num'}, nz(f.score, 0)), h('span', {class: 'fv num'}, (f.state === 'risk' ? '⚠ ' : '') + (f.short || '—')))));
 }
 function macroView() {
   const m = S.snap.macro, root = h('div');
   if (!m) return h('div', {class: 'empty'}, '此日期沒有總經資料。');
-  root.append(h('div', {class: 'note'}, h('b', null, '股價之外的環境風險：'), '把「已經發生」（殖利率、波動率、股市、美元、油價）和「尚未發生」（升息機率、通膨、就業與重要事件）分開看，避免把預期當成事實。分數越高越需要謹慎；它是風險提示，不是漲跌預測，只在「警戒」以上才會提高推薦門檻。',
-    h('div', {class: 'muted sm', style: 'margin-top:4px'}, `資料涵蓋 ${m.coverage.ok}／${m.coverage.total} 項因子；來源：Yahoo（殖利率、VIX、美元、油價、聯邦基金期貨）、FRED（CPI、就業、基準利率）。`)));
-  root.append(h('div', {class: 'sec'}, h('h2', null, '環境等級'), h('span', {class: 'sub'}, '0–100：<30 正常、30–50 留意、50–65 警戒、≥65 高風險')), h('div', {class: 'grid g2'}, regimeCard('US', m), regimeCard('TW', m)));
-  if (m.posture) root.append(h('div', {class: 'sec'}, h('h2', null, '整體操作建議'), h('span', {class: 'sub'}, '依風險等級的機械式建議；研究參考，不是個人化的投資建議')),
-    h('div', {class: 'grid g2'}, ['US', 'TW'].map(k => { const ps = m.posture[k]; return h('div', {class: 'card posture lv-' + ps.level}, h('b', null, ps.headline), ps.drivers.length ? h('div', {class: 'muted sm', style: 'margin-top:4px'}, '主要驅動：' + ps.drivers.join('；')) : null, h('ul', {style: 'margin:8px 0 0'}, ps.actions.map(a => h('li', null, a)))); })));
-  const grp = (g, t, sub) => [h('div', {class: 'sec'}, h('h2', null, t), h('span', {class: 'sub'}, sub)), h('div', {class: 'card'}, h('div', {class: 'frows'}, m.factors.filter(f => f.group === g).map(f => factorRow(f, m))))];
-  root.append(...grp('happened', '已發生：市場數據顯示的壓力', '價格已經反映；點任一列看說明'), ...grp('ahead', '尚未發生：市場預期與可能的事件', '預期可能比實際更好或更差；點任一列看說明與利率路徑'));
-  if (m.fed && (m.fed.meetings || []).length) root.append(h('div', {class: 'sec'}, h('h2', null, '市場預期的利率路徑'), h('span', {class: 'sub'}, '聯邦基金期貨隱含，非聯準會承諾')), h('div', {class: 'card'}, h('div', {style: 'max-width:680px'}, fedChart(m.fed))));
-  if (m.valuation) root.append(h('div', {class: 'sec'}, h('h2', null, '利率如何影響目標價'), h('span', {class: 'sub'}, '已套用在今日所有目標價')),
-    h('div', {class: 'card sm'}, h('ul', {style: 'margin:0'}, ['US', 'TW'].map(k => { const v = m.valuation[k]; return h('li', null, h('b', null, MK[k] + '：'), isNum(v.rf) ? `DCF 無風險利率 ${pct(v.rf, 2, false)}（原設定 ${pct(v.rf_base, 2, false)}）；PEG 合理倍數 ×${nz(v.peg_factor, 2)}` + (v.disp_add ? `；bull／bear 情境區間加寬 ${Math.round(v.disp_add * 100)} 個百分點` : '') : '無殖利率資料，沿用原設定'); })),
-      h('div', {class: 'muted sm', style: 'margin-top:6px'}, '利率上升 → 折現率上升 → DCF 與 PEG 目標價下修；同業相對本益比不調整（同業價格已反映目前利率）。')));
-  const inf = m.inflation || {}, tiles = [];
-  if (inf.headline) tiles.push(['CPI 年增', pct(inf.headline.yoy, 1, false), `月增 ${pct(inf.headline.mom, 2)}（${(inf.headline.date || '').slice(0, 7)}）`]);
-  if (inf.core) tiles.push(['核心 CPI 月增', pct(inf.core.mom, 2), `前月 ${pct(inf.core.prev_mom, 2)}；近3月年化 ${pct(inf.core.ann3m, 1, false)}`]);
+  const F = Object.fromEntries(m.factors.map(f => [f.id, f])), fed = m.fed || {}, nx = (fed.meetings || [])[0], inf = m.inflation || {}, ser = m.series || {};
+  const ch5 = v => v && v.length > 5 ? v[v.length - 1] / v[v.length - 6] - 1 : null;
+  root.append(h('div', {class: 'sec', style: 'margin-top:4px'}, h('h2', null, '環境等級'), h('span', {class: 'sub'}, '0–100：<30 正常｜30–50 留意｜50–65 警戒｜≥65 高風險；點卡片看操作建議')), h('div', {class: 'grid g2'}, regimeCard('US', m), regimeCard('TW', m)));
+  const t = [];
+  if (nx) t.push(kp('下次 FOMC', `${nx.dir === 'hike' ? '升' : nx.dir === 'cut' ? '降' : '平'} ${Math.round(nx.prob * 100)}%`, `${nx.date.slice(5)}｜${nx.days} 天後｜累計 ${fed.meetings.at(-1).cum_bp >= 0 ? '+' : ''}${Math.round(fed.meetings.at(-1).cum_bp)}bp`, F.fed && F.fed.state, () => F.fed && factorDrawer(F.fed, m)));
+  if (isNum(m.levels && m.levels.us10y)) t.push(kp('美債10年', nz(m.levels.us10y, 2) + '%', F.rate_shock ? F.rate_shock.short.split(' ').slice(1).join(' ') + '（20日）' : '', F.rate_shock && F.rate_shock.state, () => F.rate_shock && factorDrawer(F.rate_shock, m), ser['^TNX']));
+  if (inf.headline) t.push(kp('CPI 年增', pct(inf.headline.yoy, 1, false), `月增 ${pct(inf.headline.mom, 2)}｜核心 ${pct(inf.core && inf.core.mom, 2)}`, F.inflation && F.inflation.state, () => F.inflation && factorDrawer(F.inflation, m)));
+  if (isNum(m.levels && m.levels.vix)) t.push(kp('VIX', nz(m.levels.vix, 1), F.vol ? F.vol.value.split('（')[1].replace('）', '') : '', F.vol && F.vol.state, () => F.vol && factorDrawer(F.vol, m), ser['^VIX']));
+  const sx = ch5(ser['^SOX']); if (isNum(sx)) t.push(kp('費半 5日', pct(sx, 1), '台股最大連動指標', sx < -0.05 ? 'risk' : sx < -0.02 ? 'watch' : 'ok', () => F.equity && factorDrawer(F.equity, m), ser['^SOX']));
+  const v = m.valuation || {}; if (v.US && isNum(v.US.hurdle)) t.push(kp('推薦上檔門檻', '≥' + pct(Math.max(v.US.hurdle, .05), 1, false), `美股｜無風險利率 ${pct(v.US.rf, 2, false)}＋3pp｜台股 ≥${pct(Math.max((v.TW || {}).hurdle || 0, .05), 1, false)}`, null, () => openDrawer('利率如何影響推薦', '已套用在今日所有目標價與入選門檻', valuationBody(m))));
+  root.append(h('div', {class: 'sec'}, h('h2', null, '關鍵數字'), h('span', {class: 'sub'}, '琥珀框＝偏高；點方塊看說明')), h('div', {class: 'tiles'}, t));
+  root.append(h('div', {class: 'sec'}, h('h2', null, '風險因子'), h('span', {class: 'sub'}, '★＝各群最需留意的前 2 項；條上刻度＝33（留意）、66（偏高）；點任一列看說明')),
+    h('div', {class: 'grid g2'}, h('div', {class: 'card'}, h('h4', {style: 'margin:0 0 6px'}, '已發生（市場數據）'), factorBars('happened', m)), h('div', {class: 'card'}, h('h4', {style: 'margin:0 0 6px'}, '尚未發生（預期與事件）'), factorBars('ahead', m))));
+  if ((fed.meetings || []).length) root.append(h('div', {class: 'sec'}, h('h2', null, '市場預期的利率路徑'), h('span', {class: 'sub'}, '長條＝各次 FOMC 後的隱含利率；虛線＝目前利率；市場定價，非聯準會承諾')), h('div', {class: 'card'}, h('div', {style: 'max-width:700px'}, fedChart(fed, true))));
+  const ev = (m.events || []).filter(e => e.days != null);
+  if (ev.length) root.append(h('div', {class: 'sec'}, h('h2', null, '接下來的事件')), h('div', {class: 'evs'}, ev.map(e => h('div', {class: 'ev' + (e.days <= 14 ? ' soon' : '')}, h('b', {class: 'num'}, e.days + ' 天'), h('span', null, e.date.slice(5) + ' ' + e.name), h('span', {class: 'muted sm'}, e.note)))));
+  const more = [];
+  const tiles = [];
+  if (inf.core) tiles.push(['核心 CPI 近3月年化', pct(inf.core.ann3m, 1, false), `前月 ${pct(inf.core.prev_mom, 2)}`]);
   if (inf.unrate) tiles.push(['失業率', nz(inf.unrate.value, 1) + '%', `較12個月低點 +${nz(inf.unrate.above_12m_low, 1)}`]);
-  if (inf.payrolls) tiles.push(['非農（近3月平均）', `${inf.payrolls.avg3m_k >= 0 ? '+' : ''}${Math.round(inf.payrolls.avg3m_k)} 千人`, `最新一個月 ${inf.payrolls.last_k >= 0 ? '+' : ''}${Math.round(inf.payrolls.last_k)} 千人`]);
-  if (isNum(inf.breakeven)) tiles.push(['10年期通膨預期', nz(inf.breakeven, 2) + '%', '市場隱含的長期通膨']);
-  if (isNum(inf.us2y)) tiles.push(['2年期殖利率', nz(inf.us2y, 2) + '%', '對政策利率預期最敏感']);
-  if (tiles.length) root.append(h('div', {class: 'sec'}, h('h2', null, '通膨與就業（已公布）')), h('div', {class: 'tiles'}, tiles.map(([a, b, c]) => h('div', {class: 'tile'}, h('div', {class: 'lb'}, a), h('div', {class: 'v num'}, b), h('div', {class: 'd muted'}, c)))));
+  if (inf.payrolls) tiles.push(['非農（近3月均）', `${inf.payrolls.avg3m_k >= 0 ? '+' : ''}${Math.round(inf.payrolls.avg3m_k)}千`, `最新 ${inf.payrolls.last_k >= 0 ? '+' : ''}${Math.round(inf.payrolls.last_k)}千`]);
+  if (isNum(inf.breakeven)) tiles.push(['10年通膨預期', nz(inf.breakeven, 2) + '%', '市場隱含']);
+  if (isNum(inf.us2y)) tiles.push(['2年期殖利率', nz(inf.us2y, 2) + '%', '政策預期指標']);
   const NM = {'^TNX': '美債10年', '^IRX': '美債3個月', 'DX-Y.NYB': '美元指數', 'CL=F': '原油', '^VIX': 'VIX', '^GSPC': 'S&P 500', '^SOX': '費城半導體'};
-  const mk = Object.entries(m.series || {}).filter(([, v]) => v && v.length > 5);
-  if (mk.length) root.append(h('div', {class: 'sec'}, h('h2', null, '關鍵市場指標（近 60 日）')), h('div', {class: 'tiles'}, mk.map(([t, v]) => h('div', {class: 'tile'}, h('div', {class: 'lb'}, NM[t] || t), h('div', {class: 'v num'}, nz(v[v.length - 1], 2)), h('div', {class: 'd muted'}, `5日 ${v.length > 5 ? (v[v.length - 1] - v[v.length - 6] >= 0 ? '+' : '') + nz(v[v.length - 1] - v[v.length - 6], 2) : '—'}`), spark(v, 150, 30)))));
-  if ((m.events || []).length) root.append(h('div', {class: 'sec'}, h('h2', null, '接下來要留意的事件'), h('span', {class: 'sub'}, '尚未發生')), h('div', {class: 'card'}, h('ul', null, m.events.map(e => h('li', null, h('b', null, e.date + (e.days != null ? `（${e.days} 天後）` : '')), ' ', e.name, h('span', {class: 'muted sm'}, `　${e.note}`))))));
-  if ((m.headlines || []).length) root.append(h('div', {class: 'sec'}, h('h2', null, '相關新聞')), h('div', {class: 'card'}, h('ul', null, m.headlines.map(x => h('li', null, safeUrl(x.link) ? h('a', {href: x.link, target: '_blank', rel: 'noopener noreferrer'}, x.title) : x.title, h('span', {class: 'muted sm'}, ` ｜${x.source}｜${x.theme}`))))));
+  const mk = Object.entries(ser).filter(([, x]) => x && x.length > 5);
+  root.append(h('details', {class: 'card', style: 'margin-top:12px'}, h('summary', null, '更多：通膨與就業、市場走勢、相關新聞'),
+    h('div', {class: 'tiles', style: 'margin-top:8px'}, tiles.map(([a, b, c]) => h('div', {class: 'tile'}, h('div', {class: 'lb'}, a), h('div', {class: 'v num'}, b), h('div', {class: 'd muted'}, c)))),
+    h('div', {class: 'tiles', style: 'margin-top:8px'}, mk.map(([k, x]) => h('div', {class: 'tile'}, h('div', {class: 'lb'}, NM[k] || k), h('div', {class: 'v num'}, nz(x.at(-1), 2)), spark(x, 150, 28)))),
+    (m.headlines || []).length ? h('ul', {style: 'margin-top:10px'}, m.headlines.slice(0, 6).map(x => h('li', null, safeUrl(x.link) ? h('a', {href: x.link, target: '_blank', rel: 'noopener noreferrer'}, x.title) : x.title, h('span', {class: 'muted sm'}, ` ｜${x.source}｜${x.theme}`)))) : null));
+  root.append(h('details', {class: 'card', style: 'margin-top:10px'}, h('summary', null, '這一頁怎麼看？'),
+    h('div', {class: 'sm', style: 'margin-top:6px'}, h('p', null, '分數越高越需要謹慎，是風險提示，不是漲跌預測。「已發生」＝市場數據已經反映的壓力；「尚未發生」＝市場正在定價的預期與事件，結果可能更好或更差。'),
+      h('p', null, '只有「警戒」以上才會提高推薦門檻；利率則一律影響目標價（折現率、PEG）與上檔底線（≥ 無風險利率＋3 個百分點，且不低於 5%）。'),
+      h('p', {class: 'muted'}, `資料涵蓋 ${m.coverage.ok}／${m.coverage.total} 項因子｜來源：Yahoo（殖利率、VIX、美元、油價、聯邦基金期貨）、FRED（CPI、就業、基準利率）。權重與門檻為初始設定，尚未回測。`))));
   return root;
+}
+function valuationBody(m) {
+  const v = m.valuation || {};
+  return [h('div', {class: 'kpis'}, ['US', 'TW'].map(k => v[k] && isNum(v[k].rf) ? kpi(`${MK[k]} 無風險利率`, pct(v[k].rf, 2, false), `原設定 ${pct(v[k].rf_base, 2, false)}；PEG ×${nz(v[k].peg_factor, 2)}；上檔門檻 ≥${pct(Math.max(v[k].hurdle, .05), 1, false)}`) : null)),
+    h('ul', null, h('li', null, 'DCF：折現率採即時殖利率，利率升 → 目標價下修'), h('li', null, 'PEG：合理倍數隨利率偏離基準下修（每高 1pp 約 −8%）'), h('li', null, '同業相對本益比：不調整（同業價格已反映目前利率）'), h('li', null, '推薦上檔底線：≥ 無風險利率 ＋ 3pp（機會成本），且不低於 5%'), h('li', null, '警戒以上：bull／bear 區間加寬、推薦門檻再提高'))];
 }
 function perfView() {
   const P = S.perf, root = h('div');
