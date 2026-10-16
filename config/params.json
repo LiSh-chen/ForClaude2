@@ -153,5 +153,80 @@
       "explosive": 0.25,
       "turn": 0.15
     }
+  },
+  "macro": {
+    "weights": {
+      "rate_shock": 0.18,
+      "vol": 0.14,
+      "equity": 0.16,
+      "usd": 0.06,
+      "oil": 0.06,
+      "credit": 0.06,
+      "fed": 0.14,
+      "inflation": 0.12,
+      "growth": 0.08
+    },
+    "tw_blend": 0.4,
+    "levels": {
+      "watch": 30,
+      "warn": 50,
+      "high": 65
+    },
+    "state_watch": 33,
+    "state_risk": 66,
+    "overlay": {
+      "extra_upside": {
+        "watch": 0.0,
+        "warn": 0.05,
+        "high": 0.1
+      },
+      "sensitive_extra": {
+        "watch": 0.0,
+        "warn": 0.05,
+        "high": 0.1
+      },
+      "pe_sensitive": 35,
+      "beta_sensitive": 1.5
+    },
+    "min_coverage": 0.6,
+    "valuation": {
+      "rf_bounds": [
+        0.02,
+        0.08
+      ],
+      "rf_pass_tw": 0.5,
+      "peg_sens_per_pt": 0.08,
+      "peg_factor_bounds": [
+        0.8,
+        1.05
+      ],
+      "disp_add": {
+        "normal": 0.0,
+        "watch": 0.0,
+        "warn": 0.02,
+        "high": 0.04
+      }
+    },
+    "posture": {
+      "exposure": {
+        "normal": 1.0,
+        "watch": 0.85,
+        "warn": 0.7,
+        "high": 0.5
+      },
+      "batches": {
+        "normal": 2,
+        "watch": 3,
+        "warn": 4,
+        "high": 5
+      },
+      "sens_mult": {
+        "normal": 1.0,
+        "watch": 0.8,
+        "warn": 0.5,
+        "high": 0.25
+      },
+      "event_days": 7
+    }
   }
 }

@@ -5,6 +5,7 @@ import datetime as dt
 
 from . import bargain as B
 from . import emerging as E
+from . import macro as M
 from .journal import analyze, thesis
 from .selection import eligible
 from .utils import isnum
@@ -49,6 +50,33 @@ def stock_obj(r: dict, sec: dict | None, risk_ctx: dict, prices: dict, names: di
     return o
 
 
+def _macro_compact(m: dict) -> dict:
+    inf = m["inflation"]
+    return {"asof": m["asof"], "scores": m["scores"], "overlay": m["overlay"], "headline": M.headline_text(m), "factors": m["factors"],
+            "fed": m["fed"], "posture": m["posture"], "valuation": m["valuation"], "events": m["events"], "headlines": m["headlines"], "coverage": m["coverage"], "series": m["series"], "levels": m["levels_now"],
+            "inflation": {k: inf.get(k) for k in ("headline", "core", "unrate", "payrolls", "breakeven", "us2y")}}
+
+
+def _macro_risks(o: dict, r: dict, m: dict) -> None:
+    """把總經環境寫進個股的『已出現』與『未來需留意』風險（只加不減）。"""
+    ov = m["overlay"][r["market"]]
+    f = r["f"]
+    sens = M.rate_sensitive(f, ov)
+    fac = {x["id"]: x for x in m["factors"]}
+    now, watch = [], []
+    if ov["level"] != "normal":
+        now.append({"t": f"總經環境「{ov['label']}」（{m['scores'][r['market']]:.0f} 分）" + ("，本次推薦的上檔門檻已因此提高。" if ov["extra_upside"] else "。"), "news": []})
+    if sens and fac["rate_shock"]["state"] in ("watch", "risk"):
+        now.append({"t": f"{fac['rate_shock']['value']}；此股預估本益比 {f['pe_fwd']:.0f} 倍／Beta {f.get('beta') or 0:.1f}，對利率上升特別敏感。" if isnum(f.get("pe_fwd")) else f"{fac['rate_shock']['value']}；此股 Beta 偏高，對利率上升特別敏感。", "news": []})
+    nxt = (m["fed"].get("meetings") or [None])[0]
+    if nxt and nxt["days"] <= 28 and (nxt["dir"] == "hike" or fac["inflation"]["state"] != "ok"):
+        watch.append({"t": f"{nxt['date']} FOMC 利率決議：市場定價{'升息' if nxt['dir'] == 'hike' else '降息' if nxt['dir'] == 'cut' else '持平'}機率約 {nxt['prob'] * 100:.0f}%；若結果或談話比預期鷹派，{'高估值股通常跌幅較大' if sens else '大盤與成長股可能同步下跌'}。", "news": []})
+    o["risks_now"] = now + o["risks_now"]
+    o["risks_watch"] = watch + o["risks_watch"]
+    ps = m["posture"][r["market"]]
+    o["macro"] = {"level": ov["level"], "label": ov["label"], "sensitive": bool(sens), "size_mult": ps["sens_mult"] if sens else 1.0, "exposure": ps["exposure"]}
+
+
 def build(date: str, ctx: dict, emg: dict | None, prices: dict, bar: dict | None = None) -> dict:
     p, uni, sec_scores, picks, rows = ctx["params"], ctx["uni"], ctx["sec_scores"], ctx["picks"], ctx["rows"]
     names = {s["id"]: s["name"] for s in uni["sectors"]} | {t["id"]: t["name"] for t in uni["themes"]}
@@ -65,6 +93,11 @@ def build(date: str, ctx: dict, emg: dict | None, prices: dict, bar: dict | None
     # --- 主榜
     snap["picks"] = {m: [stock_obj(r, sec_scores[m].get(r["sector"]), {"traits": sectors_cfg[r["sector"]].get("risk_traits"), "watch": sectors_cfg[r["sector"]].get("risk_watch")}, prices, names,
                                    sec_heads=ctx["scan"]["sector"][r["sector"]][m]["heads"]) for r in picks[m]] for m in ("TW", "US")}
+    if ctx.get("macro"):
+        snap["macro"] = _macro_compact(ctx["macro"])
+        for m_ in ("TW", "US"):
+            for o, r in zip(snap["picks"][m_], picks[m_]):
+                _macro_risks(o, r, ctx["macro"])
     snap["shortage"] = {m: {"n": len(picks[m]), "N": N, "candidates": ctx["stats"][m]["candidates"], "reasons": ctx["stats"][m]["reasons"]} for m in ("TW", "US")}
     focus_n = p["selection"]["focus_sectors_per_market"]
     snap["sectors"] = {}
@@ -114,6 +147,8 @@ def build(date: str, ctx: dict, emg: dict | None, prices: dict, bar: dict | None
             o["why"] = B.why(r) + o["why"][:2]
             o["highlights"] = B.chips(r)
             o["headline"] = f"低基期（距高點 {B.facts(r)['from_high'] * 100:.0f}%）＋ 目標價上檔 {B.facts(r)['upside'] * 100:+.0f}%，獲利轉強"
+            if ctx.get("macro"):
+                _macro_risks(o, r, ctx["macro"])
             o["risks_now"] = B.risks_now(r) + o["risks_now"]
             o["risks_watch"] = [B.TRAP] + o["risks_watch"]
             return o

@@ -9,7 +9,7 @@ from . import config as C
 from . import llm
 from . import bargain as B
 from . import emerging as E
-from . import datafix, quality, sessions, snapshot
+from . import datafix, macro as M, quality, sessions, snapshot
 from .features import norm_fundamentals, price_features
 from .journal import candidate_record, pick_record, write_journal
 from .news import scan
@@ -43,6 +43,9 @@ def _record_status(date: str, q: dict, published: bool) -> None:
 def run_daily(provider, force: bool = False, asof: str | None = None) -> str | None:
     uni, params, src = C.load_universe(), C.load_params(), C.load_sources()
     tickers = list(uni["stocks"]) + [i["t"] for i in uni["indices"]] + list(uni["benchmarks"].values()) + list(uni["reference"].values())
+    mcfg = C.load_macro()
+    if mcfg:
+        tickers += M.all_tickers(mcfg, dt.date.fromisoformat(asof) if asof else dt.date.today())
     tickers = list(dict.fromkeys(tickers))
     print(f"[daily] 抓取 {len(tickers)} 檔價格…")
     prices = provider.prices(tickers)
@@ -89,6 +92,19 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
     items = provider.news(src)
     scan_res = scan(items, uni, src)
 
+    # 總經與市場環境（失敗不得影響主日誌）：產生風險分數，並依等級調整選股門檻
+    macro_res = None
+    try:
+        if mcfg:
+            today = pd.Timestamp(date).date()
+            fred, ferr = provider.macro_fred(mcfg, today)
+            fred = {k: [(d, v) for d, v in rows if d <= today] for k, rows in fred.items()}
+            macro_res = M.analyze(prices, fred, items, mcfg, params["macro"], today, ferr, params["valuation"]["rf"])
+            params = {**params, "_overlay": macro_res["overlay"], "_macro_val": macro_res["valuation"]}
+            print(f"[daily] 總經環境：{M.headline_text(macro_res)}；涵蓋 {macro_res['coverage']['ok']}/{macro_res['coverage']['total']} 項" + (f"；FRED 問題：{'、'.join(ferr)}" if ferr else ""))
+    except Exception as ex:  # noqa: BLE001
+        print(f"[daily] 總經分析失敗（略過，不調整門檻）：{ex!r}")
+
     data = C.path("data")
     nh_path = data / "news_history.json"
     nh = C.load_json(nh_path, {})
@@ -96,7 +112,7 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
     rows = score_stocks(uni, feats, funds, sec_scores, scan_res, params)
     # ---- 資料品質關卡：不合格就不發佈、不覆蓋上一份好的日誌
     live_now = dt.datetime.now(dt.timezone.utc) if (provider.name == "live" and not asof) else None
-    q = quality.assess(universe=uni["stocks"], feats=feats, basis=basis, rows=rows, prices=prices, news_log=provider.fetch_log, data_report=data_report, params=params, now=live_now)
+    q = quality.assess(universe=uni["stocks"], feats=feats, basis=basis, rows=rows, prices=prices, news_log=provider.fetch_log, data_report=data_report, params=params, now=live_now, macro=macro_res)
     _record_status(date, q, published=(q["level"] != "bad"))
     for c in q["checks"]:
         if c["level"] != "ok":
@@ -121,7 +137,7 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
         "params": params, "uni": uni, "sec_scores": sec_scores, "picks": picks, "notes": notes, "stats": stats, "rows": rows, "scan": scan_res,
         "fetch_log": provider.fetch_log, "provider": provider.name, "indices": _index_stats(prices, uni), "prev": prev,
         "perf_summary": perf["summary"] if perf and perf.get("summary") else None,
-        "param_history": C.load_json(C.history_path(), []), "elig": lambda r: eligible(r, params), "basis": basis, "quality": q, "data_notes": datafix.notes(data_report) if data_report else [],
+        "param_history": C.load_json(C.history_path(), []), "elig": lambda r: eligible(r, params), "basis": basis, "quality": q, "macro": macro_res, "data_notes": datafix.notes(data_report) if data_report else [],
     }
     # 選用 LLM 評論
     if llm.available():
@@ -162,6 +178,10 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
     except Exception as ex:  # noqa: BLE001
         print(f"[daily] 便宜好貨專區產生失敗（略過）：{ex!r}")
 
+    if macro_res:
+        mdir = C.path("data") / "macro"
+        mdir.mkdir(exist_ok=True)
+        C.save_json(mdir / f"{date}.json", M.record(macro_res))
     md = write_journal(date, ctx)
     jpath.write_text(md, encoding="utf-8")
     try:

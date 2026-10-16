@@ -36,7 +36,9 @@ def dcf_per_share(f: dict, g0: float, market: str, beta: float | None, p: dict) 
     if not f.get("fcf_ps") or f["fcf_ps"] <= 0:
         return None, {}
     b = beta if isnum(beta) else 1.0
-    wacc = clip(v["rf"][market] + clip(b, 0.5, 2.0) * v["erp"], *v["wacc_bounds"])
+    mv = (p.get("_macro_val") or {}).get(market) or {}
+    rf = mv.get("rf", v["rf"][market])            # 無風險利率：有即時殖利率就用即時值（利率上升 → 折現率上升 → DCF 下修）
+    wacc = clip(rf + clip(b, 0.5, 2.0) * v["erp"], *v["wacc_bounds"])
     tg = v["terminal_growth"]
     g1 = clip(g0, 0.0, 0.25)
     cf, pv = f["fcf_ps"], 0.0
@@ -46,12 +48,13 @@ def dcf_per_share(f: dict, g0: float, market: str, beta: float | None, p: dict) 
         pv += cf / (1 + wacc) ** yr
     tv = cf * (1 + tg) / (wacc - tg)
     pv += tv / (1 + wacc) ** 10
-    return pv, {"wacc": wacc, "g1": g1, "tg": tg}
+    return pv, {"wacc": wacc, "g1": g1, "tg": tg, "rf": rf, "rf_live": "rf" in mv}
 
 
 def value_stock(price: float, f: dict, pf: dict, market: str, peers: dict, p: dict) -> dict | None:
     """回傳目標價結構；資料不足回傳 None。"""
     v = p["valuation"]
+    mv = (p.get("_macro_val") or {}).get(market) or {}
     g = growth_estimate(f, p)
     methods: dict[str, dict] = {}
     eps = f.get("eps_fwd_px")
@@ -66,14 +69,15 @@ def value_stock(price: float, f: dict, pf: dict, market: str, peers: dict, p: di
         methods["pe"] = {"label": "同業相對本益比", "value": eps * tpe,
                          "detail": f"預估EPS {eps:.2f} × 目標本益比 {tpe:.1f}（現行 {cur_pe:.1f} 向同業 {peer_pe:.1f} 靠攏 {v['pe_reversion']:.0%}；同業中位數 {peers['pe']:.1f} × 成長調整 {adj:.2f}）"}
     if eps and eps > 0 and g is not None and g >= 0.05:
-        fpe = clip(min(g, v["peg_growth_cap"]) * 100 * v["peg_target"], *v["pe_bounds"])
+        pf_ = mv.get("peg_factor", 1.0)                # 利率高於基準 → 合理 PEG 倍數下修（同業相對本益比不調整：同業價格已反映目前利率）
+        fpe = clip(min(g, v["peg_growth_cap"]) * 100 * v["peg_target"] * pf_, *v["pe_bounds"])
         methods["peg"] = {"label": "PEG 成長調整", "value": eps * fpe,
-                          "detail": f"預估EPS {eps:.2f} × 合理本益比 {fpe:.1f}（成長率 {min(g, v['peg_growth_cap']) * 100:.1f}%（上限 {v['peg_growth_cap']:.0%}）× PEG {v['peg_target']}）"}
+                          "detail": f"預估EPS {eps:.2f} × 合理本益比 {fpe:.1f}（成長率 {min(g, v['peg_growth_cap']) * 100:.1f}%（上限 {v['peg_growth_cap']:.0%}）× PEG {v['peg_target']}" + (f" × 利率調整 {pf_:.2f}" if abs(pf_ - 1) > 0.005 else "") + "）"}
     if f.get("same_ccy") and g is not None:
         val, d = dcf_per_share(f, g, market, f.get("beta"), p)
         if val:
             methods["dcf"] = {"label": "兩階段 DCF", "value": val,
-                              "detail": f"每股FCF {f['fcf_ps']:.2f}，前期成長 {d['g1'] * 100:.1f}%→永續 {d['tg'] * 100:.1f}%，WACC {d['wacc'] * 100:.1f}%"}
+                              "detail": f"每股FCF {f['fcf_ps']:.2f}，前期成長 {d['g1'] * 100:.1f}%→永續 {d['tg'] * 100:.1f}%，WACC {d['wacc'] * 100:.1f}%（無風險利率 {d['rf'] * 100:.2f}%" + ("，採即時殖利率" if d["rf_live"] else "") + "）"}
     if f.get("target_mean") and (f.get("n_analysts") or 0) >= 2:
         methods["consensus"] = {"label": "券商共識目標價", "value": f["target_mean"],
                                 "detail": f"{int(f['n_analysts'])} 位分析師平均（區間 {f.get('target_low') or '—'}–{f.get('target_high') or '—'}）"}
@@ -98,7 +102,7 @@ def value_stock(price: float, f: dict, pf: dict, market: str, peers: dict, p: di
     vals = [m["value"] for m in methods.values()]
     spread = (max(vals) - min(vals)) / (sum(vals) / len(vals))
     confidence = "高" if len(methods) >= 3 and spread <= 0.35 else "中" if spread <= 0.6 else "低"
-    d = clip(0.5 * spread + 0.25 * (pf.get("vol_ann") or 0.3), 0.12, 0.40)
+    d = clip(0.5 * spread + 0.25 * (pf.get("vol_ann") or 0.3) + mv.get("disp_add", 0.0), 0.12, 0.40)   # 總經警戒時情境區間加寬（下檔看得更大）
     bull, bear = base * (1 + d), max(base * (1 - 1.5 * d), price * 0.4)
     pr = p["scenario_prob"]
     ev = pr["bull"] * bull + pr["base"] * base + pr["bear"] * bear

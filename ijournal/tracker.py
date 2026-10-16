@@ -55,6 +55,37 @@ def summarize(positions: list[dict]) -> dict:
     return s
 
 
+def evaluate_macro(data, prices) -> dict:
+    """檢驗總經風險分數：各等級之後，大盤 5／20 個交易日的報酬與最大回檔。樣本太少時只呈現、不下結論。"""
+    files = sorted((data / "macro").glob("*.json")) if (data / "macro").exists() else []
+    bench = {"US": prices.get("^GSPC"), "TW": prices.get("^TWII")}
+    rows = []
+    for f in files:
+        r = C.load_json(f)
+        for m, df in bench.items():
+            if df is None or r.get(m) is None:
+                continue
+            c = df["Close"].dropna()
+            i = c.index.searchsorted(pd.Timestamp(r["date"]), side="right") - 1
+            if i < 0:
+                continue
+            e = {"date": r["date"], "market": m, "score": r[m], "level": r["level"][m]}
+            for h in (5, 20):
+                e[f"r{h}"] = float(c.iloc[i + h] / c.iloc[i] - 1) if i + h < len(c) else None
+            e["dd20"] = float(c.iloc[i + 1:i + 21].min() / c.iloc[i] - 1) if len(c) > i + 1 else None
+            rows.append(e)
+    by = {}
+    for m in ("US", "TW"):
+        by[m] = {}
+        for lv in ("normal", "watch", "warn", "high"):
+            xs = [e for e in rows if e["market"] == m and e["level"] == lv]
+            if not xs:
+                continue
+            avg = lambda k: (sum(e[k] for e in xs if e.get(k) is not None) / n) if (n := sum(1 for e in xs if e.get(k) is not None)) else None
+            by[m][lv] = {"n": len(xs), "avg_r5": avg("r5"), "avg_r20": avg("r20"), "avg_dd20": avg("dd20")}
+    return {"rows": rows, "by_level": by}
+
+
 def run_tracker(provider) -> dict:
     uni = C.load_universe()
     data = C.path("data")
@@ -71,7 +102,7 @@ def run_tracker(provider) -> dict:
     for f in sorted((data / "candidates").glob("*.json")) if (data / "candidates").exists() else []:
         tickers |= {r["ticker"] for r in C.load_json(f)["rows"]}
     benches = set(uni["benchmarks"].values())
-    prices = provider.prices(sorted(tickers | benches))
+    prices = provider.prices(sorted(tickers | benches | {"^GSPC", "^TWII"}))
     positions, cohorts = [], []
     for book, picks_by_date in books.items():
         for date, pj in picks_by_date.items():
@@ -112,13 +143,14 @@ def run_tracker(provider) -> dict:
                 day[r["ticker"]] = {k: (round(fw[k], 5) if isnum(fw.get(k)) else None) for k in ("r5", "a5", "r20", "a20", "r60", "a60", "r120", "a120", "rlast", "alast")}
         pool[cj["date"]] = day
     C.save_json(data / "pool_returns.json", pool)
+    macro_eval = evaluate_macro(data, prices)
     main_pos = [p for p in positions if p["book"] == "main"]
     emg_pos = [p for p in positions if p["book"] == "emerging"]
     bar_pos = [p for p in positions if p["book"] == "bargain"]
     perf = {"generated": str(dt.date.today()), "positions": positions, "cohorts": cohorts, "summary": summarize(main_pos),
             "by_market": {m: summarize([p for p in main_pos if p["market"] == m]) for m in ("TW", "US")},
             "emerging": {"summary": summarize(emg_pos), "n": len(emg_pos)},
-            "bargain": {"summary": summarize(bar_pos), "n": len(bar_pos)}}
+            "bargain": {"summary": summarize(bar_pos), "n": len(bar_pos)}, "macro": macro_eval}
     C.save_json(data / "performance.json", perf)
     print(f"[track] 追蹤 {len(positions)} 筆推薦；候選池 {sum(len(v) for v in pool.values())} 筆觀察。")
     return perf

@@ -1,0 +1,20 @@
+{
+  "_doc": "總經分析設定。價格類指標用 Yahoo（殖利率、美元、油價、VIX、聯邦基金利率期貨）；通膨、就業、基準利率用 FRED（公開 CSV，免 API key）。FOMC 日期為聯準會公布的 2026 年會議行事曆（決議日＝第二天），請定期對照官網。",
+  "tickers": {
+    "us10y": "^TNX", "us3m": "^IRX", "us5y": "^FVX", "us30y": "^TYX",
+    "dxy": "DX-Y.NYB", "wti": "CL=F", "gold": "GC=F", "hyg": "HYG", "lqd": "LQD", "tlt": "TLT", "move": "^MOVE"
+  },
+  "fred": {
+    "cpi": "CPIAUCSL", "core_cpi": "CPILFESL", "unrate": "UNRATE", "payems": "PAYEMS",
+    "effr": "DFF", "target_upper": "DFEDTARU", "us2y": "DGS2", "breakeven": "T10YIE"
+  },
+  "fomc_decisions": ["2026-01-28", "2026-03-18", "2026-04-29", "2026-06-17", "2026-07-29", "2026-09-16", "2026-10-28", "2026-12-09", "2027-01-27", "2027-03-17"],
+  "headline_keywords": {
+    "通膨／CPI": ["CPI", "通膨", "通貨膨脹", "物價", "inflation", "PCE", "PPI"],
+    "聯準會／利率": ["Fed", "聯準會", "升息", "降息", "鮑爾", "FOMC", "利率", "rate hike", "rate cut", "Powell", "basis points"],
+    "殖利率／債市": ["殖利率", "公債", "yield", "Treasury", "bond"],
+    "就業／景氣": ["非農", "失業", "就業", "衰退", "recession", "payroll", "jobs report", "GDP"],
+    "關稅／地緣": ["關稅", "tariff", "制裁", "出口管制", "地緣"],
+    "油價／美元": ["油價", "原油", "crude", "oil prices", "美元", "dollar"]
+  }
+}
