@@ -1,0 +1,832 @@
+{
+ "date": "2026-10-16",
+ "params_version": 1,
+ "themes": [
+  {
+   "id": "aging_care",
+   "name": "高齡化與慢性病照護設備",
+   "tier": "A",
+   "score": 88.293,
+   "coverage_ratio": 0.057,
+   "n_headlines": 1,
+   "status": "尚未被充分報導",
+   "rank": 1,
+   "components": {
+    "evidence": 100,
+    "low_coverage": 94.3,
+    "fundamental": 72.6,
+    "not_crowded": 82.9
+   }
+  },
+  {
+   "id": "grid_hardware",
+   "name": "高壓電纜與電網互連硬體",
+   "tier": "A",
+   "score": 86.461,
+   "coverage_ratio": 0.0,
+   "n_headlines": 0,
+   "status": "尚未被充分報導",
+   "rank": 2,
+   "components": {
+    "evidence": 100,
+    "low_coverage": 100.0,
+    "fundamental": 59.6,
+    "not_crowded": 82.9
+   }
+  },
+  {
+   "id": "pq_security",
+   "name": "抗量子密碼與硬體安全遷移",
+   "tier": "A",
+   "score": 83.489,
+   "coverage_ratio": 0.0,
+   "n_headlines": 0,
+   "status": "尚未被充分報導",
+   "rank": 3,
+   "components": {
+    "evidence": 100,
+    "low_coverage": 100.0,
+    "fundamental": 74.0,
+    "not_crowded": 50.0
+   }
+  },
+  {
+   "id": "edge_ai_industrial",
+   "name": "工業邊緣 AI 與嵌入式運算",
+   "tier": "B",
+   "score": 82.138,
+   "coverage_ratio": 0.0,
+   "n_headlines": 0,
+   "status": "尚未被充分報導",
+   "rank": 4,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 100.0,
+    "fundamental": 86.7,
+    "not_crowded": 64.8
+   }
+  },
+  {
+   "id": "power_semis",
+   "name": "高壓功率半導體（SiC / GaN）",
+   "tier": "B",
+   "score": 76.878,
+   "coverage_ratio": 0.0,
+   "n_headlines": 0,
+   "status": "尚未被充分報導",
+   "rank": 5,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 100.0,
+    "fundamental": 74.8,
+    "not_crowded": 53.4
+   }
+  },
+  {
+   "id": "adv_packaging_supply",
+   "name": "先進封裝測試介面與材料",
+   "tier": "B",
+   "score": 76.697,
+   "coverage_ratio": 0.274,
+   "n_headlines": 3,
+   "status": "尚未被充分報導",
+   "rank": 6,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 72.6,
+    "fundamental": 97.1,
+    "not_crowded": 58.8
+   }
+  },
+  {
+   "id": "water_infra",
+   "name": "水資源與超純水處理",
+   "tier": "B",
+   "score": 73.293,
+   "coverage_ratio": 0.131,
+   "n_headlines": 1,
+   "status": "尚未被充分報導",
+   "rank": 7,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 86.9,
+    "fundamental": 46.9,
+    "not_crowded": 86.7
+   }
+  },
+  {
+   "id": "process_control",
+   "name": "先進製程量測、檢測與可靠度驗證",
+   "tier": "B",
+   "score": 61.811,
+   "coverage_ratio": 0.518,
+   "n_headlines": 7,
+   "status": "報導中等",
+   "rank": 8,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 48.2,
+    "fundamental": 56.5,
+    "not_crowded": 65.7
+   }
+  }
+ ],
+ "picks": [
+  {
+   "ticker": "6166.TW",
+   "name": "ADLINK TECHNOLOGY INC",
+   "zh_name": "凌華",
+   "market": "TW",
+   "sector": "edge_ai_industrial",
+   "rank": 1,
+   "entry_price": 109.0,
+   "entry_date": "2026-10-16",
+   "composite": 63.47,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 50.3,
+    "growth": 100.0,
+    "valuation": 98.2,
+    "momentum": 30.1,
+    "news": 40.0
+   },
+   "target": {
+    "base": 159.94,
+    "bull": 223.91,
+    "bear": 63.98,
+    "ev": 148.74,
+    "confidence": "中",
+    "upside": 0.4673,
+    "ev_upside": 0.3646,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 143.73,
+      "weight": 0.533,
+      "upside": 0.3187
+     },
+     "peg": {
+      "value": 223.48,
+      "weight": 0.2,
+      "upside": 1.0503
+     },
+     "dcf": {
+      "value": 144.69,
+      "weight": 0.267,
+      "upside": 0.3274
+     }
+    }
+   },
+   "stop": 94.27,
+   "fundamentals": {
+    "market_cap": 23745759232,
+    "pe_ttm": 20.9615,
+    "pe_fwd": 15.2875,
+    "peg": 0.9,
+    "roe": 0.2019,
+    "gross_margin": 0.3549,
+    "op_margin": 0.1081,
+    "net_margin": 0.0809,
+    "rev_growth": 0.524,
+    "eps_growth": null,
+    "de": 0.6617,
+    "beta": 0.953,
+    "target_mean": 138.0,
+    "n_analysts": 1,
+    "fcf_margin": 0.0386
+   },
+   "tech": {
+    "ret_1m": -0.013574660633484115,
+    "ret_3m": -0.1484375,
+    "rel_3m": -0.18101354134248338,
+    "dist200": 0.10009825754130275,
+    "vol_ann": 0.7186574880070742
+   },
+   "theme": "edge_ai_industrial",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
+   "ticker": "3088.TWO",
+   "name": "AXIOMTEK CO",
+   "zh_name": "艾訊",
+   "market": "TW",
+   "sector": "edge_ai_industrial",
+   "rank": 2,
+   "entry_price": 122.5,
+   "entry_date": "2026-10-16",
+   "composite": 46.28,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 58.6,
+    "growth": 100.0,
+    "valuation": 40.8,
+    "momentum": 25.4,
+    "news": 40.0
+   },
+   "target": {
+    "base": 135.23,
+    "bull": 169.03,
+    "bear": 84.52,
+    "ev": 129.31,
+    "confidence": "中",
+    "upside": 0.1039,
+    "ev_upside": 0.0556,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 124.43,
+      "weight": 0.615,
+      "upside": 0.0158
+     },
+     "consensus": {
+      "value": 152.5,
+      "weight": 0.385,
+      "upside": 0.2449
+     }
+    }
+   },
+   "stop": 111.88,
+   "fundamentals": {
+    "market_cap": 13606223872,
+    "pe_ttm": 15.9713,
+    "pe_fwd": 16.3116,
+    "peg": null,
+    "roe": 0.1719,
+    "gross_margin": 0.3328,
+    "op_margin": 0.1178,
+    "net_margin": 0.1035,
+    "rev_growth": 0.54,
+    "eps_growth": null,
+    "de": 0.0552,
+    "beta": 0.77,
+    "target_mean": 152.5,
+    "n_analysts": 2,
+    "fcf_margin": -0.0446
+   },
+   "tech": {
+    "ret_1m": -0.012096774193548376,
+    "ret_3m": -0.09432545512961676,
+    "rel_3m": -0.12690149647210014,
+    "dist200": 0.10551537804380917,
+    "vol_ann": 0.5145641814389622
+   },
+   "theme": "edge_ai_industrial",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
+   "ticker": "2481.TW",
+   "name": "PAN JIT INTERNATIONAL INC",
+   "zh_name": "強茂",
+   "market": "TW",
+   "sector": "power_semis",
+   "rank": 3,
+   "entry_price": 158.5,
+   "entry_date": "2026-10-16",
+   "composite": 56.35,
+   "scores": {
+    "sector": null,
+    "leader": 33.3,
+    "quality": 43.9,
+    "growth": 80.4,
+    "valuation": 77.5,
+    "momentum": 65.9,
+    "news": 40.0
+   },
+   "target": {
+    "base": 192.15,
+    "bull": 260.38,
+    "bear": 89.8,
+    "ev": 180.21,
+    "confidence": "高",
+    "upside": 0.2123,
+    "ev_upside": 0.137,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 188.6,
+      "weight": 0.5,
+      "upside": 0.1899
+     },
+     "peg": {
+      "value": 233.51,
+      "weight": 0.187,
+      "upside": 0.4733
+     },
+     "consensus": {
+      "value": 173.0,
+      "weight": 0.312,
+      "upside": 0.0915
+     }
+    }
+   },
+   "stop": 137.34,
+   "fundamentals": {
+    "market_cap": 60565213184,
+    "pe_ttm": 42.1543,
+    "pe_fwd": 21.2754,
+    "peg": 0.41,
+    "roe": 0.1043,
+    "gross_margin": 0.3253,
+    "op_margin": 0.1174,
+    "net_margin": 0.1028,
+    "rev_growth": 0.163,
+    "eps_growth": 0.938,
+    "de": 0.6267,
+    "beta": 1.546,
+    "target_mean": 173.0,
+    "n_analysts": 4,
+    "fcf_margin": -0.0159
+   },
+   "tech": {
+    "ret_1m": -0.0031446540880503138,
+    "ret_3m": -0.050898203592814384,
+    "rel_3m": -0.08347424493529776,
+    "dist200": 0.2552572932058994,
+    "vol_ann": 0.7303460296754071
+   },
+   "theme": "power_semis",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
+   "ticker": "3587.TWO",
+   "name": "MATERIALS ANALYSIS TECHNOLOGY I",
+   "zh_name": "閎康",
+   "market": "TW",
+   "sector": "process_control",
+   "rank": 4,
+   "entry_price": 228.5,
+   "entry_date": "2026-10-16",
+   "composite": 55.59,
+   "scores": {
+    "sector": null,
+    "leader": 50.0,
+    "quality": 67.3,
+    "growth": 35.3,
+    "valuation": 100.0,
+    "momentum": 7.6,
+    "news": 40.0
+   },
+   "target": {
+    "base": 330.28,
+    "bull": 462.39,
+    "bear": 132.11,
+    "ev": 307.16,
+    "confidence": "低",
+    "upside": 0.4454,
+    "ev_upside": 0.3442,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 253.7,
+      "weight": 0.5,
+      "upside": 0.1103
+     },
+     "peg": {
+      "value": 475.49,
+      "weight": 0.187,
+      "upside": 1.0809
+     },
+     "consensus": {
+      "value": 365.67,
+      "weight": 0.312,
+      "upside": 0.6003
+     }
+    }
+   },
+   "stop": 210.11,
+   "fundamentals": {
+    "market_cap": 16908934144,
+    "pe_ttm": 34.003,
+    "pe_fwd": 15.0626,
+    "peg": null,
+    "roe": 0.0925,
+    "gross_margin": 0.316,
+    "op_margin": 0.1657,
+    "net_margin": 0.0786,
+    "rev_growth": 0.197,
+    "eps_growth": -0.444,
+    "de": 0.3549,
+    "beta": 0.939,
+    "target_mean": 365.6667,
+    "n_analysts": 3,
+    "fcf_margin": 0.1726
+   },
+   "tech": {
+    "ret_1m": -0.01931330472102999,
+    "ret_3m": -0.14756355912907093,
+    "rel_3m": -0.1801396004715543,
+    "dist200": -0.09396921102180023,
+    "vol_ann": 0.5409973114139807
+   },
+   "theme": "process_control",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
+   "ticker": "SYK",
+   "name": "Stryker Corporation",
+   "zh_name": "Stryker",
+   "market": "US",
+   "sector": "aging_care",
+   "rank": 1,
+   "entry_price": 293.23,
+   "entry_date": "2026-10-15",
+   "composite": 67.52,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 83.9,
+    "growth": 70.6,
+    "valuation": 75.2,
+    "momentum": 12.5,
+    "news": 40.0
+   },
+   "target": {
+    "base": 373.13,
+    "bull": 498.38,
+    "bear": 185.26,
+    "ev": 351.21,
+    "confidence": "中",
+    "upside": 0.2725,
+    "ev_upside": 0.1977,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 309.41,
+      "weight": 0.4,
+      "upside": 0.0552
+     },
+     "peg": {
+      "value": 503.63,
+      "weight": 0.15,
+      "upside": 0.7175
+     },
+     "dcf": {
+      "value": 415.84,
+      "weight": 0.2,
+      "upside": 0.4181
+     },
+     "consensus": {
+      "value": 362.62,
+      "weight": 0.25,
+      "upside": 0.2366
+     }
+    }
+   },
+   "stop": 274.23,
+   "fundamentals": {
+    "market_cap": 112475127808,
+    "pe_ttm": 30.3865,
+    "pe_fwd": 17.5767,
+    "peg": 1.32,
+    "roe": 0.1651,
+    "gross_margin": 0.6559,
+    "op_margin": 0.2702,
+    "net_margin": 0.1443,
+    "rev_growth": 0.094,
+    "eps_growth": 0.441,
+    "de": 0.6439,
+    "beta": 0.781,
+    "target_mean": 362.6154,
+    "n_analysts": 26,
+    "fcf_margin": 0.159
+   },
+   "tech": {
+    "ret_1m": 0.033005212780951476,
+    "ret_3m": -0.0803808195560417,
+    "rel_3m": -0.1187801254319173,
+    "dist200": -0.09803727219384373,
+    "vol_ann": 0.36639318116534836
+   },
+   "theme": "aging_care",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
+   "ticker": "RMD",
+   "name": "ResMed Inc.",
+   "zh_name": "ResMed",
+   "market": "US",
+   "sector": "aging_care",
+   "rank": 2,
+   "entry_price": 242.23,
+   "entry_date": "2026-10-15",
+   "composite": 66.97,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 95.6,
+    "growth": 31.8,
+    "valuation": 54.9,
+    "momentum": 69.8,
+    "news": 40.0
+   },
+   "target": {
+    "base": 269.01,
+    "bull": 367.0,
+    "bear": 122.04,
+    "ev": 251.87,
+    "confidence": "中",
+    "upside": 0.1106,
+    "ev_upside": 0.0398,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 232.15,
+      "weight": 0.4,
+      "upside": -0.0416
+     },
+     "peg": {
+      "value": 399.35,
+      "weight": 0.15,
+      "upside": 0.6486
+     },
+     "dcf": {
+      "value": 266.28,
+      "weight": 0.2,
+      "upside": 0.0993
+     },
+     "consensus": {
+      "value": 251.99,
+      "weight": 0.25,
+      "upside": 0.0403
+     }
+    }
+   },
+   "stop": 227.7,
+   "fundamentals": {
+    "market_cap": 34067044352,
+    "pe_ttm": 23.2244,
+    "pe_fwd": 18.3112,
+    "peg": 1.37,
+    "roe": 0.2427,
+    "gross_margin": 0.6162,
+    "op_margin": 0.3086,
+    "net_margin": 0.2695,
+    "rev_growth": 0.086,
+    "eps_growth": 0.024,
+    "de": 0.1254,
+    "beta": 0.75,
+    "target_mean": 251.9877,
+    "n_analysts": 17,
+    "fcf_margin": 0.1661
+   },
+   "tech": {
+    "ret_1m": 0.061248612168845806,
+    "ret_3m": 0.22079060316101007,
+    "rel_3m": 0.18239129728513448,
+    "dist200": 0.08079515001112725,
+    "vol_ann": 0.293577188626389
+   },
+   "theme": "aging_care",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
+   "ticker": "POWL",
+   "name": "Powell Industries, Inc.",
+   "zh_name": "Powell Industries",
+   "market": "US",
+   "sector": "grid_hardware",
+   "rank": 3,
+   "entry_price": 170.82,
+   "entry_date": "2026-10-15",
+   "composite": 50.0,
+   "scores": {
+    "sector": null,
+    "leader": 50.0,
+    "quality": 81.4,
+    "growth": 37.5,
+    "valuation": 46.6,
+    "momentum": 6.0,
+    "news": 40.0
+   },
+   "target": {
+    "base": 190.27,
+    "bull": 266.38,
+    "bear": 76.11,
+    "ev": 176.95,
+    "confidence": "中",
+    "upside": 0.1139,
+    "ev_upside": 0.0359,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 153.86,
+      "weight": 0.4,
+      "upside": -0.0993
+     },
+     "peg": {
+      "value": 210.99,
+      "weight": 0.15,
+      "upside": 0.2351
+     },
+     "dcf": {
+      "value": 151.02,
+      "weight": 0.2,
+      "upside": -0.1159
+     },
+     "consensus": {
+      "value": 267.5,
+      "weight": 0.25,
+      "upside": 0.566
+     }
+    }
+   },
+   "stop": 145.56,
+   "fundamentals": {
+    "market_cap": 6223410688,
+    "pe_ttm": 32.7241,
+    "pe_fwd": 24.4416,
+    "peg": 1.85,
+    "roe": 0.2825,
+    "gross_margin": 0.3008,
+    "op_margin": 0.2055,
+    "net_margin": 0.1649,
+    "rev_growth": 0.089,
+    "eps_growth": 0.076,
+    "de": 0.0033,
+    "beta": 1.173,
+    "target_mean": 267.5,
+    "n_analysts": 4,
+    "fcf_margin": 0.1645
+   },
+   "tech": {
+    "ret_1m": -0.038771026556439825,
+    "ret_3m": -0.2658809735215465,
+    "rel_3m": -0.3042802793974221,
+    "dist200": -0.19035239168380624,
+    "vol_ann": 0.5736258418901734
+   },
+   "theme": "grid_hardware",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
+   "ticker": "IBM",
+   "name": "International Business Machines",
+   "zh_name": "IBM",
+   "market": "US",
+   "sector": "pq_security",
+   "rank": 4,
+   "entry_price": 234.12,
+   "entry_date": "2026-10-15",
+   "composite": 51.02,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 57.3,
+    "growth": 16.9,
+    "valuation": 46.1,
+    "momentum": 39.0,
+    "news": 40.0
+   },
+   "target": {
+    "base": 270.88,
+    "bull": 361.73,
+    "bear": 134.6,
+    "ev": 254.98,
+    "confidence": "中",
+    "upside": 0.157,
+    "ev_upside": 0.0891,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 234.89,
+      "weight": 0.4,
+      "upside": 0.0033
+     },
+     "peg": {
+      "value": 268.19,
+      "weight": 0.15,
+      "upside": 0.1455
+     },
+     "dcf": {
+      "value": 380.15,
+      "weight": 0.2,
+      "upside": 0.6237
+     },
+     "consensus": {
+      "value": 242.65,
+      "weight": 0.25,
+      "upside": 0.0364
+     }
+    }
+   },
+   "stop": 219.73,
+   "fundamentals": {
+    "market_cap": 220572499968,
+    "pe_ttm": 20.8107,
+    "pe_fwd": 17.8037,
+    "peg": 2.16,
+    "roe": 0.3446,
+    "gross_margin": 0.581,
+    "op_margin": 0.1655,
+    "net_margin": 0.1552,
+    "rev_growth": 0.011,
+    "eps_growth": -0.018,
+    "de": 1.8897,
+    "beta": 0.724,
+    "target_mean": 242.6513,
+    "n_analysts": 23,
+    "fcf_margin": 0.1744
+   },
+   "tech": {
+    "ret_1m": -0.014190114522834363,
+    "ret_3m": 0.10875750960813613,
+    "rel_3m": 0.07035820373226054,
+    "dist200": -0.06185694423691512,
+    "vol_ann": 0.3094062165943459
+   },
+   "theme": "pq_security",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
+   "ticker": "AKAM",
+   "name": "Akamai Technologies, Inc.",
+   "zh_name": "Akamai",
+   "market": "US",
+   "sector": "pq_security",
+   "rank": 5,
+   "entry_price": 92.32,
+   "entry_date": "2026-10-15",
+   "composite": 41.15,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 51.6,
+    "growth": 14.9,
+    "valuation": 95.3,
+    "momentum": 8.7,
+    "news": 40.0
+   },
+   "target": {
+    "base": 147.71,
+    "bull": 206.8,
+    "bear": 59.08,
+    "ev": 137.37,
+    "confidence": "低",
+    "upside": 0.6,
+    "ev_upside": 0.488,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 115.54,
+      "weight": 0.4,
+      "upside": 0.2515
+     },
+     "peg": {
+      "value": 206.73,
+      "weight": 0.15,
+      "upside": 1.2393
+     },
+     "dcf": {
+      "value": 222.78,
+      "weight": 0.2,
+      "upside": 1.4132
+     },
+     "consensus": {
+      "value": 158.87,
+      "weight": 0.25,
+      "upside": 0.7209
+     }
+    }
+   },
+   "stop": 77.47,
+   "fundamentals": {
+    "market_cap": 13267916800,
+    "pe_ttm": 33.4493,
+    "pe_fwd": 13.4813,
+    "peg": 1.06,
+    "roe": 0.0892,
+    "gross_margin": 0.5745,
+    "op_margin": 0.0763,
+    "net_margin": 0.0951,
+    "rev_growth": 0.054,
+    "eps_growth": -0.268,
+    "de": 1.9667,
+    "beta": 0.616,
+    "target_mean": 158.8732,
+    "n_analysts": 22,
+    "fcf_margin": 0.1643
+   },
+   "tech": {
+    "ret_1m": -0.1163859424905197,
+    "ret_3m": -0.23188287029255128,
+    "rel_3m": -0.27028217616842687,
+    "dist200": -0.17764755218949135,
+    "vol_ann": 0.5794066086799247
+   },
+   "theme": "pq_security",
+   "book": "emerging",
+   "also_main": false
+  }
+ ],
+ "clues": []
+}

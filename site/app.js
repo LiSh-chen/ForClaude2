@@ -57,9 +57,9 @@ function spark(vals, w = 96, hh = 28) {
 }
 function rangeBar(price, bear, base, bull, full) {
   const lo = Math.min(bear, price) * 0.985, hi = Math.max(bull, price) * 1.015, pos = v => (v - lo) / (hi - lo) * 100, P = v => pos(v).toFixed(2) + '%';
-  const marks = full ? [['現價', price], ['目標', base], ['bear', bear], ['bull', bull]] : [];
+  const marks = full ? [['現價', price], ['目標', base], ['悲觀', bear], ['樂觀', bull]] : [];
   const kept = []; for (const m of marks) { const ps = pos(m[1]); if (kept.every(k => Math.abs(k[2] - ps) > 12)) kept.push([m[0], m[1], ps]); }
-  return h('div', {class: 'range' + (full ? ' full' : ''), tip: `bear ${px(bear)}｜現價 ${px(price)}｜base 目標 ${px(base)}｜bull ${px(bull)}`},
+  return h('div', {class: 'range' + (full ? ' full' : ''), tip: `悲觀情境 ${px(bear)}｜現價 ${px(price)}｜目標 ${px(base)}｜樂觀情境 ${px(bull)}`},
     h('div', {class: 'bar'}), h('div', {class: 'fill', style: `left:${P(bear)};width:calc(${P(bull)} - ${P(bear)})`}),
     h('div', {class: 'mk', style: `left:${P(bear)}`}), h('div', {class: 'mk', style: `left:${P(bull)}`}),
     h('div', {class: 'tg', style: `left:${P(base)}`}), h('div', {class: 'px', style: `left:${P(price)}`}),
@@ -123,7 +123,7 @@ function stockDrawer(p) {
     h('div', {class: 'sm', style: 'display:flex;gap:6px;flex-wrap:wrap;margin-top:-6px'},
       h('span', {class: 'badge' + (t.confidence === '低' ? ' lo' : '')}, '估值信心 ' + t.confidence), t.capped && h('span', {class: 'badge lo', tip: `模型原始上檔 ${pct(t.raw_upside, 0)}，已套用上限`}, '已套用上檔上限'),
       p.relaxed && h('span', {class: 'badge lo', tip: '各方法對幅度看法分歧，但方向一致（最保守方法仍高於現價）'}, '幅度分歧・方向一致'), p.also_main && h('span', {class: 'badge'}, '亦入選主榜'),
-      h('span', {class: 'badge'}, `風險報酬比 ${nz(t.rr, 2)}`), h('span', {class: 'badge'}, `參考停損 ${px(t.stop)}`), h('span', {class: 'badge', tip: '機率加權期望值（bull/base/bear）'}, `期望值 ${px(t.ev)}（${pct(t.ev_upside)}）`)),
+      h('span', {class: 'badge'}, `風險報酬比 ${nz(t.rr, 2)}`), h('span', {class: 'badge'}, `參考停損 ${px(t.stop)}`), h('span', {class: 'badge', tip: '機率加權期望值（樂觀／基準／悲觀情境）'}, `期望值 ${px(t.ev)}（${pct(t.ev_upside)}）`)),
     whyBlock(p),
     p.macro && p.macro.level !== 'normal' ? h('div', {class: 'note'}, h('b', null, '總經環境「' + p.macro.label + '」：'), p.macro.sensitive ? `此股屬高估值／高 Beta，建議單檔比重乘以 ${p.macro.size_mult}（相對於一般標的）；` : '', `整體持股水位建議在原計畫的 ${Math.round(p.macro.exposure * 100)}% 以下。僅為研究參考。`) : null,
     sec('近 120 個交易日收盤價', lineChart(p.series)),
@@ -177,7 +177,7 @@ function pickCard(p) {
   return h('button', {class: 'pick' + (top ? ' top' : ''), type: 'button', on: {click: () => stockDrawer(p)}, 'aria-label': `${p.ticker} ${p.name}，${top ? '首選，' : ''}點擊看詳細`, tip: p.headline},
     h('div', {class: 'r1'}, top ? h('span', {class: 'crown'}, '★ 首選') : h('span', {class: 'rk'}, p.rank), h('span', {class: 'tk'}, p.ticker.replace(/\.(TW|TWO)$/, '')), h('span', {class: 'nm'}, p.name), h('span', {class: 'up2 num', tip: `目標 ${px(t.base)} 相對現價 ${px(p.price)}`}, delta(t.upside))),
     h('div', {class: 'r2'}, hls.length ? hls.map(x => h('span', {class: 'hl-chip', tip: '亮點'}, x.t)) : h('span', {class: 'muted sm sc2'}, p.theme_name || p.sector_name),
-      t.confidence === '低' && h('span', {class: 'badge lo', tip: '各估值方法差距大，信心偏低'}, '信心低'), t.capped && h('span', {class: 'badge lo', tip: '模型原始上檔更高，已套用上限'}, '上限'), p.relaxed && h('span', {class: 'badge lo', tip: '幅度分歧、方向一致'}, '分歧'), p.also_main && h('span', {class: 'badge'}, '亦主榜'),
+      (t.confidence === '低' || p.relaxed) && h('span', {class: 'badge lo', tip: '各估值方法的結果差距大，目標價可信度較低'}, '估值不確定'), t.capped && h('span', {class: 'badge lo', tip: `模型原始估算上檔 ${pct(t.raw_upside, 0)}，已封頂在 ${pct(t.upside, 0)}`}, '上檔封頂'), p.also_main && h('span', {class: 'badge'}, '也在主榜'),
       h('span', {class: 'muted sm num px2'}, `${px(p.price)} → ${px(t.base)}`)),
     h('div', {class: 'r3'}, h('div', {style: 'flex:1;min-width:0'}, rangeBar(p.price, t.bear, t.base, t.bull, null)), spark(p.series.c.slice(-60), 72, 24)));
 }
@@ -216,7 +216,7 @@ function keyStrip(sn) {
   const hot = ['TW', 'US'].map(m => [m, sn.sectors[m][0]]).filter(x => x[1]);
   if (hot.length) cells.push(h('div', {class: 'key'}, h('span', {class: 'kl'}, '最熱產業'), hot.map(([m, x]) => h('button', {type: 'button', class: 'kline', on: {click: () => sectorDrawer(x, m)}}, h('span', {class: 'muted'}, MK[m] + ' '), h('b', null, x.name), h('span', {class: 'num'}, ` ${nz(x.score, 0)}`)))));
   if (sn.macro) cells.push(h('button', {type: 'button', class: 'key lvkey lv-' + (['high', 'warn', 'watch', 'normal'].find(k => k === sn.macro.overlay.US.level || k === sn.macro.overlay.TW.level)), on: {click: () => go('macro')}}, h('span', {class: 'kl'}, '總經環境'),
-    ['US', 'TW'].map(m => h('span', {class: 'kline'}, h('span', {class: 'muted'}, MK[m] + ' '), h('b', null, sn.macro.overlay[m].label), h('span', {class: 'num'}, ` ${nz(sn.macro.scores[m], 0)}`))), h('span', {class: 'ks muted'}, '已發生 vs 預期')));
+    ['US', 'TW'].map(m => h('span', {class: 'kline'}, h('span', {class: 'muted'}, MK[m] + ' '), h('b', null, sn.macro.overlay[m].label), h('span', {class: 'muted sm'}, `　持股 ≤${Math.round(sn.macro.posture[m].exposure * 100)}%`)))));
   const th = sn.emerging && sn.emerging.themes[0];
   if (th) cells.push(keyCell('前瞻首選趨勢', th.name, [h('span', {class: 'num'}, `分數 ${nz(th.score, 0)}`), h('span', {class: 'muted'}, `　證據級${th.tier}・${th.status}`)], [], () => themeDrawer(th)));
   return h('div', {class: 'keys', role: 'list', 'aria-label': '今日重點'}, cells);
@@ -227,22 +227,22 @@ function overview() {
     root.append(h('div', {class: 'basisbar', role: 'note'}, h('b', null, '行情基準：已收盤價，非盤中'),
       h('span', {class: 'chip', tip: '台股最近一個已收盤的交易日'}, `台股 ${sn.basis.TW.slice(5)} 收盤`), h('span', {class: 'chip', tip: prov ? '美股收盤價為暫定值，下次更新換成正式資料' : '美股最近一個已收盤的交易日'}, `美股 ${sn.basis.US.slice(5)} 收盤${prov ? '（暫定）' : ''}`),
       h('span', {class: 'muted sm'}, same ? `報告日 ${sn.date}` : `報告日 ${sn.date}＝兩市場較新的收盤日；台股／美股日期不同代表其中一邊休市或尚未收盤`))); }
-  if (sn.macro && ['warn', 'high'].some(k => k === sn.macro.overlay.US.level || k === sn.macro.overlay.TW.level))
-    root.append(h('button', {type: 'button', class: 'macrobanner', on: {click: () => go('macro')}}, h('b', null, '⚠ 總經環境提示：'), sn.macro.headline, '；已因此提高推薦門檻。點此看原因 →'));
+  if (sn.macro) { const hot = ['US', 'TW'].filter(k => ['warn', 'high'].includes(sn.macro.overlay[k].level));
+    if (hot.length) root.append(h('button', {type: 'button', class: 'macrobanner', on: {click: () => go('macro')}}, h('b', null, '⚠ 總經提示　'), hot.map(k => `${MK[k]}環境「${sn.macro.overlay[k].label}」：建議持股水位 ≤${Math.round(sn.macro.posture[k].exposure * 100)}%`).join('　'), '　推薦門檻已提高　', h('u', null, '看原因 →'))); }
   root.append(h('div', {class: 'sec', style: 'margin-top:4px'}, h('h2', null, '今日重點'), h('span', {class: 'sub'}, `資料日 ${sn.date}；點任一格看詳細`)), keyStrip(sn));
   root.append(h('div', {class: 'sec'}, h('h2', null, '市場')), h('div', {class: 'tiles'}, sn.indices.map(indexTile)));
   if (sn.summary) root.append(h('div', {class: 'note', style: 'margin-top:10px'}, 'AI 摘要：' + sn.summary));
-  root.append(h('div', {class: 'sec'}, h('h2', null, '今日推薦'), h('span', {class: 'sub'}, '點卡片看估值、財務、風險與走勢；進度條＝bear｜現價｜目標｜bull')),
+  root.append(h('div', {class: 'sec'}, h('h2', null, '今日推薦'), h('span', {class: 'sub'}, '點卡片看估值、財務、風險與走勢；進度條＝悲觀情境｜現價｜目標｜樂觀情境')),
     h('div', {class: 'grid g2'}, marketCol('TW', sn.picks.TW, sn.shortage.TW, ''), marketCol('US', sn.picks.US, sn.shortage.US, '')));
   const seg = h('div', {class: 'seg', role: 'group', 'aria-label': '市場'}, ['TW', 'US'].map(m => h('button', {type: 'button', 'aria-pressed': S.hm === m, on: {click: () => { S.hm = m; render(); }}}, MK[m])));
   root.append(h('div', {class: 'sec'}, h('h2', null, '產業熱力圖'), seg, h('span', {class: 'sub'}, '點方塊看分數組成、新聞證據與成分股')), heatmap(S.hm));
   if (sn.emerging) { const top = sn.emerging.themes.slice(0, 3);
     root.append(h('div', {class: 'sec'}, h('h2', null, '前瞻雷達'), h('button', {class: 'chip btn', type: 'button', on: {click: () => go('emerging')}}, '進入前瞻專區 →')),
       h('div', {class: 'grid g2'}, h('div', {class: 'card'}, barRows(top.map(x => ({label: x.name, v: x.score, text: nz(x.score, 0), tip: `${x.name}｜證據級${x.tier}｜${x.status}`})), true)),
-        h('div', {class: 'card sm'}, '主榜追逐「現在被關注」的產業；前瞻專區找「證據已具備、但新聞尚未充分報導、股價尚未被擠進去」的結構性趨勢。', h('br'), h('span', {class: 'muted'}, `今日前瞻推薦：台股 ${sn.emerging.shortage.TW.n} 檔、美股 ${sn.emerging.shortage.US.n} 檔`)))); }
+        h('div', {class: 'card sm'}, h('div', {class: 'muted'}, '今日前瞻推薦'), h('div', {style: 'font-size:22px;font-weight:650;margin-top:4px'}, `台股 ${sn.emerging.shortage.TW.n} 檔　美股 ${sn.emerging.shortage.US.n} 檔`), h('div', {class: 'muted sm', style: 'margin-top:6px'}, '證據已具備、但新聞尚未充分報導的趨勢')))); }
   if (sn.bargain) { const all = ['TW', 'US'].flatMap(m => sn.bargain.picks[m]).slice(0, 6);
     root.append(h('div', {class: 'sec'}, h('h2', null, '便宜好貨'), h('button', {class: 'chip btn', type: 'button', on: {click: () => go('bargain')}}, '進入便宜好貨專區 →')),
-      all.length ? h('div', {class: 'grid g2'}, ['TW', 'US'].map(m => h('div', null, h('div', {class: 'mh'}, h('h3', null, MK[m]), h('span', {class: 'cnt num'}, `${sn.bargain.shortage[m].n}／${sn.bargain.shortage[m].N} 檔`)), sn.bargain.picks[m].slice(0, 2).map(pickCard)))) : h('div', {class: 'empty'}, '今日沒有標的同時通過低基期、品質、成長與止跌四道關卡。')); }
+      all.length ? h('div', {class: 'grid g2'}, ['TW', 'US'].map(m => h('div', null, h('div', {class: 'mh'}, h('h3', null, MK[m]), h('span', {class: 'cnt num'}, `${sn.bargain.shortage[m].n}／${sn.bargain.shortage[m].N} 檔`)), (sn.bargain.picks[m].length ? sn.bargain.picks[m].slice(0, 2).map(pickCard) : h('div', {class: 'empty sm'}, `今日${MK[m]}沒有標的通過全部關卡`))))) : h('div', {class: 'empty'}, '今日沒有標的同時通過低基期、品質、成長與止跌四道關卡。')); }
   return root;
 }
 function radar(themes, topN) {
@@ -271,12 +271,12 @@ function radar(themes, topN) {
 function emergingView() {
   const em = S.snap.emerging, root = h('div');
   if (!em) return h('div', {class: 'empty'}, '此日期沒有前瞻專區資料。');
-  root.append(h('div', {class: 'note'}, '找「結構性證據已具備、但新聞尚未充分報導、股價尚未被擠進去」的趨勢。「確定」只指驅動力（人口、法規時程、成本限制、已簽約產能）有可查證證據，', h('b', null, '不代表股價必漲'), '；每個趨勢都附證偽條件。趨勢清單為人工研究假設，請自行查證。',
-    h('div', {class: 'muted sm', style: 'margin-top:4px'}, `新聞覆蓋度＝近48小時命中數÷主流產業中位數（本次掃描 ${em.n_scanned} 則標題；0 只代表沒命中，不等於沒人報導）。證據級 A＝不可逆驅動力、B＝採用率/成本曲線有資料、C＝商業化未定。`)));
-  root.append(h('div', {class: 'sec'}, h('h2', null, '趨勢雷達'), h('span', {class: 'sub'}, '★／粗框＝前 4 名重點趨勢（其餘淡化）；氣泡數字＝排名、大小＝證據級、深淺＝綜合分；愈靠左上愈冷門且基本面愈強；點氣泡或右側列看詳細')),
+  root.append(h('div', {class: 'note'}, '找「證據已具備、但新聞尚未充分報導、股價還沒被擠進去」的趨勢。', h('b', null, '不代表股價必漲'), '；每個趨勢都附證偽條件，趨勢清單為人工研究假設，請自行查證。',
+    h('details', {style: 'margin-top:4px'}, h('summary', {class: 'muted sm'}, '名詞說明'), h('div', {class: 'muted sm'}, `新聞覆蓋度＝近48小時命中數÷主流產業中位數（本次掃描 ${em.n_scanned} 則標題；0 只代表沒命中，不等於沒人報導）。證據級 A＝不可逆驅動力、B＝採用率／成本曲線有資料、C＝商業化未定。`))));
+  root.append(h('div', {class: 'sec'}, h('h2', null, '趨勢雷達'), h('span', {class: 'sub'}, '★＝前 4 名重點趨勢；愈靠左上＝愈冷門且基本面愈強；點氣泡或右側列看詳細')),
     h('div', {class: 'grid g2'}, h('div', {class: 'card'}, radar(em.themes, em.top_n || 4)),
       h('div', {class: 'card'}, h('div', {class: 'bl'}, em.themes.map(t => h('button', {type: 'button', class: 'row wide' + (t.rank <= (em.top_n || 4) ? ' hot' : ''), style: 'text-align:left', on: {click: () => themeDrawer(t)}, tip: `證據${t.parts.evidence}｜低覆蓋${t.parts.low_coverage}｜基本面${t.parts.fundamental}｜未擁擠${t.parts.not_crowded}`},
-        h('span', {style: 'line-height:1.3'}, `${t.rank <= (em.top_n || 4) ? '★ ' : ''}${t.rank}. ${t.name}`), h('div', {class: 'tr'}, h('div', {class: 'fi', style: `width:${t.score}%`})), h('span', {class: 'v num'}, `${nz(t.score, 0)}·${t.tier}`)))))));
+        h('span', {style: 'line-height:1.3'}, `${t.rank <= (em.top_n || 4) ? '★ ' : ''}${t.rank}. ${t.name}`), h('div', {class: 'tr'}, h('div', {class: 'fi', style: `width:${t.score}%`})), h('span', {class: 'v num'}, nz(t.score, 0))))))));
   root.append(h('div', {class: 'sec'}, h('h2', null, '前瞻推薦'), h('span', {class: 'sub'}, '門檻比主榜寬，但仍需品質、上檔與估值一致性；合格不足就照實少選')),
     h('div', {class: 'grid g2'}, marketCol('TW', em.picks.TW, em.shortage.TW, '（前瞻）'), marketCol('US', em.picks.US, em.shortage.US, '（前瞻）')));
   if (em.clues && em.clues.length) root.append(h('div', {class: 'sec'}, h('h2', null, 'AI 新興線索'), h('span', {class: 'sub'}, '未經驗證，不在推薦中')), h('div', {class: 'card'}, h('ul', null, em.clues.map(c => h('li', null, h('b', null, c.topic), '：' + c.why)))));
@@ -286,7 +286,7 @@ function bargainView() {
   const ba = S.snap.bargain, root = h('div');
   if (!ba) return h('div', {class: 'empty'}, '此日期沒有便宜好貨專區資料。');
   const r = ba.rules;
-  root.append(h('div', {class: 'note'}, '找「股價已被打到低基期，但公司沒有壞掉、獲利有轉強條件」的標的。', h('b', null, '便宜不等於好貨'), '：股價低常是因為基本面惡化（價值陷阱），所以要同時通過四道關卡，且不保證反彈。',
+  root.append(h('div', {class: 'note'}, '股價被打到低檔、但公司沒壞掉的標的。', h('b', null, '便宜不等於好貨'), '：要同時通過四道關卡，且不保證反彈。',
     h('div', {class: 'gates'}, [['① 低基期', `距52週高回檔 ≥ ${pct(r.drawdown, 0, false)}、位於區間下 ${pct(r.pos52, 0, false)}`], ['② 便宜', `目標價上檔 ≥ ${pct(r.upside, 0, false)}`], ['③ 好貨', `品質分 ≥ ${r.quality}、獲利為正、營收未衰退`], ['④ 有轉機', `成長分 ≥ ${r.growth}、自20日低點回升 ≥ ${pct(r.bounce, 0, false)}`]].map(([a, b]) => h('span', {class: 'gate'}, h('b', null, a), ' ', b)))));
   root.append(h('div', {class: 'sec'}, h('h2', null, '便宜好貨推薦'), h('span', {class: 'sub'}, '依「便宜、品質、爆發、轉機」加權排序；合格不足就照實少選；點卡片看估值、風險與走勢')),
     h('div', {class: 'grid g2'}, marketCol('TW', ba.picks.TW, ba.shortage.TW, '（便宜好貨）'), marketCol('US', ba.picks.US, ba.shortage.US, '（便宜好貨）')));
@@ -299,7 +299,7 @@ function scatterBargain(list) {
   const xm = Math.max(.5, ...xs) * 1.05, ym = Math.max(.4, ...ys) * 1.1, X = v => L + (W - L - R) * v / xm, Y = v => H - B - (H - T - B) * v / ym;
   const svg = s('svg', {viewBox: `0 0 ${W} ${H}`, width: '100%', role: 'img', 'aria-label': '低基期位置與目標價上檔'});
   for (let i = 0; i <= 4; i++) { const v = ym * i / 4; svg.append(s('line', {x1: L, x2: W - R, y1: Y(v), y2: Y(v), style: 'stroke:var(--grid)'}), s('text', {x: L - 5, y: Y(v) + 4, 'text-anchor': 'end'}, (v * 100).toFixed(0) + '%')); }
-  for (let i = 0; i <= 5; i++) { const v = xm * i / 5; svg.append(s('text', {x: X(v), y: H - 14, 'text-anchor': 'middle'}, '-' + (v * 100).toFixed(0) + '%')); }
+  for (let i = 0; i <= 5; i++) { const v = xm * i / 5; svg.append(s('text', {x: X(v), y: H - 14, 'text-anchor': 'middle'}, (v ? '-' : '') + (v * 100).toFixed(0) + '%')); }
   svg.append(s('text', {x: (L + W - R) / 2, y: H - 1, 'text-anchor': 'middle'}, '距52週高點回檔'));
   list.forEach(p => { const top = p.rank === 1, c = s('circle', {cx: X(-p.bargain.facts.from_high), cy: Y(p.target.upside), r: top ? 9 : 6, tabindex: 0, role: 'button', style: `fill:var(--up);opacity:${top ? 1 : .75};cursor:pointer`, 'data-tip': `${p.ticker} ${p.name}\n距高點 ${pct(p.bargain.facts.from_high, 0)}｜上檔 ${pct(p.target.upside, 0)}｜總分 ${nz(p.bargain.score, 0)}`, 'aria-label': `${p.ticker} ${p.name}`});
     c.addEventListener('click', () => stockDrawer(p)); c.addEventListener('keydown', e => { if (e.key === 'Enter') stockDrawer(p); }); svg.append(c);
@@ -380,13 +380,11 @@ function macroView() {
   if (inf.headline) t.push(kp('CPI 年增', pct(inf.headline.yoy, 1, false), `月增 ${pct(inf.headline.mom, 2)}｜核心 ${pct(inf.core && inf.core.mom, 2)}`, F.inflation && F.inflation.state, () => F.inflation && factorDrawer(F.inflation, m)));
   if (isNum(m.levels && m.levels.vix)) t.push(kp('VIX', nz(m.levels.vix, 1), F.vol ? F.vol.value.split('（')[1].replace('）', '') : '', F.vol && F.vol.state, () => F.vol && factorDrawer(F.vol, m), ser['^VIX']));
   const sx = ch5(ser['^SOX']); if (isNum(sx)) t.push(kp('費半 5日', pct(sx, 1), '台股最大連動指標', sx < -0.05 ? 'risk' : sx < -0.02 ? 'watch' : 'ok', () => F.equity && factorDrawer(F.equity, m), ser['^SOX']));
-  const v = m.valuation || {}; if (v.US && isNum(v.US.hurdle)) t.push(kp('推薦上檔門檻', '≥' + pct(Math.max(v.US.hurdle, .05), 1, false), `美股｜無風險利率 ${pct(v.US.rf, 2, false)}＋3pp｜台股 ≥${pct(Math.max((v.TW || {}).hurdle || 0, .05), 1, false)}`, null, () => openDrawer('利率如何影響推薦', '已套用在今日所有目標價與入選門檻', valuationBody(m))));
+  const v = m.valuation || {}; if (v.US && isNum(v.US.hurdle)) t.push(kp('美股推薦上檔門檻', '≥' + pct(Math.max(v.US.hurdle, .05), 1, false), `公債殖利率 ${pct(v.US.rf, 2, false)}＋3pp（台股 ≥${pct(Math.max((v.TW || {}).hurdle || 0, .05), 1, false)}）`, null, () => openDrawer('利率如何影響推薦', '已套用在今日所有目標價與入選門檻', valuationBody(m))));
   root.append(h('div', {class: 'sec'}, h('h2', null, '關鍵數字'), h('span', {class: 'sub'}, '琥珀框＝偏高；點方塊看說明')), h('div', {class: 'tiles'}, t));
   root.append(h('div', {class: 'sec'}, h('h2', null, '風險因子'), h('span', {class: 'sub'}, '★＝各群最需留意的前 2 項；條上刻度＝33（留意）、66（偏高）；點任一列看說明')),
     h('div', {class: 'grid g2'}, h('div', {class: 'card'}, h('h4', {style: 'margin:0 0 6px'}, '已發生（市場數據）'), factorBars('happened', m)), h('div', {class: 'card'}, h('h4', {style: 'margin:0 0 6px'}, '尚未發生（預期與事件）'), factorBars('ahead', m))));
   if ((fed.meetings || []).length) root.append(h('div', {class: 'sec'}, h('h2', null, '市場預期的利率路徑'), h('span', {class: 'sub'}, '長條＝各次 FOMC 後的隱含利率；虛線＝目前利率；市場定價，非聯準會承諾')), h('div', {class: 'card'}, h('div', {style: 'max-width:700px'}, fedChart(fed, true))));
-  const ev = (m.events || []).filter(e => e.days != null);
-  if (ev.length) root.append(h('div', {class: 'sec'}, h('h2', null, '接下來的事件')), h('div', {class: 'evs'}, ev.map(e => h('div', {class: 'ev' + (e.days <= 14 ? ' soon' : '')}, h('b', {class: 'num'}, e.days + ' 天'), h('span', null, e.date.slice(5) + ' ' + e.name), h('span', {class: 'muted sm'}, e.note)))));
   const more = [];
   const tiles = [];
   if (inf.core) tiles.push(['核心 CPI 近3月年化', pct(inf.core.ann3m, 1, false), `前月 ${pct(inf.core.prev_mom, 2)}`]);
@@ -419,7 +417,7 @@ function perfView() {
   if (!pos.length) { root.append(h('div', {class: 'empty'}, '尚無追蹤資料：推薦後需累積交易日才會出現績效。')); return root; }
   const done = h => summ && summ[h] && summ[h].n ? summ[h] : null, s5 = done('5'), s20 = done('20'), s60 = done('60');
   const last = pos.reduce((a, b) => (a.date > b.date ? a : b)).date;
-  root.append(h('div', {class: 'kpis', style: 'margin-top:8px'}, kpi('追蹤中推薦', pos.length + ' 筆'), kpi('推薦日數', new Set(pos.map(p => p.date)).size), kpi('最新推薦日', last),
+  root.append(h('div', {class: 'kpis', style: 'margin-top:8px'}, kpi('追蹤中推薦', pos.length + ' 筆'),
     kpi('5日平均超額', s5 ? pct(s5.avg_alpha) : '待累積', s5 ? `${s5.n} 筆到期；贏大盤 ${pct(s5.win_alpha, 0, false)}` : '需 5 個交易日'), kpi('20日平均超額', s20 ? pct(s20.avg_alpha) : '待累積', s20 ? `${s20.n} 筆到期；贏大盤 ${pct(s20.win_alpha, 0, false)}` : '需 20 個交易日'),
     kpi('60日平均超額', s60 ? pct(s60.avg_alpha) : '待累積', s60 ? `${s60.n} 筆到期` : '需 60 個交易日')));
   const coh = (P.cohorts || []).filter(c => (c.book || 'main') === S.pm && isNum(c.avg_alpha)).sort((a, b) => a.date < b.date ? -1 : 1).slice(-40);
