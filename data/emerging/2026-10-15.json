@@ -6,14 +6,14 @@
    "id": "aging_care",
    "name": "高齡化與慢性病照護設備",
    "tier": "A",
-   "score": 86.935,
-   "coverage_ratio": 0.112,
+   "score": 87.283,
+   "coverage_ratio": 0.098,
    "n_headlines": 1,
    "status": "尚未被充分報導",
    "rank": 1,
    "components": {
     "evidence": 100,
-    "low_coverage": 88.8,
+    "low_coverage": 90.2,
     "fundamental": 72.6,
     "not_crowded": 82.9
    }
@@ -54,16 +54,32 @@
    "id": "edge_ai_industrial",
    "name": "工業邊緣 AI 與嵌入式運算",
    "tier": "B",
-   "score": 80.483,
-   "coverage_ratio": 0.065,
-   "n_headlines": 1,
+   "score": 82.116,
+   "coverage_ratio": 0.0,
+   "n_headlines": 0,
    "status": "尚未被充分報導",
    "rank": 4,
    "components": {
     "evidence": 75,
-    "low_coverage": 93.5,
+    "low_coverage": 100.0,
     "fundamental": 86.7,
     "not_crowded": 64.7
+   }
+  },
+  {
+   "id": "adv_packaging_supply",
+   "name": "先進封裝測試介面與材料",
+   "tier": "B",
+   "score": 77.361,
+   "coverage_ratio": 0.241,
+   "n_headlines": 2,
+   "status": "尚未被充分報導",
+   "rank": 5,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 75.9,
+    "fundamental": 97.1,
+    "not_crowded": 58.1
    }
   },
   {
@@ -74,7 +90,7 @@
    "coverage_ratio": 0.0,
    "n_headlines": 0,
    "status": "尚未被充分報導",
-   "rank": 5,
+   "rank": 6,
    "components": {
     "evidence": 75,
     "low_coverage": 100.0,
@@ -90,7 +106,7 @@
    "coverage_ratio": 0.0,
    "n_headlines": 0,
    "status": "尚未被充分報導",
-   "rank": 6,
+   "rank": 7,
    "components": {
     "evidence": 75,
     "low_coverage": 100.0,
@@ -99,33 +115,17 @@
    }
   },
   {
-   "id": "adv_packaging_supply",
-   "name": "先進封裝測試介面與材料",
-   "tier": "B",
-   "score": 76.503,
-   "coverage_ratio": 0.276,
-   "n_headlines": 2,
-   "status": "尚未被充分報導",
-   "rank": 7,
-   "components": {
-    "evidence": 75,
-    "low_coverage": 72.4,
-    "fundamental": 97.1,
-    "not_crowded": 58.1
-   }
-  },
-  {
    "id": "process_control",
    "name": "先進製程量測、檢測與可靠度驗證",
    "tier": "B",
-   "score": 61.633,
-   "coverage_ratio": 0.525,
-   "n_headlines": 6,
+   "score": 61.839,
+   "coverage_ratio": 0.517,
+   "n_headlines": 7,
    "status": "報導中等",
    "rank": 8,
    "components": {
     "evidence": 75,
-    "low_coverage": 47.5,
+    "low_coverage": 48.3,
     "fundamental": 56.5,
     "not_crowded": 65.7
    }
@@ -152,24 +152,24 @@
     "news": 40.0
    },
    "target": {
-    "base": 160.12,
-    "bull": 224.17,
-    "bear": 64.05,
-    "ev": 148.91,
+    "base": 160.54,
+    "bull": 224.76,
+    "bear": 64.22,
+    "ev": 149.3,
     "confidence": "中",
-    "upside": 0.4557,
-    "ev_upside": 0.3538,
+    "upside": 0.4595,
+    "ev_upside": 0.3573,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 144.84,
+      "value": 145.24,
       "weight": 0.533,
-      "upside": 0.3167
+      "upside": 0.3204
      },
      "peg": {
-      "value": 221.47,
+      "value": 222.47,
       "weight": 0.2,
-      "upside": 1.0134
+      "upside": 1.0225
      },
      "dcf": {
       "value": 144.69,
@@ -180,9 +180,9 @@
    },
    "stop": 94.55,
    "fundamentals": {
-    "market_cap": 24181460992,
-    "pe_ttm": 22.1116,
-    "pe_fwd": 15.568,
+    "market_cap": 24072536064,
+    "pe_ttm": 22.012,
+    "pe_fwd": 15.4979,
     "peg": 0.9,
     "roe": 0.2019,
     "gross_margin": 0.3549,
@@ -216,30 +216,30 @@
    "rank": 2,
    "entry_price": 123.5,
    "entry_date": "2026-10-15",
-   "composite": 46.18,
+   "composite": 46.23,
    "scores": {
     "sector": null,
     "leader": 0.0,
     "quality": 58.6,
     "growth": 100.0,
-    "valuation": 40.2,
+    "valuation": 40.4,
     "momentum": 25.5,
     "news": 40.0
    },
    "target": {
-    "base": 135.95,
-    "bull": 170.64,
-    "bear": 83.91,
-    "ev": 129.88,
+    "base": 136.11,
+    "bull": 170.7,
+    "bear": 84.22,
+    "ev": 130.05,
     "confidence": "中",
-    "upside": 0.1008,
-    "ev_upside": 0.0516,
+    "upside": 0.1021,
+    "ev_upside": 0.0531,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 125.61,
+      "value": 125.86,
       "weight": 0.615,
-      "upside": 0.017
+      "upside": 0.0191
      },
      "consensus": {
       "value": 152.5,
@@ -250,9 +250,9 @@
    },
    "stop": 112.79,
    "fundamentals": {
-    "market_cap": 13828366336,
-    "pe_ttm": 16.7564,
-    "pe_fwd": 16.5779,
+    "market_cap": 13772830720,
+    "pe_ttm": 16.6891,
+    "pe_fwd": 16.5113,
     "peg": null,
     "roe": 0.1719,
     "gross_margin": 0.3328,
@@ -278,12 +278,87 @@
    "also_main": false
   },
   {
+   "ticker": "2481.TW",
+   "name": "PAN JIT INTERNATIONAL INC",
+   "zh_name": "強茂",
+   "market": "TW",
+   "sector": "power_semis",
+   "rank": 3,
+   "entry_price": 155.5,
+   "entry_date": "2026-10-15",
+   "composite": 55.82,
+   "scores": {
+    "sector": null,
+    "leader": 33.3,
+    "quality": 43.9,
+    "growth": 80.4,
+    "valuation": 79.2,
+    "momentum": 60.2,
+    "news": 40.0
+   },
+   "target": {
+    "base": 190.69,
+    "bull": 255.62,
+    "bear": 93.31,
+    "ev": 179.33,
+    "confidence": "高",
+    "upside": 0.2263,
+    "ev_upside": 0.1533,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 188.16,
+      "weight": 0.5,
+      "upside": 0.21
+     },
+     "peg": {
+      "value": 226.94,
+      "weight": 0.187,
+      "upside": 0.4595
+     },
+     "consensus": {
+      "value": 173.0,
+      "weight": 0.312,
+      "upside": 0.1125
+     }
+    }
+   },
+   "stop": 133.89,
+   "fundamentals": {
+    "market_cap": 61138386944,
+    "pe_ttm": 45.4545,
+    "pe_fwd": 21.4767,
+    "peg": 0.41,
+    "roe": 0.1043,
+    "gross_margin": 0.3253,
+    "op_margin": 0.1174,
+    "net_margin": 0.1028,
+    "rev_growth": 0.163,
+    "eps_growth": 0.938,
+    "de": 0.6267,
+    "beta": 1.546,
+    "target_mean": 173.0,
+    "n_analysts": 4,
+    "fcf_margin": -0.0159
+   },
+   "tech": {
+    "ret_1m": 0.036666666666666625,
+    "ret_3m": -0.10888252148997135,
+    "rel_3m": -0.13821047728950608,
+    "dist200": 0.23540912562502547,
+    "vol_ann": 0.7315089248067187
+   },
+   "theme": "power_semis",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
    "ticker": "3587.TWO",
    "name": "MATERIALS ANALYSIS TECHNOLOGY I",
    "zh_name": "閎康",
    "market": "TW",
    "sector": "process_control",
-   "rank": 3,
+   "rank": 4,
    "entry_price": 226.0,
    "entry_date": "2026-10-15",
    "composite": 55.35,
@@ -297,24 +372,24 @@
     "news": 40.0
    },
    "target": {
-    "base": 327.27,
-    "bull": 458.17,
-    "bear": 130.91,
-    "ev": 304.36,
+    "base": 327.14,
+    "bull": 457.99,
+    "bear": 130.85,
+    "ev": 304.24,
     "confidence": "中",
-    "upside": 0.4481,
-    "ev_upside": 0.3467,
+    "upside": 0.4475,
+    "ev_upside": 0.3462,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 251.54,
+      "value": 251.66,
       "weight": 0.5,
-      "upside": 0.113
+      "upside": 0.1135
      },
      "peg": {
-      "value": 465.2,
+      "value": 464.2,
       "weight": 0.187,
-      "upside": 1.0584
+      "upside": 1.054
      },
      "consensus": {
       "value": 365.67,
@@ -325,9 +400,9 @@
    },
    "stop": 207.79,
    "fundamentals": {
-    "market_cap": 17093933056,
-    "pe_ttm": 36.2637,
-    "pe_fwd": 15.2274,
+    "market_cap": 17130933248,
+    "pe_ttm": 34.4494,
+    "pe_fwd": 15.2604,
     "peg": null,
     "roe": 0.0925,
     "gross_margin": 0.316,
@@ -425,7 +500,7 @@
     "ret_1m": 0.033005212780951476,
     "ret_3m": -0.0803808195560417,
     "rel_3m": -0.1187801254319173,
-    "dist200": -0.0980372705004855,
+    "dist200": -0.09803726880712738,
     "vol_ann": 0.36639318116534836
    },
    "theme": "aging_care",
@@ -472,7 +547,7 @@
       "upside": 0.2351
      },
      "dcf": {
-      "value": 151.02,
+      "value": 151.03,
       "weight": 0.2,
       "upside": -0.1159
      },
@@ -485,7 +560,7 @@
    },
    "stop": 145.56,
    "fundamentals": {
-    "market_cap": 6223410688,
+    "market_cap": 6223254528,
     "pe_ttm": 35.0041,
     "pe_fwd": 24.4416,
     "peg": 1.85,
@@ -505,7 +580,7 @@
     "ret_1m": -0.038771026556439825,
     "ret_3m": -0.2658809735215465,
     "rel_3m": -0.3042802793974221,
-    "dist200": -0.1903523900735088,
+    "dist200": -0.19035238978072744,
     "vol_ann": 0.5736258418901734
    },
    "theme": "grid_hardware",
@@ -585,7 +660,7 @@
     "ret_1m": -0.014190114522834363,
     "ret_3m": 0.10875750960813613,
     "rel_3m": 0.07035820373226054,
-    "dist200": -0.061856943089687255,
+    "dist200": -0.06185694251607332,
     "vol_ann": 0.3094062165943459
    },
    "theme": "pq_security",
