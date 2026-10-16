@@ -159,66 +159,37 @@ def thesis(r: dict, sec: dict | None, ctx: dict) -> tuple[str, list[str]]:
 
 
 def macro_lines(m: dict) -> list[str]:
-    """日誌的『總經與市場環境』段落。"""
+    """日誌的『總經與市場環境』段落（精簡版：重點用表格，細節請看儀表板「總經」分頁）。"""
     L = []
     A = L.append
     A("## 一之二、總經與市場環境\n")
-    A(f"**{headline_text(m)}**。風險分數 0–100，越高越需要謹慎；分成『已發生（市場數據已經反映）』與『尚未發生（預期與事件）』兩群，避免把預期當成已發生的事實。\n")
-    for grp, title in (("happened", "已發生：市場數據顯示的壓力"), ("ahead", "尚未發生：市場預期與可能的事件")):
-        A(f"**{title}**\n")
-        A("| 因子 | 風險分 | 狀態 | 目前數據 |")
-        A("|---|---|---|---|")
-        for f in m["factors"]:
-            if f["group"] == grp:
-                st = {"risk": "⚠ 偏高", "watch": "留意", "ok": "正常", None: "—"}[f["state"]]
-                A(f"| {f['label']}{'（台股）' if f['tw_only'] else ''} | {num(f['score'], 0)} | {st} | {md_escape(f['value'])} |")
-        A("")
-    fed = m["fed"]
-    if fed.get("meetings"):
-        A("**聯準會利率路徑（市場隱含，來自聯邦基金期貨）**\n")
-        A(f"目前有效聯邦基金利率 {num(fed['effr'], 2)}%" + (f"（目標區間上緣 {num(fed['target_upper'], 2)}%）" if isnum(fed.get("target_upper")) else "") + "。\n")
-        A("| FOMC 決議日 | 距今 | 會後隱含利率 | 本次變動 | 25bp 機率 | 累計 |")
-        A("|---|---|---|---|---|---|")
-        for x in fed["meetings"]:
-            A(f"| {x['date']} | {x['days']} 天 | {x['after']:.2f}% | {x['delta_bp']:+.0f}bp（{'升息' if x['dir'] == 'hike' else '降息' if x['dir'] == 'cut' else '持平'}） | {x['prob'] * 100:.0f}% | {x['cum_bp']:+.0f}bp |")
-        A("\n> 這是『市場定價』（含少量期限溢酬），不是聯準會的承諾；數字會隨每日資料變動。\n")
-    ov = m["overlay"]
-    A("**整體操作建議（依風險等級的機械式建議，研究參考；不是個人化的投資建議）**\n")
+    A(f"**{headline_text(m)}**（0–100，越高越需謹慎；細節與圖表見儀表板「總經」分頁）\n")
+    A("| 群 | 因子 | 分數 | 狀態 | 數據 |")
+    A("|---|---|---|---|---|")
+    for f in sorted(m["factors"], key=lambda x: -(x["score"] if x["score"] is not None else -1)):
+        st = {"risk": "⚠ 偏高", "watch": "留意", "ok": "正常", None: "—"}[f["state"]]
+        A(f"| {'已發生' if f['group'] == 'happened' else '預期'} | {f['label']}{'（台）' if f['tw_only'] else ''} | {num(f['score'], 0)} | {st} | {md_escape(f.get('short') or f['value'])} |")
+    A("")
     for k, nm in (("US", "美股"), ("TW", "台股")):
         ps = m["posture"][k]
-        A(f"- **{ps['headline']}**" + (f"。主要驅動：{'；'.join(ps['drivers'])}" if ps["drivers"] else ""))
-        for a in ps["actions"]:
-            A(f"  - {a}")
-    A("")
+        A(f"- **{ps['headline']}**" + (f"；高估值／高 Beta 股單檔比重 ×{ps['sens_mult']:.2f}" if ps["sens_mult"] < 1 else "") + (f"（主要驅動：{'、'.join(d.split('（')[0] for d in ps['drivers'])}）" if ps["drivers"] else ""))
+    fed = m["fed"]
+    if fed.get("meetings"):
+        x = fed["meetings"][0]
+        A(f"- 下次 FOMC {x['date']}（{x['days']} 天後）：市場定價{'升息' if x['dir'] == 'hike' else '降息' if x['dir'] == 'cut' else '持平'}機率約 {x['prob'] * 100:.0f}%；目前利率 {num(fed['effr'], 2)}%，未來 {len(fed['meetings'])} 次會議累計 {fed['meetings'][-1]['cum_bp']:+.0f}bp（市場定價，非聯準會承諾）")
     vc = m["valuation"]
-    A("**利率如何影響目標價**\n")
-    for k, nm in (("US", "美股"), ("TW", "台股")):
-        v = vc[k]
-        if "rf" in v:
-            A(f"- {nm}：DCF 無風險利率 {v['rf'] * 100:.2f}%（原設定 {v['rf_base'] * 100:.2f}%）；PEG 合理倍數 ×{v['peg_factor']:.2f}" + (f"；bull／bear 情境區間加寬 {v['disp_add'] * 100:.0f} 個百分點" if v["disp_add"] else "") + "。同業相對本益比不調整（同業價格已反映目前利率）。")
-        else:
-            A(f"- {nm}：無殖利率資料，沿用原設定的無風險利率。")
-    A("")
-    A("**對選股的影響**\n")
+    A("- 利率對估值：" + "；".join(f"{nm} 無風險利率 {vc[k]['rf'] * 100:.2f}%、推薦上檔門檻 ≥ {max(vc[k]['hurdle'], 0.05) * 100:.1f}%" for k, nm in (("US", "美股"), ("TW", "台股")) if "rf" in vc[k]))
+    ov = m["overlay"]
     for k, nm in (("US", "美股"), ("TW", "台股")):
         o = ov[k]
         if o["extra_upside"] or o["sens_extra"]:
-            A(f"- {nm}環境「{o['label']}」→ 推薦門檻提高：一般股目標價上檔需再多 {o['extra_upside'] * 100:.0f} 個百分點，高估值（預估本益比 > {o['pe']}）或高 Beta（> {o['beta']}）股需多 {(o['extra_upside'] + o['sens_extra']) * 100:.0f} 個百分點。")
-        else:
-            A(f"- {nm}環境「{o['label']}」→ 不調整推薦門檻。")
+            A(f"- {nm}「{o['label']}」：門檻再 +{o['extra_upside'] * 100:.0f}pp（高估值／高 Beta +{(o['extra_upside'] + o['sens_extra']) * 100:.0f}pp）")
     A("")
-    if m["events"]:
-        A("**接下來要留意的事件（尚未發生）**\n")
-        for e in m["events"]:
-            A(f"- {e['date']}{'（' + str(e['days']) + ' 天後）' if e['days'] is not None else ''}：{e['name']}——{e['note']}")
-        A("")
     if m["headlines"]:
-        A("**相關新聞**\n")
-        for h in m["headlines"]:
-            A(f"- [{md_escape(h['title'])}]({h['link']})（{md_escape(h['source'])}｜{h['theme']}）" if h["link"] else f"- {md_escape(h['title'])}（{md_escape(h['source'])}｜{h['theme']}）")
-        A("")
+        A("相關新聞：" + "；".join(f"[{md_escape(h['title'][:40])}]({h['link']})" if h["link"] else md_escape(h["title"][:40]) for h in m["headlines"][:4]) + "\n")
     cv = m["coverage"]
-    A(f"> 資料涵蓋 {cv['ok']}／{cv['total']} 項因子" + (f"；缺：{'、'.join(cv['missing'])}" if cv["missing"] else "") + "。總經因子是風險提示，不是對漲跌的預測。\n")
+    if cv["missing"]:
+        A(f"> 缺資料的因子：{'、'.join(cv['missing'])}（不計分）。\n")
     return L
 
 

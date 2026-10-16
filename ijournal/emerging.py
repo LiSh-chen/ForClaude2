@@ -69,7 +69,7 @@ def eligible(r: dict, p: dict) -> tuple[bool, str]:
         return False, "市值過小"
     if r["pf"]["turnover"] < e["min_avg_turnover"][m]:
         return False, "流動性不足"
-    if r["val"]["upside"] < e["min_upside"]:
+    if r["val"]["upside"] < max(e["min_upside"], ((p.get("_macro_val") or {}).get(m) or {}).get("hurdle", 0.0)):
         return False, "目標價低於現價"
     q = r["scores"]["quality"]
     if q is None or q < e["min_quality_score"]:
