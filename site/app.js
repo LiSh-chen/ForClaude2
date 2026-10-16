@@ -422,12 +422,22 @@ function healthCard(hl) {
     (hl.actions || []).length ? h('details', null, h('summary', {class: 'sm'}, `系統建議的改進（${hl.actions.length}）`), h('ul', null, hl.actions.map(a => h('li', null, a)))) : null,
     h('details', null, h('summary', {class: 'sm'}, '更多觀察'), h('ul', null, (hl.findings || []).filter(f => f.level !== 'warn').map(f => h('li', null, f.text)))));
 }
+function strategyCard(hl) {
+  const sc = hl && hl.strategies; if (!sc || !sc.rows || sc.rows.length < 2) return null;
+  const mx = Math.max(.02, ...sc.rows.map(r => Math.abs(r.alpha))) * 1.15;
+  return h('div', {class: 'card strat'}, h('div', {class: 'hh'}, h('b', {class: 'hv'}, '三個策略同一把尺比'), h('span', {class: 'muted sm'}, `${sc.since} 起｜每檔只計首次推薦｜相對大盤超額`)),
+    h('div', {class: 'srows'}, sc.rows.map(r => { const w = Math.abs(r.alpha) / mx * 50, pos = r.alpha >= 0;
+      return h('div', {class: 'srow' + (r.n < 8 ? ' thin' : ''), tip: `${r.name}：${r.n} 檔不同股票，平均超額 ${pct(r.alpha)}，贏大盤 ${Math.round(r.win * 100)}%`},
+        h('span', {class: 'sl'}, r.name), h('span', {class: 'dv'}, h('i', {class: 'zero'}), h('i', {class: 'b', style: `${pos ? 'left:50%' : 'right:50%'};width:${w}%;background:var(${pos ? '--up' : '--down'});border-radius:${pos ? '0 4px 4px 0' : '4px 0 0 4px'}`})),
+        h('span', {class: 'num sv'}, pct(r.alpha)), h('span', {class: 'muted sm'}, `${r.n} 檔${r.n < 8 ? '・樣本太少' : ''}`)); })),
+    h('div', {class: 'muted sm'}, '各分頁的數字起算日與重複推薦次數不同，直接比較會誤導；這裡統一後三者差距很小，現階段不足以說哪個策略比較好。'));
+}
 function perfView() {
   const P = S.perf, root = h('div');
   const pos = (P && P.positions || []).filter(p => (p.book || 'main') === S.pm), summ = S.pm === 'main' ? (P && P.summary) : (P && P[S.pm] && P[S.pm].summary);
   const seg = h('div', {class: 'seg', role: 'group', 'aria-label': '範圍'}, [['main', '主榜'], ['emerging', '前瞻專區'], ['bargain', '便宜好貨']].map(([k, l]) => h('button', {type: 'button', 'aria-pressed': S.pm === k, on: {click: () => { S.pm = k; render(); }}}, l)));
   root.append(h('div', {class: 'sec'}, h('h2', null, '績效追蹤'), seg, h('span', {class: 'sub'}, '進場價＝推薦日收盤；報酬未計成本；基準＝台股加權／S&P 500')));
-  if (S.pm === 'main') { const hc = healthCard(S.health); if (hc) root.append(hc); }
+  { const hc = S.pm === 'main' ? healthCard(S.health) : null, st = strategyCard(S.health); if (hc) root.append(hc); if (st) root.append(st); }
   if (!pos.length) { root.append(h('div', {class: 'empty'}, '尚無追蹤資料：推薦後需累積交易日才會出現績效。')); return root; }
   const done = h => summ && summ[h] && summ[h].n ? summ[h] : null, s5 = done('5'), s20 = done('20'), s60 = done('60');
   const last = pos.reduce((a, b) => (a.date > b.date ? a : b)).date;
