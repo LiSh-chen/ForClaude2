@@ -6,14 +6,14 @@
    "id": "aging_care",
    "name": "高齡化與慢性病照護設備",
    "tier": "A",
-   "score": 88.293,
-   "coverage_ratio": 0.057,
+   "score": 88.213,
+   "coverage_ratio": 0.061,
    "n_headlines": 1,
    "status": "尚未被充分報導",
    "rank": 1,
    "components": {
     "evidence": 100,
-    "low_coverage": 94.3,
+    "low_coverage": 93.9,
     "fundamental": 72.6,
     "not_crowded": 82.9
    }
@@ -86,14 +86,14 @@
    "id": "adv_packaging_supply",
    "name": "先進封裝測試介面與材料",
    "tier": "B",
-   "score": 76.697,
-   "coverage_ratio": 0.274,
+   "score": 76.319,
+   "coverage_ratio": 0.289,
    "n_headlines": 3,
    "status": "尚未被充分報導",
    "rank": 6,
    "components": {
     "evidence": 75,
-    "low_coverage": 72.6,
+    "low_coverage": 71.1,
     "fundamental": 97.1,
     "not_crowded": 58.8
    }
@@ -102,14 +102,14 @@
    "id": "water_infra",
    "name": "水資源與超純水處理",
    "tier": "B",
-   "score": 73.293,
-   "coverage_ratio": 0.131,
+   "score": 73.114,
+   "coverage_ratio": 0.138,
    "n_headlines": 1,
    "status": "尚未被充分報導",
    "rank": 7,
    "components": {
     "evidence": 75,
-    "low_coverage": 86.9,
+    "low_coverage": 86.2,
     "fundamental": 46.9,
     "not_crowded": 86.7
    }
@@ -118,14 +118,14 @@
    "id": "process_control",
    "name": "先進製程量測、檢測與可靠度驗證",
    "tier": "B",
-   "score": 61.811,
-   "coverage_ratio": 0.518,
-   "n_headlines": 7,
-   "status": "報導中等",
+   "score": 63.679,
+   "coverage_ratio": 0.444,
+   "n_headlines": 6,
+   "status": "尚未被充分報導",
    "rank": 8,
    "components": {
     "evidence": 75,
-    "low_coverage": 48.2,
+    "low_coverage": 55.6,
     "fundamental": 56.5,
     "not_crowded": 65.7
    }
@@ -500,7 +500,7 @@
     "ret_1m": 0.033005212780951476,
     "ret_3m": -0.0803808195560417,
     "rel_3m": -0.1187801254319173,
-    "dist200": -0.09803727219384373,
+    "dist200": -0.09803727007714591,
     "vol_ann": 0.36639318116534836
    },
    "theme": "aging_care",
@@ -580,7 +580,7 @@
     "ret_1m": 0.061248612168845806,
     "ret_3m": 0.22079060316101007,
     "rel_3m": 0.18239129728513448,
-    "dist200": 0.08079515001112725,
+    "dist200": 0.0807951489073786,
     "vol_ann": 0.293577188626389
    },
    "theme": "aging_care",
@@ -740,7 +740,7 @@
     "ret_1m": -0.014190114522834363,
     "ret_3m": 0.10875750960813613,
     "rel_3m": 0.07035820373226054,
-    "dist200": -0.06185694423691512,
+    "dist200": -0.06185694194245939,
     "vol_ann": 0.3094062165943459
    },
    "theme": "pq_security",
