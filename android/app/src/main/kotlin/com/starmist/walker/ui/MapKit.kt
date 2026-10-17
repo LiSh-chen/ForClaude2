@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
@@ -51,7 +52,7 @@ fun ZoomPanMap(
     maxZoom: Float = 8f,
     background: Color = Vintage.parchmentLight,
     overlay: @Composable BoxScope.() -> Unit = {},
-    content: DrawScope.(w: Float, h: Float, zoom: Float) -> Unit,
+    content: DrawScope.(w: Float, h: Float, zoom: Float, view: Rect) -> Unit,
 ) {
     var zoom by remember(aspect) { mutableFloatStateOf(initialZoom) }
     var center by remember(aspect) { mutableStateOf(focus) }
@@ -101,7 +102,8 @@ fun ZoomPanMap(
             val w = w0 * zoom
             val h = h0 * zoom
             val c = clamp(center, zoom)
-            translate(size.width / 2f - c.x * w, size.height / 2f - c.y * h) { content(w, h, zoom) }
+            val view = Rect(c.x * w - size.width / 2f, c.y * h - size.height / 2f, c.x * w + size.width / 2f, c.y * h + size.height / 2f)
+            translate(size.width / 2f - c.x * w, size.height / 2f - c.y * h) { content(w, h, zoom, view) }
         }
         overlay()
         Box(

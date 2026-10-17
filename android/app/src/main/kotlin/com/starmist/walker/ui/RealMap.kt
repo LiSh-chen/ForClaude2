@@ -190,6 +190,8 @@ internal fun DrawScope.drawRealMap(
     measurer: TextMeasurer,
     pin: ImageBitmap?,
     base: ImageBitmap? = null,
+    tiles: MapTiles? = null,
+    view: Rect = Rect(0f, 0f, w, h),
 ) {
     fun GeoPoint.px() = unit().let { Offset(it.x * w, it.y * h) }
     fun Offset.scaled() = Offset(x * w, y * h)
@@ -206,6 +208,17 @@ internal fun DrawScope.drawRealMap(
     }
     if (base != null) {
         drawImage(base, dstSize = IntSize(w.toInt(), h.toInt()))
+        // Detail: the sharp tiles over the part on screen (only once the low-resolution picture would look soft).
+        if (tiles != null && w > 2200f) {
+            val sx = w / MAP_FULL_W; val sy = h / MAP_FULL_H
+            for (id in tiles.visible(view, w, h)) {
+                val bmp = tiles.get(id) ?: continue
+                val x0 = (id % MAP_TILE_COLS) * MAP_TILE; val y0 = (id / MAP_TILE_COLS) * MAP_TILE
+                val left = kotlin.math.floor(x0 * sx).toInt(); val top = kotlin.math.floor(y0 * sy).toInt()
+                val right = kotlin.math.ceil((x0 + bmp.width) * sx).toInt(); val bottom = kotlin.math.ceil((y0 + bmp.height) * sy).toInt()
+                drawImage(bmp, dstOffset = IntOffset(left, top), dstSize = IntSize(right - left, bottom - top))
+            }
+        }
     } else {
         clipPath(island, clipOp = ClipOp.Difference) {
             val gap = 7.dp.toPx()

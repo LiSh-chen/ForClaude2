@@ -93,7 +93,7 @@ fun ZoomWorldMap(regionIndex: Int, fraction: Double, finished: Boolean, modifier
         modifier = modifier,
         initialZoom = 3.2f,
         background = androidx.compose.ui.graphics.Color(0xFFEAD9AE),
-    ) { w, h, zoom -> drawWorldMap(w, h, data, measurer, zoom) }
+    ) { w, h, zoom, _ -> drawWorldMap(w, h, data, measurer, zoom) }
 }
 
 internal fun DrawScope.drawWorldMap(w: Float, h: Float, data: WorldMapData, measurer: androidx.compose.ui.text.TextMeasurer, zoom: Float) {
