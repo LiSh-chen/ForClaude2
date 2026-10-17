@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.imageResource
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import kotlinx.coroutines.CoroutineScope
