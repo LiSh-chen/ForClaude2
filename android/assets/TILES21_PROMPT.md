@@ -20,6 +20,7 @@ Task: return the SAME image, same framing, same 3:2 ratio, at the highest resolu
 3. Redraw each illustration with more detail but the same subject (listed below) and let its edges melt into the surrounding ground (grass into grass, sand into sand, water into sea or river), so that it no longer looks like a sticker: no light patch around it, no frame, a very soft contact shadow only.
 4. Do not add any text, numbers, labels, frames, scale bars, compasses or watermarks. Do not add buildings, houses or objects that are not already in the image.
 5. If something is cut by the image border, keep it cut at the border exactly as it is.
+6. Keep every illustration at the SAME size and footprint it has in the uploaded image: do not enlarge, shrink or extend any illustration, and do not let it spread over fields, coast or sea around it (for example a harbour must stay inside its current outline and must not turn land into water).
 ```
 
 ## 第 01 張　緯度 24.919–25.4°N，經度 120.599–121.386°E（4 個物件）
