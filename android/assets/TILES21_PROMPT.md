@@ -18,7 +18,7 @@ Task: return the SAME image, same framing, same 3:2 ratio, at the highest resolu
 1. Do NOT change the composition. Every coastline, river, road, field outline, mountain ridge, forest patch, colour area and every illustration must stay in exactly the same position, with the same size and shape. Do not move, crop, rotate, mirror, add or remove anything. Nothing may be re-composed.
 2. Add only finer detail: sharper pen lines, finer hatching on slopes, more refined tree and field texture, cleaner coast lines and sea hatching, crisp paper grain.
 3. Redraw each illustration with more detail but the same subject (listed below) and let its edges melt into the surrounding ground (grass into grass, sand into sand, water into sea or river), so that it no longer looks like a sticker: no light patch around it, no frame, a very soft contact shadow only.
-4. Do not add any text, numbers, labels, frames, scale bars, compasses or watermarks. Do not add buildings, houses or objects that are not already in the image.
+4. Absolutely no text of any kind: no Chinese characters, no letters, no numbers, no labels, no captions, no place names, no signs with writing, no frames, scale bars, compasses or watermarks anywhere in the image. Do not add buildings, houses or objects that are not already in the image.
 5. If something is cut by the image border, keep it cut at the border exactly as it is.
 6. Keep every illustration at the SAME size and footprint it has in the uploaded image: do not enlarge, shrink or extend any illustration, and do not let it spread over fields, coast or sea around it (for example a harbour must stay inside its current outline and must not turn land into water).
 ```
@@ -27,10 +27,10 @@ Task: return the SAME image, same framing, same 3:2 ratio, at the highest resolu
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (下右) Datun-side duck pond area (Taoyuan ponds): many small round irrigation ponds scattered in farmland
-- (中右) 竹圍漁港: a small harbour with an old wharf and fishing nets
-- (下右) 桃園神社: a Japanese shrine with a torii gate, stone lanterns and a stair path through trees
-- (下右) 中壢藝術館: a small modern brick arts hall with a courtyard
+- (下右) local_3: many small round irrigation ponds scattered in farmland
+- (中右) zhuwei: a small harbour with an old wharf and fishing nets
+- (下右) taoyuan: a Japanese shrine with a torii gate, stone lanterns and a stair path through trees
+- (下右) zhongli_hall: a small modern brick arts hall with a courtyard
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile01.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -39,22 +39,22 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (中左) 淡水紅毛城: a red fort with a flag on a hill by the river mouth
-- (中左) Tamsui sunset ferry: a small passenger ferry crossing a wide river mouth at sunset
-- (中中) 和平島公園: a rocky coast with strange wave-eroded stone shapes and a small park
-- (下左) 桃園神社: a Japanese shrine with a torii gate, stone lanterns and a stair path through trees
-- (中左) 十三行博物館: a modern dark-roofed museum with a long ribbon-shaped structure beside the Tamsui river mouth
-- (下左) 板橋林家花園: a classical Chinese garden with a pavilion, a pond and a curved bridge
-- (中左) Beitou hot springs: steam rising from a valley of hot springs with small bathhouses
-- (下左) 西門紅樓: an octagonal red-brick Japanese-era building with a small plaza
-- (下左) 迪化街: an old merchant street with arched baroque facades, hanging dried goods and lanterns
-- (下左) 回到台北: a cosy small house with a lantern light and a front garden (the end of the journey)
-- (下中) 台北101: the tall segmented tower with stacked pagoda-like sections, small trees at its base
-- (中中) 基隆廟口: a temple (Dianji Temple) gate with rows of small lantern-lit food stalls in front, a harbour behind
-- (中右) 九份: a steep hillside of old teahouses with red lanterns and stone steps down to the sea
-- (下右) 福隆: a wide sandy beach where a river meets the ocean, a long sandbar, small umbrellas
-- (下右) 三貂角: a white lighthouse standing on a green headland above the sea
-- (下中) Pinglin tea hills: terraced hillsides of tea plantations with neat curved rows and a small tea factory hut
+- (中左) hongmaocheng: a red fort with a flag on a hill by the river mouth
+- (中左) local_2: a small passenger ferry crossing a wide river mouth at sunset
+- (中中) heping: a rocky coast with strange wave-eroded stone shapes and a small park
+- (下左) taoyuan: a Japanese shrine with a torii gate, stone lanterns and a stair path through trees
+- (中左) shihsanhang: a modern dark-roofed museum with a long ribbon-shaped structure beside the Tamsui river mouth
+- (下左) lin_garden: a classical Chinese garden with a pavilion, a pond and a curved bridge
+- (中左) local_1: steam rising from a valley of hot springs with small bathhouses
+- (下左) red_house: an octagonal red-brick Japanese-era building with a small plaza
+- (下左) dihua: an old merchant street with arched baroque facades, hanging dried goods and lanterns
+- (下左) finish: a cosy small house with a lantern light and a front garden (the end of the journey)
+- (下中) taipei101: the tall segmented tower with stacked pagoda-like sections, small trees at its base
+- (中中) keelung: a temple (Dianji Temple) gate with rows of small lantern-lit food stalls in front, a harbour behind
+- (中右) jiufen: a steep hillside of old teahouses with red lanterns and stone steps down to the sea
+- (下右) fulong: a wide sandy beach where a river meets the ocean, a long sandbar, small umbrellas
+- (下右) sandiaojiao: a white lighthouse standing on a green headland above the sea
+- (下中) local_0: terraced hillsides of tea plantations with neat curved rows and a small tea factory hut
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile02.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -63,13 +63,13 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上右) 中壢藝術館: a small modern brick arts hall with a courtyard
-- (中中) Hsinchu windy coast: a windswept coast with wind-bent pines and a cycle path
-- (上中) 南寮漁港: a harbour with a long seaside cycle path and small boats
-- (中中) 新竹城隍廟: a large city-god temple with a colourful carved roof and a courtyard
-- (下左) Miaoli coastal wind turbines: a row of wind turbines on a coastal plain
-- (中中) Roadside Earth God shrine: a small roadside Earth God shrine with incense and a banyan tree
-- (下左) 通霄精鹽廠: a salt factory building with big white salt piles and a small train
+- (上右) zhongli_hall: a small modern brick arts hall with a courtyard
+- (中中) local_16: a windswept coast with wind-bent pines and a cycle path
+- (上中) nanliao: a harbour with a long seaside cycle path and small boats
+- (中中) hsinchu: a large city-god temple with a colourful carved roof and a courtyard
+- (下左) local_15: a row of wind turbines on a coastal plain
+- (中中) extra_3: a small roadside Earth God shrine with incense and a banyan tree
+- (下左) tongxiao: a salt factory building with big white salt piles and a small train
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile03.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -78,15 +78,15 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上中) Pinglin tea hills: terraced hillsides of tea plantations with neat curved rows and a small tea factory hut
-- (中中) 宜蘭酒廠: an old factory building with a tall chimney and large wooden barrels
-- (上右) 頭城老街: a row of old brick shophouses with arcaded fronts and baroque-style facades
-- (上右) 蘭陽博物館: a modern building shaped like a cuesta rock slope, beside the sea
-- (中中) 羅東林業文化園區: a wooden log pond with stacked logs and a small steam train
-- (中中) Lanyang plain paddies: a patchwork of green rice paddies with a water buffalo and an egret
-- (中右) 傳統藝術中心: a traditional Chinese courtyard complex with curved roofs beside a canal, a small bridge
-- (下右) 蘇澳冷泉: a round stone spring pool with bubbles rising and a few people soaking, cool blue water
-- (下右) 南方澳漁港: a bridge over a colourful fishing harbour full of boats
+- (上中) local_0: terraced hillsides of tea plantations with neat curved rows and a small tea factory hut
+- (中中) yilan_distillery: an old factory building with a tall chimney and large wooden barrels
+- (上右) toucheng: a row of old brick shophouses with arcaded fronts and baroque-style facades
+- (上右) lanyang: a modern building shaped like a cuesta rock slope, beside the sea
+- (中中) luodong: a wooden log pond with stacked logs and a small steam train
+- (中中) local_4: a patchwork of green rice paddies with a water buffalo and an egret
+- (中右) ncta: a traditional Chinese courtyard complex with curved roofs beside a canal, a small bridge
+- (下右) suao: a round stone spring pool with bubbles rising and a few people soaking, cool blue water
+- (下右) nanfangao: a bridge over a colourful fishing harbour full of boats
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile04.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -95,13 +95,13 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上右) 通霄精鹽廠: a salt factory building with big white salt piles and a small train
-- (中右) 大甲鎮瀾宮: a large Mazu temple with a procession of small figures carrying a palanquin
-- (上右) Yuanli grass-weaving fields: low rush-grass fields and a small weaving house
-- (中右) 梧棲漁港: a harbour with many moored fishing boats and a small market
-- (中右) 高美濕地: a row of white wind turbines on a tidal flat at sunset, shallow pools reflecting the sky
-- (中右) Railway bridge: a train crossing a small iron bridge over a river
-- (下右) 國家歌劇院: a futuristic white curved building with cave-like openings
+- (上右) tongxiao: a salt factory building with big white salt piles and a small train
+- (中右) dajia: a large Mazu temple with a procession of small figures carrying a palanquin
+- (上右) local_14: low rush-grass fields and a small weaving house
+- (中右) wuqi: a harbour with many moored fishing boats and a small market
+- (中右) gaomei: a row of white wind turbines on a tidal flat at sunset, shallow pools reflecting the sky
+- (中右) extra_4: a train crossing a small iron bridge over a river
+- (下右) taichung_theater: a futuristic white curved building with cave-like openings
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile05.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -110,11 +110,11 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上左) 通霄精鹽廠: a salt factory building with big white salt piles and a small train
-- (中左) 大甲鎮瀾宮: a large Mazu temple with a procession of small figures carrying a palanquin
-- (上左) Yuanli grass-weaving fields: low rush-grass fields and a small weaving house
-- (中左) Railway bridge: a train crossing a small iron bridge over a river
-- (下左) 國家歌劇院: a futuristic white curved building with cave-like openings
+- (上左) tongxiao: a salt factory building with big white salt piles and a small train
+- (中左) dajia: a large Mazu temple with a procession of small figures carrying a palanquin
+- (上左) local_14: low rush-grass fields and a small weaving house
+- (中左) extra_4: a train crossing a small iron bridge over a river
+- (下左) taichung_theater: a futuristic white curved building with cave-like openings
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile06.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -131,14 +131,14 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上右) 國家歌劇院: a futuristic white curved building with cave-like openings
-- (中中) Wanggong oyster fields: tidal flats with oyster racks and a small fishing hamlet
-- (上中) 鹿港老街: a very narrow alley between tall red-brick walls with a tiny strip of sky
-- (上右) 彰化扇形車庫: a semicircular steam-locomotive depot with a locomotive on a turntable
-- (上右) 八卦山大佛: a very large seated Buddha statue on a hill above a city
-- (下右) 西螺大橋: a very long steel truss bridge crossing a wide braided river
-- (中右) Tianwei flower garden: rows of colourful flower fields and greenhouses
-- (下中) Mailiao wind turbines: a row of white wind turbines along a coastal dike
+- (上右) taichung_theater: a futuristic white curved building with cave-like openings
+- (中中) local_12: tidal flats with oyster racks and a small fishing hamlet
+- (上中) lukang: a very narrow alley between tall red-brick walls with a tiny strip of sky
+- (上右) roundhouse: a semicircular steam-locomotive depot with a locomotive on a turntable
+- (上右) baguashan: a very large seated Buddha statue on a hill above a city
+- (下右) xiluo: a very long steel truss bridge crossing a wide braided river
+- (中右) local_13: rows of colourful flower fields and greenhouses
+- (下中) local_11: a row of white wind turbines along a coastal dike
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile08.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -147,7 +147,7 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上左) 國家歌劇院: a futuristic white curved building with cave-like openings
+- (上左) taichung_theater: a futuristic white curved building with cave-like openings
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile09.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -156,9 +156,9 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (中中) 松園別館: a two-storey Japanese-era wooden villa with a tiled roof among old pine trees
-- (上中) 七星潭: a crescent-shaped bay with a pebble beach, a few kites in the air
-- (下左) 林田山: a wooden forestry village on a hillside with a small logging railway and stacked logs
+- (中中) pinegarden: a two-storey Japanese-era wooden villa with a tiled roof among old pine trees
+- (上中) qixingtan: a crescent-shaped bay with a pebble beach, a few kites in the air
+- (下左) lintienshan: a wooden forestry village on a hillside with a small logging railway and stacked logs
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile10.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -167,16 +167,16 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上中) Mailiao wind turbines: a row of white wind turbines along a coastal dike
-- (中中) Temple fair: a small roadside temple fair with colourful banners and lanterns
-- (中中) Pineapple field: a pineapple field with rows of spiky plants
-- (中左) Dongshi oyster racks: oyster-farm racks on a tidal flat with fishermen
-- (中中) 朴子配天宮: a large Mazu temple with an ornate multi-layered roof, red lanterns
-- (中中) 水上北回歸線標: a small white monument with a ring symbol on flat farmland (Tropic of Cancer marker)
-- (中中) 檜意森活村: Japanese-era wooden houses with tiled roofs among tall cypress trees
-- (中右) 嘉義公園: a park with a tall shrine-like pavilion and old trees
-- (下左) 布袋: a fishing harbour with a ferry and fishing boats, a small lighthouse
-- (下中) Lotus pond: a lotus pond with pink flowers and large round leaves
+- (上中) local_11: a row of white wind turbines along a coastal dike
+- (中中) extra_5: a small roadside temple fair with colourful banners and lanterns
+- (中中) extra_1: a pineapple field with rows of spiky plants
+- (中左) local_10: oyster-farm racks on a tidal flat with fishermen
+- (中中) peitian: a large Mazu temple with an ornate multi-layered roof, red lanterns
+- (中中) shuishang: a small white monument with a ring symbol on flat farmland (Tropic of Cancer marker)
+- (中中) hinoki: Japanese-era wooden houses with tiled roofs among tall cypress trees
+- (中右) chiayi_park: a park with a tall shrine-like pavilion and old trees
+- (下左) budai: a fishing harbour with a ferry and fishing boats, a small lighthouse
+- (下中) extra_2: a lotus pond with pink flowers and large round leaves
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile11.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -185,9 +185,9 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (中右) 瑞穗北回歸線標: a small white stone monument with a ring-shaped top on a hill (Tropic of Cancer marker)
-- (中右) Ruisui ranch: a green hillside pasture with a group of cows
-- (下右) 玉里: a steaming bowl of noodles in front of a small railway station building
+- (中右) ruisui: a small white stone monument with a ring-shaped top on a hill (Tropic of Cancer marker)
+- (中右) local_5: a green hillside pasture with a group of cows
+- (下右) yuli: a steaming bowl of noodles in front of a small railway station building
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile12.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -196,10 +196,10 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上左) 林田山: a wooden forestry village on a hillside with a small logging railway and stacked logs
-- (中左) 瑞穗北回歸線標: a small white stone monument with a ring-shaped top on a hill (Tropic of Cancer marker)
-- (中左) Ruisui ranch: a green hillside pasture with a group of cows
-- (下左) 玉里: a steaming bowl of noodles in front of a small railway station building
+- (上左) lintienshan: a wooden forestry village on a hillside with a small logging railway and stacked logs
+- (中左) ruisui: a small white stone monument with a ring-shaped top on a hill (Tropic of Cancer marker)
+- (中左) local_5: a green hillside pasture with a group of cows
+- (下左) yuli: a steaming bowl of noodles in front of a small railway station building
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile13.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -208,13 +208,13 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上中) Water buffalo: a water buffalo standing in a flooded rice paddy with an egret
-- (上中) Lotus pond: a lotus pond with pink flowers and large round leaves
-- (中左) Qigu lagoon oyster racks: oyster-farm racks in a shallow lagoon with a few small boats
-- (上左) 井仔腳鹽田: tile-floored salt pans in a grid, small white salt pyramids, the sea edge
-- (下左) 安平古堡: a red-brick fort with a watchtower and thick walls, old banyan trees
-- (下中) 赤崁樓: a red-brick tower with a curved roof among old trees
-- (下中) 奇美博物館: a neoclassical white museum with columns and a large fountain
+- (上中) extra_0: a water buffalo standing in a flooded rice paddy with an egret
+- (上中) extra_2: a lotus pond with pink flowers and large round leaves
+- (中左) local_9: oyster-farm racks in a shallow lagoon with a few small boats
+- (上左) jingzijiao: tile-floored salt pans in a grid, small white salt pyramids, the sea edge
+- (下左) anping: a red-brick fort with a watchtower and thick walls, old banyan trees
+- (下中) chihkan: a red-brick tower with a curved roof among old trees
+- (下中) chimei: a neoclassical white museum with columns and a large fountain
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile14.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -223,12 +223,12 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上右) 玉里: a steaming bowl of noodles in front of a small railway station building
-- (中右) 池上: a green rice field with a small railway station and a lunch box (bento) in the foreground
-- (中右) Chishang paddies: wide golden rice fields with a long straight farm road and a lone tree
-- (中右) 羅山瀑布: a high narrow waterfall in a green valley with a small bridge
-- (中右) 關山: a bicycle on a path circling a rice field, mountains behind
-- (下中) 鹿野高台: a hot-air balloon rising over green tea terraces, a lookout deck
+- (上右) yuli: a steaming bowl of noodles in front of a small railway station building
+- (中右) chishang: a green rice field with a small railway station and a lunch box (bento) in the foreground
+- (中右) local_6: wide golden rice fields with a long straight farm road and a lone tree
+- (中右) luoshan: a high narrow waterfall in a green valley with a small bridge
+- (中右) guanshan: a bicycle on a path circling a rice field, mountains behind
+- (下中) luye: a hot-air balloon rising over green tea terraces, a lookout deck
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile15.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -237,8 +237,8 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上左) 玉里: a steaming bowl of noodles in front of a small railway station building
-- (中左) 羅山瀑布: a high narrow waterfall in a green valley with a small bridge
+- (上左) yuli: a steaming bowl of noodles in front of a small railway station building
+- (中左) luoshan: a high narrow waterfall in a green valley with a small bridge
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile16.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -247,14 +247,14 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上中) 奇美博物館: a neoclassical white museum with columns and a large fountain
-- (上中) 岡山水塔: an old brick water tower among low houses
-- (中中) 橋頭糖廠: an old sugar mill with a tall chimney, a small sugarcane train and cane fields
-- (下中) 旗津燈塔: a white lighthouse on a sandy spit at the harbour mouth
-- (下中) 高雄駁二: old brick warehouses turned into an art area with colourful art installations, a harbour crane
-- (中中) 愛河: a calm river with small boats and willow trees, bridges
-- (中中) 蓮池潭: a lake with the Dragon and Tiger Pagodas on the shore, a zigzag bridge
-- (中右) 屏東演藝廳: a modern curved building with a green roof
+- (上中) chimei: a neoclassical white museum with columns and a large fountain
+- (上中) gangshan: an old brick water tower among low houses
+- (中中) qiaotou: an old sugar mill with a tall chimney, a small sugarcane train and cane fields
+- (下中) cijin: a white lighthouse on a sandy spit at the harbour mouth
+- (下中) pier2: old brick warehouses turned into an art area with colourful art installations, a harbour crane
+- (中中) loveriver: a calm river with small boats and willow trees, bridges
+- (中中) lotuspond: a lake with the Dragon and Tiger Pagodas on the shore, a zigzag bridge
+- (中右) pingtung_hall: a modern curved building with a green roof
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile17.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -263,11 +263,11 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上中) 鹿野高台: a hot-air balloon rising over green tea terraces, a lookout deck
-- (中中) 史前博物館: a modern museum building with a curved glass roof and a stone-age mural wall
-- (上中) 卑南文化公園: stone slab ruins in a grass park under a big sky
-- (下中) 太麻里: a coast with the first golden light of sunrise over the Pacific, a small seaside shrine
-- (中中) 知本溫泉: a steaming outdoor hot spring pool among trees
+- (上中) luye: a hot-air balloon rising over green tea terraces, a lookout deck
+- (中中) prehistory: a modern museum building with a curved glass roof and a stone-age mural wall
+- (上中) beinan: stone slab ruins in a grass park under a big sky
+- (下中) taimali: a coast with the first golden light of sunrise over the Pacific, a small seaside shrine
+- (中中) zhiben: a steaming outdoor hot spring pool among trees
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile18.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -276,11 +276,11 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上中) 東港: a temple with a large decorated wooden ceremonial ship (Wangchuan) on a harbour shore
-- (上右) Linbian wax-apple farms: orchards of wax-apple trees with netting and a roadside fruit stand
-- (上右) Betel-nut stand: a roadside betel-nut stand with a tiny shop and tall palms
-- (中右) 枋寮: a small railway station with a steam train passing, the sea in the background
-- (下右) 車城福安宮: a Taiwanese Earth God temple with a curved swallowtail roof and a very large golden statue of the Earth God beside it
+- (上中) donggang: a temple with a large decorated wooden ceremonial ship (Wangchuan) on a harbour shore
+- (上右) local_7: orchards of wax-apple trees with netting and a roadside fruit stand
+- (上右) extra_6: a roadside betel-nut stand with a tiny shop and tall palms
+- (中右) fangliao: a small railway station with a steam train passing, the sea in the background
+- (下右) checheng: a Taiwanese Earth God temple with a curved swallowtail roof and a very large golden statue of the Earth God beside it
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile19.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -289,8 +289,8 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (中左) 壽卡: a mountain pass road winding up between steep forested slopes, a small roadside shrine
-- (下左) 車城福安宮: a Taiwanese Earth God temple with a curved swallowtail roof and a very large golden statue of the Earth God beside it
+- (中左) shouka: a mountain pass road winding up between steep forested slopes, a small roadside shrine
+- (下左) checheng: a Taiwanese Earth God temple with a curved swallowtail roof and a very large golden statue of the Earth God beside it
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile20.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
@@ -299,13 +299,13 @@ After generating, save the final image to my Google Drive in the folder "AI coop
 
 ```
 The illustrations in this section (position in the picture, subject):
-- (上左) 壽卡: a mountain pass road winding up between steep forested slopes, a small roadside shrine
-- (中左) 海生館: a modern aquarium building with a large whale sculpture and waves
-- (中左) 車城福安宮: a Taiwanese Earth God temple with a curved swallowtail roof and a very large golden statue of the Earth God beside it
-- (下左) 貓鼻頭: a rock on the shore shaped like a crouching cat, surrounded by waves
-- (中左) 恆春古城: a stone city gate with a tower and thick curved walls, a quiet street
-- (下左) Kenting beach dunes: a white sand beach with dunes, windswept grass and a few palms
-- (下左) 鵝鑾鼻: a white lighthouse on a grassy coral-limestone cape, the sea beyond
+- (上左) shouka: a mountain pass road winding up between steep forested slopes, a small roadside shrine
+- (中左) nmmba: a modern aquarium building with a large whale sculpture and waves
+- (中左) checheng: a Taiwanese Earth God temple with a curved swallowtail roof and a very large golden statue of the Earth God beside it
+- (下左) maobitou: a rock on the shore shaped like a crouching cat, surrounded by waves
+- (中左) hengchun: a stone city gate with a tower and thick curved walls, a quiet street
+- (下左) local_8: a white sand beach with dunes, windswept grass and a few palms
+- (下左) eluanbi: a white lighthouse on a grassy coral-limestone cape, the sea beyond
 
 After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile21.png (no extra words in the name). If a file with that name already exists, replace it.
 ```

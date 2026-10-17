@@ -20,7 +20,7 @@ md = ['# 真實世界地圖：21 張切圖細畫（每張 80×53 公里）', '',
  '1. Do NOT change the composition. Every coastline, river, road, field outline, mountain ridge, forest patch, colour area and every illustration must stay in exactly the same position, with the same size and shape. Do not move, crop, rotate, mirror, add or remove anything. Nothing may be re-composed.',
  '2. Add only finer detail: sharper pen lines, finer hatching on slopes, more refined tree and field texture, cleaner coast lines and sea hatching, crisp paper grain.',
  '3. Redraw each illustration with more detail but the same subject (listed below) and let its edges melt into the surrounding ground (grass into grass, sand into sand, water into sea or river), so that it no longer looks like a sticker: no light patch around it, no frame, a very soft contact shadow only.',
- '4. Do not add any text, numbers, labels, frames, scale bars, compasses or watermarks. Do not add buildings, houses or objects that are not already in the image.',
+ '4. Absolutely no text of any kind: no Chinese characters, no letters, no numbers, no labels, no captions, no place names, no signs with writing, no frames, scale bars, compasses or watermarks anywhere in the image. Do not add buildings, houses or objects that are not already in the image.',
  '5. If something is cut by the image border, keep it cut at the border exactly as it is.',
  '6. Keep every illustration at the SAME size and footprint it has in the uploaded image: do not enlarge, shrink or extend any illustration, and do not let it spread over fields, coast or sea around it (for example a harbour must stay inside its current outline and must not turn land into water).',
  '```', '']
@@ -32,7 +32,7 @@ for t in meta['tiles']:
     for o in inside:
         fx, fy = (o['x0'] - x0) / (x1 - x0), (o['y0'] - y0) / (y1 - y0)
         col = '左' if fx < 1/3 else ('中' if fx < 2/3 else '右'); row = '上' if fy < 1/3 else ('中' if fy < 2/3 else '下')
-        lines.append(f'- ({row}{col}) {o["name"]}: {o["desc"]}')
+        lines.append(f'- ({row}{col}) {o["id"]}: {o["desc"]}')
     md += [f'## 第 {t["tile"]:02d} 張　緯度 {t["lat"][0]}–{t["lat"][1]}°N，經度 {t["lon"][0]}–{t["lon"][1]}°E（{len(inside)} 個物件）', '',
            '```', 'The illustrations in this section (position in the picture, subject):' if inside else 'There are no illustrations in this section; it is plain terrain and sea.'] + lines + ['', SAVE(t['tile']), '```', '']
 md += ['## 交給我之後', '',
