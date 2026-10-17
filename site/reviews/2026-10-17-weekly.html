@@ -1,0 +1,550 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>2026-10-17-weekly｜投資研究日誌</title><style>
+:root{--bg:#f7f7f4;--fg:#1c2421;--card:#fff;--muted:#68726d;--line:#dcdfda;--accent:#1f6f4a;--up:#c0392b;--down:#1a8f4c}
+@media (prefers-color-scheme:dark){:root{--bg:#121614;--fg:#e6eae7;--card:#1a1f1c;--muted:#9aa59f;--line:#2c342f;--accent:#5bbd8a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.7 system-ui,-apple-system,"Noto Sans TC",sans-serif}
+header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav{max-width:1000px;margin:0 auto;padding:10px 16px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+nav b{margin-right:auto}nav a{color:var(--accent);text-decoration:none;font-weight:600}
+main{max-width:1000px;margin:0 auto;padding:12px 16px 60px}
+h1{font-size:1.5rem}h2{margin-top:2rem;border-bottom:1px solid var(--line);padding-bottom:4px}h3{margin-top:1.6rem}
+a{color:var(--accent)}blockquote{margin:10px 0;padding:6px 14px;border-left:4px solid var(--accent);background:var(--card);color:var(--muted)}
+.tw{overflow-x:auto}table{border-collapse:collapse;font-size:13.5px;margin:10px 0;min-width:100%}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}th{background:var(--card)}
+code{background:var(--card);padding:1px 4px;border-radius:4px}.muted{color:var(--muted)}
+ul.arch{list-style:none;padding:0}ul.arch li{padding:6px 0;border-bottom:1px solid var(--line)}
+svg text{fill:var(--fg);font-size:11px}
+footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);font-size:12.5px}
+</style></head><body><header><nav><b>📒 投資研究日誌</b><a href="../index.html">儀表板</a><a href="../archive.html">日誌</a><a href="../reviews.html">檢討</a><a href="../methodology.html">方法論</a></nav></header><main><h1>週度檢討報告 2026-10-17</h1>
+<blockquote>
+<p>追蹤中推薦 66 筆，涵蓋 9 個推薦日。參數版本 v1。僅供研究，不構成投資建議。</p>
+</blockquote>
+<h2>零、一頁摘要</h2>
+<p><strong>推薦後平均超額 -2.7%，但樣本太少（11 檔不同股票、到期 0 筆），還不能判斷選股好壞</strong></p>
+<ul>
+<li>66 筆推薦其實只有 11 檔不同股票（同一檔每天重複計入）；去重後自首次推薦起平均超額 -2.4%。</li>
+<li>同期大盤平均 -2.2%、推薦平均 -4.9%：大盤本身在下跌，絕對報酬為負不全是選股問題。</li>
+<li>⚠ 美股拖累整體：超額 -4.9%（台股 +1.5%）。</li>
+<li>⚠ 推薦集中在 PCB、載板與先進材料 27%、AI 晶片與先進製程 27%：績效主要反映這些題材的行情，而不是選股能力。</li>
+<li>⚠ 33% 的推薦已碰到參考停損；若大盤沒有同步重挫，代表停損設太近或選到高波動股。</li>
+<li>⚠ 拖累最大：SNDK（-21.7%）、TSM（-13.0%）、2383.TW（-8.4%）。</li>
+<li>調整系統所需的樣本還不夠：到期 0／40 筆、不同股票 0／20 檔。在此之前不自動調參，避免追著雜訊跑。</li>
+<li>檢討機制：每週六產生檢討報告；每月第一個週六在樣本足夠時調整參數（上次檢討 2026-10-16、下次 2026-10-17）。</li>
+<li>⚠ 假設追蹤：目標價上檔 ≥45% 的 7 檔平均超額 -9.0%，其餘 20 檔 -0.6%。樣本很小且同在一段行情，先持續觀察，累積到各 20 檔以上再決定是否收緊上檔上限。</li>
+</ul>
+<p><strong>建議的結構性改進（需決定後才會實作）</strong></p>
+<ul>
+<li>評估加入『同題材跨市場上限』：目前只限同市場同產業 2 檔，美股與台股的同一題材（如 AI 晶片）仍會同時入選，放大單一題材的風險。</li>
+<li>檢討停損規則（目前約 2.5 倍 ATR、6%–18%）是否貼合持有期；並區分『大盤急跌』與『個股論點被推翻』兩種情境。</li>
+</ul>
+<h2>一、績效總覽（相對大盤）</h2>
+<p>基準：台股對加權指數、美股對 S&amp;P 500。進場價為推薦日收盤價（未計交易成本與稅費，實際績效會更低）。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>範圍</th>
+<th>持有期</th>
+<th>到期檔數</th>
+<th>平均報酬</th>
+<th>平均超額報酬</th>
+<th>勝率（絕對）</th>
+<th>勝率（贏大盤）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全部</td>
+<td>5 日</td>
+<td>32</td>
+<td>-4.7%</td>
+<td>-2.6%</td>
+<td>25%</td>
+<td>41%</td>
+</tr>
+<tr>
+<td>台股</td>
+<td>5 日</td>
+<td>13</td>
+<td>-2.1%</td>
+<td>+1.8%</td>
+<td>23%</td>
+<td>62%</td>
+</tr>
+<tr>
+<td>美股</td>
+<td>5 日</td>
+<td>19</td>
+<td>-6.4%</td>
+<td>-5.6%</td>
+<td>26%</td>
+<td>26%</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>各期推薦批次迄今表現</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>推薦日</th>
+<th>檔數</th>
+<th>已持有交易日</th>
+<th>平均報酬</th>
+<th>平均超額報酬</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-10-16</td>
+<td>7</td>
+<td>0</td>
+<td>-0.0%</td>
+<td>-0.0%</td>
+</tr>
+<tr>
+<td>2026-10-15</td>
+<td>7</td>
+<td>1</td>
+<td>-1.7%</td>
+<td>-1.0%</td>
+</tr>
+<tr>
+<td>2026-10-14</td>
+<td>7</td>
+<td>2</td>
+<td>-3.6%</td>
+<td>-2.1%</td>
+</tr>
+<tr>
+<td>2026-10-13</td>
+<td>6</td>
+<td>3</td>
+<td>-4.4%</td>
+<td>-2.3%</td>
+</tr>
+<tr>
+<td>2026-10-12</td>
+<td>7</td>
+<td>4</td>
+<td>-5.3%</td>
+<td>-2.6%</td>
+</tr>
+<tr>
+<td>2026-10-09</td>
+<td>7</td>
+<td>5</td>
+<td>-5.6%</td>
+<td>-2.6%</td>
+</tr>
+<tr>
+<td>2026-10-08</td>
+<td>8</td>
+<td>5</td>
+<td>-5.8%</td>
+<td>-3.3%</td>
+</tr>
+<tr>
+<td>2026-10-07</td>
+<td>7</td>
+<td>6</td>
+<td>-10.2%</td>
+<td>-7.3%</td>
+</tr>
+<tr>
+<td>2026-10-06</td>
+<td>10</td>
+<td>7</td>
+<td>-6.6%</td>
+<td>-2.8%</td>
+</tr>
+</tbody>
+</table></div>
+<h2>二、最佳與最差個股（迄今）</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>推薦日</th>
+<th>代號</th>
+<th>名稱</th>
+<th>產業</th>
+<th>迄今報酬</th>
+<th>超額</th>
+<th>目標價進度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最佳</td>
+<td>2026-10-06</td>
+<td>6505.TW</td>
+<td>台塑化</td>
+<td>傳統能源與原物料</td>
+<td>+20.7%</td>
+<td>+26.1%</td>
+<td>162%</td>
+</tr>
+<tr>
+<td>最佳</td>
+<td>2026-10-08</td>
+<td>6505.TW</td>
+<td>台塑化</td>
+<td>傳統能源與原物料</td>
+<td>+10.9%</td>
+<td>+15.3%</td>
+<td>210%</td>
+</tr>
+<tr>
+<td>最佳</td>
+<td>2026-10-09</td>
+<td>6505.TW</td>
+<td>台塑化</td>
+<td>傳統能源與原物料</td>
+<td>+10.9%</td>
+<td>+15.3%</td>
+<td>210%</td>
+</tr>
+<tr>
+<td>最佳</td>
+<td>2026-10-13</td>
+<td>2368.TW</td>
+<td>金像電</td>
+<td>PCB、載板與先進材料</td>
+<td>+6.4%</td>
+<td>+9.0%</td>
+<td>16%</td>
+</tr>
+<tr>
+<td>最佳</td>
+<td>2026-10-07</td>
+<td>2368.TW</td>
+<td>金像電</td>
+<td>PCB、載板與先進材料</td>
+<td>+0.0%</td>
+<td>+5.4%</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>最差</td>
+<td>2026-10-06</td>
+<td>TSM</td>
+<td>台積電 ADR</td>
+<td>AI 晶片與先進製程</td>
+<td>-15.1%</td>
+<td>-13.0%</td>
+<td>-70%</td>
+</tr>
+<tr>
+<td>最差</td>
+<td>2026-10-09</td>
+<td>SNDK</td>
+<td>Sandisk</td>
+<td>記憶體與儲存</td>
+<td>-17.9%</td>
+<td>-15.9%</td>
+<td>-42%</td>
+</tr>
+<tr>
+<td>最差</td>
+<td>2026-10-08</td>
+<td>SNDK</td>
+<td>Sandisk</td>
+<td>記憶體與儲存</td>
+<td>-19.3%</td>
+<td>-17.9%</td>
+<td>-48%</td>
+</tr>
+<tr>
+<td>最差</td>
+<td>2026-10-07</td>
+<td>SNDK</td>
+<td>Sandisk</td>
+<td>記憶體與儲存</td>
+<td>-21.8%</td>
+<td>-19.9%</td>
+<td>-57%</td>
+</tr>
+<tr>
+<td>最差</td>
+<td>2026-10-06</td>
+<td>SNDK</td>
+<td>Sandisk</td>
+<td>記憶體與儲存</td>
+<td>-23.8%</td>
+<td>-21.7%</td>
+<td>-62%</td>
+</tr>
+</tbody>
+</table></div>
+<h2>三、選股有效性（20 個交易日超額報酬）</h2>
+<p>尚無已滿 20 個交易日的樣本。</p>
+<h2>四、因子與估值方法的預測力（日均 Rank IC）</h2>
+<p>IC＝每日橫斷面中，因子分數與後續 20 日超額報酬的 Spearman 相關，再對日期平均；有效日期數：因子 0、估值方法 0。IC&gt;0 代表該因子有預測力。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>因子</th>
+<th>目前權重</th>
+<th>IC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sector</td>
+<td>0.200</td>
+<td>—</td>
+</tr>
+<tr>
+<td>leader</td>
+<td>0.100</td>
+<td>—</td>
+</tr>
+<tr>
+<td>quality</td>
+<td>0.250</td>
+<td>—</td>
+</tr>
+<tr>
+<td>growth</td>
+<td>0.100</td>
+<td>—</td>
+</tr>
+<tr>
+<td>valuation</td>
+<td>0.150</td>
+<td>—</td>
+</tr>
+<tr>
+<td>momentum</td>
+<td>0.120</td>
+<td>—</td>
+</tr>
+<tr>
+<td>news</td>
+<td>0.080</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>估值方法</th>
+<th>目前權重</th>
+<th>IC（隱含上檔 vs 實際超額報酬）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pe</td>
+<td>0.400</td>
+<td>—</td>
+</tr>
+<tr>
+<td>peg</td>
+<td>0.150</td>
+<td>—</td>
+</tr>
+<tr>
+<td>dcf</td>
+<td>0.200</td>
+<td>—</td>
+</tr>
+<tr>
+<td>consensus</td>
+<td>0.250</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<h2>五、目標價檢驗</h2>
+<ul>
+<li>觸及 base 目標價：3/32；觸及參考停損：18/32</li>
+<li>目標價『隱含路徑』檢驗：把 12 個月上檔空間按複利攤到 20 日作為預期報酬，實際 − 預期的平均偏差 = <strong>—</strong>（0 筆）。</li>
+<li>偏差為負 → 目標價系統性偏樂觀；為正 → 偏保守。需注意此期間大盤整體漲跌也會影響此數字。</li>
+<li>迄今（不分持有期）平均 實際−預期：-7.73%</li>
+</ul>
+<h2>六、產業別表現（迄今超額報酬）</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>產業</th>
+<th>筆數</th>
+<th>平均超額</th>
+<th>平均報酬</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>傳統能源與原物料</td>
+<td>3</td>
+<td>+18.9%</td>
+<td>+14.1%</td>
+</tr>
+<tr>
+<td>網通與光通訊</td>
+<td>1</td>
+<td>+2.0%</td>
+<td>-3.4%</td>
+</tr>
+<tr>
+<td>網路平台、廣告與消費電子</td>
+<td>3</td>
+<td>+2.0%</td>
+<td>+0.1%</td>
+</tr>
+<tr>
+<td>PCB、載板與先進材料</td>
+<td>18</td>
+<td>-1.2%</td>
+<td>-4.4%</td>
+</tr>
+<tr>
+<td>雲端、AI 軟體與資安</td>
+<td>14</td>
+<td>-1.8%</td>
+<td>-3.1%</td>
+</tr>
+<tr>
+<td>AI 晶片與先進製程</td>
+<td>18</td>
+<td>-5.2%</td>
+<td>-6.7%</td>
+</tr>
+<tr>
+<td>記憶體與儲存</td>
+<td>9</td>
+<td>-11.4%</td>
+<td>-13.2%</td>
+</tr>
+</tbody>
+</table></div>
+<h2>六之二、前瞻專區績效（獨立追蹤）</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>持有期</th>
+<th>到期檔數</th>
+<th>平均報酬</th>
+<th>平均超額報酬</th>
+<th>勝率（贏大盤）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5 日</td>
+<td>21</td>
+<td>-5.1%</td>
+<td>-2.9%</td>
+<td>38%</td>
+</tr>
+</tbody>
+</table></div>
+<p>若此專區長期沒有超額報酬，代表『冷門趨勢』篩選沒有附加價值，應下修或停用，不應因為故事動聽而保留。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>趨勢</th>
+<th>筆數</th>
+<th>平均超額（迄今）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>aging_care</td>
+<td>9</td>
+<td>+4.8%</td>
+</tr>
+<tr>
+<td>power_semis</td>
+<td>2</td>
+<td>+0.8%</td>
+</tr>
+<tr>
+<td>process_control</td>
+<td>8</td>
+<td>-0.8%</td>
+</tr>
+<tr>
+<td>grid_hardware</td>
+<td>2</td>
+<td>-2.0%</td>
+</tr>
+<tr>
+<td>edge_ai_industrial</td>
+<td>21</td>
+<td>-2.5%</td>
+</tr>
+<tr>
+<td>pq_security</td>
+<td>16</td>
+<td>-3.1%</td>
+</tr>
+<tr>
+<td>adv_packaging_supply</td>
+<td>2</td>
+<td>-15.1%</td>
+</tr>
+</tbody>
+</table></div>
+<h2>六之三、便宜好貨專區績效（獨立追蹤）</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>持有期</th>
+<th>到期檔數</th>
+<th>平均報酬</th>
+<th>平均超額報酬</th>
+<th>勝率（贏大盤）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5 日</td>
+<td>7</td>
+<td>-1.4%</td>
+<td>-0.2%</td>
+<td>57%</td>
+</tr>
+</tbody>
+</table></div>
+<p>若長期沒有超額報酬，代表『低基期』篩選只是撿到價值陷阱，應收緊止跌與成長條件或停用此專區。</p>
+<h2>六之四、總經風險分數驗證</h2>
+<p>每天的總經風險等級，與之後 5／20 個交易日大盤的表現對照（美股看 S&amp;P 500、台股看加權指數）。若『警戒／高風險』之後大盤並沒有比『正常』更差，代表這些因子沒有預測力，應調整權重或停用門檻提高機制。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>市場</th>
+<th>等級</th>
+<th>樣本</th>
+<th>之後5日平均</th>
+<th>之後20日平均</th>
+<th>20日內最大回檔（平均）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>美股</td>
+<td>留意</td>
+<td>2</td>
+<td>—</td>
+<td>—</td>
+<td>-1.1%</td>
+</tr>
+<tr>
+<td>台股</td>
+<td>警戒</td>
+<td>2</td>
+<td>—</td>
+<td>—</td>
+<td>+0.3%</td>
+</tr>
+</tbody>
+</table></div>
+<p>樣本天數少時（尤其是剛上線的前幾週），只能當描述，不能當結論。</p>
+<h2>七、診斷與改進行動</h2>
+<ul>
+<li>到期樣本僅 0 筆（&lt; 40），任何結論統計上都不可靠；<strong>不調整目標價折減係數</strong>，繼續累積。</li>
+<li>可計算 IC 的日期僅 0 天（&lt; 20），因子權重暫不調整。</li>
+<li>逐一檢討最差的個股（見第二節）：回頭閱讀當期日誌，確認是『論點被推翻』（需修正選股規則）還是『短期雜訊』（不應過度反應）。最差：SNDK(-22%)、SNDK(-20%)、SNDK(-18%)</li>
+</ul>
+<h2>八、回饋到系統的參數調整</h2>
+<p>本報告為純檢討（週報），不調整參數；月報會在樣本足夠時回饋參數。</p></main><footer>本站內容由系統自動產生，僅供研究與教育用途，不構成投資建議；目標價為模型估算，投資有風險。</footer></body></html>
