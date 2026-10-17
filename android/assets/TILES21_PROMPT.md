@@ -8,7 +8,7 @@
 1. 開新對話（每張一個），比例 **3:2 橫式**，解析度選最高。
 2. 上傳兩張圖：`tileNN_input.jpg`（要精修的那張）和 `tileNN_locator.jpg`（小圖，粉紅框＝這一張在全島的位置，只給你參考，**不要求 Gemini 畫它**；想省事可以不傳）。
 3. 貼下面的「通用提示詞」，後面接該張的「物件清單」。
-4. 存成 `generated/tiles21/tileNN.png`（NN 是兩位數編號，和輸入檔一致）。
+4. 每張提示詞最後一行（After generating, save…）會要求 Gemini 把成品直接存到你的雲端硬碟 **我的雲端硬碟／AI cooperate**，檔名固定為 `tileNN.png`（NN 是兩位數編號，和輸入檔一致）；我之後從那裡取檔。若 Gemini 沒存成功或檔名不對，請「下載原尺寸」後手動存進同一資料夾並改成這個檔名。
 
 ## 通用提示詞（每張都貼）
 
@@ -30,6 +30,8 @@ The illustrations in this section (position in the picture, subject):
 - (中右) 竹圍漁港: a small harbour with an old wharf and fishing nets
 - (下右) 桃園神社: a Japanese shrine with a torii gate, stone lanterns and a stair path through trees
 - (下右) 中壢藝術館: a small modern brick arts hall with a courtyard
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile01.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 02 張　緯度 24.919–25.4°N，經度 121.268–122.055°E（16 個物件）
@@ -52,6 +54,8 @@ The illustrations in this section (position in the picture, subject):
 - (下右) 福隆: a wide sandy beach where a river meets the ocean, a long sandbar, small umbrellas
 - (下右) 三貂角: a white lighthouse standing on a green headland above the sea
 - (下中) Pinglin tea hills: terraced hillsides of tea plantations with neat curved rows and a small tea factory hut
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile02.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 03 張　緯度 24.51–24.991°N，經度 120.599–121.386°E（7 個物件）
@@ -65,6 +69,8 @@ The illustrations in this section (position in the picture, subject):
 - (下左) Miaoli coastal wind turbines: a row of wind turbines on a coastal plain
 - (中中) Roadside Earth God shrine: a small roadside Earth God shrine with incense and a banyan tree
 - (下左) 通霄精鹽廠: a salt factory building with big white salt piles and a small train
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile03.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 04 張　緯度 24.51–24.991°N，經度 121.268–122.055°E（9 個物件）
@@ -80,6 +86,8 @@ The illustrations in this section (position in the picture, subject):
 - (中右) 傳統藝術中心: a traditional Chinese courtyard complex with curved roofs beside a canal, a small bridge
 - (下右) 蘇澳冷泉: a round stone spring pool with bubbles rising and a few people soaking, cool blue water
 - (下右) 南方澳漁港: a bridge over a colourful fishing harbour full of boats
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile04.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 05 張　緯度 24.1–24.581°N，經度 119.93–120.717°E（7 個物件）
@@ -93,6 +101,8 @@ The illustrations in this section (position in the picture, subject):
 - (中右) 高美濕地: a row of white wind turbines on a tidal flat at sunset, shallow pools reflecting the sky
 - (中右) Railway bridge: a train crossing a small iron bridge over a river
 - (下右) 國家歌劇院: a futuristic white curved building with cave-like openings
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile05.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 06 張　緯度 24.1–24.581°N，經度 120.599–121.386°E（5 個物件）
@@ -104,12 +114,16 @@ The illustrations in this section (position in the picture, subject):
 - (上左) Yuanli grass-weaving fields: low rush-grass fields and a small weaving house
 - (中左) Railway bridge: a train crossing a small iron bridge over a river
 - (下左) 國家歌劇院: a futuristic white curved building with cave-like openings
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile06.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 07 張　緯度 24.1–24.581°N，經度 121.268–122.055°E（0 個物件）
 
 ```
 There are no illustrations in this section; it is plain terrain and sea.
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile07.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 08 張　緯度 23.691–24.173°N，經度 119.93–120.717°E（8 個物件）
@@ -124,6 +138,8 @@ The illustrations in this section (position in the picture, subject):
 - (下右) 西螺大橋: a very long steel truss bridge crossing a wide braided river
 - (中右) Tianwei flower garden: rows of colourful flower fields and greenhouses
 - (下中) Mailiao wind turbines: a row of white wind turbines along a coastal dike
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile08.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 09 張　緯度 23.691–24.173°N，經度 120.599–121.386°E（1 個物件）
@@ -131,6 +147,8 @@ The illustrations in this section (position in the picture, subject):
 ```
 The illustrations in this section (position in the picture, subject):
 - (上左) 國家歌劇院: a futuristic white curved building with cave-like openings
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile09.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 10 張　緯度 23.691–24.173°N，經度 121.268–122.055°E（3 個物件）
@@ -140,6 +158,8 @@ The illustrations in this section (position in the picture, subject):
 - (中中) 松園別館: a two-storey Japanese-era wooden villa with a tiled roof among old pine trees
 - (上中) 七星潭: a crescent-shaped bay with a pebble beach, a few kites in the air
 - (下左) 林田山: a wooden forestry village on a hillside with a small logging railway and stacked logs
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile10.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 11 張　緯度 23.282–23.763°N，經度 119.93–120.717°E（10 個物件）
@@ -156,6 +176,8 @@ The illustrations in this section (position in the picture, subject):
 - (中右) 嘉義公園: a park with a tall shrine-like pavilion and old trees
 - (下左) 布袋: a fishing harbour with a ferry and fishing boats, a small lighthouse
 - (下中) Lotus pond: a lotus pond with pink flowers and large round leaves
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile11.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 12 張　緯度 23.282–23.763°N，經度 120.599–121.386°E（3 個物件）
@@ -165,6 +187,8 @@ The illustrations in this section (position in the picture, subject):
 - (中右) 瑞穗北回歸線標: a small white stone monument with a ring-shaped top on a hill (Tropic of Cancer marker)
 - (中右) Ruisui ranch: a green hillside pasture with a group of cows
 - (下右) 玉里: a steaming bowl of noodles in front of a small railway station building
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile12.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 13 張　緯度 23.282–23.763°N，經度 121.268–122.055°E（4 個物件）
@@ -175,6 +199,8 @@ The illustrations in this section (position in the picture, subject):
 - (中左) 瑞穗北回歸線標: a small white stone monument with a ring-shaped top on a hill (Tropic of Cancer marker)
 - (中左) Ruisui ranch: a green hillside pasture with a group of cows
 - (下左) 玉里: a steaming bowl of noodles in front of a small railway station building
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile13.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 14 張　緯度 22.873–23.354°N，經度 119.93–120.717°E（7 個物件）
@@ -188,6 +214,8 @@ The illustrations in this section (position in the picture, subject):
 - (下左) 安平古堡: a red-brick fort with a watchtower and thick walls, old banyan trees
 - (下中) 赤崁樓: a red-brick tower with a curved roof among old trees
 - (下中) 奇美博物館: a neoclassical white museum with columns and a large fountain
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile14.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 15 張　緯度 22.873–23.354°N，經度 120.599–121.386°E（6 個物件）
@@ -200,6 +228,8 @@ The illustrations in this section (position in the picture, subject):
 - (中右) 羅山瀑布: a high narrow waterfall in a green valley with a small bridge
 - (中右) 關山: a bicycle on a path circling a rice field, mountains behind
 - (下中) 鹿野高台: a hot-air balloon rising over green tea terraces, a lookout deck
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile15.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 16 張　緯度 22.873–23.354°N，經度 121.268–122.055°E（2 個物件）
@@ -208,6 +238,8 @@ The illustrations in this section (position in the picture, subject):
 The illustrations in this section (position in the picture, subject):
 - (上左) 玉里: a steaming bowl of noodles in front of a small railway station building
 - (中左) 羅山瀑布: a high narrow waterfall in a green valley with a small bridge
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile16.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 17 張　緯度 22.463–22.944°N，經度 119.93–120.717°E（8 個物件）
@@ -222,6 +254,8 @@ The illustrations in this section (position in the picture, subject):
 - (中中) 愛河: a calm river with small boats and willow trees, bridges
 - (中中) 蓮池潭: a lake with the Dragon and Tiger Pagodas on the shore, a zigzag bridge
 - (中右) 屏東演藝廳: a modern curved building with a green roof
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile17.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 18 張　緯度 22.463–22.944°N，經度 120.599–121.386°E（5 個物件）
@@ -233,6 +267,8 @@ The illustrations in this section (position in the picture, subject):
 - (上中) 卑南文化公園: stone slab ruins in a grass park under a big sky
 - (下中) 太麻里: a coast with the first golden light of sunrise over the Pacific, a small seaside shrine
 - (中中) 知本溫泉: a steaming outdoor hot spring pool among trees
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile18.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 19 張　緯度 22.054–22.535°N，經度 119.93–120.717°E（5 個物件）
@@ -244,6 +280,8 @@ The illustrations in this section (position in the picture, subject):
 - (上右) Betel-nut stand: a roadside betel-nut stand with a tiny shop and tall palms
 - (中右) 枋寮: a small railway station with a steam train passing, the sea in the background
 - (下右) 車城福安宮: a Taiwanese Earth God temple with a curved swallowtail roof and a very large golden statue of the Earth God beside it
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile19.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 20 張　緯度 22.054–22.535°N，經度 120.599–121.386°E（2 個物件）
@@ -252,6 +290,8 @@ The illustrations in this section (position in the picture, subject):
 The illustrations in this section (position in the picture, subject):
 - (中左) 壽卡: a mountain pass road winding up between steep forested slopes, a small roadside shrine
 - (下左) 車城福安宮: a Taiwanese Earth God temple with a curved swallowtail roof and a very large golden statue of the Earth God beside it
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile20.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 第 21 張　緯度 21.8–22.281°N，經度 120.599–121.386°E（7 個物件）
@@ -265,6 +305,8 @@ The illustrations in this section (position in the picture, subject):
 - (中左) 恆春古城: a stone city gate with a tower and thick curved walls, a quiet street
 - (下左) Kenting beach dunes: a white sand beach with dunes, windswept grass and a few palms
 - (下左) 鵝鑾鼻: a white lighthouse on a grassy coral-limestone cape, the sea beyond
+
+After generating, save the final image to my Google Drive in the folder "AI cooperate" (My Drive / AI cooperate), with the exact file name tile21.png (no extra words in the name). If a file with that name already exists, replace it.
 ```
 
 ## 交給我之後
