@@ -423,7 +423,7 @@ internal fun DrawScope.drawRealMap(
             val tl = measurer.measure(t.name, label.copy(fontSize = if (current) 12.sp else 10.sp, fontWeight = if (current) FontWeight.Black else FontWeight.SemiBold, color = if (current) Color(0xFF1F5E43) else Vintage.ink.copy(alpha = 0.78f)))
             val box = Rect(q.x - tl.size.width / 2f - 3f, q.y - tl.size.height / 2f - 2f, q.x + tl.size.width / 2f + 3f, q.y + tl.size.height / 2f + 2f)
             if (box.left < 0f || box.right > sx || box.top < 0f || box.bottom > sy || occupied.any { it.overlaps(box) }) continue
-            val halo = measurer.measure(t.name, label.copy(fontSize = if (current) 12.sp else 10.sp, fontWeight = if (current) FontWeight.Black else FontWeight.SemiBold, color = Color(0xFFFFF6E0).copy(alpha = 0.9f), drawStyle = Stroke(width = 4f, join = StrokeJoin.Round)))
+            val halo = measurer.measure(t.name, label.copy(fontSize = if (current) 12.sp else 10.sp, fontWeight = if (current) FontWeight.Black else FontWeight.SemiBold, color = Color(0xFFFFF6E0).copy(alpha = 0.95f), drawStyle = Stroke(width = 6f, join = StrokeJoin.Round)))
             drawText(halo, topLeft = Offset(q.x - tl.size.width / 2f, q.y - tl.size.height / 2f))
             drawText(tl, topLeft = Offset(q.x - tl.size.width / 2f, q.y - tl.size.height / 2f))
             occupied += box
