@@ -317,12 +317,12 @@ internal fun DrawScope.drawRealMap(
         val wm = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold)
         fun watermark(i: Int, size: androidx.compose.ui.unit.TextUnit, color: Color) {
             val t = measurer.measure(TOWNS[i].name, wm.copy(fontSize = size, color = color, letterSpacing = 5.sp))
-            val halo = measurer.measure(TOWNS[i].name, wm.copy(fontSize = size, color = Color(0xFFFFF6E0).copy(alpha = 0.55f), letterSpacing = 5.sp, drawStyle = Stroke(width = 7f, join = StrokeJoin.Round)))
+            val halo = measurer.measure(TOWNS[i].name, wm.copy(fontSize = size, color = Color(0xFFFFF6E0).copy(alpha = 0.8f), letterSpacing = 5.sp, drawStyle = Stroke(width = 9f, join = StrokeJoin.Round)))
             val tl = Offset(tp[i].x - t.size.width / 2f, tp[i].y - t.size.height / 2f)
             drawText(halo, topLeft = tl); drawText(t, topLeft = tl)
         }
-        if (nxt >= 0) watermark(nxt, 20.sp, Color(0xFF9A4F1B).copy(alpha = 0.55f))
-        watermark(cur, 28.sp, Color(0xFF14702F).copy(alpha = 0.55f))
+        if (nxt >= 0) watermark(nxt, 24.sp, Color(0xFF9A4F1B).copy(alpha = 0.7f))
+        watermark(cur, 34.sp, Color(0xFF14702F).copy(alpha = 0.72f))
     }
 
     // Township borders: faint dashed lines, only once the map is big enough to show them.
