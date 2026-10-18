@@ -167,7 +167,7 @@ internal fun HomeContent(
                         ChallengeHeader(
                             title = "${map.route.region}・${map.route.name}",
                             detail = "已走 ${"%.1f".format(map.walkedKm)} / ${map.route.totalKm.roundToInt()} 公里" +
-                                (next?.let { "　下一張：${it.first.name}（${"%.1f".format(it.second)} 公里）" } ?: "　環島完成"),
+                                (next?.let { "　下一個景點：還有 ${"%.1f".format(it.second)} 公里" } ?: "　環島完成"),
                         )
                         RouteMapView(map.route, map.walkedKm, Modifier.weight(1f).fillMaxWidth(), initialZoom = map.zoom)
                     }
@@ -309,7 +309,7 @@ private fun RouteStepsBlock(route: RouteDef, walkedKm: Double, strideM: Double, 
             val legEnd = walkedKm + next.second
             val legFraction = if (legEnd > legStart) ((walkedKm - legStart) / (legEnd - legStart)).coerceIn(0.0, 1.0) else 0.0
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text("到「${next.first.name}」還有 ${toNext.withCommas()} 步", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f), maxLines = 1)
+                Text("到下一個景點還有 ${toNext.withCommas()} 步", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f), maxLines = 1)
                 Text("約 ${days(toNext)} 天", style = MaterialTheme.typography.bodySmall, color = Vintage.brassDark)
             }
             LinearProgressIndicator(progress = { legFraction.toFloat() }, modifier = Modifier.fillMaxWidth().height(6.dp), color = Color(0xFFB4642A), trackColor = Vintage.edge.copy(alpha = 0.25f))

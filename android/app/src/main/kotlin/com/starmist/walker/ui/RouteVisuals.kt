@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,7 +60,9 @@ fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifie
     val pin = rememberArt("traveller_fox")
     val base = rememberArt("real_map_base")
     val tiles = rememberMapTiles()
-    val borders = rememberTownBorders()
+    val areas = rememberTownAreas()
+    val explored = remember(areas, route, (walkedKm * 2).toInt()) { areas.visited(route, walkedKm) }
+    val currentTown = remember(areas, route, (walkedKm * 2).toInt()) { route.positionAt(walkedKm).let { areas.find(it.lat, it.lng) } }
     val here = route.positionAt(walkedKm)
     ZoomPanMap(
         aspect = REAL_MAP_ASPECT,
@@ -69,7 +72,7 @@ fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifie
         initialZoom = initialZoom ?: if (base != null) 5.5f else 12f,
         maxZoom = 12f,
         background = SEA_COLOR,
-    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, pin, base, tiles, view, borders) }
+    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, pin, base, tiles, view, areas, explored, currentTown) }
 }
 
 /** Small round picture for a card: the painted card art if the asset library has it, a letter tile otherwise. */
