@@ -44,6 +44,9 @@ import com.starmist.core.route.RouteDef
 import com.starmist.core.route.Routes
 import com.starmist.walker.data.UserSettings
 import kotlinx.coroutines.delay
+import kotlin.math.roundToLong
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.background
 import kotlin.math.roundToInt
 
 /** What the home map shows. */
@@ -103,6 +106,7 @@ fun HomeScreen(
         onOpenAppSettings = onOpenAppSettings,
         onSync = { vm.refresh(announce = true) },
         onStartRoute = { vm.startRoute(it) },
+        strideM = BodyMetrics.strideMeters(profile),
         overlay = { if (map is HomeMap.Virtual) PickupBanner(vm) },
     )
 }
@@ -125,6 +129,7 @@ internal fun HomeContent(
     onOpenAppSettings: () -> Unit,
     onSync: () -> Unit,
     onStartRoute: (String) -> Unit,
+    strideM: Double = 0.7,
     overlay: @Composable BoxScope.() -> Unit = {},
 ) {
     val progress = BodyMetrics.goalProgress(steps, goal)
@@ -179,6 +184,7 @@ internal fun HomeContent(
             kcal = kcal,
             lastSnapshot = lastSnapshot,
             onSync = onSync,
+            routePanel = (map as? HomeMap.Real)?.let { m -> { RouteStepsBlock(m.route, m.walkedKm, strideM, goal) } },
         )
     }
 }
@@ -210,6 +216,7 @@ private fun StepsPanel(
     kcal: Double,
     lastSnapshot: Long?,
     onSync: () -> Unit,
+    routePanel: (@Composable () -> Unit)? = null,
 ) {
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(3.dp)) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 6.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -227,6 +234,7 @@ private fun StepsPanel(
                 )
                 TextButton(onClick = onSync) { Text(lastSnapshot?.let { "同步 ${formatTime(it)}" } ?: "立即同步", fontSize = 12.sp) }
             }
+            routePanel?.let { Box(Modifier.padding(vertical = 3.dp).fillMaxWidth().height(1.dp).background(Vintage.edge.copy(alpha = 0.5f))); it() }
         }
     }
 }
@@ -283,4 +291,37 @@ private fun PermissionCard(onRequest: () -> Unit, onOpenSettings: () -> Unit) {
 @Composable
 private fun NoticeCard(text: String) {
     Card(Modifier.fillMaxWidth()) { Text(text, Modifier.padding(12.dp)) }
+}
+
+/** The way ahead in steps: to the next card and to the end, each with the days it takes at the daily goal, and a progress bar. */
+@Composable
+private fun RouteStepsBlock(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int) {
+    val stride = strideM.coerceAtLeast(0.3)
+    fun steps(km: Double) = (km * 1000.0 / stride).roundToLong().coerceAtLeast(0L)
+    fun days(steps: Long) = if (goal <= 0) 0L else (steps + goal - 1) / goal
+    val next = route.next(walkedKm)
+    val total = route.totalKm
+    val overall = (walkedKm / total).coerceIn(0.0, 1.0)
+    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+        if (next != null) {
+            val toNext = steps(next.second)
+            val legStart = route.collected(walkedKm).lastOrNull()?.let { c -> route.stops.indexOfFirst { it.landmark?.id == c.id }.takeIf { it >= 0 }?.let { route.cumulativeKm[it] } } ?: 0.0
+            val legEnd = walkedKm + next.second
+            val legFraction = if (legEnd > legStart) ((walkedKm - legStart) / (legEnd - legStart)).coerceIn(0.0, 1.0) else 0.0
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text("到「${next.first.name}」還有 ${toNext.withCommas()} 步", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f), maxLines = 1)
+                Text("約 ${days(toNext)} 天", style = MaterialTheme.typography.bodySmall, color = Vintage.brassDark)
+            }
+            LinearProgressIndicator(progress = { legFraction.toFloat() }, modifier = Modifier.fillMaxWidth().height(6.dp), color = Color(0xFFB4642A), trackColor = Vintage.edge.copy(alpha = 0.25f))
+        }
+        val toEnd = steps(total - walkedKm)
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                if (next == null) "環島完成！" else "環島全程還有 ${toEnd.withCommas()} 步",
+                style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f), maxLines = 1,
+            )
+            Text(if (next == null) "100%" else "約 ${days(toEnd)} 天（每天 ${goal.toLong().withCommas()} 步）　${(overall * 100).roundToInt()}%", style = MaterialTheme.typography.bodySmall, color = Vintage.brassDark, maxLines = 1)
+        }
+        LinearProgressIndicator(progress = { overall.toFloat() }, modifier = Modifier.fillMaxWidth().height(6.dp), color = Color(0xFF1F8A5B), trackColor = Vintage.edge.copy(alpha = 0.25f))
+    }
 }
