@@ -51,7 +51,7 @@ internal sealed interface HomeMap {
     data object Preparing : HomeMap
     data class Virtual(val regionName: String, val regionIndex: Int, val fraction: Double, val finished: Boolean) : HomeMap
     data object ChooseRoute : HomeMap
-    data class Real(val route: RouteDef, val walkedKm: Double) : HomeMap
+    data class Real(val route: RouteDef, val walkedKm: Double, val zoom: Float? = null) : HomeMap
 }
 
 /**
@@ -164,7 +164,7 @@ internal fun HomeContent(
                             detail = "已走 ${"%.1f".format(map.walkedKm)} / ${map.route.totalKm.roundToInt()} 公里" +
                                 (next?.let { "　下一張：${it.first.name}（${"%.1f".format(it.second)} 公里）" } ?: "　環島完成"),
                         )
-                        RouteMapView(map.route, map.walkedKm, Modifier.weight(1f).fillMaxWidth())
+                        RouteMapView(map.route, map.walkedKm, Modifier.weight(1f).fillMaxWidth(), initialZoom = map.zoom)
                     }
                 }
             }

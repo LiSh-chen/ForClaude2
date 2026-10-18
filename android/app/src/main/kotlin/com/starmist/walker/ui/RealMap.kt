@@ -192,6 +192,7 @@ internal fun DrawScope.drawRealMap(
     base: ImageBitmap? = null,
     tiles: MapTiles? = null,
     view: Rect = Rect(0f, 0f, w, h),
+    borders: TownBorders? = null,
 ) {
     fun GeoPoint.px() = unit().let { Offset(it.x * w, it.y * h) }
     fun Offset.scaled() = Offset(x * w, y * h)
@@ -302,6 +303,11 @@ internal fun DrawScope.drawRealMap(
 
     }
 
+    // Township borders: faint dashed lines, only once the map is big enough to show them.
+    if (borders != null && w > 3000f) {
+        drawPath(borders.path(w, h), Vintage.ink.copy(alpha = 0.38f), style = Stroke(1.1.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = PathEffect.dashPathEffect(floatArrayOf(6.dp.toPx(), 5.dp.toPx()))))
+    }
+
     // The route: a bold solid line behind the walker, a dashed dark line ahead, a dotted red one where a train or ferry carries the walker.
     // Each is one path so the dashes run on unbroken; a pale casing under both keeps them readable on the painting.
     val walkedPath = Path(); val aheadPath = Path(); val ridePath = Path(); val rideAhead = Path()
@@ -410,24 +416,35 @@ internal fun DrawScope.drawRealMap(
             placeName(pk.name, o, 11.sp, Vintage.inkSoft, 9.dp.toPx())
         }
     }
-    // Township / district names (鄉鎮市區) once the map is big enough to hold them; the one being walked through is bold.
+    // Township / district names (鄉鎮市區) once the map is big enough: all of them small and pale, the one being walked through and the next one bold.
     if (w > 3000f) {
-        val sx = w; val sy = h
-        val near = TOWNS.minByOrNull { val q = GeoPoint(it.lat, it.lon).px(); (q - p).getDistance() }
-        val shown = TOWNS.mapNotNull { t ->
-            val q = GeoPoint(t.lat, t.lon).px()
-            if (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f) null else t to q
-        }.sortedBy { (it.second - p).getDistance() }
-        for ((t, q) in shown) {
-            val current = t === near
-            val tl = measurer.measure(t.name, label.copy(fontSize = if (current) 12.sp else 10.sp, fontWeight = if (current) FontWeight.Black else FontWeight.SemiBold, color = if (current) Color(0xFF1F5E43) else Vintage.ink.copy(alpha = 0.78f)))
-            val box = Rect(q.x - tl.size.width / 2f - 3f, q.y - tl.size.height / 2f - 2f, q.x + tl.size.width / 2f + 3f, q.y + tl.size.height / 2f + 2f)
-            if (box.left < 0f || box.right > sx || box.top < 0f || box.bottom > sy || occupied.any { it.overlaps(box) }) continue
-            val halo = measurer.measure(t.name, label.copy(fontSize = if (current) 12.sp else 10.sp, fontWeight = if (current) FontWeight.Black else FontWeight.SemiBold, color = Color(0xFFFFF6E0).copy(alpha = 0.95f), drawStyle = Stroke(width = 6f, join = StrokeJoin.Round)))
-            drawText(halo, topLeft = Offset(q.x - tl.size.width / 2f, q.y - tl.size.height / 2f))
-            drawText(tl, topLeft = Offset(q.x - tl.size.width / 2f, q.y - tl.size.height / 2f))
+        val tp = TOWNS.map { GeoPoint(it.lat, it.lon).px() }
+        fun nearest(q: Offset) = tp.indices.minByOrNull { (tp[it] - q).getDistance() } ?: 0
+        val cur = nearest(p)
+        var nxt = -1
+        var km = walkedKm + 1.0
+        while (nxt < 0 && km < walkedKm + 60.0 && km < route.totalKm) {
+            val c = nearest(route.positionAt(km).px()); if (c != cur) nxt = c; km += 1.0
+        }
+        val strong = listOf(cur, nxt).filter { it >= 0 }
+        fun drawTown(i: Int, big: Boolean, force: Boolean) {
+            val q = tp[i]
+            if (!force && (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f)) return
+            val isCur = i == cur
+            val size = if (big) 15.sp else 9.sp
+            val weight = if (big) FontWeight.Black else FontWeight.Medium
+            val color = when { big && isCur -> Color(0xFF14502F); big -> Color(0xFF7A3B12); else -> Vintage.ink.copy(alpha = 0.5f) }
+            val name = TOWNS[i].name + if (big && !isCur) "（下一個）" else ""
+            val tl = measurer.measure(name, label.copy(fontSize = size, fontWeight = weight, color = color))
+            val tl0 = Offset(q.x - tl.size.width / 2f, q.y - tl.size.height / 2f)
+            val box = Rect(tl0.x - 3f, tl0.y - 2f, tl0.x + tl.size.width + 3f, tl0.y + tl.size.height + 2f)
+            if (!force && (box.left < 0f || box.right > w || box.top < 0f || box.bottom > h || occupied.any { it.overlaps(box) })) return
+            val halo = measurer.measure(name, label.copy(fontSize = size, fontWeight = weight, color = Color(0xFFFFF6E0).copy(alpha = if (big) 1f else 0.85f), drawStyle = Stroke(width = if (big) 8f else 5f, join = StrokeJoin.Round)))
+            drawText(halo, topLeft = tl0); drawText(tl, topLeft = tl0)
             occupied += box
         }
+        strong.forEach { drawTown(it, big = true, force = true) }
+        TOWNS.indices.filter { it !in strong }.sortedBy { (tp[it] - p).getDistance() }.forEach { drawTown(it, big = false, force = false) }
     }
     CITIES.forEach { c ->
         val o = GeoPoint(c.lat, c.lon).px()
