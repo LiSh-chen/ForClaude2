@@ -42,7 +42,7 @@ internal const val MAP_LAT_MAX = 25.4
 internal val REAL_MAP_ASPECT: Float =
     ((MAP_LON_MAX - MAP_LON_MIN) * cos(Math.toRadians(23.5)) / (MAP_LAT_MAX - MAP_LAT_MIN)).toFloat()
 
-internal val SEA_COLOR = Color(0xFFCFE0E0)
+internal val SEA_COLOR = Color(0xFFE4DAC6)
 private val LAND_COLOR = Color(0xFFE9DFBF)
 private val STAMP_RED = Color(0xFFB04A3A)
 private val SUPPLY_COLOR = Color(0xFFD9744B)
