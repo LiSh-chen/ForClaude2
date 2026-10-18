@@ -398,62 +398,93 @@ internal fun DrawScope.drawRealMap(
         }
     }
 
-    // Names, most important first: the next card and the last one collected, then sights, mountains and towns.
+    // Names are queued with a priority and placed from the most important down; a name that would cover a more important
+    // one (or a marker) is simply not drawn, and it comes back by itself once there is room.
+    class Label(val priority: Int, val place: () -> Unit)
+    val queue = ArrayList<Label>()
     val next = route.next(walkedKm)?.first
     val lastCard = route.collected(walkedKm).lastOrNull()
     listOfNotNull(next?.let { it to "（下一張）" }, lastCard?.let { it to "" }).forEach { (card, tag) ->
-        val o = route.stops.first { it.landmark?.id == card.id }.at.px()
-        placeName(card.name + tag, o, 13.sp, Vintage.ink, 12.dp.toPx(), force = true)
-    }
-    sights.forEach { (poi, km) ->
-        val alpha = (1f - ((km - POI_RANGE_KM * 0.6) / (POI_RANGE_KM * 0.4)).toFloat().coerceIn(0f, 1f))
-        placeName(poi.name, poi.at.px(), 12.sp, Vintage.ink.copy(alpha = alpha), 15.dp.toPx())
-    }
-    PEAKS.forEach { pk ->
-        val o = GeoPoint(pk.lat, pk.lon).px()
-        val tri = Path().apply { moveTo(o.x - 5.dp.toPx(), o.y + 3.dp.toPx()); lineTo(o.x, o.y - 5.dp.toPx()); lineTo(o.x + 5.dp.toPx(), o.y + 3.dp.toPx()); close() }
-        if (occupied.none { it.contains(o) }) {
-            drawPath(tri, Vintage.inkSoft.copy(alpha = 0.7f))
-            placeName(pk.name, o, 11.sp, Vintage.inkSoft, 9.dp.toPx())
+        queue += Label(100) {
+            val o = route.stops.first { it.landmark?.id == card.id }.at.px()
+            placeName(card.name + tag, o, 13.sp, Vintage.ink, 12.dp.toPx(), force = true)
         }
     }
-    // Township / district names (鄉鎮市區) once the map is big enough: all of them small and pale, the one being walked through and the next one bold.
-    if (w > 3000f) {
-        val tp = TOWNS.map { GeoPoint(it.lat, it.lon).px() }
+
+    // Township names (鄉鎮市區): the one being walked through and the next one stand out; only a few around them are shown.
+    val tp = if (w > 3000f) TOWNS.map { GeoPoint(it.lat, it.lon).px() } else emptyList()
+    var cur = -1; var nxt = -1
+    if (tp.isNotEmpty()) {
         fun nearest(q: Offset) = tp.indices.minByOrNull { (tp[it] - q).getDistance() } ?: 0
-        val cur = nearest(p)
-        var nxt = -1
+        cur = nearest(p)
         var km = walkedKm + 1.0
         while (nxt < 0 && km < walkedKm + 60.0 && km < route.totalKm) {
             val c = nearest(route.positionAt(km).px()); if (c != cur) nxt = c; km += 1.0
         }
-        val strong = listOf(cur, nxt).filter { it >= 0 }
-        fun drawTown(i: Int, big: Boolean, force: Boolean) {
-            val q = tp[i]
-            if (!force && (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f)) return
-            val isCur = i == cur
-            val size = if (big) 15.sp else 9.sp
-            val weight = if (big) FontWeight.Bold else FontWeight.Normal
-            val color = when { big && isCur -> Color(0xFF14502F); big -> Color(0xFF7A3B12); else -> Vintage.ink.copy(alpha = 0.5f) }
-            val name = TOWNS[i].name + if (big && !isCur) "（下一個）" else ""
-            val tl = measurer.measure(name, label.copy(fontSize = size, fontWeight = weight, color = color))
-            val tl0 = Offset(q.x - tl.size.width / 2f, q.y - tl.size.height / 2f)
-            val box = Rect(tl0.x - 3f, tl0.y - 2f, tl0.x + tl.size.width + 3f, tl0.y + tl.size.height + 2f)
-            if (!force && (box.left < 0f || box.right > w || box.top < 0f || box.bottom > h || occupied.any { it.overlaps(box) })) return
-            val halo = measurer.measure(name, label.copy(fontSize = size, fontWeight = weight, color = Color(0xFFFFF6E0).copy(alpha = if (big) 1f else 0.85f), drawStyle = Stroke(width = if (big) 6f else 4f, join = StrokeJoin.Round)))
-            drawText(halo, topLeft = tl0); drawText(tl, topLeft = tl0)
+        fun townPill(i: Int, isCur: Boolean) {
+            val name = TOWNS[i].name + if (isCur) "" else "（下一個）"
+            val t = measurer.measure(name, label.copy(fontSize = 14.sp, fontWeight = FontWeight.Bold, color = if (isCur) Color(0xFF14502F) else Color(0xFF7A3B12)))
+            val padX = 6.dp.toPx(); val padY = 2.dp.toPx(); val q = tp[i]
+            val tw = t.size.width.toFloat(); val th = t.size.height.toFloat()
+            // try the point itself, then above and below it
+            val spots = listOf(0f, -(th + 2 * padY + 6.dp.toPx()), th + 2 * padY + 6.dp.toPx())
+            val box = spots.map { dy -> Rect(q.x - tw / 2 - padX, q.y + dy - th / 2 - padY, q.x + tw / 2 + padX, q.y + dy + th / 2 + padY) }
+                .firstOrNull { r -> r.left >= 0f && r.right <= w && r.top >= 0f && r.bottom <= h && occupied.none { it.overlaps(r) } }
+                ?: Rect(q.x - tw / 2 - padX, q.y - th / 2 - padY, q.x + tw / 2 + padX, q.y + th / 2 + padY)
+            val edge = if (isCur) Color(0xFF1F8A5B) else Color(0xFFB4642A)
+            drawRoundRect(Vintage.parchmentLight.copy(alpha = 0.96f), box.topLeft, box.size, CornerRadius(8.dp.toPx()))
+            drawRoundRect(edge, box.topLeft, box.size, CornerRadius(8.dp.toPx()), style = Stroke(1.6.dp.toPx()))
+            drawText(t, topLeft = Offset(box.left + padX, box.top + padY))
             occupied += box
         }
-        strong.forEach { drawTown(it, big = true, force = true) }
-        TOWNS.indices.filter { it !in strong }.sortedBy { (tp[it] - p).getDistance() }.forEach { drawTown(it, big = false, force = false) }
-    }
-    CITIES.forEach { c ->
-        val o = GeoPoint(c.lat, c.lon).px()
-        if (occupied.none { it.contains(o) }) {
-            drawCircle(Vintage.inkSoft.copy(alpha = 0.8f), 2.8.dp.toPx(), o)
-            placeName(c.name, o, 12.sp, Vintage.inkSoft, 7.dp.toPx())
+        queue += Label(90) { townPill(cur, true) }
+        if (nxt >= 0) queue += Label(85) { townPill(nxt, false) }
+        val reach = w * 22f / 222.5f                    // towns within about 22 km of the walker
+        tp.indices.filter { it != cur && it != nxt && (tp[it] - p).getDistance() < reach }.sortedBy { (tp[it] - p).getDistance() }.take(8).forEachIndexed { rank, i ->
+            queue += Label(30 - rank) {
+                val q = tp[i]
+                val t = measurer.measure(TOWNS[i].name, label.copy(fontSize = 10.sp, fontWeight = FontWeight.Medium, color = Vintage.ink.copy(alpha = 0.62f)))
+                val tl0 = Offset(q.x - t.size.width / 2f, q.y - t.size.height / 2f)
+                val box = Rect(tl0.x - 3f, tl0.y - 2f, tl0.x + t.size.width + 3f, tl0.y + t.size.height + 2f)
+                if (box.left >= 0f && box.right <= w && box.top >= 0f && box.bottom <= h && occupied.none { it.overlaps(box) }) {
+                    drawText(measurer.measure(TOWNS[i].name, label.copy(fontSize = 10.sp, fontWeight = FontWeight.Medium, color = Color(0xFFFFF6E0).copy(alpha = 0.9f), drawStyle = Stroke(width = 3f, join = StrokeJoin.Round))), topLeft = tl0)
+                    drawText(t, topLeft = tl0)
+                    occupied += box
+                }
+            }
         }
     }
+    sights.forEach { (poi, km) ->
+        val alpha = (1f - ((km - POI_RANGE_KM * 0.6) / (POI_RANGE_KM * 0.4)).toFloat().coerceIn(0f, 1f))
+        queue += Label(70) { placeName(poi.name, poi.at.px(), 12.sp, Vintage.ink.copy(alpha = alpha), 15.dp.toPx()) }
+    }
+    if (w > 3000f) route.stops.forEach { stop ->
+        val lm = stop.landmark ?: return@forEach
+        if (lm.id == next?.id || lm.id == lastCard?.id) return@forEach
+        val o = stop.at.px()
+        if (o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f) return@forEach
+        queue += Label(60) { placeName(lm.name, o, 11.sp, Vintage.ink.copy(alpha = 0.85f), 11.dp.toPx()) }
+    }
+    PEAKS.forEach { pk ->
+        queue += Label(50) {
+            val o = GeoPoint(pk.lat, pk.lon).px()
+            val tri = Path().apply { moveTo(o.x - 5.dp.toPx(), o.y + 3.dp.toPx()); lineTo(o.x, o.y - 5.dp.toPx()); lineTo(o.x + 5.dp.toPx(), o.y + 3.dp.toPx()); close() }
+            if (occupied.none { it.contains(o) }) {
+                drawPath(tri, Vintage.inkSoft.copy(alpha = 0.7f))
+                placeName(pk.name, o, 11.sp, Vintage.inkSoft, 9.dp.toPx())
+            }
+        }
+    }
+    CITIES.forEach { c ->
+        queue += Label(40) {
+            val o = GeoPoint(c.lat, c.lon).px()
+            if (occupied.none { it.contains(o) }) {
+                drawCircle(Vintage.inkSoft.copy(alpha = 0.8f), 2.8.dp.toPx(), o)
+                placeName(c.name, o, 12.sp, Vintage.inkSoft, 7.dp.toPx())
+            }
+        }
+    }
+    queue.sortedByDescending { it.priority }.forEach { it.place() }
 
     // The walker, on top of everything.
     if (pin != null) {
