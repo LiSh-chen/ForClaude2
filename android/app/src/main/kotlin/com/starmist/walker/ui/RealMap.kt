@@ -302,26 +302,39 @@ internal fun DrawScope.drawRealMap(
 
     }
 
-    // The route: dotted ahead, solid behind, dashed red where a train or ferry carries the walker.
-    val dotted = PathEffect.dashPathEffect(floatArrayOf(3.dp.toPx(), 5.dp.toPx()))
-    val dashed = PathEffect.dashPathEffect(floatArrayOf(8.dp.toPx(), 5.dp.toPx()))
+    // The route: a bold solid line behind the walker, a dashed dark line ahead, a dotted red one where a train or ferry carries the walker.
+    // Each is one path so the dashes run on unbroken; a pale casing under both keeps them readable on the painting.
+    val walkedPath = Path(); val aheadPath = Path(); val ridePath = Path(); val rideAhead = Path()
+    var walkedEnd: Offset? = null; var aheadEnd: Offset? = null
+    fun extend(path: Path, last: Offset?, a: Offset, b: Offset): Offset {
+        if (last == null || (last - a).getDistance() > 0.5f) path.moveTo(a.x, a.y)
+        path.lineTo(b.x, b.y); return b
+    }
     for (i in 1 until route.stops.size) {
-        val a = route.stops[i - 1].at.px()
-        val b = route.stops[i].at.px()
-        val startKm = route.cumulativeKm[i - 1]
-        val endKm = route.cumulativeKm[i]
+        val a = route.stops[i - 1].at.px(); val b = route.stops[i].at.px()
+        val startKm = route.cumulativeKm[i - 1]; val endKm = route.cumulativeKm[i]
         when {
-            route.stops[i].transit != null ->
-                drawLine(if (walkedKm >= endKm) STAMP_RED else STAMP_RED.copy(alpha = 0.35f), a, b, 2.4.dp.toPx(), pathEffect = dashed)
-            walkedKm >= endKm -> drawLine(Vintage.moss, a, b, 3.dp.toPx(), cap = StrokeCap.Round)
-            walkedKm <= startKm -> drawLine(Vintage.inkSoft.copy(alpha = 0.6f), a, b, 1.6.dp.toPx(), pathEffect = dotted)
+            route.stops[i].transit != null -> { (if (walkedKm >= endKm) ridePath else rideAhead).apply { moveTo(a.x, a.y); lineTo(b.x, b.y) } }
+            walkedKm >= endKm -> walkedEnd = extend(walkedPath, walkedEnd, a, b)
+            walkedKm <= startKm -> aheadEnd = extend(aheadPath, aheadEnd, a, b)
             else -> {
                 val mid = here.px()
-                drawLine(Vintage.moss, a, mid, 3.dp.toPx(), cap = StrokeCap.Round)
-                drawLine(Vintage.inkSoft.copy(alpha = 0.6f), mid, b, 1.6.dp.toPx(), pathEffect = dotted)
+                walkedEnd = extend(walkedPath, walkedEnd, a, mid)
+                aheadEnd = extend(aheadPath, aheadEnd, mid, b)
             }
         }
     }
+    val round = StrokeCap.Round
+    val casing = Color(0xFFFFF6E0).copy(alpha = 0.85f)
+    val rideDots = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 6.dp.toPx()))
+    val aheadDash = PathEffect.dashPathEffect(floatArrayOf(9.dp.toPx(), 6.dp.toPx()))
+    drawPath(aheadPath, casing, style = Stroke(5.5.dp.toPx(), cap = StrokeCap.Butt, join = StrokeJoin.Round))
+    drawPath(walkedPath, casing, style = Stroke(8.dp.toPx(), cap = round, join = StrokeJoin.Round))
+    drawPath(rideAhead, STAMP_RED.copy(alpha = 0.5f), style = Stroke(3.dp.toPx(), cap = round, pathEffect = rideDots))
+    drawPath(ridePath, STAMP_RED, style = Stroke(3.5.dp.toPx(), cap = round, pathEffect = rideDots))
+    drawPath(aheadPath, Color(0xFF4A2F1E), style = Stroke(2.8.dp.toPx(), cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
+    drawPath(walkedPath, Color(0xFF1F8A5B), style = Stroke(5.dp.toPx(), cap = round, join = StrokeJoin.Round))
+    drawPath(walkedPath, Color(0xFF7FE0AE).copy(alpha = 0.7f), style = Stroke(1.6.dp.toPx(), cap = round, join = StrokeJoin.Round))
 
     // Everything that takes room is recorded, so a name is only put where it covers neither a marker nor another name.
     val occupied = ArrayList<Rect>()
@@ -395,6 +408,25 @@ internal fun DrawScope.drawRealMap(
         if (occupied.none { it.contains(o) }) {
             drawPath(tri, Vintage.inkSoft.copy(alpha = 0.7f))
             placeName(pk.name, o, 11.sp, Vintage.inkSoft, 9.dp.toPx())
+        }
+    }
+    // Township / district names (鄉鎮市區) once the map is big enough to hold them; the one being walked through is bold.
+    if (w > 3000f) {
+        val sx = w; val sy = h
+        val near = TOWNS.minByOrNull { val q = GeoPoint(it.lat, it.lon).px(); (q - p).getDistance() }
+        val shown = TOWNS.mapNotNull { t ->
+            val q = GeoPoint(t.lat, t.lon).px()
+            if (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f) null else t to q
+        }.sortedBy { (it.second - p).getDistance() }
+        for ((t, q) in shown) {
+            val current = t === near
+            val tl = measurer.measure(t.name, label.copy(fontSize = if (current) 12.sp else 10.sp, fontWeight = if (current) FontWeight.Black else FontWeight.SemiBold, color = if (current) Color(0xFF1F5E43) else Vintage.ink.copy(alpha = 0.78f)))
+            val box = Rect(q.x - tl.size.width / 2f - 3f, q.y - tl.size.height / 2f - 2f, q.x + tl.size.width / 2f + 3f, q.y + tl.size.height / 2f + 2f)
+            if (box.left < 0f || box.right > sx || box.top < 0f || box.bottom > sy || occupied.any { it.overlaps(box) }) continue
+            val halo = measurer.measure(t.name, label.copy(fontSize = if (current) 12.sp else 10.sp, fontWeight = if (current) FontWeight.Black else FontWeight.SemiBold, color = Color(0xFFFFF6E0).copy(alpha = 0.9f), drawStyle = Stroke(width = 4f, join = StrokeJoin.Round)))
+            drawText(halo, topLeft = Offset(q.x - tl.size.width / 2f, q.y - tl.size.height / 2f))
+            drawText(tl, topLeft = Offset(q.x - tl.size.width / 2f, q.y - tl.size.height / 2f))
+            occupied += box
         }
     }
     CITIES.forEach { c ->
