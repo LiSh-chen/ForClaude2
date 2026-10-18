@@ -305,7 +305,7 @@ internal fun DrawScope.drawRealMap(
 
     // Township borders: faint dashed lines, only once the map is big enough to show them.
     if (borders != null && w > 3000f) {
-        drawPath(borders.path(w, h), Vintage.ink.copy(alpha = 0.38f), style = Stroke(1.1.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = PathEffect.dashPathEffect(floatArrayOf(6.dp.toPx(), 5.dp.toPx()))))
+        drawPath(borders.path(w, h), Vintage.ink.copy(alpha = 0.5f), style = Stroke(1.3.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = PathEffect.dashPathEffect(floatArrayOf(6.dp.toPx(), 5.dp.toPx()))))
     }
 
     // The route: a bold solid line behind the walker, a dashed dark line ahead, a dotted red one where a train or ferry carries the walker.
@@ -331,16 +331,17 @@ internal fun DrawScope.drawRealMap(
         }
     }
     val round = StrokeCap.Round
+    val k = (w / 3000f).coerceIn(0.5f, 1f)
     val casing = Color(0xFFFFF6E0).copy(alpha = 0.85f)
     val rideDots = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 6.dp.toPx()))
     val aheadDash = PathEffect.dashPathEffect(floatArrayOf(9.dp.toPx(), 6.dp.toPx()))
-    drawPath(aheadPath, casing, style = Stroke(5.5.dp.toPx(), cap = StrokeCap.Butt, join = StrokeJoin.Round))
-    drawPath(walkedPath, casing, style = Stroke(8.dp.toPx(), cap = round, join = StrokeJoin.Round))
+    drawPath(aheadPath, casing, style = Stroke(5.5.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round))
+    drawPath(walkedPath, casing, style = Stroke(8.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
     drawPath(rideAhead, STAMP_RED.copy(alpha = 0.5f), style = Stroke(3.dp.toPx(), cap = round, pathEffect = rideDots))
     drawPath(ridePath, STAMP_RED, style = Stroke(3.5.dp.toPx(), cap = round, pathEffect = rideDots))
-    drawPath(aheadPath, Color(0xFF4A2F1E), style = Stroke(2.8.dp.toPx(), cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
-    drawPath(walkedPath, Color(0xFF1F8A5B), style = Stroke(5.dp.toPx(), cap = round, join = StrokeJoin.Round))
-    drawPath(walkedPath, Color(0xFF7FE0AE).copy(alpha = 0.7f), style = Stroke(1.6.dp.toPx(), cap = round, join = StrokeJoin.Round))
+    drawPath(aheadPath, Color(0xFF4A2F1E), style = Stroke(2.8.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
+    drawPath(walkedPath, Color(0xFF1F8A5B), style = Stroke(5.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+    drawPath(walkedPath, Color(0xFF7FE0AE).copy(alpha = 0.7f), style = Stroke(1.6.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
 
     // Everything that takes room is recorded, so a name is only put where it covers neither a marker nor another name.
     val occupied = ArrayList<Rect>()
@@ -432,14 +433,14 @@ internal fun DrawScope.drawRealMap(
             if (!force && (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f)) return
             val isCur = i == cur
             val size = if (big) 15.sp else 9.sp
-            val weight = if (big) FontWeight.Black else FontWeight.Medium
+            val weight = if (big) FontWeight.Bold else FontWeight.Normal
             val color = when { big && isCur -> Color(0xFF14502F); big -> Color(0xFF7A3B12); else -> Vintage.ink.copy(alpha = 0.5f) }
             val name = TOWNS[i].name + if (big && !isCur) "（下一個）" else ""
             val tl = measurer.measure(name, label.copy(fontSize = size, fontWeight = weight, color = color))
             val tl0 = Offset(q.x - tl.size.width / 2f, q.y - tl.size.height / 2f)
             val box = Rect(tl0.x - 3f, tl0.y - 2f, tl0.x + tl.size.width + 3f, tl0.y + tl.size.height + 2f)
             if (!force && (box.left < 0f || box.right > w || box.top < 0f || box.bottom > h || occupied.any { it.overlaps(box) })) return
-            val halo = measurer.measure(name, label.copy(fontSize = size, fontWeight = weight, color = Color(0xFFFFF6E0).copy(alpha = if (big) 1f else 0.85f), drawStyle = Stroke(width = if (big) 8f else 5f, join = StrokeJoin.Round)))
+            val halo = measurer.measure(name, label.copy(fontSize = size, fontWeight = weight, color = Color(0xFFFFF6E0).copy(alpha = if (big) 1f else 0.85f), drawStyle = Stroke(width = if (big) 6f else 4f, join = StrokeJoin.Round)))
             drawText(halo, topLeft = tl0); drawText(tl, topLeft = tl0)
             occupied += box
         }
