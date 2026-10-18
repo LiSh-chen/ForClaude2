@@ -449,10 +449,12 @@ internal fun DrawScope.drawRealMap(
             val cur = id == currentTown
             val st = label.copy(fontSize = if (cur) 15.sp else 11.sp, fontWeight = FontWeight.Bold, color = if (cur) Color(0xFF0B4A78) else Color(0xFF3B4A57))
             val tx = measurer.measure(t.name, st)
+            val padX = 5.dp.toPx(); val padY = 1.5.dp.toPx()
             val tl0 = Offset(q.x - tx.size.width / 2f, q.y - tx.size.height / 2f)
-            val box = Rect(tl0.x - 3f, tl0.y - 2f, tl0.x + tx.size.width + 3f, tl0.y + tx.size.height + 2f)
+            val box = Rect(tl0.x - padX, tl0.y - padY, tl0.x + tx.size.width + padX, tl0.y + tx.size.height + padY)
             if (box.left >= 0f && box.right <= w && box.top >= 0f && box.bottom <= h && (cur || occupied.none { it.overlaps(box) })) {
-                drawText(measurer.measure(t.name, st.copy(color = Color.White.copy(alpha = 0.95f), drawStyle = Stroke(width = if (cur) 8f else 6f, join = StrokeJoin.Round))), topLeft = tl0)
+                drawRoundRect(Color.White.copy(alpha = if (cur) 0.95f else 0.85f), box.topLeft, box.size, CornerRadius(5.dp.toPx()))
+                drawRoundRect(Color(0xFF0E5C93).copy(alpha = if (cur) 0.9f else 0.5f), box.topLeft, box.size, CornerRadius(5.dp.toPx()), style = Stroke((if (cur) 1.8f else 1f).dp.toPx()))
                 drawText(tx, topLeft = tl0)
                 occupied += box
             }
