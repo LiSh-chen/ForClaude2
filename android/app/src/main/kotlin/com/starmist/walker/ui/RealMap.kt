@@ -426,11 +426,13 @@ internal fun DrawScope.drawRealMap(
             val t = measurer.measure(name, label.copy(fontSize = 14.sp, fontWeight = FontWeight.Bold, color = if (isCur) Color(0xFF14502F) else Color(0xFF7A3B12)))
             val padX = 6.dp.toPx(); val padY = 2.dp.toPx(); val q = tp[i]
             val tw = t.size.width.toFloat(); val th = t.size.height.toFloat()
-            // try the point itself, then above and below it
-            val spots = listOf(0f, -(th + 2 * padY + 6.dp.toPx()), th + 2 * padY + 6.dp.toPx())
-            val box = spots.map { dy -> Rect(q.x - tw / 2 - padX, q.y + dy - th / 2 - padY, q.x + tw / 2 + padX, q.y + dy + th / 2 + padY) }
+            // try the point itself, then above / below / to the sides, until it covers nothing more important (e.g. the walker)
+            val d = th + 2 * padY + 4.dp.toPx(); val sx = tw / 2 + padX + 14.dp.toPx()
+            val spots = listOf(0f to 0f, 0f to -d, 0f to d, sx to 0f, -sx to 0f, sx to -d, -sx to -d, sx to d, -sx to d, 0f to -2 * d, 0f to 2 * d)
+            fun at(dx: Float, dy: Float) = Rect(q.x + dx - tw / 2 - padX, q.y + dy - th / 2 - padY, q.x + dx + tw / 2 + padX, q.y + dy + th / 2 + padY)
+            val box = spots.map { (dx, dy) -> at(dx, dy) }
                 .firstOrNull { r -> r.left >= 0f && r.right <= w && r.top >= 0f && r.bottom <= h && occupied.none { it.overlaps(r) } }
-                ?: Rect(q.x - tw / 2 - padX, q.y - th / 2 - padY, q.x + tw / 2 + padX, q.y + th / 2 + padY)
+                ?: at(0f, -2 * d)
             val edge = if (isCur) Color(0xFF1F8A5B) else Color(0xFFB4642A)
             drawRoundRect(Vintage.parchmentLight.copy(alpha = 0.96f), box.topLeft, box.size, CornerRadius(8.dp.toPx()))
             drawRoundRect(edge, box.topLeft, box.size, CornerRadius(8.dp.toPx()), style = Stroke(1.6.dp.toPx()))
