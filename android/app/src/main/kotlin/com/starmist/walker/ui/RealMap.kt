@@ -329,7 +329,7 @@ internal fun DrawScope.drawRealMap(
                 var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF123A5E).copy(alpha = 0.78f)))
                 while (sp > 7f && tx.size.width > maxW) { sp -= 1f; tx = measurer.measure(t.name, tx.layoutInput.style.copy(fontSize = sp.sp)) }
                 if (tx.size.width > maxW) return@forEach
-                fun inside(dx: Float, dy: Float) = areas.find(MAP_LAT_MAX - (q.y + dy) / h * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + (q.x + dx) / w * (MAP_LON_MAX - MAP_LON_MIN)) == id
+                fun inside(dx: Float, dy: Float) = areas.find(MAP_LAT_MAX - (q.y + dy).toDouble() / h * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + (q.x + dx).toDouble() / w * (MAP_LON_MAX - MAP_LON_MIN)) == id
                 val hw = tx.size.width / 2f; val hh = tx.size.height / 2f
                 if (!(inside(-hw, -hh) && inside(hw, -hh) && inside(-hw, hh) && inside(hw, hh))) return@forEach
                 val tl0 = Offset(q.x - hw, q.y - hh)
