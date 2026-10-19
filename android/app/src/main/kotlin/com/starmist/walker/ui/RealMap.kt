@@ -325,14 +325,14 @@ internal fun DrawScope.drawRealMap(
                 val q = GeoPoint(t.lat, t.lon).px()
                 if (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f) return@forEach
                 // The name must fit inside its township: shrink it until its ends and corners are inside, or leave it out.
-                val maxW = (t.widthKm * pxPerKm * 0.8).toFloat().coerceAtLeast(1f)
-                var sp = 12f
+                val maxW = (t.widthKm * pxPerKm * 0.92).toFloat().coerceAtLeast(1f)
+                var sp = 11f
                 var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF123A5E).copy(alpha = 0.78f)))
-                while (sp > 7f && tx.size.width > maxW) { sp -= 1f; tx = measurer.measure(t.name, tx.layoutInput.style.copy(fontSize = sp.sp)) }
+                while (sp > 5.5f && tx.size.width > maxW) { sp -= 0.5f; tx = measurer.measure(t.name, tx.layoutInput.style.copy(fontSize = sp.sp)) }
                 if (tx.size.width > maxW) return@forEach
                 fun inside(dx: Float, dy: Float) = areas.find(MAP_LAT_MAX - (q.y + dy).toDouble() / h * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + (q.x + dx).toDouble() / w * (MAP_LON_MAX - MAP_LON_MIN)) == id
                 val hw = tx.size.width / 2f; val hh = tx.size.height / 2f
-                if (!(inside(-hw, -hh) && inside(hw, -hh) && inside(-hw, hh) && inside(hw, hh))) return@forEach
+                if (!(inside(-hw, 0f) && inside(hw, 0f) && inside(0f, 0f))) return@forEach
                 val tl0 = Offset(q.x - hw, q.y - hh)
                 val box = Rect(tl0.x, tl0.y, tl0.x + tx.size.width, tl0.y + tx.size.height)
                 if (placedNames.none { it.overlaps(box) }) { drawText(tx, topLeft = tl0); placedNames += box }
@@ -343,7 +343,7 @@ internal fun DrawScope.drawRealMap(
     // The route: a bold solid line behind the walker, a dashed dark line ahead, a dotted red one where a train or ferry carries the walker.
     // Each is one path so the dashes run on unbroken; a pale casing under both keeps them readable on the painting.
     val walkedPath = Path(); val aheadPath = Path(); val ridePath = Path(); val rideAhead = Path()
-    var walkedEnd: Offset? = null; var aheadEnd: Offset? = null
+    var walkedEnd: Offset? = null; var aheadEnd: Offset? = null; var rideEnd: Offset? = null; var rideAheadEnd: Offset? = null
     fun extend(path: Path, last: Offset?, a: Offset, b: Offset): Offset {
         if (last == null || (last - a).getDistance() > 0.5f) path.moveTo(a.x, a.y)
         path.lineTo(b.x, b.y); return b
@@ -354,7 +354,7 @@ internal fun DrawScope.drawRealMap(
         val a = route.stops[i - 1].at.px(); val b = route.stops[i].at.px()
         val startKm = route.cumulativeKm[i - 1]; val endKm = route.cumulativeKm[i]
         when {
-            route.stops[i].transit != null -> { (if (walkedKm >= endKm) ridePath else rideAhead).apply { moveTo(a.x, a.y); lineTo(b.x, b.y) } }
+            route.stops[i].transit != null -> if (walkedKm >= endKm) rideEnd = extend(ridePath, rideEnd, a, b) else rideAheadEnd = extend(rideAhead, rideAheadEnd, a, b)
             walkedKm >= endKm -> walkedEnd = extend(walkedPath, walkedEnd, a, b)
             walkedKm <= startKm -> aheadEnd = extend(aheadPath, aheadEnd, a, b)
             else -> {
@@ -368,10 +368,11 @@ internal fun DrawScope.drawRealMap(
     val k = (w / 3000f).coerceIn(0.28f, 1f)
     val ms = (w / 2400f).coerceIn(0.4f, 1f)      // markers shrink with the map
     val casing = Color.White.copy(alpha = 0.92f)
-    val rideDots = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 6.dp.toPx()))
+    val rideDots = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx() * k.coerceAtLeast(0.5f), 3.dp.toPx() * k.coerceAtLeast(0.5f)))
     val aheadDash = PathEffect.dashPathEffect(floatArrayOf(9.dp.toPx(), 6.dp.toPx()))
     drawPath(aheadPath, casing, style = Stroke(6.5.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round))
     drawPath(walkedPath, casing, style = Stroke(9.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+    drawPath(ridePath, casing, style = Stroke(7.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, join = StrokeJoin.Round))
     drawPath(rideAhead, Color(0xFF7B3FB5).copy(alpha = 0.6f), style = Stroke(3.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
     drawPath(ridePath, Color(0xFF7B3FB5), style = Stroke(3.5.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
     drawPath(aheadPath, Color(0xFFB3202A), style = Stroke(2.8.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
