@@ -108,6 +108,7 @@ fun CardFace(card: Landmark, atKm: Double) {
             CardEmblem(card, true, Modifier.size(96.dp))
         }
         Text(card.blurb, fontSize = 20.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, color = Vintage.ink)
+        rememberLandmarkFacts()[card.id].orEmpty().forEach { Text("你知道嗎？$it", fontSize = 13.sp, color = Vintage.inkSoft, modifier = Modifier.fillMaxWidth()) }
         Text("路線第 ${atKm.roundToInt()} 公里", style = MaterialTheme.typography.labelMedium)
     }
 }

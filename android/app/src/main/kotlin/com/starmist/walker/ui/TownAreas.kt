@@ -134,3 +134,23 @@ fun rememberTownAreas(): TownAreas {
     val context = LocalContext.current
     return remember(context) { TownAreas.load(context.applicationContext) }
 }
+
+/** "Did you know" lines of the landmark cards: `id|fact|fact` per line in res/raw/landmark_facts.txt. */
+fun loadLandmarkFacts(context: Context): Map<String, List<String>> {
+    val id = context.resources.getIdentifier("landmark_facts", "raw", context.packageName)
+    if (id == 0) return emptyMap()
+    return runCatching {
+        context.resources.openRawResource(id).bufferedReader(Charsets.UTF_8).readLines()
+            .filter { it.isNotBlank() && !it.startsWith("#") }
+            .mapNotNull { l ->
+                val f = l.split('|')
+                if (f.size < 2) null else f[0] to f.drop(1).map { it.trim() }.filter { it.isNotEmpty() }
+            }.filter { it.second.isNotEmpty() }.toMap()
+    }.getOrDefault(emptyMap())
+}
+
+@Composable
+fun rememberLandmarkFacts(): Map<String, List<String>> {
+    val context = LocalContext.current
+    return remember(context) { loadLandmarkFacts(context.applicationContext) }
+}
