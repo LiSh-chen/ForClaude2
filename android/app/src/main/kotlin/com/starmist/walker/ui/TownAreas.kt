@@ -19,6 +19,9 @@ class TownArea(
     private val minLon = rings.minOf { r -> (1 until r.size step 2).minOf { r[it] } }
     private val maxLon = rings.maxOf { r -> (1 until r.size step 2).maxOf { r[it] } }
 
+    val widthKm: Double get() = (maxLon - minLon) * 101.5
+    val heightKm: Double get() = (maxLat - minLat) * 111.0
+
     fun contains(la: Double, lo: Double): Boolean {
         if (la < minLat || la > maxLat || lo < minLon || lo > maxLon) return false
         for (r in rings) {
@@ -102,25 +105,26 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
     }
 }
 
-/** What makes a township memorable: a headline, a few tags and one "did you know". */
-class TownBlurb(val headline: String, val tags: List<String>, val fact: String)
+/** One of a township's three features: a short tag and the "did you know" that goes with it. */
+class TownTag(val tag: String, val fact: String)
 
-/** Introductions for the townships on the route, keyed "county|name" (res/raw/town_blurbs.txt: county|name|headline|tag,tag,tag|fact). */
-fun loadTownBlurbs(context: Context): Map<String, TownBlurb> {
+/** Three features per township, for the township card (res/raw/town_blurbs.txt: county|name|tag:fact|tag:fact|tag:fact). */
+fun loadTownBlurbs(context: Context): Map<String, List<TownTag>> {
     val id = context.resources.getIdentifier("town_blurbs", "raw", context.packageName)
     if (id == 0) return emptyMap()
     return runCatching {
         context.resources.openRawResource(id).bufferedReader(Charsets.UTF_8).readLines()
+            .filter { !it.startsWith("#") }
             .mapNotNull { l ->
                 val f = l.split('|')
-                if (f.size < 5 || f[2].isBlank() || l.startsWith("#")) null
-                else "${f[0]}|${f[1]}" to TownBlurb(f[2].trim(), f[3].split(',', '、').map { it.trim() }.filter { it.isNotEmpty() }.take(3), f[4].trim())
-            }.toMap()
+                if (f.size < 5) null
+                else "${f[0]}|${f[1]}" to f.drop(2).take(3).mapNotNull { x -> x.split(':', limit = 2).takeIf { it.size == 2 }?.let { TownTag(it[0].trim(), it[1].trim()) } }
+            }.filter { it.second.isNotEmpty() }.toMap()
     }.getOrDefault(emptyMap())
 }
 
 @Composable
-fun rememberTownBlurbs(): Map<String, TownBlurb> {
+fun rememberTownBlurbs(): Map<String, List<TownTag>> {
     val context = LocalContext.current
     return remember(context) { loadTownBlurbs(context.applicationContext) }
 }

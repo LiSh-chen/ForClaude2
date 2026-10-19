@@ -12,6 +12,7 @@ import com.starmist.core.stats.Period
 import com.starmist.core.stats.PeriodSummary
 import com.starmist.core.steps.StepScaler
 import com.starmist.walker.container
+import com.starmist.walker.data.RegionLog
 import com.starmist.walker.data.DailyStepsEntity
 import com.starmist.walker.data.DiagnosticsInfo
 import com.starmist.walker.data.SnapshotResult
@@ -199,6 +200,26 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val routeState: StateFlow<RouteState?> = container.routes.flow
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
+    /** The tags found in each township (key "county|name"). */
+    val regionLogs: StateFlow<Map<String, RegionLog>> = container.regions.logs.stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+
+    private val townAreas by lazy { TownAreas.load(getApplication()) }
+    private val townTags by lazy { loadTownBlurbs(getApplication()) }
+    private var lastRegionCheckKm = -1.0
+
+    /** Gives each township walked through since the last check its tag for this lap, and says so when one is new. */
+    private suspend fun collectRegionTags(route: com.starmist.core.route.RouteDef, walkedKm: Double) {
+        if (lastRegionCheckKm >= 0 && walkedKm - lastRegionCheckKm < 0.5 && walkedKm >= lastRegionCheckKm) return
+        lastRegionCheckKm = walkedKm
+        for (id in townAreas.visited(route, walkedKm).keys) {
+            val t = townAreas.towns[id]
+            val key = "${t.county}|${t.name}"
+            val tags = townTags[key] ?: continue
+            val found = container.regions.visit(key, tags.size)
+            if (found != null) _message.value = "${t.name}：發現新特色「${tags[found].tag}」"
+        }
+    }
+
     private val _pendingRouteEvents = MutableStateFlow<List<RouteEvent>>(emptyList())
 
     /** Cards, stamps and crossings waiting to be shown, oldest first; the screen shows one at a time. */
@@ -209,6 +230,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun startRoute(routeId: String) {
         val route = Routes.byId(routeId) ?: return
         viewModelScope.launch {
+            container.regions.newLap()
             container.routes.start(route, repository.allTimeTotal())
             settleRoute()
         }
@@ -216,6 +238,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun restartRoute() {
         viewModelScope.launch {
+            container.regions.newLap()
             container.routes.clear()
             _pendingRouteEvents.value = emptyList()
         }
@@ -228,6 +251,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             val route = Routes.byId(state.routeId) ?: return@launch
             val stride = BodyMetrics.strideMeters(container.settings.current().profile)
             val advance = container.routes.settle(route, repository.allTimeTotal(), stride) ?: return@launch
+            collectRegionTags(route, advance.state.walkedKm)
             val shown = advance.events.filter {
                 it is RouteEvent.CardCollected || it is RouteEvent.StampCollected || it is RouteEvent.Transit || it is RouteEvent.Finished
             }

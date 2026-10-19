@@ -37,7 +37,7 @@ class ScreenshotTest {
         val region = (map as? HomeMap.Real)?.let { m ->
             val g = m.route.positionAt(m.walkedKm)
             val id = areas.find(g.lat, g.lng)
-            if (id < 0) null else areas.towns[id].let { t -> RegionInfo(t, blurbs["${t.county}|${t.name}"], areas.visited(m.route, m.walkedKm)[id] ?: 0.0, areas.visited(m.route, m.walkedKm).size) }
+            if (id < 0) null else areas.towns[id].let { t -> RegionInfo(t, blurbs["${t.county}|${t.name}"], 1, areas.visited(m.route, m.walkedKm)[id] ?: 0.0, areas.visited(m.route, m.walkedKm).size) }
         }
         Page { pad ->
             HomeContent(

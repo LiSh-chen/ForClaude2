@@ -317,14 +317,22 @@ internal fun DrawScope.drawRealMap(
         // The names of the explored townships lie on the ground, pale and without a box, under everything else. The township being walked through has its card above the map instead.
         if (w > 3000f) {
             val placedNames = ArrayList<Rect>()
-            val nameStyle = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = Color(0xFF1B3A57).copy(alpha = 0.45f), letterSpacing = 2.sp)
+            val pxPerKm = w / 222.5f
             explored.forEach { id ->
                 if (id == currentTown) return@forEach
                 val t = areas.towns[id]
                 val q = GeoPoint(t.lat, t.lon).px()
                 if (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f) return@forEach
-                val tx = measurer.measure(t.name, nameStyle)
-                val tl0 = Offset(q.x - tx.size.width / 2f, q.y - tx.size.height / 2f)
+                // The name must fit inside its township: shrink it until its ends and corners are inside, or leave it out.
+                val maxW = (t.widthKm * pxPerKm * 0.8f).coerceAtLeast(1f)
+                var sp = 12f
+                var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF123A5E).copy(alpha = 0.78f)))
+                while (sp > 7f && tx.size.width > maxW) { sp -= 1f; tx = measurer.measure(t.name, tx.layoutInput.style.copy(fontSize = sp.sp)) }
+                if (tx.size.width > maxW) return@forEach
+                fun inside(dx: Float, dy: Float) = areas.find(MAP_LAT_MAX - (q.y + dy) / h * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + (q.x + dx) / w * (MAP_LON_MAX - MAP_LON_MIN)) == id
+                val hw = tx.size.width / 2f; val hh = tx.size.height / 2f
+                if (!(inside(-hw, -hh) && inside(hw, -hh) && inside(-hw, hh) && inside(hw, hh))) return@forEach
+                val tl0 = Offset(q.x - hw, q.y - hh)
                 val box = Rect(tl0.x, tl0.y, tl0.x + tx.size.width, tl0.y + tx.size.height)
                 if (placedNames.none { it.overlaps(box) }) { drawText(tx, topLeft = tl0); placedNames += box }
             }

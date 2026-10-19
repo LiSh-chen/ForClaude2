@@ -2,6 +2,7 @@ package com.starmist.walker.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -58,7 +61,7 @@ internal sealed interface HomeMap {
 }
 
 /** The township being walked through, for the card above the map. */
-internal data class RegionInfo(val area: TownArea, val blurb: TownBlurb?, val walkedKm: Double, val exploredCount: Int)
+internal data class RegionInfo(val area: TownArea, val tags: List<TownTag>?, val foundMask: Int, val walkedKm: Double, val exploredCount: Int)
 
 private val BLUE = Color(0xFF0E86D4)
 private val RED = Color(0xFFB3202A)
@@ -82,19 +85,20 @@ fun HomeScreen(
     val lastSnapshot by vm.lastSnapshotAt.collectAsStateWithLifecycle()
     val areas = rememberTownAreas()
     val blurbs = rememberTownBlurbs()
+    val logs by vm.regionLogs.collectAsStateWithLifecycle()
 
     val profile = settings.profile
     val route = routeState?.let { Routes.byId(it.routeId) }
     val walkedKm = routeState?.walkedKm ?: 0.0
     val map: HomeMap = if (route == null) HomeMap.ChooseRoute else HomeMap.Real(route, walkedKm)
-    val region = remember(areas, route, (walkedKm * 2).toInt()) {
+    val region = remember(areas, route, (walkedKm * 2).toInt(), logs) {
         if (route == null) null else {
             val g = route.positionAt(walkedKm)
             val id = areas.find(g.lat, g.lng)
             if (id < 0) null else {
                 val visited = areas.visited(route, walkedKm)
                 val t = areas.towns[id]
-                RegionInfo(t, blurbs["${t.county}|${t.name}"], visited[id] ?: 0.0, visited.size)
+                RegionInfo(t, blurbs["${t.county}|${t.name}"], logs["${t.county}|${t.name}"]?.mask ?: 0, visited[id] ?: 0.0, visited.size)
             }
         }
     }
@@ -160,14 +164,14 @@ internal fun HomeContent(
 
 // ---- the region card -------------------------------------------------------------------------
 
-/** The township being walked through: its name, one line that makes it memorable, three tags and one "did you know". */
+/** The township being walked through: its name and three features, each found on a different visit. */
 @Composable
 private fun RegionCard(region: RegionInfo?) {
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(2.dp)) {
-        Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
             if (region == null) {
                 Text("出發吧！", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("走進一個新的鄉鎮，這裡就會出現它的介紹。", style = MaterialTheme.typography.bodySmall)
+                Text("走進一個新的鄉鎮，這裡就會出現它的特色。", style = MaterialTheme.typography.bodySmall)
                 return@Column
             }
             val a = region.area
@@ -177,18 +181,34 @@ private fun RegionCard(region: RegionInfo?) {
                 Spacer(Modifier.weight(1f))
                 Text("第 ${region.exploredCount} 區", style = MaterialTheme.typography.labelMedium, color = Vintage.brassDark, modifier = Modifier.padding(bottom = 3.dp))
             }
-            val b = region.blurb
-            if (b != null) {
-                Text(b.headline, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Vintage.ink, maxLines = 1)
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    b.tags.forEach { t ->
-                        Text(t, fontSize = 11.sp, color = Color(0xFF0B4A78), modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(Color(0xFF0E86D4).copy(alpha = 0.12f)).padding(horizontal = 8.dp, vertical = 2.dp), maxLines = 1)
-                    }
-                }
-                Text("你知道嗎？${b.fact}", fontSize = 12.sp, color = Vintage.inkSoft, maxLines = 2)
-            } else {
-                Text("${terrainOf(a.medianElevM)}地帶的小角落，介紹整理中。", style = MaterialTheme.typography.bodySmall, color = Vintage.inkSoft)
+            val tags = region.tags
+            if (tags == null) {
+                Text("${terrainOf(a.medianElevM)}地帶的小角落，特色整理中。", style = MaterialTheme.typography.bodySmall, color = Vintage.inkSoft)
+                return@Column
             }
+            val newest = (tags.indices).lastOrNull { region.foundMask and (1 shl it) != 0 }
+            var picked by remember(a.name, region.foundMask) { mutableStateOf(newest) }
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                tags.forEachIndexed { i, t ->
+                    val found = region.foundMask and (1 shl i) != 0
+                    val on = found && picked == i
+                    Text(
+                        if (found) t.tag else "？？？",
+                        fontSize = 12.sp, fontWeight = if (found) FontWeight.Bold else FontWeight.Normal,
+                        color = when { on -> Color.White; found -> Color(0xFF0B4A78); else -> Vintage.inkSoft.copy(alpha = 0.6f) },
+                        modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                            .background(when { on -> Color(0xFF0E86D4); found -> Color(0xFF0E86D4).copy(alpha = 0.14f); else -> Vintage.edge.copy(alpha = 0.2f) })
+                            .clickable(enabled = found) { picked = i }
+                            .padding(horizontal = 10.dp, vertical = 3.dp),
+                        maxLines = 1,
+                    )
+                }
+            }
+            val p = picked
+            Text(
+                if (p != null) "你知道嗎？${tags[p].fact}" else "還沒有發現這裡的特色，再走一段看看。",
+                fontSize = 12.sp, color = Vintage.inkSoft, maxLines = 3,
+            )
         }
     }
 }
