@@ -1,0 +1,188 @@
+{
+ "date": "2026-10-19",
+ "params_version": 1,
+ "picks": [
+  {
+   "ticker": "SYK",
+   "name": "Stryker Corporation",
+   "zh_name": "Stryker",
+   "market": "US",
+   "sector": "aging_care",
+   "rank": 1,
+   "entry_price": 294.66,
+   "entry_date": "2026-10-16",
+   "composite": 67.23,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 83.9,
+    "growth": 70.6,
+    "valuation": 72.7,
+    "momentum": 13.8,
+    "news": 40.0
+   },
+   "target": {
+    "base": 371.29,
+    "bull": 493.7,
+    "bear": 187.67,
+    "ev": 349.87,
+    "confidence": "中",
+    "upside": 0.2601,
+    "ev_upside": 0.1874,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 307.56,
+      "weight": 0.4,
+      "upside": 0.0438
+     },
+     "peg": {
+      "value": 497.13,
+      "weight": 0.15,
+      "upside": 0.6871
+     },
+     "dcf": {
+      "value": 415.2,
+      "weight": 0.2,
+      "upside": 0.4091
+     },
+     "consensus": {
+      "value": 362.62,
+      "weight": 0.25,
+      "upside": 0.2306
+     }
+    }
+   },
+   "stop": 275.55,
+   "fundamentals": {
+    "market_cap": 114272174080,
+    "pe_ttm": 30.872,
+    "pe_fwd": 17.8797,
+    "peg": 1.38,
+    "roe": 0.1651,
+    "gross_margin": 0.6559,
+    "op_margin": 0.2702,
+    "net_margin": 0.1443,
+    "rev_growth": 0.094,
+    "eps_growth": 0.441,
+    "de": 0.6439,
+    "beta": 0.781,
+    "target_mean": 362.6154,
+    "n_analysts": 26,
+    "fcf_margin": 0.159
+   },
+   "tech": {
+    "ret_1m": 0.05519968473247494,
+    "ret_3m": -0.07378233803069822,
+    "rel_3m": -0.10282332029782693,
+    "dist200": -0.09286325181274513,
+    "vol_ann": 0.36046906107709875
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 59.8,
+   "facts": {
+    "from_high": -0.233,
+    "pos52": 0.2235,
+    "bounce20": 0.0958,
+    "ret_1m": 0.0552,
+    "dist200": -0.0929,
+    "pe_discount": 0.02,
+    "eps_up": 0.7267,
+    "rev_growth": 0.094,
+    "upside": 0.2601
+   }
+  },
+  {
+   "ticker": "NFLX",
+   "name": "Netflix, Inc.",
+   "zh_name": "Netflix",
+   "market": "US",
+   "sector": "internet_platforms",
+   "rank": 2,
+   "entry_price": 70.53,
+   "entry_date": "2026-10-16",
+   "composite": 60.28,
+   "scores": {
+    "sector": 69.1,
+    "leader": 0.0,
+    "quality": 79.9,
+    "growth": 47.4,
+    "valuation": 83.0,
+    "momentum": 23.1,
+    "news": 81.7
+   },
+   "target": {
+    "base": 93.15,
+    "bull": 114.31,
+    "bear": 61.41,
+    "ev": 89.45,
+    "confidence": "高",
+    "upside": 0.3207,
+    "ev_upside": 0.2682,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 85.49,
+      "weight": 0.4,
+      "upside": 0.212
+     },
+     "peg": {
+      "value": 90.86,
+      "weight": 0.15,
+      "upside": 0.2883
+     },
+     "dcf": {
+      "value": 112.72,
+      "weight": 0.2,
+      "upside": 0.5982
+     },
+     "consensus": {
+      "value": 91.13,
+      "weight": 0.25,
+      "upside": 0.292
+     }
+    }
+   },
+   "stop": 66.3,
+   "fundamentals": {
+    "market_cap": 289123139584,
+    "pe_ttm": 21.8349,
+    "pe_fwd": 18.2707,
+    "peg": 1.21,
+    "roe": 0.4954,
+    "gross_margin": 0.4912,
+    "op_margin": 0.3338,
+    "net_margin": 0.2822,
+    "rev_growth": 0.134,
+    "eps_growth": 0.111,
+    "de": 0.5524,
+    "beta": 1.613,
+    "target_mean": 91.1267,
+    "n_analysts": 45,
+    "fcf_margin": 0.5249
+   },
+   "tech": {
+    "ret_1m": -0.0634709724373298,
+    "ret_3m": 0.043343200759057066,
+    "rel_3m": 0.014302218491928365,
+    "dist200": -0.1490162781671973,
+    "vol_ann": 0.3354551895340123
+   },
+   "book": "bargain",
+   "also_main": true,
+   "bargain_score": 55.9,
+   "facts": {
+    "from_high": -0.4318,
+    "pos52": 0.0608,
+    "bounce20": 0.0517,
+    "ret_1m": -0.0635,
+    "dist200": -0.149,
+    "pe_discount": 0.229,
+    "eps_up": 0.1951,
+    "rev_growth": 0.134,
+    "upside": 0.3207
+   }
+  }
+ ]
+}
