@@ -312,11 +312,11 @@ internal fun DrawScope.drawRealMap(
         val recent = explored.toList().takeLast(4).toSet()      // the latest stretch is blue, the older ground is sepia
         val boost = if (w < 1700f) 1.7f else 1f
         val blue = if (w < 1700f) Color(0xFF1A8CFF) else Color(0xFF6FBCFF)
-        val sepia = Color(0xFF7A4A1E)
+        val sepia = Color(0xFF7A5230)
         explored.forEach { id ->
             val isRecent = id in recent || w < 1700f
             val c = if (isRecent) blue else sepia
-            val base = if (id == selectedTown) 0.42f else if (isRecent) 0.30f else 0.42f
+            val base = if (id == selectedTown) 0.42f else if (isRecent) 0.30f else 0.62f
             drawPath(areas.path(id, w, h), c.copy(alpha = (base * boost).coerceAtMost(0.85f)))
         }
         if (w >= 1700f) {
