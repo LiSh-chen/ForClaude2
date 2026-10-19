@@ -309,12 +309,18 @@ internal fun DrawScope.drawRealMap(
 
     // Region mode: the townships walked through are tinted and outlined (dashed), the one picked is outlined firmly, and their names lie on the ground.
     if (regionMode && areas != null && explored.isNotEmpty()) {
-        val wash = if (w < 1700f) Color(0xFF1A8CFF) else Color(0xFF6FBCFF)      // full island: strong azure; zoomed in: a lighter blue so the painting shows through
+        val recent = explored.toList().takeLast(4).toSet()      // the latest stretch is blue, the older ground is sepia
         val boost = if (w < 1700f) 1.7f else 1f
-        explored.forEach { id -> drawPath(areas.path(id, w, h), wash.copy(alpha = ((if (id == selectedTown) 0.42f else 0.30f) * boost).coerceAtMost(0.85f))) }
+        val blue = if (w < 1700f) Color(0xFF1A8CFF) else Color(0xFF6FBCFF)
+        val sepia = Color(0xFF7A4A1E)
+        explored.forEach { id ->
+            val isRecent = id in recent || w < 1700f
+            val c = if (isRecent) blue else sepia
+            val base = if (id == selectedTown) 0.42f else if (isRecent) 0.30f else 0.42f
+            drawPath(areas.path(id, w, h), c.copy(alpha = (base * boost).coerceAtMost(0.85f)))
+        }
         if (w >= 1700f) {
-            val dash = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx(), 5.dp.toPx()))
-            explored.forEach { id -> if (id != selectedTown) drawPath(areas.path(id, w, h), Color(0xFF0058C8), style = Stroke(1.8.dp.toPx(), join = StrokeJoin.Round)) }
+            explored.forEach { id -> if (id != selectedTown && id in recent) drawPath(areas.path(id, w, h), Color(0xFF0058C8), style = Stroke(1.8.dp.toPx(), join = StrokeJoin.Round)) }
         }
         if (selectedTown in areas.towns.indices) { drawPath(areas.path(selectedTown, w, h), Color.White, style = Stroke(6.dp.toPx(), join = StrokeJoin.Round)); drawPath(areas.path(selectedTown, w, h), Color(0xFF0058C8), style = Stroke(3.2.dp.toPx(), join = StrokeJoin.Round)) }
         if (w > 3000f) {
@@ -328,13 +334,17 @@ internal fun DrawScope.drawRealMap(
                 val sel = id == selectedTown
                 val maxW = (t.widthKm * pxPerKm * 0.92).toFloat().coerceAtLeast(1f)
                 var sp = if (sel) 15f else 13f
-                var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFFA3001F)))
+                var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF0B2A5B)))
                 while (sp > 6f && tx.size.width > maxW) { sp -= 0.5f; tx = measurer.measure(t.name, tx.layoutInput.style.copy(fontSize = sp.sp)) }
                 if (tx.size.width > maxW && !sel) return@forEach
                 val hw = tx.size.width / 2f; val hh = tx.size.height / 2f
                 val tl0 = Offset(q.x - hw, q.y - hh)
                 val box = Rect(tl0.x, tl0.y, tl0.x + tx.size.width, tl0.y + tx.size.height)
-                if (sel || placedNames.none { it.overlaps(box) }) { drawText(tx, topLeft = tl0); placedNames += box }
+                if (sel || placedNames.none { it.overlaps(box) }) {
+                    val halo = measurer.measure(t.name, tx.layoutInput.style.copy(color = Color.White.copy(alpha = 0.92f)))
+                    for (dx in floatArrayOf(-1.6f, 1.6f)) for (dy in floatArrayOf(-1.6f, 1.6f)) drawText(halo, topLeft = Offset(tl0.x + dx, tl0.y + dy))
+                    drawText(tx, topLeft = tl0); placedNames += box
+                }
             }
         }
     }
