@@ -55,7 +55,9 @@ for v, ps in polys.items():
     u = unary_union(ps).simplify(0.0009)
     parts = [p for p in getattr(u, 'geoms', [u]) if p.geom_type == 'Polygon' and p.area > 2e-5]
     if not parts: continue
-    big = max(parts, key=lambda p: p.area); lp = big.representative_point()
+    big = max(parts, key=lambda p: p.area)
+    from shapely.ops import polylabel
+    lp = polylabel(big, tolerance=0.0005)      # the point farthest from every edge, so the name sits in the middle of the area
     nm = names[keys[v - 1]].encode('utf8'); cy = counties[keys[v - 1]].encode('utf8')
     union = unary_union(parts); area = union.area * 111.0 * 101.5
     med, hi = dem_stats(union)

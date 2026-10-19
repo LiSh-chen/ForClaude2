@@ -184,7 +184,7 @@ private fun ModeSwitch(regionMode: Boolean, modifier: Modifier, onChange: (Boole
             Text(
                 text, fontSize = 12.sp, fontWeight = FontWeight.Bold,
                 color = if (on) Color.White else Vintage.inkSoft,
-                modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(if (on) (if (mode) Color(0xFF0E86D4) else Color(0xFFB3202A)) else Color.Transparent)
+                modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(if (on) (if (mode) Color(0xFFD81B8A) else Color(0xFFB3202A)) else Color.Transparent)
                     .clickable { onChange(mode) }.padding(horizontal = 12.dp, vertical = 5.dp),
             )
         }
@@ -204,7 +204,7 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
         }
         val a = region.area
         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(a.name, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 20.sp, color = Color(0xFF0B4A78), maxLines = 1)
+            Text(a.name, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 20.sp, color = Color(0xFF8E0F57), maxLines = 1)
             Text(a.county, fontSize = 11.sp, color = Vintage.inkSoft, modifier = Modifier.padding(bottom = 2.dp), maxLines = 1)
             Spacer(Modifier.weight(1f))
             Text(if (isCurrent) "目前所在" else if (region.explored) "第 ${region.order} 區" else "", fontSize = 11.sp, color = Vintage.brassDark, modifier = Modifier.padding(bottom = 2.dp))
@@ -224,8 +224,8 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
                     val on = picked == i
                     Text(
                         t.tag, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1,
-                        color = if (on) Color.White else Color(0xFF0B4A78),
-                        modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(if (on) Color(0xFF0E86D4) else Color(0xFF0E86D4).copy(alpha = 0.14f))
+                        color = if (on) Color.White else Color(0xFF8E0F57),
+                        modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(if (on) Color(0xFFD81B8A) else Color(0xFFD81B8A).copy(alpha = 0.14f))
                             .clickable { picked = i }.padding(horizontal = 10.dp, vertical = 3.dp),
                     )
                 }

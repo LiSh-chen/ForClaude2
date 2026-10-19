@@ -309,13 +309,14 @@ internal fun DrawScope.drawRealMap(
 
     // Region mode: the townships walked through are tinted and outlined (dashed), the one picked is outlined firmly, and their names lie on the ground.
     if (regionMode && areas != null && explored.isNotEmpty()) {
-        val wash = Color(0xFF0E86D4)
-        explored.forEach { id -> drawPath(areas.path(id, w, h), wash.copy(alpha = if (id == selectedTown) 0.42f else 0.26f)) }
+        val wash = Color(0xFFD81B8A)      // a magenta that no part of the painted map uses
+        val boost = if (w < 1700f) 1.7f else 1f
+        explored.forEach { id -> drawPath(areas.path(id, w, h), wash.copy(alpha = ((if (id == selectedTown) 0.5f else 0.34f) * boost).coerceAtMost(0.85f))) }
         if (w >= 1700f) {
             val dash = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx(), 5.dp.toPx()))
-            explored.forEach { id -> if (id != selectedTown) drawPath(areas.path(id, w, h), Color(0xFF0B4A78).copy(alpha = 0.85f), style = Stroke(1.8.dp.toPx(), join = StrokeJoin.Round)) }
+            explored.forEach { id -> if (id != selectedTown) drawPath(areas.path(id, w, h), Color(0xFF8E0F57), style = Stroke(1.8.dp.toPx(), join = StrokeJoin.Round)) }
         }
-        if (selectedTown in areas.towns.indices) { drawPath(areas.path(selectedTown, w, h), Color.White, style = Stroke(6.dp.toPx(), join = StrokeJoin.Round)); drawPath(areas.path(selectedTown, w, h), Color(0xFF0B4A78), style = Stroke(3.2.dp.toPx(), join = StrokeJoin.Round)) }
+        if (selectedTown in areas.towns.indices) { drawPath(areas.path(selectedTown, w, h), Color.White, style = Stroke(6.dp.toPx(), join = StrokeJoin.Round)); drawPath(areas.path(selectedTown, w, h), Color(0xFF8E0F57), style = Stroke(3.2.dp.toPx(), join = StrokeJoin.Round)) }
         if (w > 3000f) {
             val placedNames = ArrayList<Rect>()
             val pxPerKm = w / 222.5f
@@ -327,7 +328,7 @@ internal fun DrawScope.drawRealMap(
                 val sel = id == selectedTown
                 val maxW = (t.widthKm * pxPerKm * 0.92).toFloat().coerceAtLeast(1f)
                 var sp = if (sel) 15f else 13f
-                var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF062A47)))
+                var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF3A0630)))
                 while (sp > 6f && tx.size.width > maxW) { sp -= 0.5f; tx = measurer.measure(t.name, tx.layoutInput.style.copy(fontSize = sp.sp)) }
                 if (tx.size.width > maxW && !sel) return@forEach
                 val hw = tx.size.width / 2f; val hh = tx.size.height / 2f
