@@ -389,8 +389,6 @@ internal fun DrawScope.drawRealMap(
     occupied += if (pin != null && !dotMode) Rect(p.x - pinWidth / 2, p.y - pinHeight, p.x + pinWidth / 2, p.y + 4.dp.toPx())
     else Rect(p.x - 9.dp.toPx(), p.y - 9.dp.toPx(), p.x + 9.dp.toPx(), p.y + 9.dp.toPx())
     route.stops.forEach { stop -> if (stop.landmark != null || stop.supply != null) reserve(stop.at.px(), 9.dp.toPx()) }
-    val sights = route.poisNear(here)
-    sights.forEach { (poi, _) -> reserve(poi.at.px(), 13.dp.toPx()) }
 
     /** Puts [text] beside [anchor] on a parchment tag, on the first side that is free; returns false when none is. */
     fun placeName(text: String, anchor: Offset, size: androidx.compose.ui.unit.TextUnit, color: Color, gap: Float, force: Boolean = false, plain: Boolean = false, edge: Color? = null, weight: FontWeight = FontWeight.Bold): Boolean {
@@ -417,12 +415,6 @@ internal fun DrawScope.drawRealMap(
         drawText(t, topLeft = chosen)
         occupied += box
         return true
-    }
-
-    // Small sights: only while the walker is near, fading in and out.
-    sights.forEach { (poi, km) ->
-        val alpha = (1f - ((km - POI_RANGE_KM * 0.6) / (POI_RANGE_KM * 0.4)).toFloat().coerceIn(0f, 1f))
-        drawPoiGlyph(poi.kind, poi.at.px(), 11.dp.toPx(), alpha)
     }
 
     // Cards and stamps: collected ones are solid blue, the next card is a big red target; nothing further on is shown.
