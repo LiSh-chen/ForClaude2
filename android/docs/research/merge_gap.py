@@ -1,6 +1,6 @@
 import re,glob,collections,sys
 B='app/src/main/res/raw/town_blurbs.txt'
-SKIP={'紅葉溫泉'}   # judged BAD in an earlier check
+SKIP={'紅葉溫泉','地層下陷'}   # judged BAD in an earlier check
 rows=collections.OrderedDict();hdr=[]
 for l in open(B,encoding='utf-8'):
     if l.startswith('#') or not l.strip(): hdr.append(l);continue
