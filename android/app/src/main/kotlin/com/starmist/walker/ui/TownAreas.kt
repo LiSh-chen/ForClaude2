@@ -102,18 +102,25 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
     }
 }
 
-/** Short introductions written for the townships on the route, keyed "county|name" (res/raw/town_blurbs.txt). */
-fun loadTownBlurbs(context: Context): Map<String, String> {
+/** What makes a township memorable: a headline, a few tags and one "did you know". */
+class TownBlurb(val headline: String, val tags: List<String>, val fact: String)
+
+/** Introductions for the townships on the route, keyed "county|name" (res/raw/town_blurbs.txt: county|name|headline|tag,tag,tag|fact). */
+fun loadTownBlurbs(context: Context): Map<String, TownBlurb> {
     val id = context.resources.getIdentifier("town_blurbs", "raw", context.packageName)
     if (id == 0) return emptyMap()
     return runCatching {
         context.resources.openRawResource(id).bufferedReader(Charsets.UTF_8).readLines()
-            .mapNotNull { l -> l.split('|', limit = 3).takeIf { it.size == 3 && it[2].isNotBlank() }?.let { "${it[0]}|${it[1]}" to it[2].trim() } }.toMap()
+            .mapNotNull { l ->
+                val f = l.split('|')
+                if (f.size < 5 || f[2].isBlank() || l.startsWith("#")) null
+                else "${f[0]}|${f[1]}" to TownBlurb(f[2].trim(), f[3].split(',', '、').map { it.trim() }.filter { it.isNotEmpty() }.take(3), f[4].trim())
+            }.toMap()
     }.getOrDefault(emptyMap())
 }
 
 @Composable
-fun rememberTownBlurbs(): Map<String, String> {
+fun rememberTownBlurbs(): Map<String, TownBlurb> {
     val context = LocalContext.current
     return remember(context) { loadTownBlurbs(context.applicationContext) }
 }

@@ -356,14 +356,15 @@ internal fun DrawScope.drawRealMap(
         }
     }
     val round = StrokeCap.Round
-    val k = (w / 3000f).coerceIn(0.5f, 1f)
+    val k = (w / 3000f).coerceIn(0.28f, 1f)
+    val ms = (w / 2400f).coerceIn(0.4f, 1f)      // markers shrink with the map
     val casing = Color.White.copy(alpha = 0.92f)
     val rideDots = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 6.dp.toPx()))
     val aheadDash = PathEffect.dashPathEffect(floatArrayOf(9.dp.toPx(), 6.dp.toPx()))
     drawPath(aheadPath, casing, style = Stroke(6.5.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round))
     drawPath(walkedPath, casing, style = Stroke(9.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
-    drawPath(rideAhead, Color(0xFF7B3FB5).copy(alpha = 0.6f), style = Stroke(3.dp.toPx(), cap = round, pathEffect = rideDots))
-    drawPath(ridePath, Color(0xFF7B3FB5), style = Stroke(3.5.dp.toPx(), cap = round, pathEffect = rideDots))
+    drawPath(rideAhead, Color(0xFF7B3FB5).copy(alpha = 0.6f), style = Stroke(3.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
+    drawPath(ridePath, Color(0xFF7B3FB5), style = Stroke(3.5.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
     drawPath(aheadPath, Color(0xFFB3202A), style = Stroke(2.8.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
     drawPath(walkedPath, Color(0xFF0E86D4), style = Stroke(5.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
     drawPath(walkedPath, Color(0xFF9AD8FF).copy(alpha = 0.8f), style = Stroke(1.6.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
@@ -423,15 +424,15 @@ internal fun DrawScope.drawRealMap(
         if (stop.landmark != null) {
             when {
                 stop.landmark?.id == nextCardId -> {
-                    drawCircle(Color(0xFFB3202A).copy(alpha = 0.25f), 19.dp.toPx(), o)
-                    drawCircle(Color.White, 10.dp.toPx(), o)
-                    drawCircle(Color(0xFFB3202A), 10.dp.toPx(), o, style = Stroke(3.5.dp.toPx()))
-                    drawCircle(Color(0xFFB3202A), 4.dp.toPx(), o)
+                    drawCircle(Color(0xFFB3202A).copy(alpha = 0.25f), 19.dp.toPx() * ms, o)
+                    drawCircle(Color.White, 10.dp.toPx() * ms, o)
+                    drawCircle(Color(0xFFB3202A), 10.dp.toPx() * ms, o, style = Stroke(3.5.dp.toPx() * ms))
+                    drawCircle(Color(0xFFB3202A), 4.dp.toPx() * ms, o)
                 }
-                reached -> { drawCircle(Color(0xFF0E86D4), 6.5.dp.toPx(), o); drawCircle(Color.White, 6.5.dp.toPx(), o, style = Stroke(2.dp.toPx())) }
+                reached -> { drawCircle(Color(0xFF0E86D4), 6.5.dp.toPx() * ms, o); drawCircle(Color.White, 6.5.dp.toPx() * ms, o, style = Stroke(2.dp.toPx() * ms)) }
             }
         } else if (stop.supply != null && reached) {
-            val side = 11.dp.toPx()
+            val side = 11.dp.toPx() * ms
             drawRect(SUPPLY_COLOR, Offset(o.x - side / 2, o.y - side / 2), Size(side, side))
             drawRect(Color.White, Offset(o.x - side / 2, o.y - side / 2), Size(side, side), style = Stroke(1.8.dp.toPx()))
         }
@@ -444,7 +445,7 @@ internal fun DrawScope.drawRealMap(
     val next = route.next(walkedKm)?.first
     val lastCard = route.collected(walkedKm).lastOrNull()
     // How far to the next card (its name stays hidden until it is reached).
-    next?.let { n ->
+    if (w >= 1700f) next?.let { n ->
         val toNext = route.next(walkedKm)!!.second
         queue += Label(100) {
             val o = route.stops.first { it.landmark?.id == n.id }.at.px()
@@ -452,7 +453,7 @@ internal fun DrawScope.drawRealMap(
         }
     }
     // Names of the cards already collected.
-    route.collected(walkedKm).forEach { card ->
+    if (w >= 1700f) route.collected(walkedKm).forEach { card ->
         val o = route.stops.first { it.landmark?.id == card.id }.at.px()
         if (card.id != lastCard?.id && (w <= 3000f || o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f)) return@forEach
         queue += Label(if (card.id == lastCard?.id) 90 else 60) { placeName(card.name, o, 12.sp, Vintage.ink, 11.dp.toPx(), force = card.id == lastCard?.id) }

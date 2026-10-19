@@ -58,7 +58,7 @@ internal sealed interface HomeMap {
 }
 
 /** The township being walked through, for the card above the map. */
-internal data class RegionInfo(val area: TownArea, val blurb: String?, val walkedKm: Double, val exploredCount: Int)
+internal data class RegionInfo(val area: TownArea, val blurb: TownBlurb?, val walkedKm: Double, val exploredCount: Int)
 
 private val BLUE = Color(0xFF0E86D4)
 private val RED = Color(0xFFB3202A)
@@ -160,11 +160,11 @@ internal fun HomeContent(
 
 // ---- the region card -------------------------------------------------------------------------
 
-/** The township being walked through: its name, a line about it, and a few figures drawn as small icons. */
+/** The township being walked through: its name, one line that makes it memorable, three tags and one "did you know". */
 @Composable
 private fun RegionCard(region: RegionInfo?) {
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(2.dp)) {
-        Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+        Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (region == null) {
                 Text("出發吧！", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Text("走進一個新的鄉鎮，這裡就會出現它的介紹。", style = MaterialTheme.typography.bodySmall)
@@ -177,66 +177,27 @@ private fun RegionCard(region: RegionInfo?) {
                 Spacer(Modifier.weight(1f))
                 Text("第 ${region.exploredCount} 區", style = MaterialTheme.typography.labelMedium, color = Vintage.brassDark, modifier = Modifier.padding(bottom = 3.dp))
             }
-            Text(
-                region.blurb ?: "${terrainOf(a.medianElevM)}地帶，海拔約 ${a.medianElevM} 公尺，共 ${a.villages} 個村里。",
-                style = MaterialTheme.typography.bodySmall, maxLines = 2, color = Vintage.ink,
-            )
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                StatChip(Glyph.Mountain, "${a.medianElevM}", "公尺 · ${terrainOf(a.medianElevM)}")
-                StatChip(Glyph.Area, "≈${(a.areaKm2 / DAAN_KM2).roundToInt().coerceAtLeast(1)}", "個大安區")
-                StatChip(Glyph.Houses, "${a.villages}", "村里")
-                StatChip(Glyph.Foot, "%.1f".format(region.walkedKm), "公里已走")
+            val b = region.blurb
+            if (b != null) {
+                Text(b.headline, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Vintage.ink, maxLines = 1)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    b.tags.forEach { t ->
+                        Text(t, fontSize = 11.sp, color = Color(0xFF0B4A78), modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(Color(0xFF0E86D4).copy(alpha = 0.12f)).padding(horizontal = 8.dp, vertical = 2.dp), maxLines = 1)
+                    }
+                }
+                Text("你知道嗎？${b.fact}", fontSize = 12.sp, color = Vintage.inkSoft, maxLines = 2)
+            } else {
+                Text("${terrainOf(a.medianElevM)}地帶的小角落，介紹整理中。", style = MaterialTheme.typography.bodySmall, color = Vintage.inkSoft)
             }
         }
     }
 }
-
-/** Taipei's Da'an District, as a yardstick for the area of a township. */
-private const val DAAN_KM2 = 11.4
 
 private fun terrainOf(medianElevM: Int) = when {
     medianElevM < 40 -> "平原"
     medianElevM < 300 -> "台地丘陵"
     medianElevM < 1000 -> "山地"
     else -> "高山"
-}
-
-private enum class Glyph { Mountain, Area, Houses, Foot }
-
-@Composable
-private fun StatChip(glyph: Glyph, value: String, label: String) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        Canvas(Modifier.size(18.dp)) { drawGlyph(glyph) }
-        Column {
-            Text(value, fontWeight = FontWeight.Bold, fontSize = 14.sp, maxLines = 1)
-            Text(label, fontSize = 9.sp, color = Vintage.inkSoft, maxLines = 1)
-        }
-    }
-}
-
-private fun DrawScope.drawGlyph(glyph: Glyph) {
-    val c = Vintage.inkSoft
-    val s = size.width
-    val line = Stroke(1.6.dp.toPx(), cap = StrokeCap.Round)
-    when (glyph) {
-        Glyph.Mountain -> {
-            val p = Path().apply { moveTo(s * 0.05f, s * 0.85f); lineTo(s * 0.4f, s * 0.2f); lineTo(s * 0.62f, s * 0.55f); lineTo(s * 0.75f, s * 0.38f); lineTo(s * 0.97f, s * 0.85f); close() }
-            drawPath(p, c.copy(alpha = 0.25f)); drawPath(p, c, style = line)
-        }
-        Glyph.Area -> {
-            drawRoundRect(c.copy(alpha = 0.25f), Offset(s * 0.1f, s * 0.1f), Size(s * 0.8f, s * 0.8f), CornerRadius(2.dp.toPx()))
-            drawRoundRect(c, Offset(s * 0.1f, s * 0.1f), Size(s * 0.8f, s * 0.8f), CornerRadius(2.dp.toPx()), style = line)
-            drawLine(c, Offset(s * 0.1f, s * 0.5f), Offset(s * 0.9f, s * 0.5f), 1.dp.toPx()); drawLine(c, Offset(s * 0.5f, s * 0.1f), Offset(s * 0.5f, s * 0.9f), 1.dp.toPx())
-        }
-        Glyph.Houses -> {
-            val h = Path().apply { moveTo(s * 0.08f, s * 0.9f); lineTo(s * 0.08f, s * 0.5f); lineTo(s * 0.32f, s * 0.25f); lineTo(s * 0.56f, s * 0.5f); lineTo(s * 0.56f, s * 0.9f); close() }
-            drawPath(h, c.copy(alpha = 0.25f)); drawPath(h, c, style = line)
-            drawRect(c, Offset(s * 0.62f, s * 0.55f), Size(s * 0.3f, s * 0.35f), style = line)
-        }
-        Glyph.Foot -> {
-            drawOval(c, Offset(s * 0.2f, s * 0.35f), Size(s * 0.3f, s * 0.5f)); drawOval(c, Offset(s * 0.55f, s * 0.1f), Size(s * 0.28f, s * 0.48f))
-        }
-    }
 }
 
 // ---- the dashboard ---------------------------------------------------------------------------
@@ -286,27 +247,26 @@ private fun RouteBars(route: RouteDef, walkedKm: Double, strideM: Double, goal: 
     val toEnd = steps(route.totalKm - walkedKm)
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        // To the next stop: a red target at the end of the bar, the walker as a blue dot on it.
-        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Canvas(Modifier.size(14.dp)) { drawCircle(RED.copy(alpha = 0.25f), size.width / 2); drawCircle(RED, size.width * 0.32f, style = Stroke(2.dp.toPx())); drawCircle(RED, size.width * 0.12f) }
-                Text(if (next != null) toNext.withCommas() else "完成", fontWeight = FontWeight.Bold, fontSize = 17.sp, fontFamily = FontFamily.Serif, modifier = Modifier.weight(1f), maxLines = 1)
-                if (next != null) Text("${days(toNext)} 天", fontSize = 12.sp, color = RED, fontWeight = FontWeight.Bold)
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text("下一景點", fontSize = 11.sp, color = RED, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                if (next != null) Text("${"%.1f".format(next.second)} 公里・${days(toNext)} 天", fontSize = 11.sp, color = RED, fontWeight = FontWeight.Bold)
             }
+            Text(if (next != null) "${toNext.withCommas()} 步" else "已完成", fontWeight = FontWeight.Bold, fontSize = 17.sp, fontFamily = FontFamily.Serif, maxLines = 1)
             Canvas(Modifier.fillMaxWidth().height(10.dp)) {
                 val r = size.height / 2
+                val x = (size.width * legFraction.toFloat()).coerceIn(r, size.width - r)
                 drawRoundRect(Vintage.edge.copy(alpha = 0.28f), Offset.Zero, size, CornerRadius(r, r))
                 drawRoundRect(RED.copy(alpha = 0.85f), Offset.Zero, Size((size.width * legFraction.toFloat()).coerceAtLeast(size.height), size.height), CornerRadius(r, r))
-                drawCircle(Color.White, r * 0.85f, Offset((size.width * legFraction.toFloat()).coerceIn(r, size.width - r), r)); drawCircle(BLUE, r * 0.55f, Offset((size.width * legFraction.toFloat()).coerceIn(r, size.width - r), r))
+                drawCircle(Color.White, r * 0.85f, Offset(x, r)); drawCircle(BLUE, r * 0.55f, Offset(x, r))
             }
         }
-        // Around the island: one tick per card, those already collected filled in blue.
-        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Canvas(Modifier.size(14.dp)) { drawCircle(BLUE, size.width * 0.38f, style = Stroke(2.2.dp.toPx())); drawCircle(BLUE, size.width * 0.12f, Offset(size.width * 0.5f, size.height * 0.12f)) }
-                Text("${(overall * 100).roundToInt()}%", fontWeight = FontWeight.Bold, fontSize = 17.sp, fontFamily = FontFamily.Serif, modifier = Modifier.weight(1f), maxLines = 1)
-                if (next != null) Text("${days(toEnd)} 天", fontSize = 12.sp, color = BLUE, fontWeight = FontWeight.Bold)
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text("環島全程", fontSize = 11.sp, color = BLUE, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                if (next != null) Text("剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里・${days(toEnd)} 天", fontSize = 11.sp, color = BLUE, fontWeight = FontWeight.Bold)
             }
+            Text("${(overall * 100).roundToInt()}%　${collected.size}/$totalCards 景點", fontWeight = FontWeight.Bold, fontSize = 17.sp, fontFamily = FontFamily.Serif, maxLines = 1)
             Canvas(Modifier.fillMaxWidth().height(10.dp)) {
                 val gap = 1.5.dp.toPx()
                 val seg = (size.width - gap * (totalCards - 1)) / totalCards
