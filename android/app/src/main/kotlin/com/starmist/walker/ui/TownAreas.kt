@@ -117,7 +117,7 @@ fun loadTownBlurbs(context: Context): Map<String, List<TownTag>> {
             .filter { !it.startsWith("#") }
             .mapNotNull { l ->
                 val f = l.split('|')
-                if (f.size < 5) null
+                if (f.size < 3) null
                 else "${f[0]}|${f[1]}" to f.drop(2).take(3).mapNotNull { x -> x.split(':', limit = 2).takeIf { it.size == 2 }?.let { TownTag(it[0].trim(), it[1].trim()) } }
             }.filter { it.second.isNotEmpty() }.toMap()
     }.getOrDefault(emptyMap())
