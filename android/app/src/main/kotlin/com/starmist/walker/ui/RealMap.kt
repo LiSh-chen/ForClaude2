@@ -310,12 +310,12 @@ internal fun DrawScope.drawRealMap(
     // Region mode: the townships walked through are tinted and outlined (dashed), the one picked is outlined firmly, and their names lie on the ground.
     if (regionMode && areas != null && explored.isNotEmpty()) {
         val wash = Color(0xFF0E86D4)
-        explored.forEach { id -> drawPath(areas.path(id, w, h), wash.copy(alpha = if (id == selectedTown) 0.28f else 0.14f)) }
+        explored.forEach { id -> drawPath(areas.path(id, w, h), wash.copy(alpha = if (id == selectedTown) 0.42f else 0.26f)) }
         if (w >= 1700f) {
             val dash = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx(), 5.dp.toPx()))
-            explored.forEach { id -> if (id != selectedTown) drawPath(areas.path(id, w, h), Color(0xFF0E5C93).copy(alpha = 0.55f), style = Stroke(1.3.dp.toPx(), join = StrokeJoin.Round, pathEffect = dash)) }
+            explored.forEach { id -> if (id != selectedTown) drawPath(areas.path(id, w, h), Color(0xFF0B4A78).copy(alpha = 0.85f), style = Stroke(1.8.dp.toPx(), join = StrokeJoin.Round)) }
         }
-        if (selectedTown in areas.towns.indices) drawPath(areas.path(selectedTown, w, h), Color(0xFF0E5C93), style = Stroke(2.8.dp.toPx(), join = StrokeJoin.Round))
+        if (selectedTown in areas.towns.indices) { drawPath(areas.path(selectedTown, w, h), Color.White, style = Stroke(6.dp.toPx(), join = StrokeJoin.Round)); drawPath(areas.path(selectedTown, w, h), Color(0xFF0B4A78), style = Stroke(3.2.dp.toPx(), join = StrokeJoin.Round)) }
         if (w > 3000f) {
             val placedNames = ArrayList<Rect>()
             val pxPerKm = w / 222.5f
@@ -326,9 +326,9 @@ internal fun DrawScope.drawRealMap(
                 if (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f) return@forEach
                 val sel = id == selectedTown
                 val maxW = (t.widthKm * pxPerKm * 0.92).toFloat().coerceAtLeast(1f)
-                var sp = if (sel) 13f else 11f
-                var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF0B3558).copy(alpha = if (sel) 1f else 0.8f)))
-                while (sp > 5.5f && tx.size.width > maxW) { sp -= 0.5f; tx = measurer.measure(t.name, tx.layoutInput.style.copy(fontSize = sp.sp)) }
+                var sp = if (sel) 15f else 13f
+                var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF062A47)))
+                while (sp > 6f && tx.size.width > maxW) { sp -= 0.5f; tx = measurer.measure(t.name, tx.layoutInput.style.copy(fontSize = sp.sp)) }
                 if (tx.size.width > maxW && !sel) return@forEach
                 val hw = tx.size.width / 2f; val hh = tx.size.height / 2f
                 val tl0 = Offset(q.x - hw, q.y - hh)
@@ -368,14 +368,14 @@ internal fun DrawScope.drawRealMap(
     val casing = Color.White.copy(alpha = 0.92f)
     val rideDots = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx() * k.coerceAtLeast(0.5f), 3.dp.toPx() * k.coerceAtLeast(0.5f)))
     val aheadDash = PathEffect.dashPathEffect(floatArrayOf(9.dp.toPx(), 6.dp.toPx()))
-    drawPath(aheadPath, casing, style = Stroke(6.5.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round))
-    drawPath(walkedPath, casing, style = Stroke(9.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
-    drawPath(ridePath, casing, style = Stroke(7.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, join = StrokeJoin.Round))
-    drawPath(rideAhead, Color(0xFF7B3FB5).copy(alpha = 0.6f), style = Stroke(3.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
-    drawPath(ridePath, Color(0xFF7B3FB5), style = Stroke(3.5.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
-    drawPath(aheadPath, Color(0xFFB3202A), style = Stroke(2.8.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
-    drawPath(walkedPath, Color(0xFF0E86D4), style = Stroke(5.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
-    drawPath(walkedPath, Color(0xFF9AD8FF).copy(alpha = 0.8f), style = Stroke(1.6.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+    if (!regionMode) drawPath(aheadPath, casing, style = Stroke(6.5.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round))
+    if (!regionMode) drawPath(walkedPath, casing, style = Stroke(9.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+    if (!regionMode) drawPath(ridePath, casing, style = Stroke(7.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, join = StrokeJoin.Round))
+    if (!regionMode) drawPath(rideAhead, Color(0xFF7B3FB5).copy(alpha = 0.6f), style = Stroke(3.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
+    if (!regionMode) drawPath(ridePath, Color(0xFF7B3FB5), style = Stroke(3.5.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
+    if (!regionMode) drawPath(aheadPath, Color(0xFFB3202A), style = Stroke(2.8.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
+    if (!regionMode) drawPath(walkedPath, Color(0xFF0E86D4), style = Stroke(5.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+    if (!regionMode) drawPath(walkedPath, Color(0xFF9AD8FF).copy(alpha = 0.8f), style = Stroke(1.6.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
 
     // Everything that takes room is recorded, so a name is only put where it covers neither a marker nor another name.
     val occupied = ArrayList<Rect>()
@@ -418,7 +418,7 @@ internal fun DrawScope.drawRealMap(
 
     // Cards and stamps: collected ones are solid blue, the next card is a big red target; nothing further on is shown.
     val nextCardId = route.next(walkedKm)?.first?.id
-    route.stops.forEachIndexed { i, stop ->
+    if (!regionMode) route.stops.forEachIndexed { i, stop ->
         val o = stop.at.px()
         val reached = route.cumulativeKm[i] <= walkedKm + 1e-9
         if (stop.landmark != null) {

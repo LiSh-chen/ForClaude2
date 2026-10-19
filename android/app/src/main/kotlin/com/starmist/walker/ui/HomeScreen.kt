@@ -166,14 +166,11 @@ internal fun HomeContent(
                         onTapTown = { id -> picked = if (id >= 0) id else -1 },
                     )
                     ModeSwitch(regionMode, Modifier.align(Alignment.TopEnd).padding(8.dp)) { regionMode = it; if (!it) picked = -1 }
-                    if (regionMode) {
-                        Box(Modifier.align(Alignment.TopStart).padding(start = 8.dp, top = 46.dp, end = 8.dp)) { RegionCard(infoOf(shown), isCurrent = shown == currentTown) }
-                    }
                 }
             }
         }
 
-        Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM)
+        Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM, regionMode, infoOf(shown), shown == currentTown)
     }
 }
 
@@ -196,55 +193,58 @@ private fun ModeSwitch(regionMode: Boolean, modifier: Modifier, onChange: (Boole
 
 // ---- the region card -------------------------------------------------------------------------
 
-/** The township being walked through: its name and three features, each found on a different visit. */
+/** The township picked on the map (the one being walked through at first): its name and three features, each found on a different visit. */
 @Composable
-private fun RegionCard(region: RegionInfo?, isCurrent: Boolean) {
-    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight.copy(alpha = 0.96f)), elevation = CardDefaults.cardElevation(4.dp)) {
-        Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            if (region == null) {
-                Text("點一下走過的區域", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                Text("藍色的區域是你走過的，點它看這裡的特色。", style = MaterialTheme.typography.bodySmall)
-                return@Column
-            }
-            val a = region.area
-            Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(a.name, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 22.sp, color = Color(0xFF0B4A78))
-                Text(a.county, style = MaterialTheme.typography.labelMedium, color = Vintage.inkSoft, modifier = Modifier.padding(bottom = 3.dp))
-                Spacer(Modifier.weight(1f))
-                Text(if (isCurrent) "目前所在" else if (region.explored) "第 ${region.order} 區" else "", style = MaterialTheme.typography.labelMedium, color = Vintage.brassDark, modifier = Modifier.padding(bottom = 3.dp))
-            }
-            if (!region.explored) {
-                Text("還沒走到這裡，走進來就會發現它的特色。", style = MaterialTheme.typography.bodySmall, color = Vintage.inkSoft)
-                return@Column
-            }
-            val tags = region.tags
-            if (tags == null) {
-                Text("${terrainOf(a.medianElevM)}地帶的小角落，特色整理中。", style = MaterialTheme.typography.bodySmall, color = Vintage.inkSoft)
-                return@Column
-            }
-            val newest = (tags.indices).lastOrNull { region.foundMask and (1 shl it) != 0 }
-            var picked by remember(a.name, region.foundMask) { mutableStateOf(newest) }
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                tags.forEachIndexed { i, t ->
-                    val found = region.foundMask and (1 shl i) != 0
-                    val on = found && picked == i
+private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modifier) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        if (region == null) {
+            Text("點一下走過的區域", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text("藍色的區域是你走過的，點它看這裡的特色。", fontSize = 12.sp, color = Vintage.inkSoft)
+            return@Column
+        }
+        val a = region.area
+        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(a.name, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 20.sp, color = Color(0xFF0B4A78), maxLines = 1)
+            Text(a.county, fontSize = 11.sp, color = Vintage.inkSoft, modifier = Modifier.padding(bottom = 2.dp), maxLines = 1)
+            Spacer(Modifier.weight(1f))
+            Text(if (isCurrent) "目前所在" else if (region.explored) "第 ${region.order} 區" else "", fontSize = 11.sp, color = Vintage.brassDark, modifier = Modifier.padding(bottom = 2.dp))
+        }
+        val tags = region.tags
+        if (!region.explored || tags == null) {
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { repeat(3) { LockedTag() } }
+            Text(if (!region.explored) "還沒走到這裡" else "特色整理中", fontSize = 12.sp, color = Vintage.inkSoft)
+            return@Column
+        }
+        val newest = tags.indices.lastOrNull { region.foundMask and (1 shl it) != 0 }
+        var picked by remember(a.name, region.foundMask) { mutableStateOf(newest) }
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            tags.forEachIndexed { i, t ->
+                val found = region.foundMask and (1 shl i) != 0
+                if (!found) LockedTag() else {
+                    val on = picked == i
                     Text(
-                        if (found) t.tag else "？？？",
-                        fontSize = 12.sp, fontWeight = if (found) FontWeight.Bold else FontWeight.Normal,
-                        color = when { on -> Color.White; found -> Color(0xFF0B4A78); else -> Vintage.inkSoft.copy(alpha = 0.6f) },
-                        modifier = Modifier.clip(RoundedCornerShape(12.dp))
-                            .background(when { on -> Color(0xFF0E86D4); found -> Color(0xFF0E86D4).copy(alpha = 0.14f); else -> Vintage.edge.copy(alpha = 0.2f) })
-                            .clickable(enabled = found) { picked = i }
-                            .padding(horizontal = 10.dp, vertical = 3.dp),
-                        maxLines = 1,
+                        t.tag, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1,
+                        color = if (on) Color.White else Color(0xFF0B4A78),
+                        modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(if (on) Color(0xFF0E86D4) else Color(0xFF0E86D4).copy(alpha = 0.14f))
+                            .clickable { picked = i }.padding(horizontal = 10.dp, vertical = 3.dp),
                     )
                 }
             }
-            val p = picked
-            Text(
-                if (p != null) "你知道嗎？${tags[p].fact}" else "還沒有發現這裡的特色，再走一段看看。",
-                fontSize = 12.sp, color = Vintage.inkSoft, maxLines = 3,
-            )
+        }
+        val p = picked
+        Text(if (p != null) "你知道嗎？${tags[p].fact}" else "再走一段，就會發現這裡的特色。", fontSize = 11.sp, color = Vintage.inkSoft, maxLines = 3)
+    }
+}
+
+/** A feature not found yet: a small padlock instead of a name. */
+@Composable
+private fun LockedTag() {
+    Box(Modifier.clip(RoundedCornerShape(12.dp)).background(Vintage.edge.copy(alpha = 0.22f)).padding(horizontal = 14.dp, vertical = 4.dp)) {
+        Canvas(Modifier.size(width = 12.dp, height = 14.dp)) {
+            val c = Vintage.inkSoft.copy(alpha = 0.7f)
+            val w = size.width; val h = size.height
+            drawArc(c, 180f, 180f, false, Offset(w * 0.2f, h * 0.02f), Size(w * 0.6f, h * 0.6f), style = Stroke(1.6.dp.toPx(), cap = StrokeCap.Round))
+            drawRoundRect(c, Offset(0f, h * 0.42f), Size(w, h * 0.58f), CornerRadius(2.dp.toPx()))
         }
     }
 }
@@ -260,7 +260,7 @@ private fun terrainOf(medianElevM: Int) = when {
 
 /** Today's steps as a ring, then the way ahead as two bars: to the next stop, and around the island. */
 @Composable
-private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double) {
+private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double, regionMode: Boolean, region: RegionInfo?, isCurrent: Boolean) {
     val progress = BodyMetrics.goalProgress(steps, goal).toFloat().coerceIn(0f, 1f)
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(3.dp)) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -277,7 +277,8 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
                         Text("/ ${goal.toLong().withCommas()}", fontSize = 10.sp, color = Vintage.inkSoft, maxLines = 1)
                     }
                 }
-                if (map != null) RouteBars(map.route, map.walkedKm, strideM, goal, Modifier.weight(1f))
+                if (map != null && regionMode) RegionPanel(region, isCurrent, Modifier.weight(1f))
+                else if (map != null) RouteBars(map.route, map.walkedKm, strideM, goal, Modifier.weight(1f))
                 else Spacer(Modifier.weight(1f))
             }
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
