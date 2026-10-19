@@ -3,6 +3,7 @@ package com.starmist.walker.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -52,6 +53,7 @@ fun ZoomPanMap(
     maxZoom: Float = 8f,
     background: Color = Vintage.parchmentLight,
     overlay: @Composable BoxScope.() -> Unit = {},
+    onTap: ((Offset) -> Unit)? = null,
     content: DrawScope.(w: Float, h: Float, zoom: Float, view: Rect) -> Unit,
 ) {
     var zoom by remember(aspect) { mutableFloatStateOf(initialZoom) }
@@ -82,6 +84,14 @@ fun ZoomPanMap(
             .clipToBounds()
             .background(background)
             .onSizeChanged { viewport = it }
+            .pointerInput(aspect, onTap != null) {
+                if (onTap != null) detectTapGestures { tap ->
+                    val vw = size.width.toFloat(); val vh = size.height.toFloat()
+                    val w0 = min(vw, vh * aspect); val h0 = w0 / aspect
+                    val c = clamp(center, zoom)
+                    onTap(Offset(c.x + (tap.x - vw / 2f) / (w0 * zoom), c.y + (tap.y - vh / 2f) / (h0 * zoom)))
+                }
+            }
             .pointerInput(aspect) {
                 detectTransformGestures { _, pan, gestureZoom, _ ->
                     lastTouch = System.currentTimeMillis()

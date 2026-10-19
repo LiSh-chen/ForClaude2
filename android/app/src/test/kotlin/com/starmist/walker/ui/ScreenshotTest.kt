@@ -30,20 +30,21 @@ class ScreenshotTest {
     }
 
     @Composable
-    private fun Home(real: Boolean, map: HomeMap, steps: Long = 4321) {
+    private fun Home(real: Boolean, map: HomeMap, steps: Long = 4321, regionMode: Boolean = false) {
         val context = androidx.compose.ui.platform.LocalContext.current
         val areas = remember { TownAreas.load(context) }
         val blurbs = remember { loadTownBlurbs(context) }
-        val region = (map as? HomeMap.Real)?.let { m ->
-            val g = m.route.positionAt(m.walkedKm)
-            val id = areas.find(g.lat, g.lng)
-            if (id < 0) null else areas.towns[id].let { t -> RegionInfo(t, blurbs["${t.county}|${t.name}"], 1, areas.visited(m.route, m.walkedKm)[id] ?: 0.0, areas.visited(m.route, m.walkedKm).size) }
-        }
+        val m = map as? HomeMap.Real
+        val visited = remember(m) { if (m == null) emptyMap() else areas.visited(m.route, m.walkedKm) }
+        val cur = remember(m) { m?.route?.positionAt(m.walkedKm)?.let { areas.find(it.lat, it.lng) } ?: -1 }
         Page { pad ->
             HomeContent(
                 padding = pad, steps = steps, goal = 9000, km = steps * 0.0007, kcal = steps * 0.04,
                 lastSnapshot = null, granted = true, hasCounter = true, map = map,
-                onRequestPermission = {}, onOpenAppSettings = {}, onSync = {}, onStartRoute = {}, region = region,
+                onRequestPermission = {}, onOpenAppSettings = {}, onSync = {}, onStartRoute = {},
+                currentTown = cur, exploredTowns = visited.keys,
+                infoOf = { id -> if (id !in areas.towns.indices) null else areas.towns[id].let { t -> RegionInfo(t, blurbs["${t.county}|${t.name}"], 1, visited[id] ?: 0.0, visited.keys.indexOf(id) + 1, id in visited) } },
+                initialRegionMode = regionMode,
             )
         }
     }
@@ -62,6 +63,8 @@ class ScreenshotTest {
     @Test fun home_zoom_max() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0, 12f)) }
     @Test fun home_zoom_min() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0, 1f)) }
     @Test fun home_zoom_max_taipei() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 2.0, 12f)) }
+    @Test fun home_region_mode() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), regionMode = true) }
+    @Test fun home_region_mode_zoom_min() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0, 1f), regionMode = true) }
     @Test fun home_choose_route() = paparazzi.snapshot { Home(true, HomeMap.ChooseRoute, 0) }
 
     @Test fun collection_real() = paparazzi.snapshot {

@@ -54,7 +54,10 @@ private val SUPPLY_ORANGE = Color(0xFFD9744B)
 
 /** The island walk as a map the player can pinch and drag; it opens on the walker and cannot zoom out past the whole island. */
 @Composable
-fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifier, initialZoom: Float? = null) {
+fun RouteMapView(
+    route: RouteDef, walkedKm: Double, modifier: Modifier = Modifier, initialZoom: Float? = null,
+    regionMode: Boolean = false, selectedTown: Int = -1, onTapTown: ((Int) -> Unit)? = null,
+) {
     val measurer = rememberMapMeasurer()
     val data = rememberRealMapData(route)
     val pin = rememberArt("traveller_fox")
@@ -72,7 +75,10 @@ fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifie
         initialZoom = initialZoom ?: if (base != null) 5.5f else 12f,
         maxZoom = 12f,
         background = SEA_COLOR,
-    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, pin, base, tiles, view, areas, explored, currentTown) }
+        onTap = if (regionMode && onTapTown != null) { u ->
+            onTapTown(areas.find(MAP_LAT_MAX - u.y.toDouble() * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + u.x.toDouble() * (MAP_LON_MAX - MAP_LON_MIN)))
+        } else null,
+    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, pin, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown) }
 }
 
 /** Small round picture for a card: the painted card art if the asset library has it, a letter tile otherwise. */

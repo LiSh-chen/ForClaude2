@@ -195,6 +195,8 @@ internal fun DrawScope.drawRealMap(
     areas: TownAreas? = null,
     explored: Set<Int> = emptySet(),
     currentTown: Int = -1,
+    regionMode: Boolean = false,
+    selectedTown: Int = -1,
 ) {
     fun GeoPoint.px() = unit().let { Offset(it.x * w, it.y * h) }
     fun Offset.scaled() = Offset(x * w, y * h)
@@ -305,37 +307,33 @@ internal fun DrawScope.drawRealMap(
 
     }
 
-    // Explored townships only: a soft wash over each one walked through, and a clear outline around the one being walked through.
-    if (areas != null && explored.isNotEmpty()) {
+    // Region mode: the townships walked through are tinted and outlined (dashed), the one picked is outlined firmly, and their names lie on the ground.
+    if (regionMode && areas != null && explored.isNotEmpty()) {
         val wash = Color(0xFF0E86D4)
-        explored.forEach { id -> drawPath(areas.path(id, w, h), wash.copy(alpha = if (id == currentTown) 0.16f else 0.11f)) }
-        if (w > 3000f) {
+        explored.forEach { id -> drawPath(areas.path(id, w, h), wash.copy(alpha = if (id == selectedTown) 0.28f else 0.14f)) }
+        if (w >= 1700f) {
             val dash = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx(), 5.dp.toPx()))
-            explored.forEach { id -> if (id != currentTown) drawPath(areas.path(id, w, h), Color(0xFF0E5C93).copy(alpha = 0.5f), style = Stroke(1.3.dp.toPx(), join = StrokeJoin.Round, pathEffect = dash)) }
+            explored.forEach { id -> if (id != selectedTown) drawPath(areas.path(id, w, h), Color(0xFF0E5C93).copy(alpha = 0.55f), style = Stroke(1.3.dp.toPx(), join = StrokeJoin.Round, pathEffect = dash)) }
         }
-        // The outline of the township being walked through; thin and light when the island is small on screen, where it would only look like stray dark lines.
-        if (currentTown >= 0 && w >= 1700f) drawPath(areas.path(currentTown, w, h), Color(0xFF3A9AD9).copy(alpha = 0.85f), style = Stroke((2.6f * (w / 3000f).coerceIn(0.5f, 1f)).dp.toPx(), join = StrokeJoin.Round))
-        // The names of the explored townships lie on the ground, pale and without a box, under everything else. The township being walked through has its card above the map instead.
+        if (selectedTown in areas.towns.indices) drawPath(areas.path(selectedTown, w, h), Color(0xFF0E5C93), style = Stroke(2.8.dp.toPx(), join = StrokeJoin.Round))
         if (w > 3000f) {
             val placedNames = ArrayList<Rect>()
             val pxPerKm = w / 222.5f
-            explored.forEach { id ->
-                if (id == currentTown) return@forEach
+            val ids = explored.toMutableList().also { if (selectedTown >= 0 && selectedTown !in it) it += selectedTown }
+            ids.forEach { id ->
                 val t = areas.towns[id]
                 val q = GeoPoint(t.lat, t.lon).px()
                 if (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f) return@forEach
-                // The name must fit inside its township: shrink it until its ends and corners are inside, or leave it out.
+                val sel = id == selectedTown
                 val maxW = (t.widthKm * pxPerKm * 0.92).toFloat().coerceAtLeast(1f)
-                var sp = 11f
-                var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF123A5E).copy(alpha = 0.78f)))
+                var sp = if (sel) 13f else 11f
+                var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF0B3558).copy(alpha = if (sel) 1f else 0.8f)))
                 while (sp > 5.5f && tx.size.width > maxW) { sp -= 0.5f; tx = measurer.measure(t.name, tx.layoutInput.style.copy(fontSize = sp.sp)) }
-                if (tx.size.width > maxW) return@forEach
-                fun inside(dx: Float, dy: Float) = areas.find(MAP_LAT_MAX - (q.y + dy).toDouble() / h * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + (q.x + dx).toDouble() / w * (MAP_LON_MAX - MAP_LON_MIN)) == id
+                if (tx.size.width > maxW && !sel) return@forEach
                 val hw = tx.size.width / 2f; val hh = tx.size.height / 2f
-                if (!(inside(-hw, 0f) && inside(hw, 0f) && inside(0f, 0f))) return@forEach
                 val tl0 = Offset(q.x - hw, q.y - hh)
                 val box = Rect(tl0.x, tl0.y, tl0.x + tx.size.width, tl0.y + tx.size.height)
-                if (placedNames.none { it.overlaps(box) }) { drawText(tx, topLeft = tl0); placedNames += box }
+                if (sel || placedNames.none { it.overlaps(box) }) { drawText(tx, topLeft = tl0); placedNames += box }
             }
         }
     }
@@ -365,7 +363,7 @@ internal fun DrawScope.drawRealMap(
         }
     }
     val round = StrokeCap.Round
-    val k = (w / 3000f).coerceIn(0.28f, 1f)
+    val k = (w / 3000f).coerceIn(0.28f, 1f) * (if (regionMode) 0.6f else 1f)
     val ms = (w / 2400f).coerceIn(0.4f, 1f)      // markers shrink with the map
     val casing = Color.White.copy(alpha = 0.92f)
     val rideDots = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx() * k.coerceAtLeast(0.5f), 3.dp.toPx() * k.coerceAtLeast(0.5f)))
@@ -447,7 +445,7 @@ internal fun DrawScope.drawRealMap(
     val next = route.next(walkedKm)?.first
     val lastCard = route.collected(walkedKm).lastOrNull()
     // How far to the next card (its name stays hidden until it is reached).
-    if (w >= 1700f) next?.let { n ->
+    if (w >= 1700f && !regionMode) next?.let { n ->
         val toNext = route.next(walkedKm)!!.second
         queue += Label(100) {
             val o = route.stops.first { it.landmark?.id == n.id }.at.px()
@@ -455,7 +453,7 @@ internal fun DrawScope.drawRealMap(
         }
     }
     // Names of the cards already collected.
-    if (w >= 1700f) route.collected(walkedKm).forEach { card ->
+    if (w >= 1700f && !regionMode) route.collected(walkedKm).forEach { card ->
         val o = route.stops.first { it.landmark?.id == card.id }.at.px()
         if (card.id != lastCard?.id && (w <= 3000f || o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f)) return@forEach
         queue += Label(if (card.id == lastCard?.id) 90 else 60) { placeName(card.name, o, 12.sp, Vintage.ink, 11.dp.toPx(), force = card.id == lastCard?.id) }

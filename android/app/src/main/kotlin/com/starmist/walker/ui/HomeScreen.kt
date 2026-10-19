@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,7 +62,7 @@ internal sealed interface HomeMap {
 }
 
 /** The township being walked through, for the card above the map. */
-internal data class RegionInfo(val area: TownArea, val tags: List<TownTag>?, val foundMask: Int, val walkedKm: Double, val exploredCount: Int)
+internal data class RegionInfo(val area: TownArea, val tags: List<TownTag>?, val foundMask: Int, val walkedKm: Double, val order: Int, val explored: Boolean)
 
 private val BLUE = Color(0xFF0E86D4)
 private val RED = Color(0xFFB3202A)
@@ -91,15 +92,13 @@ fun HomeScreen(
     val route = routeState?.let { Routes.byId(it.routeId) }
     val walkedKm = routeState?.walkedKm ?: 0.0
     val map: HomeMap = if (route == null) HomeMap.ChooseRoute else HomeMap.Real(route, walkedKm)
-    val region = remember(areas, route, (walkedKm * 2).toInt(), logs) {
-        if (route == null) null else {
-            val g = route.positionAt(walkedKm)
-            val id = areas.find(g.lat, g.lng)
-            if (id < 0) null else {
-                val visited = areas.visited(route, walkedKm)
-                val t = areas.towns[id]
-                RegionInfo(t, blurbs["${t.county}|${t.name}"], logs["${t.county}|${t.name}"]?.mask ?: 0, visited[id] ?: 0.0, visited.size)
-            }
+    val visited = remember(areas, route, (walkedKm * 2).toInt()) { if (route == null) emptyMap() else areas.visited(route, walkedKm) }
+    val currentTown = remember(areas, route, (walkedKm * 2).toInt()) { route?.positionAt(walkedKm)?.let { areas.find(it.lat, it.lng) } ?: -1 }
+    val infoOf: (Int) -> RegionInfo? = { id ->
+        if (id !in areas.towns.indices) null else {
+            val t = areas.towns[id]
+            val key = "${t.county}|${t.name}"
+            RegionInfo(t, blurbs[key], logs[key]?.mask ?: 0, visited[id] ?: 0.0, visited.keys.indexOf(id) + 1, id in visited)
         }
     }
 
@@ -118,7 +117,9 @@ fun HomeScreen(
         onSync = { vm.refresh(announce = true) },
         onStartRoute = { vm.startRoute(it) },
         strideM = BodyMetrics.strideMeters(profile),
-        region = region,
+        currentTown = currentTown,
+        exploredTowns = visited.keys,
+        infoOf = infoOf,
     )
 }
 
@@ -139,12 +140,17 @@ internal fun HomeContent(
     onSync: () -> Unit,
     onStartRoute: (String) -> Unit,
     strideM: Double = 0.7,
-    region: RegionInfo? = null,
+    currentTown: Int = -1,
+    exploredTowns: Set<Int> = emptySet(),
+    infoOf: (Int) -> RegionInfo? = { null },
+    initialRegionMode: Boolean = false,
 ) {
+    var regionMode by rememberSaveable { mutableStateOf(initialRegionMode) }
+    var picked by rememberSaveable { mutableStateOf(-1) }
+    val shown = if (picked >= 0) picked else currentTown
     Column(Modifier.padding(padding).padding(horizontal = 10.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (!granted) PermissionCard(onRequestPermission, onOpenAppSettings)
         if (!hasCounter) NoticeCard("這台裝置沒有硬體計步器，目前版本無法計步。")
-        if (map is HomeMap.Real) RegionCard(region)
 
         Box(Modifier.weight(1f).fillMaxWidth().clip(RoundedCornerShape(14.dp))) {
             when (map) {
@@ -153,7 +159,17 @@ internal fun HomeContent(
                     Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         RoutePicker(onStart = onStartRoute)
                     }
-                is HomeMap.Real -> RouteMapView(map.route, map.walkedKm, Modifier.fillMaxWidth(), initialZoom = map.zoom)
+                is HomeMap.Real -> {
+                    RouteMapView(
+                        map.route, map.walkedKm, Modifier.fillMaxWidth(), initialZoom = map.zoom,
+                        regionMode = regionMode, selectedTown = if (regionMode) shown else -1,
+                        onTapTown = { id -> picked = if (id >= 0) id else -1 },
+                    )
+                    ModeSwitch(regionMode, Modifier.align(Alignment.TopEnd).padding(8.dp)) { regionMode = it; if (!it) picked = -1 }
+                    if (regionMode) {
+                        Box(Modifier.align(Alignment.TopStart).padding(start = 8.dp, top = 8.dp, end = 96.dp)) { RegionCard(infoOf(shown), isCurrent = shown == currentTown) }
+                    }
+                }
             }
         }
 
@@ -162,16 +178,32 @@ internal fun HomeContent(
 }
 
 
+/** Two small buttons on the map: the route with its stops, or the townships walked through. */
+@Composable
+private fun ModeSwitch(regionMode: Boolean, modifier: Modifier, onChange: (Boolean) -> Unit) {
+    Row(modifier.clip(RoundedCornerShape(16.dp)).background(Vintage.parchmentLight.copy(alpha = 0.95f)).padding(2.dp)) {
+        listOf(false to "路線", true to "區域").forEach { (mode, text) ->
+            val on = regionMode == mode
+            Text(
+                text, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+                color = if (on) Color.White else Vintage.inkSoft,
+                modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(if (on) (if (mode) Color(0xFF0E86D4) else Color(0xFFB3202A)) else Color.Transparent)
+                    .clickable { onChange(mode) }.padding(horizontal = 12.dp, vertical = 5.dp),
+            )
+        }
+    }
+}
+
 // ---- the region card -------------------------------------------------------------------------
 
 /** The township being walked through: its name and three features, each found on a different visit. */
 @Composable
-private fun RegionCard(region: RegionInfo?) {
-    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(2.dp)) {
+private fun RegionCard(region: RegionInfo?, isCurrent: Boolean) {
+    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight.copy(alpha = 0.96f)), elevation = CardDefaults.cardElevation(4.dp)) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
             if (region == null) {
-                Text("出發吧！", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("走進一個新的鄉鎮，這裡就會出現它的特色。", style = MaterialTheme.typography.bodySmall)
+                Text("點一下走過的區域", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text("藍色的區域是你走過的，點它看這裡的特色。", style = MaterialTheme.typography.bodySmall)
                 return@Column
             }
             val a = region.area
@@ -179,7 +211,11 @@ private fun RegionCard(region: RegionInfo?) {
                 Text(a.name, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 22.sp, color = Color(0xFF0B4A78))
                 Text(a.county, style = MaterialTheme.typography.labelMedium, color = Vintage.inkSoft, modifier = Modifier.padding(bottom = 3.dp))
                 Spacer(Modifier.weight(1f))
-                Text("第 ${region.exploredCount} 區", style = MaterialTheme.typography.labelMedium, color = Vintage.brassDark, modifier = Modifier.padding(bottom = 3.dp))
+                Text(if (isCurrent) "目前所在" else if (region.explored) "第 ${region.order} 區" else "", style = MaterialTheme.typography.labelMedium, color = Vintage.brassDark, modifier = Modifier.padding(bottom = 3.dp))
+            }
+            if (!region.explored) {
+                Text("還沒走到這裡，走進來就會發現它的特色。", style = MaterialTheme.typography.bodySmall, color = Vintage.inkSoft)
+                return@Column
             }
             val tags = region.tags
             if (tags == null) {
