@@ -324,7 +324,7 @@ internal fun DrawScope.drawRealMap(
                 val q = GeoPoint(t.lat, t.lon).px()
                 if (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f) return@forEach
                 // The name must fit inside its township: shrink it until its ends and corners are inside, or leave it out.
-                val maxW = (t.widthKm * pxPerKm * 0.8f).coerceAtLeast(1f)
+                val maxW = (t.widthKm * pxPerKm * 0.8).toFloat().coerceAtLeast(1f)
                 var sp = 12f
                 var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF123A5E).copy(alpha = 0.78f)))
                 while (sp > 7f && tx.size.width > maxW) { sp -= 1f; tx = measurer.measure(t.name, tx.layoutInput.style.copy(fontSize = sp.sp)) }
