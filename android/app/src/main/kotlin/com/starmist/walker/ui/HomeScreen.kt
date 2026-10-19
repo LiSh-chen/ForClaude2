@@ -167,7 +167,7 @@ internal fun HomeContent(
                     )
                     ModeSwitch(regionMode, Modifier.align(Alignment.TopEnd).padding(8.dp)) { regionMode = it; if (!it) picked = -1 }
                     if (regionMode) {
-                        Box(Modifier.align(Alignment.TopStart).padding(start = 8.dp, top = 8.dp, end = 96.dp)) { RegionCard(infoOf(shown), isCurrent = shown == currentTown) }
+                        Box(Modifier.align(Alignment.TopStart).padding(start = 8.dp, top = 46.dp, end = 8.dp)) { RegionCard(infoOf(shown), isCurrent = shown == currentTown) }
                     }
                 }
             }
