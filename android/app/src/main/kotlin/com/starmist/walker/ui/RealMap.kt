@@ -309,18 +309,17 @@ internal fun DrawScope.drawRealMap(
 
     // Region mode: the townships walked through are tinted and outlined (dashed), the one picked is outlined firmly, and their names lie on the ground.
     if (regionMode && areas != null && explored.isNotEmpty()) {
-        val recent = explored.toList().takeLast(4).toSet()      // the latest stretch is blue, the older ground is sepia
         val boost = if (w < 1700f) 1.7f else 1f
         val blue = if (w < 1700f) Color(0xFF1A8CFF) else Color(0xFF6FBCFF)
-        val sepia = Color(0xFF7A5230)
+        val yellow = Color(0xFFFFE680)      // the township the walker is in
+        val here = if (currentTown >= 0) currentTown else selectedTown
         explored.forEach { id ->
-            val isRecent = id in recent || w < 1700f
-            val c = if (isRecent) blue else sepia
-            val base = if (id == selectedTown) 0.42f else if (isRecent) 0.30f else 0.62f
+            val c = if (id == here && w >= 1700f) yellow else blue
+            val base = if (id == here && w >= 1700f) 0.55f else 0.30f
             drawPath(areas.path(id, w, h), c.copy(alpha = (base * boost).coerceAtMost(0.85f)))
         }
         if (w >= 1700f) {
-            explored.forEach { id -> if (id != selectedTown && id in recent) drawPath(areas.path(id, w, h), Color(0xFF0058C8), style = Stroke(1.8.dp.toPx(), join = StrokeJoin.Round)) }
+            explored.forEach { id -> if (id != selectedTown) drawPath(areas.path(id, w, h), Color(0xFF0058C8), style = Stroke(1.8.dp.toPx(), join = StrokeJoin.Round)) }
         }
         if (selectedTown in areas.towns.indices) { drawPath(areas.path(selectedTown, w, h), Color.White, style = Stroke(6.dp.toPx(), join = StrokeJoin.Round)); drawPath(areas.path(selectedTown, w, h), Color(0xFF0058C8), style = Stroke(3.2.dp.toPx(), join = StrokeJoin.Round)) }
         if (w > 3000f) {
