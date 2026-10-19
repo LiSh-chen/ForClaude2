@@ -8,10 +8,6 @@ import com.starmist.core.route.RouteEvent
 import com.starmist.core.route.RouteState
 import com.starmist.core.route.Routes
 import com.starmist.core.stats.Aggregator
-import com.starmist.core.world.ItemType
-import com.starmist.core.world.JourneyEngine
-import com.starmist.core.world.JourneyEvent
-import com.starmist.core.world.JourneyState
 import com.starmist.core.stats.Period
 import com.starmist.core.stats.PeriodSummary
 import com.starmist.core.steps.StepScaler
@@ -101,7 +97,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             _today.value = LocalDate.now()
             _permissionGranted.value = repository.hasPermission()
             val result = repository.takeSnapshot()
-            settleJourney()
             settleRoute()
             if (announce) {
                 _message.value = when (result) {
@@ -156,7 +151,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             liveJob = viewModelScope.launch {
                 repository.reader.liveCounter().conflate().collect { counter ->
                     repository.ingestLive(counter)
-                    settleJourney(live = true)
                     settleRoute()
                     delay(LIVE_MIN_INTERVAL_MS) // conflate keeps only the newest value meanwhile
                 }
@@ -182,24 +176,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     val lastRead = repository.lastRead
 
-    // ---- world -----------------------------------------------------------------------------
-
-    val engine = JourneyEngine()
-
-    /** Null until the first journey has been started. */
-    val journey: StateFlow<JourneyState?> = container.journey.flow
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
-
-    private val _replay = MutableStateFlow<ReplaySummary?>(null)
-
-    /** What happened on the road since the app was last opened; shown once, then dismissed. */
-    val replay: StateFlow<ReplaySummary?> = _replay
-    fun dismissReplay() { _replay.value = null }
-
-    private val _pickups = kotlinx.coroutines.flow.MutableSharedFlow<Pickup>(extraBufferCapacity = 16)
-
-    /** Items found while the app is open; the scene plays a small animation for each. */
-    val pickups: kotlinx.coroutines.flow.SharedFlow<Pickup> = _pickups
+    // ---- walking state ---------------------------------------------------------------------
 
     private val _walking = MutableStateFlow(false)
     private var walkingTimeout: Job? = null
@@ -216,51 +193,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    /** Converts steps counted since the last time into travel along the route. */
-    fun settleJourney(live: Boolean = false) {
-        viewModelScope.launch {
-            // Each world only moves while it is the one being walked; steps taken in the other world do not count here.
-            if (container.settings.current().challenge != 0) {
-                container.journey.skipTo(repository.allTimeTotal())
-                return@launch
-            }
-            val result = container.journey.settle(engine, repository.allTimeTotal())
-            if (live) {
-                // Steps taken with the app open: show each find as it happens instead of a summary.
-                result.events.forEach {
-                    when (it) {
-                        is JourneyEvent.Found -> _pickups.tryEmit(Pickup(it.item, it.line))
-                        is JourneyEvent.ChoiceAppeared -> _pickups.tryEmit(Pickup(it.item, null))
-                        else -> Unit
-                    }
-                }
-                return@launch
-            }
-            if (result.events.isNotEmpty()) {
-                _replay.value = ReplaySummary(
-                    stepsWalked = result.stepsWalked,
-                    events = result.events,
-                    itemsFound = result.events.mapNotNull {
-                        when (it) {
-                            is JourneyEvent.Found -> it.item
-                            is JourneyEvent.ChoiceAppeared -> it.item
-                            else -> null
-                        }
-                    }.groupingBy { it }.eachCount(),
-                )
-            }
-        }
-    }
-
-    fun resolveCard(encounterIndex: Int, chooseA: Boolean) {
-        viewModelScope.launch {
-            val resolution = container.journey.resolve(engine, encounterIndex, chooseA)
-            if (resolution != null) {
-                _message.value = "${resolution.option.result}（獲得 ${resolution.option.bonus.item.displayName}）"
-            }
-        }
-    }
-
     // ---- real-world route -----------------------------------------------------------------
 
     /** Null until a route has been chosen. */
@@ -273,29 +205,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val pendingRouteEvents: StateFlow<List<RouteEvent>> = _pendingRouteEvents
 
     fun dismissRouteEvent() = _pendingRouteEvents.update { it.drop(1) }
-
-    /**
-     * Changes which world is being walked. Steps so far are first settled into the world being left, and the other
-     * world's counter jumps to now, so each world only grows with the steps taken while it was chosen.
-     */
-    fun switchChallenge(value: Int) {
-        viewModelScope.launch {
-            val total = repository.allTimeTotal()
-            if (container.settings.current().challenge == value) return@launch
-            if (value == 1) {
-                container.journey.settle(engine, total)
-                container.routes.skipTo(total)
-            } else {
-                container.routes.flow.first()?.let { state ->
-                    Routes.byId(state.routeId)?.let {
-                        container.routes.settle(it, total, BodyMetrics.strideMeters(container.settings.current().profile))
-                    }
-                }
-                container.journey.skipTo(total)
-            }
-            updateSettings { it.copy(challenge = value) }
-        }
-    }
 
     fun startRoute(routeId: String) {
         val route = Routes.byId(routeId) ?: return
@@ -315,10 +224,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     /** Turns the steps counted since the last time into distance along the route and queues what was passed. */
     fun settleRoute() {
         viewModelScope.launch {
-            if (container.settings.current().challenge != 1) {
-                container.routes.skipTo(repository.allTimeTotal())
-                return@launch
-            }
             val state = container.routes.flow.first() ?: return@launch
             val route = Routes.byId(state.routeId) ?: return@launch
             val stride = BodyMetrics.strideMeters(container.settings.current().profile)
@@ -394,13 +299,3 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         const val WALKING_HOLD_MS = 2_500L
     }
 }
-
-/** The road since the last time the app was opened. */
-data class ReplaySummary(
-    val stepsWalked: Long,
-    val events: List<JourneyEvent>,
-    val itemsFound: Map<ItemType, Int>,
-)
-
-/** Something just picked up on the road. [line] is the story line, if there is one. */
-data class Pickup(val item: ItemType, val line: String?)

@@ -119,18 +119,6 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
         return
     }
 
-    val replay by vm.replay.collectAsStateWithLifecycle()
-    val journey by vm.journey.collectAsStateWithLifecycle()
-    replay?.let { summary ->
-        ReplayDialog(
-            vm = vm,
-            settings = current,
-            summary = summary,
-            regionId = journey?.let { vm.engine.regionAt(it.position)?.id },
-            onDismiss = { vm.dismissReplay() },
-        )
-    }
-
     val routeEvents by vm.pendingRouteEvents.collectAsStateWithLifecycle()
     routeEvents.firstOrNull()?.let { RouteEventDialog(it, onDismiss = { vm.dismissRouteEvent() }) }
 
@@ -144,7 +132,7 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
             showDiagnostics -> DiagnosticsScreen(vm, padding, openAppSettings)
             tab == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings)
             tab == 1 -> StatsScreen(vm, current, padding)
-            tab == 3 -> if (current.challenge == 1) RouteScreen(vm, current, padding) else JourneyScreen(vm, current, padding)
+            tab == 3 -> RouteScreen(vm, current, padding)
             else -> SettingsScreen(vm, current, padding, onOpenDiagnostics = { showDiagnostics = true })
         }
     }

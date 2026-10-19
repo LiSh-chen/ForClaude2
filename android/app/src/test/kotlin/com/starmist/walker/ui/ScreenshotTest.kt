@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -30,18 +31,23 @@ class ScreenshotTest {
 
     @Composable
     private fun Home(real: Boolean, map: HomeMap, steps: Long = 4321) {
+        val context = androidx.compose.ui.platform.LocalContext.current
+        val areas = remember { TownAreas.load(context) }
+        val blurbs = remember { loadTownBlurbs(context) }
+        val region = (map as? HomeMap.Real)?.let { m ->
+            val g = m.route.positionAt(m.walkedKm)
+            val id = areas.find(g.lat, g.lng)
+            if (id < 0) null else areas.towns[id].let { t -> RegionInfo(t, blurbs["${t.county}|${t.name}"], areas.visited(m.route, m.walkedKm)[id] ?: 0.0, areas.visited(m.route, m.walkedKm).size) }
+        }
         Page { pad ->
             HomeContent(
                 padding = pad, steps = steps, goal = 9000, km = steps * 0.0007, kcal = steps * 0.04,
-                lastSnapshot = null, real = real, granted = true, hasCounter = true, map = map,
-                onChallenge = {}, onRequestPermission = {}, onOpenAppSettings = {}, onSync = {}, onStartRoute = {},
+                lastSnapshot = null, granted = true, hasCounter = true, map = map,
+                onRequestPermission = {}, onOpenAppSettings = {}, onSync = {}, onStartRoute = {}, region = region,
             )
         }
     }
 
-    @Test fun home_virtual_start() = paparazzi.snapshot { Home(false, HomeMap.Virtual("星霧森林", 0, 0.02, false), 120) }
-    @Test fun home_virtual_mid() = paparazzi.snapshot { Home(false, HomeMap.Virtual("星霧森林", 0, 0.55, false)) }
-    @Test fun home_virtual_coast() = paparazzi.snapshot { Home(false, HomeMap.Virtual("海岸", 1, 0.4, false)) }
     @Test fun home_real_start() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 0.0), 120) }
     @Test fun home_real_mid() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0)) }
     @Test fun home_real_east() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 260.0)) }

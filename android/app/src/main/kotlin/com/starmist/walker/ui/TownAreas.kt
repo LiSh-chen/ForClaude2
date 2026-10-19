@@ -10,7 +10,10 @@ import java.io.DataInputStream
 import java.util.zip.GZIPInputStream
 
 /** A township or district (鄉鎮市區): outline rings as (lat, lon) pairs and a point well inside it for its name. */
-class TownArea(val name: String, val lat: Double, val lon: Double, val rings: List<DoubleArray>) {
+class TownArea(
+    val name: String, val county: String, val areaKm2: Double, val medianElevM: Int, val highElevM: Int, val villages: Int,
+    val lat: Double, val lon: Double, val rings: List<DoubleArray>,
+) {
     private val minLat = rings.minOf { r -> (0 until r.size step 2).minOf { r[it] } }
     private val maxLat = rings.maxOf { r -> (0 until r.size step 2).maxOf { r[it] } }
     private val minLon = rings.minOf { r -> (1 until r.size step 2).minOf { r[it] } }
@@ -59,18 +62,16 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
         }
     }
 
-    /** The townships the walk has passed through so far (sampled every half kilometre). */
-    fun visited(route: RouteDef, walkedKm: Double): Set<Int> {
-        val seen = LinkedHashSet<Int>()
+    /** The townships the walk has passed through so far, with the kilometres walked in each (sampled every half kilometre). */
+    fun visited(route: RouteDef, walkedKm: Double): Map<Int, Double> {
+        val seen = LinkedHashMap<Int, Double>()
         var km = 0.0
         while (km <= walkedKm + 1e-6) {
             val g = route.positionAt(km)
             val id = find(g.lat, g.lng)
-            if (id >= 0) seen += id
+            if (id >= 0) seen[id] = (seen[id] ?: 0.0) + 0.5
             km += 0.5
         }
-        val g = route.positionAt(walkedKm)
-        find(g.lat, g.lng).let { if (it >= 0) seen += it }
         return seen
     }
 
@@ -83,6 +84,8 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
                     val n = s.readUnsignedShort()
                     List(n) {
                         val nameBytes = ByteArray(s.readUnsignedByte()); s.readFully(nameBytes)
+                        val cb = ByteArray(s.readUnsignedByte()); s.readFully(cb)
+                        val area = s.readUnsignedShort() / 10.0; val med = s.readShort().toInt(); val hi = s.readShort().toInt(); val vill = s.readUnsignedShort()
                         val lat = s.readInt() / 1e5; val lon = s.readInt() / 1e5
                         val rings = List(s.readUnsignedShort()) {
                             val c = s.readUnsignedShort()
@@ -91,12 +94,28 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
                             for (k in 1 until c) { la += s.readShort(); lo += s.readShort(); out[k * 2] = la / 1e5; out[k * 2 + 1] = lo / 1e5 }
                             out
                         }
-                        TownArea(String(nameBytes, Charsets.UTF_8), lat, lon, rings)
+                        TownArea(String(nameBytes, Charsets.UTF_8), String(cb, Charsets.UTF_8), area, med, hi, vill, lat, lon, rings)
                     }
                 }
             }.getOrDefault(emptyList()).let { TownAreas(it) }
         }
     }
+}
+
+/** Short introductions written for the townships on the route, keyed "county|name" (res/raw/town_blurbs.txt). */
+fun loadTownBlurbs(context: Context): Map<String, String> {
+    val id = context.resources.getIdentifier("town_blurbs", "raw", context.packageName)
+    if (id == 0) return emptyMap()
+    return runCatching {
+        context.resources.openRawResource(id).bufferedReader(Charsets.UTF_8).readLines()
+            .mapNotNull { l -> l.split('|', limit = 3).takeIf { it.size == 3 && it[2].isNotBlank() }?.let { "${it[0]}|${it[1]}" to it[2].trim() } }.toMap()
+    }.getOrDefault(emptyMap())
+}
+
+@Composable
+fun rememberTownBlurbs(): Map<String, String> {
+    val context = LocalContext.current
+    return remember(context) { loadTownBlurbs(context.applicationContext) }
 }
 
 @Composable

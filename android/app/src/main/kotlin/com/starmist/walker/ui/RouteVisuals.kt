@@ -61,7 +61,7 @@ fun RouteMapView(route: RouteDef, walkedKm: Double, modifier: Modifier = Modifie
     val base = rememberArt("real_map_base")
     val tiles = rememberMapTiles()
     val areas = rememberTownAreas()
-    val explored = remember(areas, route, (walkedKm * 2).toInt()) { areas.visited(route, walkedKm) }
+    val explored = remember(areas, route, (walkedKm * 2).toInt()) { areas.visited(route, walkedKm).keys }
     val currentTown = remember(areas, route, (walkedKm * 2).toInt()) { route.positionAt(walkedKm).let { areas.find(it.lat, it.lng) } }
     val here = route.positionAt(walkedKm)
     ZoomPanMap(

@@ -308,12 +308,27 @@ internal fun DrawScope.drawRealMap(
     // Explored townships only: a soft wash over each one walked through, and a clear outline around the one being walked through.
     if (areas != null && explored.isNotEmpty()) {
         val wash = Color(0xFF0E86D4)
-        explored.forEach { id -> drawPath(areas.path(id, w, h), wash.copy(alpha = if (id == currentTown) 0.17f else 0.08f)) }
+        explored.forEach { id -> drawPath(areas.path(id, w, h), wash.copy(alpha = if (id == currentTown) 0.16f else 0.11f)) }
         if (w > 3000f) {
             val dash = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx(), 5.dp.toPx()))
             explored.forEach { id -> if (id != currentTown) drawPath(areas.path(id, w, h), Color(0xFF0E5C93).copy(alpha = 0.5f), style = Stroke(1.3.dp.toPx(), join = StrokeJoin.Round, pathEffect = dash)) }
         }
         if (currentTown >= 0) drawPath(areas.path(currentTown, w, h), Color(0xFF0E5C93).copy(alpha = 0.9f), style = Stroke(2.6.dp.toPx(), join = StrokeJoin.Round))
+        // The names of the explored townships lie on the ground, pale and without a box, under everything else. The township being walked through has its card above the map instead.
+        if (w > 3000f) {
+            val placedNames = ArrayList<Rect>()
+            val nameStyle = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = Color(0xFF1B3A57).copy(alpha = 0.45f), letterSpacing = 2.sp)
+            explored.forEach { id ->
+                if (id == currentTown) return@forEach
+                val t = areas.towns[id]
+                val q = GeoPoint(t.lat, t.lon).px()
+                if (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f) return@forEach
+                val tx = measurer.measure(t.name, nameStyle)
+                val tl0 = Offset(q.x - tx.size.width / 2f, q.y - tx.size.height / 2f)
+                val box = Rect(tl0.x, tl0.y, tl0.x + tx.size.width, tl0.y + tx.size.height)
+                if (placedNames.none { it.overlaps(box) }) { drawText(tx, topLeft = tl0); placedNames += box }
+            }
+        }
     }
 
     // The route: a bold solid line behind the walker, a dashed dark line ahead, a dotted red one where a train or ferry carries the walker.
@@ -357,9 +372,11 @@ internal fun DrawScope.drawRealMap(
     val occupied = ArrayList<Rect>()
     fun reserve(center: Offset, half: Float) { occupied += Rect(center.x - half, center.y - half, center.x + half, center.y + half) }
     val p = here.px()
-    val pinHeight = 60.dp.toPx()
+    // The traveller shrinks with the map and turns into a glowing dot when the island is small on screen.
+    val dotMode = w < 1700f
+    val pinHeight = 60.dp.toPx() * (w / 4500f).coerceIn(0.4f, 1f)
     val pinWidth = if (pin != null) pinHeight * pin.width / pin.height else 16.dp.toPx()
-    occupied += if (pin != null) Rect(p.x - pinWidth / 2, p.y - pinHeight, p.x + pinWidth / 2, p.y + 4.dp.toPx())
+    occupied += if (pin != null && !dotMode) Rect(p.x - pinWidth / 2, p.y - pinHeight, p.x + pinWidth / 2, p.y + 4.dp.toPx())
     else Rect(p.x - 9.dp.toPx(), p.y - 9.dp.toPx(), p.x + 9.dp.toPx(), p.y + 9.dp.toPx())
     route.stops.forEach { stop -> if (stop.landmark != null || stop.supply != null) reserve(stop.at.px(), 9.dp.toPx()) }
     val sights = route.poisNear(here)
@@ -440,30 +457,10 @@ internal fun DrawScope.drawRealMap(
         if (card.id != lastCard?.id && (w <= 3000f || o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f)) return@forEach
         queue += Label(if (card.id == lastCard?.id) 90 else 60) { placeName(card.name, o, 12.sp, Vintage.ink, 11.dp.toPx(), force = card.id == lastCard?.id) }
     }
-    // Names of the townships walked through: the current one bigger. Only they are named; the rest stays unexplored.
-    if (areas != null && w > 3000f) explored.forEach { id ->
-        val t = areas.towns[id]
-        val q = GeoPoint(t.lat, t.lon).px()
-        if (id != currentTown && (q.x < view.left - 80f || q.x > view.right + 80f || q.y < view.top - 40f || q.y > view.bottom + 40f)) return@forEach
-        queue += Label(if (id == currentTown) 80 else 40) {
-            val cur = id == currentTown
-            val st = label.copy(fontSize = if (cur) 15.sp else 11.sp, fontWeight = FontWeight.Bold, color = if (cur) Color(0xFF0B4A78) else Color(0xFF3B4A57))
-            val tx = measurer.measure(t.name, st)
-            val padX = 5.dp.toPx(); val padY = 1.5.dp.toPx()
-            val tl0 = Offset(q.x - tx.size.width / 2f, q.y - tx.size.height / 2f)
-            val box = Rect(tl0.x - padX, tl0.y - padY, tl0.x + tx.size.width + padX, tl0.y + tx.size.height + padY)
-            if (box.left >= 0f && box.right <= w && box.top >= 0f && box.bottom <= h && (cur || occupied.none { it.overlaps(box) })) {
-                drawRoundRect(Color.White.copy(alpha = if (cur) 0.95f else 0.85f), box.topLeft, box.size, CornerRadius(5.dp.toPx()))
-                drawRoundRect(Color(0xFF0E5C93).copy(alpha = if (cur) 0.9f else 0.5f), box.topLeft, box.size, CornerRadius(5.dp.toPx()), style = Stroke((if (cur) 1.8f else 1f).dp.toPx()))
-                drawText(tx, topLeft = tl0)
-                occupied += box
-            }
-        }
-    }
     queue.sortedByDescending { it.priority }.forEach { it.place() }
 
     // The walker, on top of everything.
-    if (pin != null) {
+    if (pin != null && !dotMode) {
         drawOval(Color.Black.copy(alpha = 0.18f), Offset(p.x - pinWidth * 0.3f, p.y - 3.dp.toPx()), Size(pinWidth * 0.6f, 6.dp.toPx()))
         drawImage(
             pin,
@@ -471,9 +468,10 @@ internal fun DrawScope.drawRealMap(
             dstSize = IntSize(pinWidth.toInt(), pinHeight.toInt()),
         )
     } else {
-        drawCircle(Vintage.brassLight, 8.dp.toPx(), p)
-        drawCircle(Vintage.ink, 8.dp.toPx(), p, style = Stroke(1.6.dp.toPx()))
-        drawCircle(Vintage.moss, 3.dp.toPx(), p)
+        drawCircle(Color(0xFFFF8A00).copy(alpha = 0.25f), 13.dp.toPx(), p)
+        drawCircle(Color(0xFFFF8A00).copy(alpha = 0.45f), 8.dp.toPx(), p)
+        drawCircle(Color.White, 5.dp.toPx(), p)
+        drawCircle(Color(0xFFFF8A00), 3.2.dp.toPx(), p)
     }
 }
 

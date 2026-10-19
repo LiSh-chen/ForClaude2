@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.starmist.walker.data.AppDatabase
-import com.starmist.walker.data.JourneyStore
 import com.starmist.walker.data.RouteStore
 import com.starmist.walker.data.SettingsStore
 import com.starmist.walker.data.StepRepository
@@ -17,7 +16,6 @@ class AppContainer(context: Context) {
     private val appContext = context.applicationContext
     private val database = Room.databaseBuilder(appContext, AppDatabase::class.java, "starmist.db").build()
     val settings = SettingsStore(appContext)
-    val journey = JourneyStore(appContext)
     val routes = RouteStore(appContext)
     val reader = StepCounterReader(appContext)
     val rhythmRecorder = RhythmRecorder(appContext)
