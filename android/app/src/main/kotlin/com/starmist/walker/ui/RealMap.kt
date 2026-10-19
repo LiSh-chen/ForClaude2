@@ -313,7 +313,8 @@ internal fun DrawScope.drawRealMap(
             val dash = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx(), 5.dp.toPx()))
             explored.forEach { id -> if (id != currentTown) drawPath(areas.path(id, w, h), Color(0xFF0E5C93).copy(alpha = 0.5f), style = Stroke(1.3.dp.toPx(), join = StrokeJoin.Round, pathEffect = dash)) }
         }
-        if (currentTown >= 0) drawPath(areas.path(currentTown, w, h), Color(0xFF0E5C93).copy(alpha = 0.9f), style = Stroke(2.6.dp.toPx(), join = StrokeJoin.Round))
+        // The outline of the township being walked through; thin and light when the island is small on screen, where it would only look like stray dark lines.
+        if (currentTown >= 0 && w >= 1700f) drawPath(areas.path(currentTown, w, h), Color(0xFF3A9AD9).copy(alpha = 0.85f), style = Stroke((2.6f * (w / 3000f).coerceIn(0.5f, 1f)).dp.toPx(), join = StrokeJoin.Round))
         // The names of the explored townships lie on the ground, pale and without a box, under everything else. The township being walked through has its card above the map instead.
         if (w > 3000f) {
             val placedNames = ArrayList<Rect>()
