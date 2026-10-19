@@ -6,7 +6,7 @@ for l in open(B,encoding='utf-8'):
     if l.startswith('#') or not l.strip(): hdr.append(l);continue
     p=l.rstrip('\n').split('|'); rows[(p[0],p[1])]=p[2:]
 added=0;rej=[]
-for f in sorted(glob.glob('docs/research/gap_out_[0-9].txt')):
+for f in sorted(glob.glob('docs/research/gap_out_[0-9].txt')+glob.glob('docs/research/gap2_out_[0-9].txt')):
     for l in open(f,encoding='utf-8'):
         p=l.strip().split('|')
         if len(p)<3: continue
