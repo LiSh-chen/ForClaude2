@@ -44,7 +44,6 @@ internal val REAL_MAP_ASPECT: Float =
 
 internal val SEA_COLOR = Color(0xFFE4DAC6)
 private val LAND_COLOR = Color(0xFFE9DFBF)
-private val STAMP_RED = Color(0xFFB04A3A)
 private val SUPPLY_COLOR = Color(0xFFD9744B)
 
 /** A point on the earth as a position on the unit square of the map. */
@@ -64,20 +63,6 @@ private val RIVERS: List<List<Pair<Double, Double>>> = listOf(
     listOf(23.1 to 121.2, 23.3 to 121.3, 23.47 to 121.52),                      // 秀姑巒溪
     listOf(24.5 to 121.5, 24.65 to 121.7, 24.7 to 121.83),                      // 蘭陽溪
     listOf(23.05 to 121.1, 22.85 to 121.15, 22.78 to 121.2),                    // 卑南溪
-)
-
-private class Place(val name: String, val lat: Double, val lon: Double)
-
-private val CITIES = listOf(
-    Place("基隆", 25.13, 121.74), Place("台北", 25.04, 121.52), Place("桃園", 24.99, 121.30), Place("新竹", 24.80, 120.97),
-    Place("苗栗", 24.56, 120.82), Place("台中", 24.15, 120.68), Place("彰化", 24.08, 120.54), Place("南投", 23.91, 120.69),
-    Place("嘉義", 23.48, 120.45), Place("台南", 22.99, 120.21), Place("高雄", 22.63, 120.30), Place("屏東", 22.67, 120.49),
-    Place("宜蘭", 24.76, 121.75), Place("花蓮", 23.98, 121.60), Place("台東", 22.76, 121.14),
-)
-
-private val PEAKS = listOf(
-    Place("玉山", 23.47, 120.96), Place("雪山", 24.38, 121.23), Place("合歡山", 24.14, 121.28),
-    Place("阿里山", 23.51, 120.80), Place("北大武山", 22.62, 120.75),
 )
 
 /** What can be worked out once per route: the island shape and the little decorations. */

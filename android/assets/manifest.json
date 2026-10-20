@@ -32,35 +32,6 @@
       "notes": "由 tools/make_procedural.py 產生。"
     },
     {
-      "id": "compass_case",
-      "category": "ui",
-      "title": "黃銅羅盤外殼（中空）",
-      "usedIn": "首頁步數羅盤的外框",
-      "size": [
-        1024,
-        1120
-      ],
-      "alpha": true,
-      "source": "svg",
-      "prompt": "Top-down view of an antique brass pocket compass case with a small hanging ring at the top, a thick riveted brass rim with worn patina, and green vines with small leaves winding around the outer edge on both sides. The big circular opening in the middle must be EMPTY and plain white so a dial can be placed behind it. Perfectly symmetrical, centered. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
-      "notes": "表盤開口直徑約為寬度的 56%，圓心在 (50%, 57%)；吊環在最上方。 中央開口需要透明，所以去背時連內部的純白也一起去掉（keyInterior）。 已由 SVG 手繪完成（svg/compass_case.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/compass_case.png。",
-      "keyInterior": true
-    },
-    {
-      "id": "compass_face",
-      "category": "ui",
-      "title": "羅盤表盤",
-      "usedIn": "放在外殼後面，進度弧線畫在上面",
-      "size": [
-        1024,
-        1024
-      ],
-      "alpha": true,
-      "source": "svg",
-      "prompt": "A flat circular antique compass dial face seen from above, aged parchment yellow with a faint engraved compass rose, a fine tick-mark ring near the edge and only the four letters N, E, S, W. The circle fills the whole frame edge to edge. Leave the centre fairly empty and light so a number can be written over it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
-      "notes": "圓形填滿整張圖；中心保持淡，因為會疊上步數。 已由 SVG 手繪完成（svg/compass_face.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/compass_face.png。"
-    },
-    {
       "id": "traveller_fox",
       "category": "character",
       "title": "旅人：小狐（舊，待 traveller_walker 取代後刪除）",

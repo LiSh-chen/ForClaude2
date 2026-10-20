@@ -7,8 +7,6 @@ import java.util.Locale
 
 fun Long.withCommas(): String = String.format(Locale.getDefault(), "%,d", this)
 
-fun Double.oneDecimal(): String = String.format(Locale.getDefault(), "%.1f", this)
-
 fun Double.twoDecimals(): String = String.format(Locale.getDefault(), "%.2f", this)
 
 private val timeFormat = DateTimeFormatter.ofPattern("MM/dd HH:mm")

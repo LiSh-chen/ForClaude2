@@ -20,7 +20,6 @@ class TownArea(
     private val maxLon = rings.maxOf { r -> (1 until r.size step 2).maxOf { r[it] } }
 
     val widthKm: Double get() = (maxLon - minLon) * 101.5
-    val heightKm: Double get() = (maxLat - minLat) * 111.0
 
     fun contains(la: Double, lo: Double): Boolean {
         if (la < minLat || la > maxLat || lo < minLon || lo > maxLon) return false

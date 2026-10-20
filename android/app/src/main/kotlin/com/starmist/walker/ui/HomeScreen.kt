@@ -249,13 +249,6 @@ private fun LockedTag() {
     }
 }
 
-private fun terrainOf(medianElevM: Int) = when {
-    medianElevM < 40 -> "平原"
-    medianElevM < 300 -> "台地丘陵"
-    medianElevM < 1000 -> "山地"
-    else -> "高山"
-}
-
 // ---- the dashboard ---------------------------------------------------------------------------
 
 /** Today's steps as a ring, then the way ahead as two bars: to the next stop, and around the island. */

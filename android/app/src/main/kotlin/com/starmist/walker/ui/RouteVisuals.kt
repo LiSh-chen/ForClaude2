@@ -45,12 +45,7 @@ import com.starmist.core.route.TaiwanOutline
 import kotlin.math.cos
 import kotlin.math.roundToInt
 
-private const val LON_MIN = 119.95
-private const val LON_MAX = 122.1
-private const val LAT_MIN = 21.8
-private const val LAT_MAX = 25.4
 private val STAMP_INK = Color(0xFFB04A3A)
-private val SUPPLY_ORANGE = Color(0xFFD9744B)
 
 /** The island walk as a map the player can pinch and drag; it opens on the walker and cannot zoom out past the whole island. */
 @Composable

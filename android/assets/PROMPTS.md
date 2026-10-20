@@ -2,7 +2,7 @@
 
 ## 怎麼用
 
-1. **先做 3 張試風格**：`compass_case`、`compass_face`、`traveller_walker`。風格滿意後，再把這張當「風格參考圖」一起上傳，生成其他素材，才會一致。
+1. **先做 1 張試風格**：`traveller_walker`（再加一張景點卡）。風格滿意後，把它與 `previews/style_reference.jpg`（現有景點卡的風格）一起當「風格參考圖」上傳，生成其他素材，才會一致。
 2. **每張單獨生成**：把該素材的整段提示詞貼進去。提示詞開頭已經寫了比例；Gemini 支援的比例是 1:1、3:4、4:3、9:16、16:9，**匯出時會自動裁成規格尺寸**。
 3. **一律要純白底**（提示詞已寫）。Gemini 不會輸出透明背景，匯出工具會把與邊緣相連的白底去掉。
 4. **不要有文字**：地名、數字都由 App 畫。圖裡如果出現字，請重生成。
@@ -47,52 +47,6 @@ _已有 SVG 手繪版可當備案；要用 Gemini 版的話用下面這段。_
 
 ```
 Create an image with aspect ratio 9:16. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. 
-```
-
-## ui
-
-### `compass_case` — 黃銅羅盤外殼（中空）
-
-- 用在：首頁步數羅盤的外框
-- 最終尺寸：1024×1120　Gemini 比例：1:1　背景：純白（匯出去背）
-- 注意：表盤開口直徑約為寬度的 56%，圓心在 (50%, 57%)；吊環在最上方。 中央開口需要透明，所以去背時連內部的純白也一起去掉（keyInterior）。 已由 SVG 手繪完成（svg/compass_case.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/compass_case.png。
-
-_已有 SVG 手繪版可當備案；要用 Gemini 版的話用下面這段。_
-
-```
-Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Top-down view of an antique brass pocket compass case with a small hanging ring at the top, a thick riveted brass rim with worn patina, and green vines with small leaves winding around the outer edge on both sides. The big circular opening in the middle must be EMPTY and plain white so a dial can be placed behind it. Perfectly symmetrical, centered. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
-```
-
-### `compass_face` — 羅盤表盤
-
-- 用在：放在外殼後面，進度弧線畫在上面
-- 最終尺寸：1024×1024　Gemini 比例：1:1　背景：純白（匯出去背）
-- 注意：圓形填滿整張圖；中心保持淡，因為會疊上步數。 已由 SVG 手繪完成（svg/compass_face.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/compass_face.png。
-
-_已有 SVG 手繪版可當備案；要用 Gemini 版的話用下面這段。_
-
-```
-Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A flat circular antique compass dial face seen from above, aged parchment yellow with a faint engraved compass rose, a fine tick-mark ring near the edge and only the four letters N, E, S, W. The circle fills the whole frame edge to edge. Leave the centre fairly empty and light so a number can be written over it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
-```
-
-### `collection_slot_locked` — 收藏格：尚未收集
-
-- 用在：收藏頁尚未收集景點的格子（取代目前的問號徽章）
-- 最終尺寸：512×512　Gemini 比例：1:1　背景：純白（匯出去背）
-- 注意：中央留空讓 App 疊上景點序號；不要文字與數字。
-
-```
-Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A blank collectible card slot drawn like an empty pressed-specimen mount in an old naturalist's album: a faint pencil outline of a small landmark silhouette inside a rounded rectangle of aged paper with soft hatched shading, a tiny brass corner mount at each corner, muted and quiet. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
-```
-
-### `collection_slot_frame` — 收藏格：已收集外框
-
-- 用在：收藏頁已收集景點卡的外框（透明中央，疊在景點插圖上）
-- 最終尺寸：512×512　Gemini 比例：1:1　背景：純白（匯出去背）
-- 注意：中央必須完全空白（之後去背）；邊框寬度約整張的 6%；不要文字。
-
-```
-Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A thin ornamental picture frame for a postcard-like collectible card: aged cream paper border with fine sepia pen lines, small brass corner pieces, subtle watercolor stains at the edges, empty transparent centre. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
 ```
 
 ## character
@@ -601,6 +555,28 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ```
 Create an image with aspect ratio 9:16. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. 已完成，見 archive/map_pipeline/
+```
+
+## ui
+
+### `collection_slot_locked` — 收藏格：尚未收集
+
+- 用在：收藏頁尚未收集景點的格子（取代目前的問號徽章）
+- 最終尺寸：512×512　Gemini 比例：1:1　背景：純白（匯出去背）
+- 注意：中央留空讓 App 疊上景點序號；不要文字與數字。
+
+```
+Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A blank collectible card slot drawn like an empty pressed-specimen mount in an old naturalist's album: a faint pencil outline of a small landmark silhouette inside a rounded rectangle of aged paper with soft hatched shading, a tiny brass corner mount at each corner, muted and quiet. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
+```
+
+### `collection_slot_frame` — 收藏格：已收集外框
+
+- 用在：收藏頁已收集景點卡的外框（透明中央，疊在景點插圖上）
+- 最終尺寸：512×512　Gemini 比例：1:1　背景：純白（匯出去背）
+- 注意：中央必須完全空白（之後去背）；邊框寬度約整張的 6%；不要文字。
+
+```
+Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A thin ornamental picture frame for a postcard-like collectible card: aged cream paper border with fine sepia pen lines, small brass corner pieces, subtle watercolor stains at the edges, empty transparent centre. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
 ```
 
 ## store

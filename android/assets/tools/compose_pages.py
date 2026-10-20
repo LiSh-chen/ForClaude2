@@ -15,14 +15,7 @@ def main() -> None:
     page = Image.alpha_composite(paper, notes)
     page.convert("RGB").save(GEN / "paper_page.png", optimize=True)
 
-    face = Image.open(GEN / "compass_face.png").convert("RGBA").resize((590, 590))
-    case = Image.open(GEN / "compass_case.png").convert("RGBA")
-    compass = paper.crop((0, 500, 1024, 1620)).copy()
-    compass.paste(face, (512 - 295, int(1120 * 0.57) - 295), face)
-    compass.alpha_composite(case)
-
     page.convert("RGB").resize((540, 1080), Image.LANCZOS).save(PREVIEWS / "1_paper_page.jpg", quality=90)
-    compass.convert("RGB").save(PREVIEWS / "2_compass.jpg", quality=92)
     print("wrote paper_page.png and previews/")
 
 

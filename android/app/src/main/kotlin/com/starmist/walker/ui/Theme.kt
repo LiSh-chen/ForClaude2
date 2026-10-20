@@ -45,7 +45,6 @@ object Vintage {
     val rose = Color(0xFFD3A6BC)
     val sea = Color(0xFF8DB4C4)
     val fog = Color(0xFFD9D0B9)
-    val night = Color(0xFF1B2A55)
 }
 
 private val colors = lightColorScheme(
