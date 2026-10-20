@@ -1,11 +1,15 @@
 name: Newsletters
 
 # 流程:每天 collect 備好候選 → 你花 ~30 分鐘審 data/queue/<名稱>.md → approve → 週三/週日 send 只寄已核准的。
+# 評分方式由 repo variable SCORER 決定:api(預設,用 ANTHROPIC_API_KEY)或 claude(不用 API:
+# collect 只寫 data/inbox,由排程的 Claude Code 評分後推 data/outbox,push 觸發 ingest)。
 # 要跑哪些電子報:repo variable NEWSLETTERS (空白分隔,預設 gems)。
 on:
   schedule:
     - cron: "0 22 * * *"    # 每天 06:00 (台北) collect
     - cron: "0 1 * * 0,3"   # 週三、週日 09:00 (台北) send
+  push:
+    paths: ["data/outbox/**"]   # 外部評分者 (Claude Code) 推上結果 → 自動 ingest
   workflow_dispatch:
     inputs:
       newsletter:
@@ -13,9 +17,9 @@ on:
         type: string
         default: ""
       task:
-        description: "collect=抓取備稿 / approve / reject / unapprove=審稿 / send=寄出已核准的 / send-dry=預覽"
+        description: "collect=抓取備稿 / ingest=收評分結果 / approve / reject / unapprove=審稿 / send=寄出已核准的 / send-dry=預覽"
         type: choice
-        options: [collect, approve, reject, unapprove, send, send-dry]
+        options: [collect, ingest, approve, reject, unapprove, send, send-dry]
         default: collect
       ids:
         description: "approve/reject 的編號,空白分隔,例如 1 3 5 (需指定單一電子報)"
@@ -45,7 +49,8 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           MAIL_FROM: ${{ secrets.MAIL_FROM }}
-          TASK: ${{ inputs.task || (github.event.schedule == '0 22 * * *' && 'collect' || 'send') }}
+          TASK: ${{ inputs.task || (github.event_name == 'push' && 'ingest') || (github.event.schedule == '0 22 * * *' && 'collect' || 'send') }}
+          SCORER: ${{ vars.SCORER || 'api' }}
           IDS: ${{ inputs.ids }}
           LIST: ${{ inputs.newsletter || vars.NEWSLETTERS || 'gems' }}
         run: |
@@ -53,7 +58,9 @@ jobs:
           for n in $LIST; do
             echo "::group::$n $TASK"
             case "$TASK" in
-              collect)    python -m curator collect --profile "$n" || rc=1 ;;
+              collect)    if [ "$SCORER" = claude ]; then python -m curator collect --no-llm --profile "$n" || rc=1;
+                          else python -m curator collect --profile "$n" || rc=1; fi ;;
+              ingest)     python -m curator ingest --profile "$n" || rc=1 ;;
               approve|reject|unapprove) python -m curator queue "$TASK" $IDS --profile "$n" || rc=1 ;;
               send)       python -m curator send --profile "$n" || rc=1 ;;
               send-dry)   python -m curator send --dry-run --profile "$n" || rc=1 ;;
@@ -65,5 +72,5 @@ jobs:
         if: always()
         run: |
           git config user.name "news-curator"; git config user.email "actions@users.noreply.github.com"
-          git add data/queue data/seen*.json 2>/dev/null || true
+          git add data/queue data/inbox data/outbox data/seen*.json data/scored_*.json 2>/dev/null || true
           git diff --cached --quiet || (git commit -m "chore: newsletter queue update" && git pull --rebase -q && git push)

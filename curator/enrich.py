@@ -13,6 +13,7 @@ from .fetch import UA, Article, clean_text
 from .score import API_URL, extract_json
 
 WRITE_MODEL = "claude-sonnet-5-5"
+DETAIL_FIELDS = ("headline", "what", "why_unknown", "how_to_use", "caveat", "confidence")
 _DROP = re.compile(r"<(script|style|nav|header|footer|aside)\b.*?</\1>", re.S | re.I)
 
 SYSTEM = """你是「生活冷知識」電子報的作者。根據每篇提供的原文內容 (page_text 或 summary),
@@ -66,5 +67,4 @@ def enrich(arts: list[Article], model: str = WRITE_MODEL, log=print) -> None:
         return
     for r in results:
         if isinstance(r, dict) and isinstance(r.get("id"), int) and 0 <= r["id"] < len(arts):
-            arts[r["id"]].detail = {k: str(r.get(k, ""))[:400] for k in
-                                    ("headline", "what", "why_unknown", "how_to_use", "caveat", "confidence")}
+            arts[r["id"]].detail = {k: str(r.get(k, ""))[:400] for k in DETAIL_FIELDS}

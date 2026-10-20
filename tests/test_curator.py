@@ -173,3 +173,35 @@ def test_parse_definition_and_copy(tmp_path, monkeypatch):
     init._write(tmp_path / "a", {**cfg, "name": "a"}, feeds, rubric)
     init.copy_from("a", "b")
     assert profiles.get("b").name == "b" and profiles.get("b").seen_file.name == "seen_b.json"
+
+
+def test_handoff_roundtrip(tmp_path, monkeypatch):
+    from curator import handoff, profiles, queue
+    monkeypatch.setattr(handoff, "ROOT", tmp_path)
+    monkeypatch.setattr(queue, "ROOT", tmp_path)
+    g = profiles.get("gems")
+    arts = [fetch.Article(f"T{i}", f"https://a/{i}", "summary", f"S{i}", None) for i in range(3)]
+    assert handoff.write_inbox(g, arts, with_text=False) == 3
+    keys = [handoff.key_of(a.url) for a in arts]
+    detail = {"headline": "H", "what": "W", "why_unknown": "U", "how_to_use": "X", "caveat": "C", "confidence": "high"}
+    good = dict(practical=8, surprise=8, life=8, evidence=8, mainstream=0, trivia=0, one_liner="o", why="w", detail=detail)
+    bad = dict(practical=9, surprise=9, life=9, evidence=9, mainstream=10, trivia=10, one_liner="o", why="w")
+    # 評分者亂填分數 (99、負數) 應被夾住;總分由程式算 (評分者填的 score 無效)
+    out = [{"key": keys[0], **good, "score": 100}, {"key": keys[1], **bad},
+           {"key": keys[2], **good, "practical": 99, "evidence": -5}, {"key": "nope", **good}]
+    handoff.outbox_path(g).parent.mkdir(parents=True)
+    handoff.outbox_path(g).write_text(json.dumps(out))
+    q = queue.load(tmp_path / "q.json")
+    assert handoff.ingest(g, q, top=12, min_score=40, per_source=3) == 2        # bad 被門檻擋掉
+    by_title = {i["title"]: i for i in q["items"]}
+    assert by_title["T0"]["score"] == 80.0 and by_title["T0"]["detail"]["headline"] == "H"
+    assert by_title["T2"]["dims"]["practical"] == 10 and by_title["T2"]["dims"]["evidence"] == 0
+    assert not handoff.inbox_path(g).exists() and len(handoff.scored_urls(g)) == 3   # 已評過的不再評
+    assert handoff.ingest(g, q, 12, 40, 3) == -1                                # 沒有 outbox
+
+
+def test_scorer_prompt_mentions_files_and_dims():
+    from curator import handoff, profiles
+    t = handoff.scorer_prompt(profiles.get("gems"))
+    assert "data/inbox/gems.json" in t and "data/outbox/gems.json" in t and '"mainstream"' in t
+    assert "detail" in t and "忽略" in t

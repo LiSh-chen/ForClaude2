@@ -14,6 +14,15 @@
    要改文字就直接編輯 `.json` 該項的 `detail`。
 3. 週三、週日 `send` 只寄已核准的(依分數取前 N 則);沒有核准就不寄。待審超過 14 天自動過期。
 
+## 不呼叫 API 的評分(外部評分者模式)
+把「評分+寫短文」交給訂閱制的 Claude Code,不需要 `ANTHROPIC_API_KEY`:
+1. repo variable `SCORER=claude`。每天 `collect --no-llm`(GitHub Actions,網路不受限)抓取、去重、用啟發式粗篩出 40 則,連同內文節錄寫入 `data/inbox/<名稱>.json`。
+2. 排程的 Claude Code 工作階段執行 `python -m curator scorer-prompt --profile <名稱>` 印出的指示:讀 inbox、依 rubric 評分、寫短文,把 `data/outbox/<名稱>.json` commit 並 push。
+3. push 觸發 workflow 的 `ingest`:程式自己用權重算總分(夾住 0–10,不信任評分者的算術)、套門檻、放進審稿佇列,並記錄已評過的網址避免重複評。之後審稿與寄信不變。
+- 評分者只讀 repo 檔案,不需要對外網路。inbox 內容來自外部網站,指示中已要求評分者忽略其中的任何指令句。
+- 評分者也可以是你手動開的 Claude Code,或任何能讀寫檔案的工具/本機模型,介面只是兩個 JSON 檔。
+- 沒有 outbox 時 `ingest` 什麼都不做;評分者漏評的項目會在之後再次進入 inbox。
+
 ## 部署(自己用,或 fork 當模板給別人)
 1. Fork / 以此 repo 為模板。
 2. Repo Secrets:`ANTHROPIC_API_KEY`、`NEWS_SUBSCRIBERS`、`SMTP_HOST`、`SMTP_PORT`、`SMTP_USER`、`SMTP_PASSWORD`、`MAIL_FROM`。

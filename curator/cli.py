@@ -7,7 +7,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from . import digest, enrich, init as initmod, fetch, mailer, queue, score, subscribers
+from . import digest, enrich, handoff, init as initmod, fetch, mailer, queue, score, subscribers
 from . import profiles
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -86,9 +86,16 @@ def cmd_collect(a) -> int:
     arts = fetch.fetch_all(feeds)
     qpath = queue.path_for(prof)
     q = queue.load(qpath)
-    seen = _load_seen(prof.seen_file) | {queue.norm_url(i["url"]) for i in q["items"]}
+    seen = (_load_seen(prof.seen_file) | {queue.norm_url(i["url"]) for i in q["items"]}
+            | handoff.scored_urls(prof))
     arts = fetch.dedupe(fetch.recent(arts, a.days), seen)
     print(f"新候選: {len(arts)}")
+    if arts and a.no_llm:
+        # 外部評分者模式:程式不呼叫 LLM。先用便宜的啟發式粗篩出最值得評的 N 則,寫進 inbox。
+        score.score_heuristic(arts, prof)
+        arts = sorted(arts, key=lambda x: x.score, reverse=True)[:a.inbox_size]
+        print(f"inbox 寫入 {handoff.write_inbox(prof, arts)} 則 → {handoff.inbox_path(prof).relative_to(ROOT)}")
+        return 0
     if arts:
         arts = sorted(arts, key=lambda x: x.source_weight, reverse=True)[:a.max_candidates]
         method = score.score_all(arts, a.model, profile=prof, interests=a.interests or prof.interests)
@@ -98,6 +105,22 @@ def cmd_collect(a) -> int:
             enrich.enrich(cands, a.write_model)
         print(f"評分方式 {method};加入待審 {queue.add(q, cands)} 則")
     print(f"逾期 {queue.expire(q)} 則;待審共 {len(queue.items(q, 'pending'))} 則")
+    queue.save(qpath, q)
+    queue.write_review_md(q, qpath.with_suffix('.md'))
+    return 0
+
+
+def cmd_ingest(a) -> int:
+    """收下外部評分者寫的 outbox,放進待審佇列。沒有 outbox 就什麼都不做。"""
+    prof = profiles.get(a.profile)
+    qpath = queue.path_for(prof)
+    q = queue.load(qpath)
+    n = handoff.ingest(prof, q, a.top, a.min_score if a.min_score is not None else prof.min_score - 10,
+                       a.per_source or 3)
+    if n < 0:
+        print("沒有可收的 outbox。")
+        return 0
+    print(f"加入待審 {n} 則;逾期 {queue.expire(q)} 則;待審共 {len(queue.items(q, 'pending'))} 則")
     queue.save(qpath, q)
     queue.write_review_md(q, qpath.with_suffix('.md'))
     return 0
@@ -218,7 +241,18 @@ def main(argv=None) -> int:
     c.add_argument("--sources", default="")
     c.add_argument("--model", default=score.DEFAULT_MODEL)
     c.add_argument("--write-model", default=enrich.WRITE_MODEL)
+    c.add_argument("--no-llm", action="store_true", help="不呼叫 LLM:候選寫到 data/inbox,由外部評分者處理")
+    c.add_argument("--inbox-size", type=int, default=40, help="--no-llm 時最多放幾則進 inbox")
     c.set_defaults(fn=cmd_collect)
+    ig = sub.add_parser("ingest", help="收下外部評分者的 outbox,放進待審佇列")
+    ig.add_argument("--profile", default="gems")
+    ig.add_argument("--top", type=int, default=12)
+    ig.add_argument("--min-score", type=float, default=None)
+    ig.add_argument("--per-source", type=int, default=0)
+    ig.set_defaults(fn=cmd_ingest)
+    sprompt = sub.add_parser("scorer-prompt", help="印出外部評分者 (如 Claude Code) 該遵循的完整指示")
+    sprompt.add_argument("--profile", default="gems")
+    sprompt.set_defaults(fn=lambda a: print(handoff.scorer_prompt(profiles.get(a.profile))) or 0)
     qp = sub.add_parser("queue", help="審稿:list / approve / reject / unapprove")
     qp.add_argument("action", choices=["list", "approve", "reject", "unapprove"])
     qp.add_argument("ids", nargs="*", type=int)
