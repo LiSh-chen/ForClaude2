@@ -1,0 +1,13 @@
+區 | 標籤 | A或B | 網址1 | 網址2
+東港鎮 | 肉粿 | A | https://supertaste.tvbs.com.tw/food/356861 | https://smiletaiwan.cw.com.tw/article/4612
+東港鎮 | 雙糕潤 | A | https://supertaste.tvbs.com.tw/food/356861 | https://smiletaiwan.cw.com.tw/article/4612
+池上鄉 | 池上米 | A | https://smiletaiwan.cw.com.tw/article/4852 | https://kmweb.moa.gov.tw/redirect_files.php?id=226553
+壽豐鄉 | 黃金蜆 | A | https://www.foodnext.net/life/placemaking/paper/5593904171 | https://kmweb.moa.gov.tw/redirect_files.php?id=156637
+光復鄉 | 樹豆 | A | https://smiletaiwan.cw.com.tw/article/1642 | https://health.tvbs.com.tw/strong/348384
+蘇澳鎮 | 冷泉製麵 | A | https://smiletaiwan.cw.com.tw/article/6690 | https://news.pts.org.tw/article/629009
+苑裡鎮 | 芋蔥粿 | A | https://supertaste.tvbs.com.tw/food/358729 | https://supertaste.tvbs.com.tw/infocard/19152
+桃園區 | 桃園夜市 | A | https://supertaste.tvbs.com.tw/food/350659 | https://supertaste.tvbs.com.tw/infocard/4763
+八里區 | 孔雀蛤 | A | https://supertaste.tvbs.com.tw/review/323178 | https://www.roc-taiwan.org/jp_ja/album/17/photo/23836.html
+大同區 | 油飯魚丸湯 | A | https://www.cw.com.tw/article/5132007 | https://smiletaiwan.cw.com.tw/article/7889
+北區 | 摃丸湯 | A | https://travel.yam.com/place/2929 | https://smiletaiwan.cw.com.tw/article/2247
+和美鎮 | 和美織仔 | A | https://smiletaiwan.cw.com.tw/article/4388 | https://www.curriculum.chc.edu.tw/years/111/plans/520/views/8-七年級.pdf
