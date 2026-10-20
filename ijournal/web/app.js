@@ -314,9 +314,13 @@ function gauge(score, lv) {
   return h('div', {class: 'gauge', role: 'img', 'aria-label': `風險分數 ${nz(score, 0)}，${LV[lv]}`}, h('i', {class: 'g1'}), h('i', {class: 'g2'}), h('i', {class: 'g3'}), h('i', {class: 'g4'}), h('b', {class: 'gp', style: `left:${pos}%`}));
 }
 function factorDrawer(f, m) {
-  openDrawer(f.label, `${f.group === 'happened' ? '已發生（市場數據）' : '尚未發生（預期與事件）'}｜風險分 ${nz(f.score, 0)}｜${(ST[f.state] || ['—'])[0]}`, [
-    h('div', {class: 'kpis'}, kpi('目前數據', f.value), kpi('風險分（0–100）', nz(f.score, 0), '≥66 偏高、≥33 留意')), h('p', {class: 'p'}, f.detail),
-    f.group === 'ahead' ? h('div', {class: 'note'}, '這一類是『預期』：市場正在為尚未發生的事情定價，結果可能比預期更好或更差，所以只列為風險提示，不當成已發生的事實。') : h('div', {class: 'note'}, '這一類是『已經發生』的市場數據，價格已經反映，但可能還會延續。'),
+  const sc = isNum(f.score) ? f.score : 0, st = ST[f.state] || ['—', 'ok'];
+  openDrawer(f.label, `${f.group === 'happened' ? '已發生（市場數據）' : '尚未發生（預期與事件）'}`, [
+    h('div', {class: 'fhero ' + (f.state || 'ok')}, h('div', {class: 'fbig num'}, f.short || '—'),
+      h('div', {class: 'fscore'}, h('span', {class: 'lb'}, '風險分'), h('span', {class: 'ft', 'aria-hidden': 'true'}, h('i', {class: 'tk1'}), h('i', {class: 'tk2'}), h('b', {style: `width:${sc}%`})), h('b', {class: 'num'}, nz(f.score, 0)), h('span', {class: 'fchip'}, st[0])),
+      h('div', {class: 'muted sm'}, '分數：≥66 偏高、33–66 留意、<33 正常')),
+    sec('目前數據', h('p', {class: 'p'}, f.value)), sec('為什麼重要', h('p', {class: 'p'}, f.detail)),
+    f.group === 'ahead' ? h('div', {class: 'note'}, '這一類是『預期』：市場正在為尚未發生的事情定價，結果可能比預期更好或更差，只列為風險提示，不當成已發生的事實。') : h('div', {class: 'note'}, '這一類是『已經發生』的市場數據，價格已經反映，但可能還會延續。'),
     f.id === 'fed' ? fedChart(m.fed) : null]);
 }
 function fedChart(fed, compact) {
@@ -406,8 +410,9 @@ function macroView() {
 }
 function valuationBody(m) {
   const v = m.valuation || {};
-  return [h('div', {class: 'kpis'}, ['US', 'TW'].map(k => v[k] && isNum(v[k].rf) ? kpi(`${MK[k]} 無風險利率`, pct(v[k].rf, 2, false), `原設定 ${pct(v[k].rf_base, 2, false)}；PEG ×${nz(v[k].peg_factor, 2)}；上檔門檻 ≥${pct(Math.max(v[k].hurdle, .05), 1, false)}`) : null)),
-    h('ul', null, h('li', null, 'DCF：折現率採即時殖利率，利率升 → 目標價下修'), h('li', null, 'PEG：合理倍數隨利率偏離基準下修（每高 1pp 約 −8%）'), h('li', null, '同業相對本益比：不調整（同業價格已反映目前利率）'), h('li', null, '推薦上檔底線：≥ 無風險利率 ＋ 3pp（機會成本），且不低於 5%'), h('li', null, '警戒以上：bull／bear 區間加寬、推薦門檻再提高'))];
+  return [h('div', {class: 'vrows'}, ['US', 'TW'].map(k => v[k] && isNum(v[k].rf) ? h('div', {class: 'vrow'}, h('b', null, MK[k]), h('span', null, h('span', {class: 'lb'}, '無風險利率'), h('b', {class: 'num'}, pct(v[k].rf, 2, false)), h('span', {class: 'muted sm'}, `（原 ${pct(v[k].rf_base, 2, false)}）`)),
+      h('span', null, h('span', {class: 'lb'}, 'PEG 倍數'), h('b', {class: 'num'}, '×' + nz(v[k].peg_factor, 2))), h('span', null, h('span', {class: 'lb'}, '推薦上檔門檻'), h('b', {class: 'num'}, '≥' + pct(Math.max(v[k].hurdle, .05), 1, false)))) : null)),
+    h('ul', null, h('li', null, 'DCF：折現率採即時殖利率，利率升 → 目標價下修'), h('li', null, 'PEG：合理倍數隨利率偏離基準下修（每高 1pp 約 −8%）'), h('li', null, '同業相對本益比：不調整（同業價格已反映目前利率）'), h('li', null, '推薦上檔底線：≥ 無風險利率 ＋ 3pp（機會成本），且不低於 5%'), h('li', null, '警戒以上：悲觀／樂觀情境區間加寬、推薦門檻再提高'))];
 }
 function healthCard(hl) {
   if (!hl || !hl.verdict) return null;
