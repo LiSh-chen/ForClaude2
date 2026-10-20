@@ -10,7 +10,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.starmist.core.metrics.Profile
 import com.starmist.core.metrics.Sex
-import com.starmist.core.sensor.FilterLevel
 import com.starmist.core.steps.StepScaler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -24,7 +23,6 @@ data class UserSettings(
     /** Correction factor applied to newly counted steps (1.0 = trust the sensor). */
     val multiplier: Double = 1.0,
     val strideOverrideM: Double? = null,
-    val filterLevel: FilterLevel = FilterLevel.STANDARD,
     /**
      * Keep a foreground service running so the step sensor stays registered. On many phones the
      * hardware counter only counts while something is listening, so this is what makes counting
@@ -67,7 +65,6 @@ class SettingsStore(private val context: Context) {
             prefs[MULTIPLIER] = StepScaler.clampMultiplier(updated.multiplier)
             val stride = updated.strideOverrideM
             if (stride == null) prefs.remove(STRIDE) else prefs[STRIDE] = stride
-            prefs[FILTER] = updated.filterLevel.name
             prefs[STABLE] = updated.stableMode
         }
     }
@@ -81,7 +78,6 @@ class SettingsStore(private val context: Context) {
             dailyGoal = this[GOAL] ?: d.dailyGoal,
             multiplier = StepScaler.clampMultiplier(this[MULTIPLIER] ?: d.multiplier),
             strideOverrideM = this[STRIDE],
-            filterLevel = this[FILTER]?.let { runCatching { FilterLevel.valueOf(it) }.getOrNull() } ?: d.filterLevel,
             stableMode = this[STABLE] ?: d.stableMode,
         )
     }
@@ -93,7 +89,6 @@ class SettingsStore(private val context: Context) {
         val GOAL = intPreferencesKey("daily_goal")
         val MULTIPLIER = doublePreferencesKey("multiplier")
         val STRIDE = doublePreferencesKey("stride_override_m")
-        val FILTER = stringPreferencesKey("filter_level")
         val STABLE = booleanPreferencesKey("stable_mode")
         val GOAL_DEFAULT_MOVED = booleanPreferencesKey("goal_default_moved_to_9000")
         const val OLD_DEFAULT_GOAL = 8_000

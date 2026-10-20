@@ -433,6 +433,12 @@ internal fun DrawScope.drawRealMap(
         }
     }
 
+    // Small roadside sights, only while the walker is near them (they give no card); fainter the farther away.
+    val nearPois = if (w >= 1700f && !regionMode) route.poisNear(here) else emptyList()
+    nearPois.forEach { (poi, km) ->
+        drawPoiGlyph(poi.kind, poi.at.px(), 7.dp.toPx() * ms, (1f - 0.55f * (km / POI_RANGE_KM).toFloat()).coerceIn(0.3f, 1f))
+    }
+
     // Names are queued with a priority and placed from the most important down; a name that would cover a more important
     // one (or a marker) is simply not drawn, and it comes back by itself once there is room.
     class Label(val priority: Int, val place: () -> Unit)
@@ -452,6 +458,9 @@ internal fun DrawScope.drawRealMap(
         val o = route.stops.first { it.landmark?.id == card.id }.at.px()
         if (card.id != lastCard?.id && (w <= 3000f || o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f)) return@forEach
         queue += Label(if (card.id == lastCard?.id) 90 else 60) { placeName(card.name, o, 12.sp, Vintage.ink, 11.dp.toPx(), force = card.id == lastCard?.id) }
+    }
+    nearPois.forEach { (poi, _) ->
+        queue += Label(30) { placeName(poi.name, poi.at.px(), 11.sp, Vintage.inkSoft, 10.dp.toPx(), plain = true, weight = FontWeight.Normal) }
     }
     queue.sortedByDescending { it.priority }.forEach { it.place() }
 
