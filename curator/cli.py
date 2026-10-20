@@ -4,9 +4,10 @@ import argparse
 import json
 import os
 import sys
+from datetime import date
 from pathlib import Path
 
-from . import digest, enrich, fetch, mailer, score, subscribers
+from . import digest, enrich, fetch, mailer, queue, score, subscribers
 from .profiles import PROFILES
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -58,18 +59,93 @@ def cmd_run(a) -> int:
         print("(dry-run,不寄信、不更新已寄紀錄)")
         return 0
 
+    ok = _deliver(prof, subj, text, page, picks)
+    return 0 if ok else 1
+
+
+def _deliver(prof, subj, text, page, picks) -> bool:
+    """寄給所有訂閱者並記錄已寄;全部成功才回傳 True。"""
     to = subscribers.load()
     if not to:
         print("沒有訂閱者,不寄信。")
-        return 0
+        return True
     if not os.environ.get("SMTP_HOST"):
         print("缺少 SMTP_HOST 等寄信設定。", file=sys.stderr)
-        return 1
+        return False
     n = mailer.send_all(subj, text, page, to)
     print(f"已寄出 {n}/{len(to)} 封")
     if n:
-        _save_seen(prof.seen_file, seen | {p.url.split('#')[0].rstrip('/') for p in picks})
-    return 0 if n == len(to) else 1
+        _save_seen(prof.seen_file, _load_seen(prof.seen_file) | {queue.norm_url(p.url) for p in picks})
+    return n == len(to)
+
+
+def cmd_collect(a) -> int:
+    """每天跑:抓取→評分→寫短文→放進待審佇列。不寄信。"""
+    prof = PROFILES[a.profile]
+    feeds = json.loads(Path(a.sources or prof.sources).read_text(encoding="utf-8"))["feeds"]
+    arts = fetch.fetch_all(feeds)
+    qpath = queue.path_for(prof)
+    q = queue.load(qpath)
+    seen = _load_seen(prof.seen_file) | {queue.norm_url(i["url"]) for i in q["items"]}
+    arts = fetch.dedupe(fetch.recent(arts, a.days), seen)
+    print(f"新候選: {len(arts)}")
+    if arts:
+        arts = sorted(arts, key=lambda x: x.source_weight, reverse=True)[:a.max_candidates]
+        method = score.score_all(arts, a.model, profile=prof, interests=a.interests)
+        cands = score.select(arts, a.top, a.min_score if a.min_score is not None else prof.min_score - 10,
+                             a.per_source or 3)
+        if prof.enrich and method == "llm":
+            enrich.enrich(cands, a.write_model)
+        print(f"評分方式 {method};加入待審 {queue.add(q, cands)} 則")
+    print(f"逾期 {queue.expire(q)} 則;待審共 {len(queue.items(q, 'pending'))} 則")
+    queue.save(qpath, q)
+    queue.write_review_md(q, qpath.with_suffix('.md'))
+    return 0
+
+
+def cmd_queue(a) -> int:
+    prof = PROFILES[a.profile]
+    qpath = queue.path_for(prof)
+    q = queue.load(qpath)
+    if a.action == "list":
+        rows = queue.items(q, a.status)
+        print("\n\n".join(queue.format_item(i) for i in rows) or f"(沒有 {a.status} 的項目)")
+        return 0
+    status = {"approve": "approved", "reject": "rejected", "unapprove": "pending"}[a.action]
+    changed = queue.set_status(q, a.ids, status)
+    queue.save(qpath, q)
+    queue.write_review_md(q, qpath.with_suffix('.md'))
+    print(f"{a.action}: {changed or '無變動'}")
+    return 0
+
+
+def cmd_send(a) -> int:
+    """寄出已核准的項目 (依分數取前 N 則)。沒有核准項目就不寄。"""
+    prof = PROFILES[a.profile]
+    qpath = queue.path_for(prof)
+    q = queue.load(qpath)
+    chosen = queue.items(q, "approved")[:a.top or prof.top]
+    if not chosen:
+        print("沒有已核准的項目,不寄信。")
+        return 0
+    picks = [queue.to_article(i) for i in chosen]
+    unsub = "要取消訂閱,請直接回信並註明「unsubscribe」。"
+    subj, text, page = (digest.subject(picks, profile=prof), digest.render_text(picks, unsub, prof),
+                        digest.render_html(picks, unsub, prof))
+    if a.out:
+        Path(a.out).write_text(page, encoding="utf-8")
+        print(f"預覽已寫入 {a.out}")
+    if a.dry_run:
+        print(f"(dry-run,將寄出 {len(picks)} 則,不寄信、不改狀態)")
+        return 0
+    if not _deliver(prof, subj, text, page, picks):
+        return 1
+    for i in chosen:
+        i["status"] = "sent"
+        i["sent"] = date.today().isoformat()
+    queue.save(qpath, q)
+    queue.write_review_md(q, qpath.with_suffix('.md'))
+    return 0
 
 
 def main(argv=None) -> int:
@@ -90,6 +166,30 @@ def main(argv=None) -> int:
     r.add_argument("--dry-run", action="store_true")
     r.add_argument("--out", help="把 HTML 預覽寫到此檔")
     r.set_defaults(fn=cmd_run)
+    c = sub.add_parser("collect", help="(每天) 抓取評分後放進待審佇列,不寄信")
+    c.add_argument("--profile", choices=sorted(PROFILES), default="gems")
+    c.add_argument("--days", type=int, default=3)
+    c.add_argument("--top", type=int, default=12, help="每次最多放進待審幾則")
+    c.add_argument("--min-score", type=float, default=None, help="預設為設定檔門檻 -10 (審稿再把關)")
+    c.add_argument("--per-source", type=int, default=0)
+    c.add_argument("--max-candidates", type=int, default=120)
+    c.add_argument("--interests", default="")
+    c.add_argument("--sources", default="")
+    c.add_argument("--model", default=score.DEFAULT_MODEL)
+    c.add_argument("--write-model", default=enrich.WRITE_MODEL)
+    c.set_defaults(fn=cmd_collect)
+    qp = sub.add_parser("queue", help="審稿:list / approve / reject / unapprove")
+    qp.add_argument("action", choices=["list", "approve", "reject", "unapprove"])
+    qp.add_argument("ids", nargs="*", type=int)
+    qp.add_argument("--status", default="pending", choices=queue.STATUSES)
+    qp.add_argument("--profile", choices=sorted(PROFILES), default="gems")
+    qp.set_defaults(fn=cmd_queue)
+    sp = sub.add_parser("send", help="寄出已核准的項目")
+    sp.add_argument("--profile", choices=sorted(PROFILES), default="gems")
+    sp.add_argument("--top", type=int, default=0)
+    sp.add_argument("--dry-run", action="store_true")
+    sp.add_argument("--out")
+    sp.set_defaults(fn=cmd_send)
     for name, fn in (("subscribe", subscribers.add), ("unsubscribe", subscribers.remove)):
         s = sub.add_parser(name)
         s.add_argument("email")

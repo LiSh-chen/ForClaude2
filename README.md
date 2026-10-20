@@ -32,6 +32,17 @@ Repo Secrets:`ANTHROPIC_API_KEY`、`NEWS_SUBSCRIBERS`(逗號或換行分隔)、`
 python -m curator run --profile gems --dry-run --out gems.html
 ```
 
+### 審稿流程 (每天約 30 分鐘)
+`collect`(每天自動)→ 你審 `data/queue/gems.md` → `approve` → `send`(週三、週日自動,只寄已核准的;沒有核准就不寄)。
+```bash
+python -m curator collect                 # 抓取+評分+寫短文,放進待審佇列
+python -m curator queue list              # 看待審項目 (或直接開 data/queue/gems.md)
+python -m curator queue approve 1 3 5     # 核准 / reject / unapprove
+python -m curator send --dry-run --out p.html
+```
+在 GitHub 手機版也能操作:Actions → Gems digest → Run workflow → 選 task、填 ids。
+要改短文內容,直接編輯 `data/queue/gems.json` 中該項的 `detail` 再核准。待審超過 14 天自動過期。
+
 ## 已知限制
 - 退訂目前是「回信說 unsubscribe」,由你手動改 Secret;訂閱量大時需要另做訂閱/退訂網頁。
 - `sources.json` 的 feed 網址未經實際連線驗證(開發環境網路受限),首次執行看日誌中的 ✓/✗ 並修正。

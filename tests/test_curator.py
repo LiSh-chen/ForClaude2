@@ -100,3 +100,39 @@ def test_select_respects_threshold():
     a = fetch.Article("T", "https://a", "", "S", None)
     a.score = 40
     assert score.select([a], min_score=50) == []
+
+
+def _art(n, score_=70):
+    a = fetch.Article(f"T{n}", f"https://a/{n}", "s", "S", None)
+    a.score, a.one_liner, a.why = score_, "o", "w"
+    return a
+
+
+def test_queue_flow(tmp_path, monkeypatch):
+    from curator import cli, queue
+    from curator.profiles import GEMS
+    monkeypatch.setattr(queue, "ROOT", tmp_path)
+    p = queue.path_for(GEMS)
+    q = queue.load(p)
+    assert queue.add(q, [_art(1), _art(2, 90), _art(1)]) == 2      # 同網址不重複
+    assert [i["id"] for i in queue.items(q, "pending")] == [2, 1]  # 依分數排序
+    assert queue.set_status(q, [2], "approved") == [2]
+    queue.save(p, q)
+    # send --dry-run 不改狀態;實際寄出 (無訂閱者視為成功) 會標記 sent
+    monkeypatch.setattr(cli, "_deliver", lambda *a, **k: True)
+    assert cli.main(["send", "--dry-run"]) == 0
+    assert queue.items(queue.load(p), "approved")
+    assert cli.main(["send"]) == 0
+    q2 = queue.load(p)
+    assert not queue.items(q2, "approved") and queue.items(q2, "sent")[0]["id"] == 2
+    assert queue.set_status(q2, [2], "rejected") == []             # 已寄的不可改
+
+
+def test_queue_expire_and_send_nothing(tmp_path, monkeypatch, capsys):
+    from datetime import date
+    from curator import cli, queue
+    monkeypatch.setattr(queue, "ROOT", tmp_path)
+    q = queue.load(tmp_path / "x.json")
+    queue.add(q, [_art(1)], today=date(2026, 1, 1))
+    assert queue.expire(q, 14, today=date(2026, 2, 1)) == 1
+    assert cli.main(["send"]) == 0 and "沒有已核准" in capsys.readouterr().out
