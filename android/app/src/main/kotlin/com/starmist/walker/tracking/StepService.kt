@@ -136,7 +136,7 @@ class StepService : Service() {
         )
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_walk)
-            .setContentTitle("星霧大陸 正在計步")
+            .setContentTitle("來台灣走走 正在計步")
             .setContentText(steps?.let { "今日 ${it.withCommas()} 步" } ?: "準備中…")
             .setContentIntent(open)
             .setOngoing(true)

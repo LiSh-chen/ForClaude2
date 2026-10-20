@@ -1,6 +1,8 @@
 package com.starmist.walker.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -77,10 +79,10 @@ class ScreenshotTest {
     }
 
     @Test fun card_face() = paparazzi.snapshot {
-        StarMistTheme { Box(Modifier.padding(16.dp)) { CardFace(forward.cards[3].first, forward.cards[3].second) } }
+        StarMistTheme { Box(Modifier.fillMaxSize().background(Vintage.parchment).padding(16.dp)) { CardFace(forward.cards[3].first, forward.cards[3].second) } }
     }
 
     @Test fun station_stamp() = paparazzi.snapshot {
-        StarMistTheme { Box(Modifier.padding(16.dp)) { StationStamp("鳳林", "1913", Modifier.padding(8.dp)) } }
+        StarMistTheme { Box(Modifier.fillMaxSize().background(Vintage.parchment).padding(16.dp)) { StationStamp("鳳林", "1913", Modifier.padding(8.dp)) } }
     }
 }

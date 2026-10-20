@@ -1,4 +1,4 @@
-# 星霧大陸（StarMist Walker）
+# 來台灣走走（StarMist Walker）
 
 Android 計步 App：準確、省電、只要「動作與健身」權限，並以魔法奇幻世界作為長期動力。設計見 [docs/DESIGN.md](docs/DESIGN.md)。
 

@@ -75,13 +75,16 @@ private val colors = lightColorScheme(
 
 private fun serif(style: TextStyle) = style.copy(fontFamily = FontFamily.Serif)
 
+/** Headings stay serif for the old-map feel; running text is sans so a page is not all one face. */
+private fun sans(style: TextStyle) = style.copy(fontFamily = FontFamily.SansSerif)
+
 private val typography = Typography().let {
     it.copy(
         displayLarge = serif(it.displayLarge), displayMedium = serif(it.displayMedium), displaySmall = serif(it.displaySmall),
         headlineLarge = serif(it.headlineLarge), headlineMedium = serif(it.headlineMedium), headlineSmall = serif(it.headlineSmall),
-        titleLarge = serif(it.titleLarge), titleMedium = serif(it.titleMedium), titleSmall = serif(it.titleSmall),
-        bodyLarge = serif(it.bodyLarge), bodyMedium = serif(it.bodyMedium), bodySmall = serif(it.bodySmall),
-        labelLarge = serif(it.labelLarge), labelMedium = serif(it.labelMedium), labelSmall = serif(it.labelSmall),
+        titleLarge = serif(it.titleLarge), titleMedium = sans(it.titleMedium), titleSmall = sans(it.titleSmall),
+        bodyLarge = sans(it.bodyLarge), bodyMedium = sans(it.bodyMedium), bodySmall = sans(it.bodySmall),
+        labelLarge = sans(it.labelLarge), labelMedium = sans(it.labelMedium), labelSmall = sans(it.labelSmall),
     )
 }
 
