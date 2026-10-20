@@ -95,14 +95,13 @@ def fog_puff(size: int = 256, seed: int = 5) -> Image.Image:
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     parchment().save(OUT / "parchment_tile.png", optimize=True)
-    fog_puff().save(OUT / "fog_puff.png", optimize=True)
     # Launcher icon background: the same paper, a little larger and darkened towards the corners.
     paper = Image.open(OUT / "parchment_tile.png").convert("RGB").resize((1024, 1024), Image.LANCZOS)
     ys, xs = np.mgrid[0:1024, 0:1024]
     edge = np.clip((np.hypot(xs - 512, ys - 512) / 724) ** 2.2, 0, 1)[..., None]
     shaded = np.asarray(paper, dtype=np.float64) * (1 - 0.28 * edge) + np.array([185, 143, 82]) * 0.28 * edge
     Image.fromarray(np.clip(shaded, 0, 255).astype(np.uint8), "RGB").save(OUT / "icon_background.png", optimize=True)
-    print("wrote parchment_tile.png, fog_puff.png, icon_background.png")
+    print("wrote parchment_tile.png, icon_background.png")
 
 
 if __name__ == "__main__":

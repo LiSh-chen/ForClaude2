@@ -7,7 +7,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 
 /**
- * Looks up a picture from the asset library (android/assets) by name, e.g. "fog_puff".
+ * Looks up a picture from the asset library (android/assets) by name, e.g. "paper_page".
  *
  * Pictures are exported to `drawable-nodpi/art_<name>.webp`. Anything that has not been drawn yet
  * simply returns null, and the caller falls back to its built-in drawing, so art can arrive one

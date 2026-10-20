@@ -31,10 +31,6 @@ data class UserSettings(
      * work with the screen off.
      */
     val stableMode: Boolean = true,
-    /** Which traveller look is used in the world (index into the character list). */
-    val characterId: Int = 0,
-    /** Which map the home screen follows: 0 the fantasy world, 1 a real-world route. */
-    val challenge: Int = 0,
 ) {
     val profile: Profile
         get() = Profile(heightCm, weightKg, sex, strideOverrideM)
@@ -73,8 +69,6 @@ class SettingsStore(private val context: Context) {
             if (stride == null) prefs.remove(STRIDE) else prefs[STRIDE] = stride
             prefs[FILTER] = updated.filterLevel.name
             prefs[STABLE] = updated.stableMode
-            prefs[CHARACTER] = updated.characterId.coerceIn(0, CHARACTER_COUNT - 1)
-            prefs[CHALLENGE] = updated.challenge.coerceIn(0, 1)
         }
     }
 
@@ -89,8 +83,6 @@ class SettingsStore(private val context: Context) {
             strideOverrideM = this[STRIDE],
             filterLevel = this[FILTER]?.let { runCatching { FilterLevel.valueOf(it) }.getOrNull() } ?: d.filterLevel,
             stableMode = this[STABLE] ?: d.stableMode,
-            characterId = (this[CHARACTER] ?: d.characterId).coerceIn(0, CHARACTER_COUNT - 1),
-            challenge = (this[CHALLENGE] ?: d.challenge).coerceIn(0, 1),
         )
     }
 
@@ -103,10 +95,7 @@ class SettingsStore(private val context: Context) {
         val STRIDE = doublePreferencesKey("stride_override_m")
         val FILTER = stringPreferencesKey("filter_level")
         val STABLE = booleanPreferencesKey("stable_mode")
-        val CHARACTER = intPreferencesKey("character_id")
-        val CHALLENGE = intPreferencesKey("challenge")
         val GOAL_DEFAULT_MOVED = booleanPreferencesKey("goal_default_moved_to_9000")
         const val OLD_DEFAULT_GOAL = 8_000
-        const val CHARACTER_COUNT = 4
     }
 }

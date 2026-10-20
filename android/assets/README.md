@@ -5,7 +5,7 @@
 ## 目前狀態
 - **程式產生（已完成）**：羊皮紙底紋、迷霧團、圖示底。由 `tools/make_procedural.py` 產生。
 - **SVG 手繪（已完成）**：羅盤外殼與表盤、四種旅人。Claude 直接寫 SVG（`svg/*.svg`），用 `node tools/render_svg.mjs` 以 Chromium 渲染成透明 PNG，
-  墨線的手抖感與水彩暈染來自共用的 SVG 濾鏡（`svg/_defs.inc`）。旅人由 `tools/make_travellers.py` 產生。
+  墨線的手抖感與水彩暈染來自共用的 SVG 濾鏡（`svg/_defs.inc`）。
 - **其餘（待做）**：場景前景、世界地圖與地標、背包素材、圖示前景。可以由 Claude 以同樣方式畫，或用外部圖像 AI（ChatGPT／Gemini／Midjourney 等）生成後放進 `generated/`。
   開發環境裡沒有圖像生成模型，所以 AI 繪圖要在外部做。
   App 找不到圖時會自動用內建的程式繪圖，所以可以一張一張補。
@@ -31,5 +31,5 @@ python3 tools/build_assets.py sheet     # 產生 preview.png 總覽
 
 ## 加素材 / 改規格
 改 `manifest.json`，再跑 `prompts`。App 端用 `rememberArt("<id>")` 取圖（見 `ui/Art.kt`）；取不到就回到程式繪圖。
-目前 App 已經接上的：`parchment_tile`（全 App 背景）、`fog_puff`（世界地圖迷霧）、圖示（`icon_foreground`／`icon_background`）。
+目前 App 已經接上的：`parchment_tile`（全 App 背景）、圖示（`icon_foreground`／`icon_background`）。
 其他素材的版面接線，等圖到了再配合實際構圖調整（例如羅盤表盤的位置、旅人的腳底線）。
