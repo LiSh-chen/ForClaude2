@@ -1,0 +1,11 @@
+區 | 標籤 | A或B | 網址1 | 網址2
+頭城鎮 | 烏石港 | A(偏弱，來源為搜尋摘要) | https://travel.yam.com/article/135911 | https://2blog.ilc.edu.tw/wp-content/uploads/sites/2020/2879/2879-666227.doc
+南澳鄉 | 傳道冰 | A | https://news.tvbs.com.tw/local/93351 | https://supertaste.tvbs.com.tw/food/305146
+北投區 | 桶柑酥 | A(偏弱) | https://smiletaiwan.cw.com.tw/article/1744 | https://supertaste.tvbs.com.tw/hot/347504
+嘉義東區 | 沙鍋魚頭 | A | https://supertaste.tvbs.com.tw/food/348488 | https://gofunit.com/%E5%98%89%E7%BE%A9%E7%BE%8E%E9%A3%9F/
+鹿港鎮 | 鳳眼糕 | A | https://smiletaiwan.cw.com.tw/article/162 | https://1877.com.tw/learning-corner/about-tradional-confectionery/鳳眼糕的故事
+鹿港鎮 | 麵線糊 | A | https://smiletaiwan.cw.com.tw/article/162 | https://www.wantgoo.com/blog/37351/post/1321
+清水區 | 燒炸粿 | A | https://bunnyann.tw/?p=155558 | https://gofunit.com/%E6%B8%85%E6%B0%B4%E7%BE%8E%E9%A3%9F%EF%BD%9C%E4%B9%9D%E9%96%93%E6%B8%85%E6%B0%B4%E5%9C%A8%E5%9C%B0%E9%A4%90%E5%BB%B3%E5%B0%8F%E5%90%83%EF%BC%8C%E8%AE%93%E6%82%A8%E5%BE%9E%E6%97%A9%E9%A4%90%E4%B8%80/
+通霄鎮 | 水煎包 | A(偏弱) | https://www.funliday.com/lin.ming.chi/journals/51913 | https://travel.yam.com/article/122737
+新園鄉 | 芹菜管 | A | https://smiletaiwan.cw.com.tw/article/8706 | https://www.nownews.com/news/3798058
+北門區 | 虱目魚香腸 | A(偏弱) | https://www.ctee.com.tw/news/20230908701992-431003 | https://www.chinatimes.com/realtimenews/20220106001694-260405
