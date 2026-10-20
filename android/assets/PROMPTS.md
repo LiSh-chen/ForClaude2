@@ -75,6 +75,26 @@ _已有 SVG 手繪版可當備案；要用 Gemini 版的話用下面這段。_
 Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A flat circular antique compass dial face seen from above, aged parchment yellow with a faint engraved compass rose, a fine tick-mark ring near the edge and only the four letters N, E, S, W. The circle fills the whole frame edge to edge. Leave the centre fairly empty and light so a number can be written over it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
 ```
 
+### `collection_slot_locked` — 收藏格：尚未收集
+
+- 用在：收藏頁尚未收集景點的格子（取代目前的問號徽章）
+- 最終尺寸：512×512　Gemini 比例：1:1　背景：純白（匯出去背）
+- 注意：中央留空讓 App 疊上景點序號；不要文字與數字。
+
+```
+Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A blank collectible card slot drawn like an empty pressed-specimen mount in an old naturalist's album: a faint pencil outline of a small landmark silhouette inside a rounded rectangle of aged paper with soft hatched shading, a tiny brass corner mount at each corner, muted and quiet. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
+```
+
+### `collection_slot_frame` — 收藏格：已收集外框
+
+- 用在：收藏頁已收集景點卡的外框（透明中央，疊在景點插圖上）
+- 最終尺寸：512×512　Gemini 比例：1:1　背景：純白（匯出去背）
+- 注意：中央必須完全空白（之後去背）；邊框寬度約整張的 6%；不要文字。
+
+```
+Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A thin ornamental picture frame for a postcard-like collectible card: aged cream paper border with fine sepia pen lines, small brass corner pieces, subtle watercolor stains at the edges, empty transparent centre. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
+```
+
 ## character
 
 ### `traveller_fox` — 旅人：小狐
@@ -87,16 +107,26 @@ Create an image with aspect ratio 1:1. Vintage botanical field-guide illustratio
 Create an image with aspect ratio 3:4. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, with fox ears, a wide-brimmed hat tucked behind them, a warm orange wash coat, and a small leather satchel on the back. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
 ```
 
+### `traveller_walker` — 旅人：背包行者（新角色）
+
+- 用在：環島地圖上的目前位置標記、收卡視窗（取代舊的小狐）
+- 最終尺寸：512×768　Gemini 比例：3:4　背景：純白（匯出去背）
+- 注意：面向右；腳貼底邊；全身；不要奇幻元素（沒有動物耳朵、披風）。完成後把 generated/traveller_walker.png 匯出，再把 RouteVisuals.kt 的 rememberArt("traveller_fox") 改成 traveller_walker，並刪除 traveller_fox。
+
+```
+Create an image with aspect ratio 3:4. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A friendly Taiwanese traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge: a bucket sun hat, a light linen shirt with rolled sleeves, a medium backpack with a rolled sleeping mat, comfortable walking shoes and a small water bottle clipped to the strap. Gender-neutral, simple storybook proportions, a relaxed cheerful stride. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
+```
+
 ## icon
 
 ### `icon_foreground` — App 圖示前景
 
 - 用在：自適應圖示（桌面圖示）
 - 最終尺寸：1024×1024　Gemini 比例：1:1　背景：純白（匯出去背）
-- 注意：重要內容限制在中央 60% 以內（安全區）。
+- 注意：重要內容限制在中央 60% 以內（安全區）；需要另外一張單色版（同構圖，單一深色）給主題圖示用。
 
 ```
-Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An antique brass pocket compass seen from above with a small green sprout growing from the top ring, simple bold shapes, centered and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
+Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A cheerful hand-drawn simple Taiwan island silhouette in muted moss green with a dotted brass walking route looping around it and one small red map pin, simple bold shapes, centered and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
 ```
 
 ## card
@@ -571,4 +601,16 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ```
 Create an image with aspect ratio 9:16. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. 見 REAL_MAP_PROMPT.md
+```
+
+## store
+
+### `store_feature` — 商店主視覺（1024x500）
+
+- 用在：Google Play 商店頁頂端橫幅
+- 最終尺寸：1024×500　Gemini 比例：16:9　背景：一般圖，不用去背
+- 注意：左右留白約 10%（商店會裁切）；不要文字，App 名稱「來台灣走走」由後製加上。
+
+```
+Create an image with aspect ratio 16:9. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm and slightly whimsical fantasy mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A wide panoramic illustration of the Taiwan coastline drawn as an old travel map vignette: green mountains in the middle, a dotted walking route circling the island, small sketches of a lighthouse, a temple roof, a night-market lantern string and a steam-train station along the route, a small traveller with a backpack in the foreground. Soft irregular edges fading into aged parchment, 1024x500 landscape, calm and warm mood.
 ```
