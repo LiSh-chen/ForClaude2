@@ -5,12 +5,13 @@ import html
 from datetime import date
 
 from .fetch import Article
-from .profiles import INSIGHT, Profile
+from .profiles import Profile, resolve
 
 _CONF = {"high": "資料充分", "medium": "資料尚可", "low": "僅依摘要,請自行查證"}
 
 
-def subject(arts: list[Article], today: date | None = None, profile: Profile = INSIGHT) -> str:
+def subject(arts: list[Article], today: date | None = None, profile: Profile | None = None) -> str:
+    profile = resolve(profile)
     today = today or date.today()
     if not arts:
         return f"【{profile.subject_prefix}】{today:%m/%d}"
@@ -18,7 +19,8 @@ def subject(arts: list[Article], today: date | None = None, profile: Profile = I
     return f"【{profile.subject_prefix}】{today:%m/%d} 值得知道的 {len(arts)} 件事 — {lead}…"
 
 
-def render_text(arts: list[Article], unsub_hint: str = "", profile: Profile = INSIGHT) -> str:
+def render_text(arts: list[Article], unsub_hint: str = "", profile: Profile | None = None) -> str:
+    profile = resolve(profile)
     lines = [profile.tagline + "\n"]
     for i, a in enumerate(arts, 1):
         d = a.detail
@@ -39,7 +41,8 @@ def _block(label: str, body: str, color: str) -> str:
             f'　{html.escape(body)}</p>')
 
 
-def render_html(arts: list[Article], unsub_html: str = "", profile: Profile = INSIGHT) -> str:
+def render_html(arts: list[Article], unsub_html: str = "", profile: Profile | None = None) -> str:
+    profile = resolve(profile)
     e = html.escape
     cards = []
     for i, a in enumerate(arts, 1):

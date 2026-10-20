@@ -77,7 +77,8 @@ def test_subscribers_roundtrip(tmp_path, monkeypatch):
 
 
 def test_gems_compose_penalizes_mainstream_and_trivia():
-    from curator.profiles import GEMS
+    from curator import profiles
+    GEMS = profiles.get("gems")
     d = dict(practical=8, surprise=8, life=8, evidence=8, mainstream=0, trivia=0)
     assert score.compose(d, GEMS) == 80.0
     assert score.compose({**d, "mainstream": 10}, GEMS) == pytest.approx(48.0)
@@ -85,7 +86,8 @@ def test_gems_compose_penalizes_mainstream_and_trivia():
 
 
 def test_gems_digest_renders_detail_and_falls_back():
-    from curator.profiles import GEMS
+    from curator import profiles
+    GEMS = profiles.get("gems")
     a = fetch.Article("T", "https://a", "", "S", None)
     a.score, a.one_liner, a.why = 70, "一句話", "原因"
     assert "一句話" in digest.render_html([a], "", GEMS)
@@ -110,7 +112,8 @@ def _art(n, score_=70):
 
 def test_queue_flow(tmp_path, monkeypatch):
     from curator import cli, queue
-    from curator.profiles import GEMS
+    from curator import profiles
+    GEMS = profiles.get("gems")
     monkeypatch.setattr(queue, "ROOT", tmp_path)
     p = queue.path_for(GEMS)
     q = queue.load(p)
@@ -136,3 +139,37 @@ def test_queue_expire_and_send_nothing(tmp_path, monkeypatch, capsys):
     queue.add(q, [_art(1)], today=date(2026, 1, 1))
     assert queue.expire(q, 14, today=date(2026, 2, 1)) == 1
     assert cli.main(["send"]) == 0 and "沒有已核准" in capsys.readouterr().out
+
+
+def test_profile_validation_and_system_prompt():
+    from curator import profiles
+    good = {"name": "x", "title": "T", "weights": {"evidence": 0.5, "a": 0.5}, "penalties": {"junk": 0.4}}
+    profiles.validate(good)
+    for bad in ({**good, "weights": {"evidence": 0.9}}, {**good, "name": "a b"},
+                {**good, "penalties": {"evidence": 0.3}}, {**good, "penalties": {"junk": 0.9}}):
+        with pytest.raises(profiles.ProfileError):
+            profiles.validate(bad)
+    sysm = profiles.get("gems").system
+    assert '"practical": n' in sysm and '"mainstream": n' in sysm and "category" in sysm
+
+
+def test_all_shipped_newsletters_load():
+    from curator import profiles
+    assert {"gems", "insight"} <= set(profiles.names())
+    for n in profiles.names():
+        p = profiles.get(n)
+        assert p.sources.exists() and json.loads(p.sources.read_text())["feeds"]
+
+
+def test_parse_definition_and_copy(tmp_path, monkeypatch):
+    from curator import init, profiles
+    ok = json.dumps({"name": "n", "title": "T", "weights": {"evidence": 0.5, "use": 0.5}, "penalties": {"junk": 0.4},
+                     "rubric": "r", "feeds": [{"name": "f", "url": "https://f"}, {"name": "bad", "url": "ftp://x"}]})
+    cfg, feeds, rubric = init.parse_definition("here:\n" + ok)
+    assert len(feeds) == 1 and rubric == "r" and "rubric" not in cfg
+    with pytest.raises(profiles.ProfileError):   # 沒有 evidence 維度
+        init.parse_definition(ok.replace('"evidence"', '"proof"'))
+    monkeypatch.setattr(profiles, "NEWSLETTERS", tmp_path)
+    init._write(tmp_path / "a", {**cfg, "name": "a"}, feeds, rubric)
+    init.copy_from("a", "b")
+    assert profiles.get("b").name == "b" and profiles.get("b").seen_file.name == "seen_b.json"

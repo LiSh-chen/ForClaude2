@@ -18,15 +18,15 @@ import re
 import urllib.request
 
 from .fetch import Article
-from .profiles import INSIGHT, Profile
+from .profiles import Profile, resolve
 
 API_URL = "https://api.anthropic.com/v1/messages"
 DEFAULT_MODEL = "claude-haiku-4-5-20251001"
-WEIGHTS = INSIGHT.weights  # 向下相容
 
 
-def compose(d: dict, profile: Profile = INSIGHT) -> float:
+def compose(d: dict, profile: Profile | None = None) -> float:
     """維度分數 -> 0~100 的總分。扣分維度各以其最大比例連乘折減。"""
+    profile = resolve(profile)
     base = sum(d.get(k, 0) * w for k, w in profile.weights.items()) * 10
     for k, frac in profile.penalties.items():
         base *= 1 - frac * d.get(k, 0) / 10
@@ -58,7 +58,8 @@ def _call_claude(items: list[dict], model: str, api_key: str, system: str, timeo
 
 
 def score_with_llm(arts: list[Article], model: str = DEFAULT_MODEL, batch: int = 20, log=print,
-                   profile: Profile = INSIGHT, interests: str = "") -> None:
+                   profile: Profile | None = None, interests: str = "") -> None:
+    profile = resolve(profile)
     key = os.environ["ANTHROPIC_API_KEY"]
     system = profile.system + (f"\n\n讀者特別關注:{interests}。相關主題可略微加分,但不相關的好內容仍應給高分。" if interests else "")
     for i in range(0, len(arts), batch):
@@ -100,10 +101,11 @@ _PRACTICAL = re.compile(
     r"safe|cheap|home|study shows|原來|其實|迷思|研究|發現|冷知識|竟然|健康|睡眠|飲食|省錢|居家|安全|怎麼|為什麼)", re.I)
 
 
-def score_heuristic(arts: list[Article], profile: Profile = INSIGHT) -> None:
+def score_heuristic(arts: list[Article], profile: Profile | None = None) -> None:
+    profile = resolve(profile)
     for a in arts:
         text = f"{a.title} {a.summary}"
-        pat = _PRACTICAL if profile.name == "gems" else _SUBSTANCE
+        pat = _PRACTICAL if "practical" in profile.weights else _SUBSTANCE
         sub = min(len(pat.findall(text)), 4) / 4
         triv = 1.0 if _TRIVIA.search(text) else 0.0
         length = min(len(a.summary) / 400, 1.0)
@@ -114,8 +116,9 @@ def score_heuristic(arts: list[Article], profile: Profile = INSIGHT) -> None:
 
 
 def score_all(arts: list[Article], model: str = DEFAULT_MODEL, log=print,
-              profile: Profile = INSIGHT, interests: str = "") -> str:
+              profile: Profile | None = None, interests: str = "") -> str:
     """回傳實際使用的評分方式 ('llm' | 'heuristic')。"""
+    profile = resolve(profile)
     if os.environ.get("ANTHROPIC_API_KEY"):
         score_with_llm(arts, model, log=log, profile=profile, interests=interests)
         return "llm"

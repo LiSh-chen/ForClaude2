@@ -7,8 +7,8 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from . import digest, enrich, fetch, mailer, queue, score, subscribers
-from .profiles import PROFILES
+from . import digest, enrich, init as initmod, fetch, mailer, queue, score, subscribers
+from . import profiles
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -22,7 +22,7 @@ def _save_seen(path: Path, urls: set[str]) -> None:
 
 
 def cmd_run(a) -> int:
-    prof = PROFILES[a.profile]
+    prof = profiles.get(a.profile)
     top = a.top or prof.top
     min_score = prof.min_score if a.min_score is None else a.min_score
     per_source = a.per_source or prof.per_source
@@ -37,7 +37,7 @@ def cmd_run(a) -> int:
     if a.max_candidates and len(arts) > a.max_candidates:
         # 控制 LLM 成本:先用來源先驗粗篩
         arts = sorted(arts, key=lambda x: x.source_weight, reverse=True)[:a.max_candidates]
-    method = score.score_all(arts, a.model, profile=prof, interests=a.interests)
+    method = score.score_all(arts, a.model, profile=prof, interests=a.interests or prof.interests)
     picks = score.select(arts, top, min_score, per_source)
     print(f"評分方式: {method};入選 {len(picks)} 篇")
     for p in picks:
@@ -81,7 +81,7 @@ def _deliver(prof, subj, text, page, picks) -> bool:
 
 def cmd_collect(a) -> int:
     """每天跑:抓取→評分→寫短文→放進待審佇列。不寄信。"""
-    prof = PROFILES[a.profile]
+    prof = profiles.get(a.profile)
     feeds = json.loads(Path(a.sources or prof.sources).read_text(encoding="utf-8"))["feeds"]
     arts = fetch.fetch_all(feeds)
     qpath = queue.path_for(prof)
@@ -91,7 +91,7 @@ def cmd_collect(a) -> int:
     print(f"新候選: {len(arts)}")
     if arts:
         arts = sorted(arts, key=lambda x: x.source_weight, reverse=True)[:a.max_candidates]
-        method = score.score_all(arts, a.model, profile=prof, interests=a.interests)
+        method = score.score_all(arts, a.model, profile=prof, interests=a.interests or prof.interests)
         cands = score.select(arts, a.top, a.min_score if a.min_score is not None else prof.min_score - 10,
                              a.per_source or 3)
         if prof.enrich and method == "llm":
@@ -104,7 +104,7 @@ def cmd_collect(a) -> int:
 
 
 def cmd_queue(a) -> int:
-    prof = PROFILES[a.profile]
+    prof = profiles.get(a.profile)
     qpath = queue.path_for(prof)
     q = queue.load(qpath)
     if a.action == "list":
@@ -121,7 +121,7 @@ def cmd_queue(a) -> int:
 
 def cmd_send(a) -> int:
     """寄出已核准的項目 (依分數取前 N 則)。沒有核准項目就不寄。"""
-    prof = PROFILES[a.profile]
+    prof = profiles.get(a.profile)
     qpath = queue.path_for(prof)
     q = queue.load(qpath)
     chosen = queue.items(q, "approved")[:a.top or prof.top]
@@ -148,12 +148,41 @@ def cmd_send(a) -> int:
     return 0
 
 
+def cmd_init(a) -> int:
+    if (profiles.NEWSLETTERS / a.name).exists():
+        print(f"{a.name} 已存在。", file=sys.stderr)
+        return 1
+    if a.copy_from:
+        d = initmod.copy_from(a.copy_from, a.name)
+    elif a.brief:
+        if not os.environ.get("ANTHROPIC_API_KEY"):
+            print("用 --brief 產生定義需要 ANTHROPIC_API_KEY;或改用 --copy-from。", file=sys.stderr)
+            return 1
+        d = initmod.generate(a.brief, a.name, a.model)
+    else:
+        print("請指定 --brief \"一段話描述\" 或 --copy-from <現有電子報>", file=sys.stderr)
+        return 1
+    print(f"已建立 {d}\n下一步:1) 審閱並修改 rubric.md / newsletter.json  2) python -m curator check {a.name} --prune"
+          f"\n         3) python -m curator collect --profile {a.name}  4) 加入 workflow 的 NEWSLETTERS 變數")
+    return 0
+
+
+def cmd_check(a) -> int:
+    ok_all = True
+    for name in a.names or profiles.names():
+        print(name)
+        ok, total = initmod.check_sources(profiles.get(name), a.prune)
+        print(f"  → {ok}/{total} 可用")
+        ok_all &= ok > 0
+    return 0 if ok_all else 1
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="curator")
     sub = p.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("run", help="抓取、評分、寄出精選")
     r.add_argument("--days", type=int, default=7, help="只看近幾天的文章")
-    r.add_argument("--profile", choices=sorted(PROFILES), default="insight",
+    r.add_argument("--profile", default="insight",
                    help="insight=大議題精選;gems=生活冷知識 (貼近生活、實用、少人知道)")
     r.add_argument("--interests", default="", help='讀者關注主題,例如 "育兒, 理財, 居家" (僅微調評分)')
     r.add_argument("--write-model", default=enrich.WRITE_MODEL, help="gems 模式寫短文用的模型")
@@ -166,8 +195,20 @@ def main(argv=None) -> int:
     r.add_argument("--dry-run", action="store_true")
     r.add_argument("--out", help="把 HTML 預覽寫到此檔")
     r.set_defaults(fn=cmd_run)
+    i = sub.add_parser("init", help="建立新電子報 (--brief 由 Claude 產生草稿,或 --copy-from 複製)")
+    i.add_argument("name")
+    i.add_argument("--brief", default="", help="一段話:讀者是誰、什麼內容有價值、什麼算雜訊")
+    i.add_argument("--copy-from", default="")
+    i.add_argument("--model", default=enrich.WRITE_MODEL)
+    i.set_defaults(fn=cmd_init)
+    ck = sub.add_parser("check", help="連線驗證來源網址")
+    ck.add_argument("names", nargs="*")
+    ck.add_argument("--prune", action="store_true", help="移除失敗的來源")
+    ck.set_defaults(fn=cmd_check)
+    sub.add_parser("newsletters", help="列出電子報").set_defaults(
+        fn=lambda a: print("\n".join(f"{n}\t{profiles.get(n).title}" for n in profiles.names())) or 0)
     c = sub.add_parser("collect", help="(每天) 抓取評分後放進待審佇列,不寄信")
-    c.add_argument("--profile", choices=sorted(PROFILES), default="gems")
+    c.add_argument("--profile", default="gems")
     c.add_argument("--days", type=int, default=3)
     c.add_argument("--top", type=int, default=12, help="每次最多放進待審幾則")
     c.add_argument("--min-score", type=float, default=None, help="預設為設定檔門檻 -10 (審稿再把關)")
@@ -182,10 +223,10 @@ def main(argv=None) -> int:
     qp.add_argument("action", choices=["list", "approve", "reject", "unapprove"])
     qp.add_argument("ids", nargs="*", type=int)
     qp.add_argument("--status", default="pending", choices=queue.STATUSES)
-    qp.add_argument("--profile", choices=sorted(PROFILES), default="gems")
+    qp.add_argument("--profile", default="gems")
     qp.set_defaults(fn=cmd_queue)
     sp = sub.add_parser("send", help="寄出已核准的項目")
-    sp.add_argument("--profile", choices=sorted(PROFILES), default="gems")
+    sp.add_argument("--profile", default="gems")
     sp.add_argument("--top", type=int, default=0)
     sp.add_argument("--dry-run", action="store_true")
     sp.add_argument("--out")
