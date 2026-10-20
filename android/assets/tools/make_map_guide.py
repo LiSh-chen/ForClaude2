@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Writes mapguide/layout_guide.png: a flat-colour layout sketch of the world (3:4) that is uploaded to
 Gemini together with the master-map prompt, so coastlines and regions land where the app expects them.
-Positions come from WorldMap.kt (fractions of width/height)."""
+Positions are fractions of width/height."""
 from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
