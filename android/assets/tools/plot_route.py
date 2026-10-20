@@ -49,7 +49,7 @@ for s, (x, y) in zip(stops, pts):
     elif s["kind"] == "transit":
         ax.scatter([x], [y], s=60, c="#c0392b", zorder=5)
         ax.text(x + 4000, y - 9000, s["name"], fontsize=11, color="#c0392b", zorder=6)
-ax.set_title("星霧大陸・台灣環島路線（順時針）  約 %.0f 公里" % stops[-1]["km"], fontsize=22, color="#3b2a1a", pad=14)
+ax.set_title("來台灣走走・台灣環島路線（順時針）  約 %.0f 公里" % stops[-1]["km"], fontsize=22, color="#3b2a1a", pad=14)
 
 # Legend, two columns
 lx = fig.add_axes([0.45, 0.02, 0.54, 0.96]); lx.axis("off"); lx.set_xlim(0, 2); lx.set_ylim(0, 1)

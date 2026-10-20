@@ -81,7 +81,7 @@ def style_a() -> str:
     for i, n in enumerate(NAV):
         nav += text(68 + i * 135, 1040, n, 15, "#3B2A1A", weight="bold" if i == 0 else "normal")
     body = (f'<image href="{data_uri(paper, "JPEG", quality=88)}" x="0" y="0" width="{W}" height="{H}"/>'
-            + text(270, 66, "星霧大陸", 32, "#3B2A1A", weight="bold", family="'WenQuanYi Zen Hei Mono','IPAGothic',serif")
+            + text(270, 66, "來台灣走走", 32, "#3B2A1A", weight="bold", family="'WenQuanYi Zen Hei Mono','IPAGothic',serif")
             + f'<image href="{data_uri(hero)}" x="0" y="82" width="540" height="280"/>'
             + f'<image href="{data_uri(compass)}" x="120" y="372" width="300" height="328"/>'
             + f'<path d="{arc(270, 372 + 328 * .57, 108, PROGRESS)}" fill="none" stroke="#5F8A52" stroke-width="12" stroke-linecap="round" filter="url(#inkFine)" opacity=".95"/>'
@@ -144,7 +144,7 @@ def style_b() -> str:
             + text(270, 598, f"/ {GOAL:,} 步", 16, "#6F5F5A") + text(270, 624, f"{round(PROGRESS * 100)}%", 18, "#D5705F", weight="bold"))
     blobs = ('<g filter="url(#wc)" opacity=".5"><circle cx="40" cy="470" r="70" fill="#F9D8CB"/><circle cx="520" cy="700" r="90" fill="#D6EAD9"/>'
              '<circle cx="470" cy="930" r="70" fill="#D7E3F3"/></g>')
-    body = ('<rect width="540" height="1080" fill="#FBF6EC"/>' + blobs + text(270, 62, "星霧大陸", 32, "#4B3F3B", weight="bold")
+    body = ('<rect width="540" height="1080" fill="#FBF6EC"/>' + blobs + text(270, 62, "來台灣走走", 32, "#4B3F3B", weight="bold")
             + scene + dial + cards + text(270, 888, "距離與熱量為估算", 12, "#8C7F78") + nav
             + '<rect width="540" height="1080" filter="url(#grain)"/>')
     return svg_doc(body, defs=WC)
@@ -187,7 +187,7 @@ def style_c() -> str:
             + text(270, 570, f"{STEPS:,}", 42, "#2E3E3B", weight="bold", family="'DejaVu Sans',sans-serif")
             + text(270, 598, f"/ {GOAL:,} 步", 15, "#7A5C48") + text(270, 622, f"{round(PROGRESS * 100)}%", 17, "#D9744B", weight="bold"))
     body = ('<rect width="540" height="1080" fill="#2A4B4F"/><path d="M0,0 H540 V460 Q270,540 0,460 Z" fill="#335C60"/>'
-            + text(270, 62, "星霧大陸", 32, "#F6EBD7", weight="bold") + scene + dial + cards + nav)
+            + text(270, 62, "來台灣走走", 32, "#F6EBD7", weight="bold") + scene + dial + cards + nav)
     return svg_doc(body, defs=SH)
 
 
@@ -237,7 +237,7 @@ def style_d() -> str:
             f'<path d="{arc(270, 565, 112, PROGRESS)}" fill="none" stroke="{ink}" stroke-width="2" stroke-dasharray="3 5" opacity=".9"/></g>'
             + text(270, 570, f"{STEPS:,}", 44, ink, weight="bold", family="'DejaVu Serif',serif")
             + text(270, 598, f"/ {GOAL:,} 步", 15, ink) + text(270, 622, f"{round(PROGRESS * 100)}%", 17, "#C8452F", weight="bold"))
-    body = ('<rect width="540" height="1080" fill="#E9DDC0"/>' + text(270, 62, "星霧大陸", 34, ink, weight="bold") + scene + dial + cards + nav
+    body = ('<rect width="540" height="1080" fill="#E9DDC0"/>' + text(270, 62, "來台灣走走", 34, ink, weight="bold") + scene + dial + cards + nav
             + '<rect width="540" height="1080" filter="url(#woodgrain)"/>')
     return svg_doc(body, defs=WOOD)
 
@@ -280,7 +280,7 @@ def style_e_small() -> str:
             + text(270, 574, f"{STEPS:,}", 46, "#deeed6", weight="bold", family="'DejaVu Sans Mono',monospace")
             + text(270, 602, f"/ {GOAL:,} 步", 16, "#6dc2ca") + text(270, 628, f"{round(PROGRESS * 100)}%", 20, "#dad45e", weight="bold"))
     body = (f'<g transform="scale({s})" shape-rendering="crispEdges"><rect width="540" height="1080" fill="#140c1c"/>'
-            + text(270, 64, "星霧大陸", 34, "#dad45e", weight="bold") + scene + dial + cards + nav + "</g>")
+            + text(270, 64, "來台灣走走", 34, "#dad45e", weight="bold") + scene + dial + cards + nav + "</g>")
     return svg_doc(body, 180, 360)
 
 

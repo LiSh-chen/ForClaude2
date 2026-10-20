@@ -1,6 +1,6 @@
 # 素材庫（asset library）
 
-星霧大陸需要的所有插圖與貼圖都列在 [`manifest.json`](manifest.json)：共 33 項，每項有用途、尺寸、是否透明、完整的 AI 提示詞。
+來台灣走走需要的所有插圖與貼圖都列在 [`manifest.json`](manifest.json)：共 33 項，每項有用途、尺寸、是否透明、完整的 AI 提示詞。
 
 ## 目前狀態
 - **程式產生（已完成）**：羊皮紙底紋、迷霧團、圖示底。由 `tools/make_procedural.py` 產生。
