@@ -6,7 +6,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class RouteTrackerTest {
-    private val route = TaiwanLoop.route
+    private val route = TaiwanLoop.route  // texts are not needed here
     private val stride = 0.7
 
     @Test

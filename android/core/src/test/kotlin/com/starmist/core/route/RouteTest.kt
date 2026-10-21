@@ -6,7 +6,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class RouteTest {
-    private val route = TaiwanLoop.route
+    init { TestPack.install() }
+
+    private val route = Routes.byId("taiwan_loop")!!
 
     @Test
     fun `every card blurb is exactly ten characters`() {
@@ -70,7 +72,7 @@ class RouteTest {
 
     @Test
     fun `the counter-clockwise loop has the same cards, stamps and two crossings`() {
-        val ccw = TaiwanLoop.counterClockwise
+        val ccw = Routes.byId("taiwan_loop_ccw")!!
         assertEquals(route.cards.map { it.first.id }.toSet(), ccw.cards.map { it.first.id }.toSet())
         assertEquals(route.supplies.map { it.first.id }.toSet(), ccw.supplies.map { it.first.id }.toSet())
         assertEquals("taipei101", ccw.cards.first().first.id)
@@ -86,7 +88,7 @@ class RouteTest {
 
     @Test
     fun `no stretch of the counter-clockwise loop is longer than forty-three kilometres either`() {
-        val ccw = TaiwanLoop.counterClockwise
+        val ccw = Routes.byId("taiwan_loop_ccw")!!
         val points = (ccw.cards.map { it.second } + ccw.supplies.map { it.second }).sorted()
         points.zipWithNext().forEach { (a, b) -> assertTrue(b - a <= 43.0, "gap ${"%.0f".format(b - a)} km after ${"%.0f".format(a)}") }
     }

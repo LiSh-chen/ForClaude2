@@ -5,7 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalContext
+import com.starmist.core.route.ContentPack
 import com.starmist.core.route.RouteDef
+import com.starmist.walker.content.ContentStore
 import java.io.DataInputStream
 import java.util.zip.GZIPInputStream
 
@@ -109,10 +111,8 @@ class TownTag(val tag: String, val fact: String)
 
 /** Three features per township, for the township card (res/raw/town_blurbs.txt: county|name|tag:fact|tag:fact|tag:fact). */
 fun loadTownBlurbs(context: Context): Map<String, List<TownTag>> {
-    val id = context.resources.getIdentifier("town_blurbs", "raw", context.packageName)
-    if (id == 0) return emptyMap()
     return runCatching {
-        context.resources.openRawResource(id).bufferedReader(Charsets.UTF_8).readLines()
+        ContentStore(context).lines(ContentPack.TOWNS)
             .filter { !it.startsWith("#") }
             .mapNotNull { l ->
                 val f = l.split('|')
@@ -136,10 +136,8 @@ fun rememberTownAreas(): TownAreas {
 
 /** "Did you know" lines of the landmark cards: `id|fact|fact` per line in res/raw/landmark_facts.txt. */
 fun loadLandmarkFacts(context: Context): Map<String, List<String>> {
-    val id = context.resources.getIdentifier("landmark_facts", "raw", context.packageName)
-    if (id == 0) return emptyMap()
     return runCatching {
-        context.resources.openRawResource(id).bufferedReader(Charsets.UTF_8).readLines()
+        ContentStore(context).lines(ContentPack.FACTS)
             .filter { it.isNotBlank() && !it.startsWith("#") }
             .mapNotNull { l ->
                 val f = l.split('|')

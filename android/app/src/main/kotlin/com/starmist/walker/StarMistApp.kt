@@ -3,18 +3,21 @@ package com.starmist.walker
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import com.starmist.walker.content.ContentStore
 import com.starmist.walker.data.AppDatabase
 import com.starmist.walker.data.RegionStore
 import com.starmist.walker.data.RouteStore
 import com.starmist.walker.data.SettingsStore
 import com.starmist.walker.data.StepRepository
 import com.starmist.walker.sensor.StepCounterReader
+import com.starmist.walker.work.ContentUpdateScheduler
 import com.starmist.walker.work.SnapshotScheduler
 
 /** Hand-wired dependencies; small enough that a DI framework would only add weight. */
 class AppContainer(context: Context) {
     private val appContext = context.applicationContext
     private val database = Room.databaseBuilder(appContext, AppDatabase::class.java, "starmist.db").build()
+    val content = ContentStore(appContext)
     val settings = SettingsStore(appContext)
     val routes = RouteStore(appContext)
     val regions = RegionStore(appContext)
@@ -29,6 +32,8 @@ class StarMistApp : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
+        container.content.applyToRoutes()
+        ContentUpdateScheduler.ensureScheduled(this)
         SnapshotScheduler.ensureScheduled(this)
     }
 }

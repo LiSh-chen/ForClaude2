@@ -26,6 +26,27 @@ jobs:
       - name: Unit tests (pure Kotlin core)
         run: ./gradlew -p core test
 
+  content-publish:
+    # The text pack the app downloads: published only after the tests (which check the content rules) pass.
+    needs: core-tests
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/claude/'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and publish the content pack
+        run: |
+          d=$(mktemp -d)
+          python3 android/content-tools/build_content.py "$d"
+          cd "$d"
+          git init -q -b content
+          git config user.name "content-publish"
+          git config user.email "content-publish@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Content pack for ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" content
+
   ui-previews:
     runs-on: ubuntu-latest
     permissions:

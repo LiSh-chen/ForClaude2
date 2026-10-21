@@ -67,8 +67,20 @@ object RouteStateCodec {
 
 /** The routes the app offers, by region. */
 object Routes {
+    private val base: List<RouteDef> get() = listOf(TaiwanLoop.route, TaiwanLoop.counterClockwise)
+
+    @Volatile private var shown: List<RouteDef>? = null
+
+    /**
+     * Puts the card names and lines from the content pack onto every route. Called when the app
+     * starts and whenever a new pack is stored; screens opened afterwards show the new text.
+     */
+    fun applyTexts(texts: Map<String, CardText>) {
+        shown = base.map { it.withCardTexts(texts) }
+    }
+
     /** Every route offered; the two directions of one loop share a [RouteDef.family]. */
-    val all: List<RouteDef> = listOf(TaiwanLoop.route, TaiwanLoop.counterClockwise)
+    val all: List<RouteDef> get() = shown ?: base
 
     /** Routes grouped by family, in the order they are offered. */
     val families: List<List<RouteDef>> get() = all.groupBy { it.family }.values.toList()

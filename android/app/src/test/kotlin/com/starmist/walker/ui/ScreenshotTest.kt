@@ -22,6 +22,12 @@ class ScreenshotTest {
     @get:Rule
     val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_5)
 
+    init {
+        com.starmist.core.route.Routes.applyTexts(
+            com.starmist.core.route.ContentPack.parseCards(java.io.File("src/main/res/raw/card_texts.txt").readLines()),
+        )
+    }
+
     private val forward = Routes.byId("taiwan_loop")!!
 
     @Composable
