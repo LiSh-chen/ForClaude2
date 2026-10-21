@@ -10,7 +10,6 @@ import com.starmist.walker.data.RouteStore
 import com.starmist.walker.data.SettingsStore
 import com.starmist.walker.data.StepRepository
 import com.starmist.walker.sensor.StepCounterReader
-import com.starmist.walker.work.ContentUpdateScheduler
 import com.starmist.walker.work.SnapshotScheduler
 
 /** Hand-wired dependencies; small enough that a DI framework would only add weight. */
@@ -33,7 +32,6 @@ class StarMistApp : Application() {
         super.onCreate()
         container = AppContainer(this)
         container.content.applyToRoutes()
-        ContentUpdateScheduler.ensureScheduled(this)
         SnapshotScheduler.ensureScheduled(this)
     }
 }

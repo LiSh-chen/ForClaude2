@@ -16,10 +16,6 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "0.1.0"
-        // A downloaded content pack is used only when it was published after this build; a newer
-        // build carries newer bundled text than any pack published before it.
-        buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis() / 1000}L")
-        buildConfigField("String", "CONTENT_URL", "\"https://raw.githubusercontent.com/LiSh-chen/ForClaude2/content/\"")
     }
 
     // A fixed debug key, so a newer APK installs over the old one and keeps its data. Without it every
@@ -51,7 +47,6 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 

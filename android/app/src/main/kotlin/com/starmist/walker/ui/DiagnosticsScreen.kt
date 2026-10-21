@@ -29,8 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.starmist.core.diagnostics.Issue
-import com.starmist.walker.container
-import com.starmist.walker.content.ContentStore
 import com.starmist.walker.data.DiagnosticsInfo
 import com.starmist.walker.tracking.StepService
 import kotlinx.coroutines.launch
@@ -124,7 +122,6 @@ fun DiagnosticsScreen(vm: AppViewModel, padding: PaddingValues, onOpenAppSetting
         ) { Text("開啟電池最佳化設定") }
 
         BatchTestCard(vm)
-        ContentCard()
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -190,37 +187,3 @@ private fun verdict(r: com.starmist.walker.sensor.BatchTestResult): String = whe
     else -> "結論：支援批次，事件帶著原本的時間，可以在背景還原走路的節奏。"
 }
 
-/** Shows which text pack is in use and lets the player check for a newer one right now. */
-@Composable
-private fun ContentCard() {
-    val context = LocalContext.current
-    val store = remember { context.container.content }
-    val scope = rememberCoroutineScope()
-    var message by remember { mutableStateOf<String?>(null) }
-    var published by remember { mutableStateOf(store.publishedAt) }
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("景點與地區文字", fontWeight = FontWeight.SemiBold)
-            Text(
-                if (published > 0) "使用已下載的內容（${java.text.SimpleDateFormat("yyyy/MM/dd HH:mm", java.util.Locale.getDefault()).format(java.util.Date(published * 1000))}）"
-                else "使用 App 內建的內容",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            message?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
-            OutlinedButton(
-                onClick = {
-                    message = "檢查中……"
-                    scope.launch {
-                        message = when (val r = store.refresh()) {
-                            ContentStore.Result.UpToDate -> "已是最新。"
-                            is ContentStore.Result.Updated -> "已更新；重新開啟 App 後生效。"
-                            is ContentStore.Result.Failed -> "沒有更新：${r.reason}"
-                        }
-                        published = store.publishedAt
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text("檢查內容更新") }
-        }
-    }
-}

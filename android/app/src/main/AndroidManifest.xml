@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- The only permission the step counter needs ("Physical activity" in system settings). -->
-    <!-- Only to fetch the public content pack (card and township texts); nothing is ever sent from the phone. -->
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <!-- Lets us take a first reading right after the phone restarts (the counter resets then). -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
