@@ -54,6 +54,8 @@ fun ZoomPanMap(
     background: Color = Vintage.parchmentLight,
     overlay: @Composable BoxScope.() -> Unit = {},
     onTap: ((Offset) -> Unit)? = null,
+    /** Drawn above [content] in a layer of its own, so something that animates (the walker) does not make the whole map redraw. */
+    top: (DrawScope.(w: Float, h: Float, zoom: Float, view: Rect) -> Unit)? = null,
     content: DrawScope.(w: Float, h: Float, zoom: Float, view: Rect) -> Unit,
 ) {
     var zoom by remember(aspect) { mutableFloatStateOf(initialZoom) }
@@ -114,6 +116,15 @@ fun ZoomPanMap(
             val c = clamp(center, zoom)
             val view = Rect(c.x * w - size.width / 2f, c.y * h - size.height / 2f, c.x * w + size.width / 2f, c.y * h + size.height / 2f)
             translate(size.width / 2f - c.x * w, size.height / 2f - c.y * h) { content(w, h, zoom, view) }
+        }
+        if (top != null) Canvas(Modifier.fillMaxSize()) {
+            val w0 = min(size.width, size.height * aspect)
+            val h0 = w0 / aspect
+            val w = w0 * zoom
+            val h = h0 * zoom
+            val c = clamp(center, zoom)
+            val view = Rect(c.x * w - size.width / 2f, c.y * h - size.height / 2f, c.x * w + size.width / 2f, c.y * h + size.height / 2f)
+            translate(size.width / 2f - c.x * w, size.height / 2f - c.y * h) { top(w, h, zoom, view) }
         }
         overlay()
         Box(

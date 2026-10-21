@@ -24,7 +24,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.delay
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -123,6 +126,26 @@ fun HomeScreen(
     )
 }
 
+/**
+ * True for a few seconds after the step count goes up a little, so the traveller walks only while the player does.
+ * A big jump (the count loading when the app opens, or a batch of steps arriving at once) is not walking.
+ */
+@Composable
+private fun rememberWalking(steps: Long): Boolean {
+    var last by remember { mutableLongStateOf(steps) }
+    var walking by remember { mutableStateOf(false) }
+    LaunchedEffect(steps) {
+        val added = steps - last
+        last = steps
+        if (added in 1..25) {
+            walking = true
+            delay(4_000)
+            walking = false
+        }
+    }
+    return walking
+}
+
 /** The home page as plain data in, so it can also be drawn without the app's state (screenshots). */
 @Composable
 internal fun HomeContent(
@@ -147,6 +170,7 @@ internal fun HomeContent(
 ) {
     var regionMode by rememberSaveable { mutableStateOf(initialRegionMode) }
     var picked by rememberSaveable { mutableStateOf(-1) }
+    val walking = rememberWalking(steps)
     val shown = if (picked >= 0) picked else currentTown
     Column(Modifier.padding(padding).padding(horizontal = 10.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (!granted) PermissionCard(onRequestPermission, onOpenAppSettings)
@@ -164,6 +188,7 @@ internal fun HomeContent(
                         map.route, map.walkedKm, Modifier.fillMaxWidth(), initialZoom = map.zoom,
                         regionMode = regionMode, selectedTown = if (regionMode) shown else -1,
                         onTapTown = { id -> picked = if (id >= 0) id else -1 },
+                        walking = walking,
                     )
                     ModeSwitch(regionMode, Modifier.align(Alignment.TopEnd).padding(8.dp)) { regionMode = it; if (!it) picked = -1 }
                 }

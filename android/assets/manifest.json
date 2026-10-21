@@ -32,20 +32,6 @@
       "notes": "由 tools/make_procedural.py 產生。"
     },
     {
-      "id": "traveller_fox",
-      "category": "character",
-      "title": "旅人：小狐（舊，待 traveller_walker 取代後刪除）",
-      "usedIn": "首頁／回顧視窗的角色",
-      "size": [
-        512,
-        768
-      ],
-      "alpha": true,
-      "source": "ai",
-      "prompt": "A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, with fox ears, a wide-brimmed hat tucked behind them, a warm orange wash coat, and a small leather satchel on the back. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
-      "notes": "面向右；腳貼底邊；全身。 已由 SVG 手繪完成（svg/traveller_fox.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/traveller_fox.png。"
-    },
-    {
       "id": "icon_foreground",
       "category": "icon",
       "title": "App 圖示前景",
@@ -732,20 +718,6 @@
       "notes": "海岸線要照 mapguide/real_map_guide.png；沒有文字、沒有邊框。 已完成並接進 App，不需要再做；製作紀錄在 archive/map_pipeline/。"
     },
     {
-      "id": "traveller_walker",
-      "category": "character",
-      "title": "旅人：背包行者（新角色）",
-      "usedIn": "環島地圖上的目前位置標記、收卡視窗（取代舊的小狐）",
-      "size": [
-        512,
-        768
-      ],
-      "alpha": true,
-      "source": "ai",
-      "prompt": "A friendly Taiwanese traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge: a bucket sun hat, a light linen shirt with rolled sleeves, a medium backpack with a rolled sleeping mat, comfortable walking shoes and a small water bottle clipped to the strap. Gender-neutral, simple storybook proportions, a relaxed cheerful stride. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
-      "notes": "面向右；腳貼底邊；全身；不要奇幻元素（沒有動物耳朵、披風）。完成後把 generated/traveller_walker.png 匯出，再把 RouteVisuals.kt 的 rememberArt(\"traveller_fox\") 改成 traveller_walker，並刪除 traveller_fox。"
-    },
-    {
       "id": "collection_slot_locked",
       "category": "ui",
       "title": "收藏格：尚未收集",
@@ -786,6 +758,48 @@
       "source": "ai",
       "prompt": "A wide panoramic illustration of the Taiwan coastline drawn as an old travel map vignette: green mountains in the middle, a dotted walking route circling the island, small sketches of a lighthouse, a temple roof, a night-market lantern string and a steam-train station along the route, a small traveller with a backpack in the foreground. Soft irregular edges fading into aged parchment, 1024x500 landscape, calm and warm mood.",
       "notes": "左右留白約 10%（商店會裁切）；不要文字，App 名稱「來台灣走走」由後製加上。"
+    },
+    {
+      "id": "traveller_body",
+      "category": "character",
+      "title": "旅人：身體（含帽子、披風、背包）",
+      "usedIn": "環島地圖上的目前位置（走路動畫的三層）",
+      "size": [
+        411,
+        400
+      ],
+      "alpha": true,
+      "source": "manual",
+      "prompt": "（由使用者的角色設定圖 generated/traveller_sheet.jpg 拆層而成，不需要再用 AI 出圖；做法見 tools/traveller_rig/）",
+      "notes": "三張同尺寸、同座標，疊在一起就是完整角色，面向右。"
+    },
+    {
+      "id": "traveller_staff",
+      "category": "character",
+      "title": "旅人：手杖與提燈",
+      "usedIn": "環島地圖上的目前位置（走路動畫的三層）",
+      "size": [
+        411,
+        400
+      ],
+      "alpha": true,
+      "source": "manual",
+      "prompt": "（由使用者的角色設定圖 generated/traveller_sheet.jpg 拆層而成，不需要再用 AI 出圖；做法見 tools/traveller_rig/）",
+      "notes": "三張同尺寸、同座標，疊在一起就是完整角色，面向右。"
+    },
+    {
+      "id": "traveller_hand",
+      "category": "character",
+      "title": "旅人：握杖的手",
+      "usedIn": "環島地圖上的目前位置（走路動畫的三層）",
+      "size": [
+        411,
+        400
+      ],
+      "alpha": true,
+      "source": "manual",
+      "prompt": "（由使用者的角色設定圖 generated/traveller_sheet.jpg 拆層而成，不需要再用 AI 出圖；做法見 tools/traveller_rig/）",
+      "notes": "三張同尺寸、同座標，疊在一起就是完整角色，面向右。"
     }
   ]
 }

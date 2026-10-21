@@ -7,6 +7,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -464,19 +467,72 @@ internal fun DrawScope.drawRealMap(
     }
     queue.sortedByDescending { it.priority }.forEach { it.place() }
 
-    // The walker, on top of everything.
-    if (pin != null && !dotMode) {
-        drawOval(Color.Black.copy(alpha = 0.18f), Offset(p.x - pinWidth * 0.3f, p.y - 3.dp.toPx()), Size(pinWidth * 0.6f, 6.dp.toPx()))
-        drawImage(
-            pin,
-            dstOffset = IntOffset((p.x - pinWidth / 2f).toInt(), (p.y - pinHeight + 2.dp.toPx()).toInt()),
-            dstSize = IntSize(pinWidth.toInt(), pinHeight.toInt()),
-        )
-    } else {
+    // The walker is drawn by [drawWalker] in a layer above this one (see ZoomPanMap.top).
+}
+
+/** The traveller in three layers so it can walk: body (with hat, cape and pack), staff with its lantern, and the hand that holds the staff. */
+internal class WalkerArt(val body: ImageBitmap, val staff: ImageBitmap, val hand: ImageBitmap)
+
+@Composable
+internal fun rememberWalkerArt(): WalkerArt? {
+    val body = rememberArt("traveller_body")
+    val staff = rememberArt("traveller_staff")
+    val hand = rememberArt("traveller_hand")
+    return if (body != null && staff != null && hand != null) WalkerArt(body, staff, hand) else null
+}
+
+// Where things are in the traveller pictures, as fractions of their size.
+private const val HAND_X = 0.783f      // the staff swings about the hand
+private const val HAND_Y = 0.540f
+private const val FEET_X = 0.501f      // the body tilts about its feet
+private const val FEET_Y = 0.975f
+private const val LANTERN_X = 0.860f
+private const val LANTERN_Y = 0.331f
+
+/**
+ * Draws the walker standing at [p]. With [walking] it takes steps: the body hops and rocks from foot to
+ * foot, squashing a little when it lands, the staff swings a beat behind, and the lantern glows
+ * brighter. [phase] runs 0 to 1 once per pair of steps. Standing still it is a plain picture, so
+ * nothing needs redrawing.
+ */
+internal fun DrawScope.drawWalker(p: Offset, w: Float, art: WalkerArt?, phase: Float, walking: Boolean) {
+    if (art == null || w < 1700f) {
         drawCircle(Color(0xFFFF8A00).copy(alpha = 0.25f), 13.dp.toPx(), p)
         drawCircle(Color(0xFFFF8A00).copy(alpha = 0.45f), 8.dp.toPx(), p)
         drawCircle(Color.White, 5.dp.toPx(), p)
         drawCircle(Color(0xFFFF8A00), 3.2.dp.toPx(), p)
+        return
+    }
+    val height = 60.dp.toPx() * (w / 4500f).coerceIn(0.4f, 1f)
+    val width = height * art.body.width / art.body.height
+    val turn = (phase * 2.0 * Math.PI).toFloat()
+    val rock = if (walking) kotlin.math.sin(turn) else 0f                       // -1..1, foot to foot
+    val hop = if (walking) kotlin.math.abs(kotlin.math.sin(turn)) else 0f       // 0 on each landing, 1 mid-step
+    val lift = height * 0.05f * hop
+    val squash = if (walking) 1f - hop else 0f                                  // how recently it landed
+
+    drawOval(Color.Black.copy(alpha = 0.18f - 0.06f * hop), Offset(p.x - width * 0.3f * (1f - 0.12f * hop), p.y - 3.dp.toPx()), Size(width * 0.6f * (1f - 0.12f * hop), 6.dp.toPx()))
+
+    val feet = Offset(width * FEET_X, height * FEET_Y)
+    val hand = Offset(width * HAND_X, height * HAND_Y)
+    translate(p.x - width / 2f, p.y - height + 2.dp.toPx() - lift) {
+        withTransform({
+            rotate(3.5f * rock, feet)
+            scale(1f + 0.035f * squash, 1f - 0.045f * squash, feet)
+        }) {
+            drawImage(art.body, dstSize = IntSize(width.toInt(), height.toInt()))
+            val swing = if (walking) 8f * kotlin.math.sin(turn - 0.9f) else 0f
+            withTransform({ rotate(swing, hand) }) {
+                drawImage(art.staff, dstSize = IntSize(width.toInt(), height.toInt()))
+                val glow = if (walking) 0.30f + 0.15f * kotlin.math.sin(turn * 2f) else 0.22f
+                val lantern = Offset(width * LANTERN_X, height * LANTERN_Y)
+                drawCircle(
+                    Brush.radialGradient(listOf(Color(0xFFFFE9A8).copy(alpha = glow), Color.Transparent), lantern, height * 0.16f),
+                    height * 0.16f, lantern,
+                )
+            }
+            drawImage(art.hand, dstSize = IntSize(width.toInt(), height.toInt()))
+        }
     }
 }
 

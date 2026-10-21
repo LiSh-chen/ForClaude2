@@ -34,6 +34,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.State
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,10 +59,15 @@ private val STAMP_INK = Color(0xFFB04A3A)
 fun RouteMapView(
     route: RouteDef, walkedKm: Double, modifier: Modifier = Modifier, initialZoom: Float? = null,
     regionMode: Boolean = false, selectedTown: Int = -1, onTapTown: ((Int) -> Unit)? = null,
+    /** True while steps are being counted: the traveller walks. */
+    walking: Boolean = false,
 ) {
     val measurer = rememberMapMeasurer()
     val data = rememberRealMapData(route)
-    val pin = rememberArt("traveller_fox")
+    val walker = rememberWalkerArt()
+    val phase: State<Float> = if (walking) {
+        rememberInfiniteTransition(label = "walk").animateFloat(0f, 1f, infiniteRepeatable(tween(1000, easing = LinearEasing)), label = "phase")
+    } else remember { mutableFloatStateOf(0f) }
     val base = rememberArt("real_map_base")
     val tiles = rememberMapTiles()
     val areas = rememberTownAreas()
@@ -73,7 +85,8 @@ fun RouteMapView(
         onTap = if (regionMode && onTapTown != null) { u ->
             onTapTown(areas.find(MAP_LAT_MAX - u.y.toDouble() * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + u.x.toDouble() * (MAP_LON_MAX - MAP_LON_MIN)))
         } else null,
-    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, pin, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown) }
+        top = { w, h, _, _ -> drawWalker(Offset(here.unit().x * w, here.unit().y * h), w, walker, phase.value, walking) },
+    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown) }
 }
 
 /** Small round picture for a card: the painted card art if the asset library has it, a letter tile otherwise. */
