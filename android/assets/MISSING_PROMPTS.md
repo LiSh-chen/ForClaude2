@@ -1,4 +1,4 @@
-# 還缺的圖片提示詞（共 28 張）
+# 還缺的圖片提示詞（共 23 張）
 
 ## 怎麼用
 
@@ -58,17 +58,6 @@ Create an image with aspect ratio 16:9. Vintage botanical field-guide illustrati
 
 ---
 
-### `card_taimali` — 景點卡：太麻里
-
-- 用在：景點卡「太麻里」：二〇〇〇年迎曙光之地
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A coastal railway platform at dawn, a golden sun disc just rising out of the Pacific, orange light on the water, a slope of orange daylilies. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
 ### `card_shouka` — 景點卡：壽卡
 
 - 用在：景點卡「壽卡」：屏東臺東交界山口驛站
@@ -76,50 +65,6 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ```
 Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A cyclists' rest stop at a high mountain pass on a winding coastal-mountain road, a Paiwan-style carved stone statue of a warrior at the entrance, clouds in the valley, forest on both sides. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
-### `card_maobitou` — 景點卡：貓鼻頭
-
-- 用在：景點卡「貓鼻頭」：狀似蹲貓的波浪狀礁岩
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A limestone reef coast with wave-shaped rocks and one rock that looks like a crouching cat, turquoise sea, blue sky. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
-### `card_nmmba` — 景點卡：海生館
-
-- 用在：景點卡「海生館」：海底隧道中看魚群環繞
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A curved glass tunnel under a huge aquarium tank, a whale shark, rays and schools of fish circling overhead, deep blue light, small visitors looking up. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
-### `card_pier2` — 景點卡：高雄駁二
-
-- 用在：景點卡「高雄駁二」：名字來自二號接駁碼頭
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Old harbour warehouses turned into art spaces, colourful sculptures, a rail track, cranes and the sea behind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
-### `card_lotuspond` — 景點卡：蓮池潭
-
-- 用在：景點卡「蓮池潭」：龍虎塔要龍口進虎口出
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A lotus pond with a pair of ornate pagodas, a dragon-head entrance on one and a tiger-head exit on the other, red and green lacquer, a pavilion reflected in the water. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
 ```
 
 ---
