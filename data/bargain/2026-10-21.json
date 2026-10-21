@@ -1,0 +1,188 @@
+{
+ "date": "2026-10-21",
+ "params_version": 1,
+ "picks": [
+  {
+   "ticker": "ON",
+   "name": "ON Semiconductor Corporation",
+   "zh_name": "onsemi",
+   "market": "US",
+   "sector": "power_semis",
+   "rank": 1,
+   "entry_price": 75.62,
+   "entry_date": "2026-10-20",
+   "composite": 60.74,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 71.9,
+    "growth": 66.9,
+    "valuation": 88.9,
+    "momentum": 6.0,
+    "news": 40.0
+   },
+   "target": {
+    "base": 98.9,
+    "bull": 137.39,
+    "bear": 41.17,
+    "ev": 92.16,
+    "confidence": "中",
+    "upside": 0.3078,
+    "ev_upside": 0.2188,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 83.03,
+      "weight": 0.4,
+      "upside": 0.098
+     },
+     "peg": {
+      "value": 136.66,
+      "weight": 0.15,
+      "upside": 0.8072
+     },
+     "dcf": {
+      "value": 96.02,
+      "weight": 0.2,
+      "upside": 0.2698
+     },
+     "consensus": {
+      "value": 103.93,
+      "weight": 0.25,
+      "upside": 0.3743
+     }
+    }
+   },
+   "stop": 66.35,
+   "fundamentals": {
+    "market_cap": 29440274432,
+    "pe_ttm": 48.7871,
+    "pe_fwd": 16.6641,
+    "peg": 0.16,
+    "roe": 0.0831,
+    "gross_margin": 0.4278,
+    "op_margin": 0.1953,
+    "net_margin": 0.1017,
+    "rev_growth": 0.092,
+    "eps_growth": 0.366,
+    "de": 0.6506,
+    "beta": 2.052,
+    "target_mean": 103.9259,
+    "n_analysts": 27,
+    "fcf_margin": 0.2673
+   },
+   "tech": {
+    "ret_1m": 0.054378157550185824,
+    "ret_3m": -0.18098124935650484,
+    "rel_3m": -0.2094665145658079,
+    "dist200": -0.07580768693910722,
+    "vol_ann": 0.5342239664339477
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 65.7,
+   "facts": {
+    "from_high": -0.4354,
+    "pos52": 0.3451,
+    "bounce20": 0.05,
+    "ret_1m": 0.0544,
+    "dist200": -0.0758,
+    "pe_discount": 0.1639,
+    "eps_up": 1.9277,
+    "rev_growth": 0.092,
+    "upside": 0.3078
+   }
+  },
+  {
+   "ticker": "SYK",
+   "name": "Stryker Corporation",
+   "zh_name": "Stryker",
+   "market": "US",
+   "sector": "aging_care",
+   "rank": 2,
+   "entry_price": 304.4,
+   "entry_date": "2026-10-20",
+   "composite": 69.05,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 83.9,
+    "growth": 70.6,
+    "valuation": 69.5,
+    "momentum": 29.9,
+    "news": 40.0
+   },
+   "target": {
+    "base": 375.44,
+    "bull": 495.71,
+    "bear": 195.02,
+    "ev": 354.39,
+    "confidence": "中",
+    "upside": 0.2334,
+    "ev_upside": 0.1642,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 316.85,
+      "weight": 0.4,
+      "upside": 0.0409
+     },
+     "peg": {
+      "value": 501.8,
+      "weight": 0.15,
+      "upside": 0.6485
+     },
+     "dcf": {
+      "value": 413.86,
+      "weight": 0.2,
+      "upside": 0.3596
+     },
+     "consensus": {
+      "value": 362.62,
+      "weight": 0.25,
+      "upside": 0.1912
+     }
+    }
+   },
+   "stop": 284.2,
+   "fundamentals": {
+    "market_cap": 116759633920,
+    "pe_ttm": 31.544,
+    "pe_fwd": 18.2689,
+    "peg": 1.38,
+    "roe": 0.1651,
+    "gross_margin": 0.6559,
+    "op_margin": 0.2702,
+    "net_margin": 0.1443,
+    "rev_growth": 0.094,
+    "eps_growth": 0.441,
+    "de": 0.6439,
+    "beta": 0.781,
+    "target_mean": 362.6154,
+    "n_analysts": 26,
+    "fcf_margin": 0.159
+   },
+   "tech": {
+    "ret_1m": 0.11369465680902024,
+    "ret_3m": -0.012534070249954787,
+    "rel_3m": -0.041019335459257844,
+    "dist200": -0.061557996582347396,
+    "vol_ann": 0.35391726371223725
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 61.1,
+   "facts": {
+    "from_high": -0.2076,
+    "pos52": 0.308,
+    "bounce20": 0.132,
+    "ret_1m": 0.1137,
+    "dist200": -0.0616,
+    "pe_discount": 0.0151,
+    "eps_up": 0.7267,
+    "rev_growth": 0.094,
+    "upside": 0.2334
+   }
+  }
+ ]
+}
