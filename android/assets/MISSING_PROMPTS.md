@@ -1,4 +1,4 @@
-# 還缺的圖片提示詞（共 22 張）
+# 還缺的圖片提示詞（共 18 張）
 
 ## 怎麼用
 
@@ -58,17 +58,6 @@ Create an image with aspect ratio 16:9. Vintage botanical field-guide illustrati
 
 ---
 
-### `card_qiaotou` — 景點卡：橋頭糖廠
-
-- 用在：景點卡「橋頭糖廠」：糖廠鐵道還能搭五分車
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old sugar refinery with brick chimneys, a small narrow-gauge sugar train running through a long green tunnel of trees, sugar-cane fields. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
 ### `card_anping` — 景點卡：安平古堡
 
 - 用在：景點卡「安平古堡」：鄭成功收復的荷蘭古堡
@@ -76,17 +65,6 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ```
 Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A stone-and-brick fort with a red-brick watchtower on a hill, old banyan trees, harbour behind, 17th-century Dutch style. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
-### `card_jingzijiao` — 景點卡：井仔腳鹽田
-
-- 用在：景點卡「井仔腳鹽田」：瓦盤鹽田池底鋪碎瓦片
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Tile-paved salt fields: a grid of terracotta-tile pans reflecting the sky, a small salt worker's hut, a wide flat coastal plain. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
 ```
 
 ---
@@ -135,17 +113,6 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ---
 
-### `card_xiluo` — 景點卡：西螺大橋
-
-- 用在：景點卡「西螺大橋」：長近兩公里的鋼桁大橋
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A long steel truss bridge over a broad river with a few pedestrians and bicycles, farmland, evening light. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
 ### `card_lukang` — 景點卡：鹿港老街
 
 - 用在：景點卡「鹿港老街」：摸乳巷窄處約六十公分
@@ -153,17 +120,6 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ```
 Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A very narrow stone-paved alley between old brick houses, a half-moon well set into a wall, hanging lanterns. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
-### `card_roundhouse` — 景點卡：彰化扇形車庫
-
-- 用在：景點卡「彰化扇形車庫」：人稱火車頭旅館的車庫
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A fan-shaped railway roundhouse with locomotives pointing out from a central turntable, steam, brick building. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
 ```
 
 ---
