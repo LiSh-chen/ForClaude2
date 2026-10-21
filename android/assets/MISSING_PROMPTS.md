@@ -1,4 +1,4 @@
-# 還缺的圖片提示詞（共 34 張）
+# 還缺的圖片提示詞（共 33 張）
 
 ## 怎麼用
 
@@ -6,22 +6,11 @@
 2. 比例、背景都已寫在提示詞裡。一律**不要有文字**；圖裡出現字就重生成。
 3. 需要透明的（旅行者、收藏格外框、App 圖示）提示詞已要求純白底，之後由工具去背；景點卡是一般圖，不用去背。
 4. 存成 `android/assets/generated/<id>.png`（檔名用下面標題裡的 id），傳回來給我，我匯出並接進 App。
-5. **建議先做 `traveller_walker` 和一張景點卡（例如 `card_lotuspond`）當試風格**，滿意再做其餘。
+5. 旅行者角色已用你的造型，不在這份裡；它的走路動畫圖另見 `WALK_CYCLE_PROMPT.md`。建議先做一張景點卡（例如 `card_lotuspond`）確認風格，滿意再做其餘。
 
 ## 另外：App 圖示要兩張
 
 `icon_foreground` 要出**彩色版**和**單色版**（同構圖，單色版全部改成單一深色，給手機「主題圖示」用）；單色版請在提示詞最後加一句：`Single flat dark brown colour only, no gradients, no other colours.`
-
----
-
-### `traveller_walker` — 旅人：背包行者（新角色）
-
-- 用在：環島地圖上的目前位置標記、收卡視窗（取代舊的小狐）
-- 尺寸：512×768　需要透明（純白底，之後去背）
-
-```
-Create an image with aspect ratio 3:4. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A friendly Taiwanese traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge: a bucket sun hat, a light linen shirt with rolled sleeves, a medium backpack with a rolled sleeping mat, comfortable walking shoes and a small water bottle clipped to the strap. Gender-neutral, simple storybook proportions, a relaxed cheerful stride. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
-```
 
 ---
 

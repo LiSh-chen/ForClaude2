@@ -471,15 +471,19 @@ internal fun DrawScope.drawRealMap(
 }
 
 /** The traveller in three layers so it can walk: body (with hat, cape and pack), staff with its lantern, and the hand that holds the staff. */
-internal class WalkerArt(val body: ImageBitmap, val staff: ImageBitmap, val hand: ImageBitmap)
+/** [frames] is a drawn walk cycle (art_traveller_walk_0..5); when it is missing the layers below are moved by the code instead. */
+internal class WalkerArt(val body: ImageBitmap, val staff: ImageBitmap, val hand: ImageBitmap, val frames: List<ImageBitmap> = emptyList())
 
 @Composable
 internal fun rememberWalkerArt(): WalkerArt? {
     val body = rememberArt("traveller_body")
     val staff = rememberArt("traveller_staff")
     val hand = rememberArt("traveller_hand")
-    return if (body != null && staff != null && hand != null) WalkerArt(body, staff, hand) else null
+    val frames = (0 until WALK_FRAMES).map { rememberArt("traveller_walk_$it") }
+    return if (body != null && staff != null && hand != null) WalkerArt(body, staff, hand, frames.filterNotNull().takeIf { it.size == WALK_FRAMES } ?: emptyList()) else null
 }
+
+private const val WALK_FRAMES = 6
 
 // Where things are in the traveller pictures, as fractions of their size.
 private const val HAND_X = 0.783f      // the staff swings about the hand
@@ -515,6 +519,14 @@ internal fun DrawScope.drawWalker(p: Offset, w: Float, art: WalkerArt?, phase: F
 
     val feet = Offset(width * FEET_X, height * FEET_Y)
     val hand = Offset(width * HAND_X, height * HAND_Y)
+    if (walking && art.frames.isNotEmpty()) {
+        // A drawn walk cycle: one picture per pose, the whole cycle once per phase.
+        val frame = art.frames[(phase * art.frames.size).toInt().coerceIn(0, art.frames.size - 1)]
+        translate(p.x - width / 2f, p.y - height + 2.dp.toPx()) {
+            drawImage(frame, dstSize = IntSize(width.toInt(), height.toInt()))
+        }
+        return
+    }
     translate(p.x - width / 2f, p.y - height + 2.dp.toPx() - lift) {
         withTransform({
             rotate(3.5f * rock, feet)
