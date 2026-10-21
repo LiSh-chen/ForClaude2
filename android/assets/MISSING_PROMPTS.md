@@ -1,4 +1,4 @@
-# 還缺的圖片提示詞（共 33 張）
+# 還缺的圖片提示詞（共 28 張）
 
 ## 怎麼用
 
@@ -58,17 +58,6 @@ Create an image with aspect ratio 16:9. Vintage botanical field-guide illustrati
 
 ---
 
-### `card_guanshan` — 景點卡：關山
-
-- 用在：景點卡「關山」：水牛稻田間騎環鎮單車
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A riverside bicycle path looping around a small valley town, a few cyclists, water buffalo standing in green rice paddies, mountains on both sides. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
 ### `card_taimali` — 景點卡：太麻里
 
 - 用在：景點卡「太麻里」：二〇〇〇年迎曙光之地
@@ -91,28 +80,6 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ---
 
-### `card_checheng` — 景點卡：車城福安宮
-
-- 用在：景點卡「車城福安宮」：福德正神穿龍袍戴官帽
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A traditional Taiwanese Earth God temple with a curved swallowtail roof, a very tall four-storey golden-paper burner beside it, red lanterns, incense smoke, and inside the doorway an Earth God statue dressed in a dragon robe and an official's hat, tropical trees behind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
-### `card_hengchun` — 景點卡：恆春古城
-
-- 用在：景點卡「恆春古城」：恆春古城四座城門仍在
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old stone city gate with a tower in a thick stone wall, a quiet street passing through the gate arch, a small bus waiting to pass, tropical trees. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
 ### `card_maobitou` — 景點卡：貓鼻頭
 
 - 用在：景點卡「貓鼻頭」：狀似蹲貓的波浪狀礁岩
@@ -131,28 +98,6 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ```
 Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A curved glass tunnel under a huge aquarium tank, a whale shark, rays and schools of fish circling overhead, deep blue light, small visitors looking up. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
-### `card_fangliao` — 景點卡：枋寮
-
-- 用在：景點卡「枋寮」：月台邊近看火車轉車盤
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A small railway station platform with a round railway turntable in the foreground and a locomotive being turned on it, a coast line and mountain line meeting behind, palm trees. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
-### `card_donggang` — 景點卡：東港
-
-- 用在：景點卡「東港」：東港迎王平安祭典主廟
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A fishing harbour with fishing boats, a bluefin tuna on the dock, a colourful temple procession carrying a ceremonial boat. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
 ```
 
 ---
