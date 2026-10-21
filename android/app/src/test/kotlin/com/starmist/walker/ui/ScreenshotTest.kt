@@ -91,4 +91,18 @@ class ScreenshotTest {
     @Test fun station_stamp() = paparazzi.snapshot {
         StarMistTheme { Box(Modifier.fillMaxSize().background(Vintage.parchment).padding(16.dp)) { StationStamp("鳳林", "1913", Modifier.padding(8.dp)) } }
     }
+
+    /** The traveller standing, then the six frames of the drawn walk cycle, side by side. */
+    @Test fun walker_frames() = paparazzi.snapshot {
+        StarMistTheme {
+            val art = rememberWalkerArt()
+            androidx.compose.foundation.Canvas(Modifier.fillMaxSize().background(Vintage.parchment)) {
+                val colW = size.width / 7f
+                for (i in 0..6) {
+                    val p = androidx.compose.ui.geometry.Offset(colW * (i + 0.5f), size.height * 0.5f)
+                    drawWalker(p, 4500f, art, if (i == 0) 0f else (i - 1) / 6f + 0.01f, walking = i > 0)
+                }
+            }
+        }
+    }
 }

@@ -14,8 +14,9 @@ import cv2, numpy as np
 from PIL import Image
 
 CANVAS = (411, 400)           # same as art_traveller_body.webp
-FEET_Y, CENTER_X = 0.975, 0.501
-FIT_H = 0.97 * CANVAS[1] * 0.96  # tallest frame uses about the same height as the standing picture
+FEET_Y = 0.975
+RES = pathlib.Path(__file__).resolve().parents[3] / "app/src/main/res/drawable-nodpi"
+POCKET_MIN_PIXELS = 3000       # at the sheet's own resolution (cells of about 650 px)
 
 def cut_out(cell: np.ndarray) -> np.ndarray:
     """RGBA of one cell: white connected to the border becomes transparent."""
@@ -23,12 +24,32 @@ def cut_out(cell: np.ndarray) -> np.ndarray:
     n, lab = cv2.connectedComponents(white, connectivity=4)
     border = set(lab[0, :]) | set(lab[-1, :]) | set(lab[:, 0]) | set(lab[:, -1])
     bg = np.isin(lab, [b for b in border if b != 0]) & (white > 0)
+    # Pockets of background fully enclosed by the drawing (between the hat brim and the staff, say) are
+    # not reached from the border. They are big and almost pure white; the body's highlights are small.
+    pure = (cell.min(axis=2) > 245).astype(np.uint8)
+    n2, lab2, stats2, _ = cv2.connectedComponentsWithStats(pure, connectivity=4)
+    for i in range(1, n2):
+        if stats2[i, 4] > POCKET_MIN_PIXELS:
+            bg |= cv2.dilate((lab2 == i).astype(np.uint8), np.ones((3, 3), np.uint8)) > 0
     alpha = cv2.GaussianBlur(np.where(bg, 0, 255).astype(np.uint8), (3, 3), 0)
     return np.dstack([cell, alpha])
 
 def bbox(rgba: np.ndarray):
     ys, xs = np.where(rgba[..., 3] > 40)
     return xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
+
+def standing_reference():
+    """Height of the standing picture (body + staff + hand) and where its body sits, so frames match it."""
+    layers = [Image.open(RES / f"art_traveller_{n}.webp").convert("RGBA") for n in ("body", "staff", "hand")]
+    im = layers[0]
+    for l in layers[1:]:
+        im = Image.alpha_composite(im, l)
+    a = np.array(im)
+    ys, xs = np.where(a[..., 3] > 40)
+    top, bottom = ys.min(), ys.max() + 1
+    low = a[(top + bottom) // 2:, :, 3] > 40
+    cx = np.where(low.any(axis=0))[0]
+    return bottom - top, (cx.min() + cx.max()) / 2
 
 def main() -> None:
     ap = argparse.ArgumentParser()
@@ -45,9 +66,10 @@ def main() -> None:
             cell = cut_out(rgb[r * ch:(r + 1) * ch, c * cw:(c + 1) * cw])
             x0, y0, x1, y1 = bbox(cell)
             frames.append(cell[y0:y1, x0:x1])
-    scale = FIT_H / max(f.shape[0] for f in frames)
-    # width limit: the widest frame must fit the canvas with a margin for the staff swing
-    scale = min(scale, 0.92 * CANVAS[0] / max(f.shape[1] for f in frames))
+    target_h, target_cx = standing_reference()
+    # one common scale: the average frame is as tall as the standing picture, so nothing jumps when it starts to walk
+    scale = target_h / (sum(f.shape[0] for f in frames) / len(frames))
+    scale = min(scale, 0.96 * CANVAS[0] / max(f.shape[1] for f in frames))
     out = pathlib.Path(a.out); out.mkdir(parents=True, exist_ok=True)
     tiles = []
     for i, f in enumerate(frames):
@@ -59,7 +81,7 @@ def main() -> None:
         cx = np.where(low.any(axis=0))[0]
         body_c = (cx.min() + cx.max()) / 2 if len(cx) else fw / 2
         canvas = np.zeros((CANVAS[1], CANVAS[0], 4), np.uint8)
-        ox = int(round(CANVAS[0] * CENTER_X - body_c)); oy = int(round(CANVAS[1] * FEET_Y - fh))
+        ox = int(round(target_cx - body_c)); oy = int(round(CANVAS[1] * FEET_Y - fh))
         xs0, ys0 = max(ox, 0), max(oy, 0)
         xs1, ys1 = min(ox + fw, CANVAS[0]), min(oy + fh, CANVAS[1])
         canvas[ys0:ys1, xs0:xs1] = g[ys0 - oy:ys1 - oy, xs0 - ox:xs1 - ox]
