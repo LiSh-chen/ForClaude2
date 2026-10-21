@@ -49,38 +49,16 @@ _已有 SVG 手繪版可當備案；要用 Gemini 版的話用下面這段。_
 Create an image with aspect ratio 9:16. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. 
 ```
 
-## character
-
-### `traveller_fox` — 旅人：小狐（舊，待 traveller_walker 取代後刪除）
-
-- 用在：首頁／回顧視窗的角色
-- 最終尺寸：512×768　Gemini 比例：3:4　背景：純白（匯出去背）
-- 注意：面向右；腳貼底邊；全身。 已由 SVG 手繪完成（svg/traveller_fox.svg，用 tools/render_svg.mjs 渲染）；若之後有 AI 圖，直接覆蓋 generated/traveller_fox.png。
-
-```
-Create an image with aspect ratio 3:4. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A small traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge, with fox ears, a wide-brimmed hat tucked behind them, a warm orange wash coat, and a small leather satchel on the back. Friendly, simple, storybook proportions. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
-```
-
-### `traveller_walker` — 旅人：背包行者（新角色）
-
-- 用在：環島地圖上的目前位置標記、收卡視窗（取代舊的小狐）
-- 最終尺寸：512×768　Gemini 比例：3:4　背景：純白（匯出去背）
-- 注意：面向右；腳貼底邊；全身；不要奇幻元素（沒有動物耳朵、披風）。完成後把 generated/traveller_walker.png 匯出，再把 RouteVisuals.kt 的 rememberArt("traveller_fox") 改成 traveller_walker，並刪除 traveller_fox。
-
-```
-Create an image with aspect ratio 3:4. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A friendly Taiwanese traveller walking, side view facing right, whole body from head to feet with the feet at the bottom edge: a bucket sun hat, a light linen shirt with rolled sleeves, a medium backpack with a rolled sleeping mat, comfortable walking shoes and a small water bottle clipped to the strap. Gender-neutral, simple storybook proportions, a relaxed cheerful stride. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
-```
-
 ## icon
 
 ### `icon_foreground` — App 圖示前景
 
 - 用在：自適應圖示（桌面圖示）
 - 最終尺寸：1024×1024　Gemini 比例：1:1　背景：純白（匯出去背）
-- 注意：重要內容限制在中央 60% 以內（安全區）；需要另外一張單色版（同構圖，單一深色）給主題圖示用。
+- 注意：先上傳 generated/traveller_sheet.jpg 當角色參考。重要內容限制在中央 60% 以內（安全區）；需要另外一張單色版（同構圖，單一深色）給主題圖示用。
 
 ```
-Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A cheerful hand-drawn simple Taiwan island silhouette in muted moss green with a dotted brass walking route looping around it and one small red map pin, simple bold shapes, centered and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
+Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Use the uploaded character sheet as the exact reference for the character (the small round glossy white spirit with big black eyes, wide-brim cream hat, patched green cloak, backpack, crooked staff with a glowing lantern). Draw this character cheerfully standing in front view on a small simple moss-green Taiwan island silhouette, a dotted brass walking route curling around the island, simple bold shapes, everything centred and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
 ```
 
 ## card
@@ -585,8 +563,40 @@ Create an image with aspect ratio 1:1. Vintage botanical field-guide illustratio
 
 - 用在：Google Play 商店頁頂端橫幅
 - 最終尺寸：1024×500　Gemini 比例：16:9　背景：一般圖，不用去背
-- 注意：左右留白約 10%（商店會裁切）；不要文字，App 名稱「來台灣走走」由後製加上。
+- 注意：左右留白約 10%（商店會裁切）；不要文字，App 名稱「來台灣走走」由後製加上。 先上傳 generated/traveller_sheet.jpg 當角色參考。
 
 ```
-Create an image with aspect ratio 16:9. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A wide panoramic illustration of the Taiwan coastline drawn as an old travel map vignette: green mountains in the middle, a dotted walking route circling the island, small sketches of a lighthouse, a temple roof, a night-market lantern string and a steam-train station along the route, a small traveller with a backpack in the foreground. Soft irregular edges fading into aged parchment, 1024x500 landscape, calm and warm mood.
+Create an image with aspect ratio 16:9. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A wide panoramic illustration of the Taiwan coastline drawn as an old travel map vignette: green mountains in the middle, a dotted walking route circling the island, small sketches of a lighthouse, a temple roof, a night-market lantern string and a steam-train station along the route, the small round white spirit traveller from the uploaded character sheet (hat, patched green cloak, backpack, staff with a glowing lantern) walking along the route in the foreground, matching the reference exactly. Soft irregular edges fading into aged parchment, 1024x500 landscape, calm and warm mood.
+```
+
+## character
+
+### `traveller_body` — 旅人：身體（含帽子、披風、背包）
+
+- 用在：環島地圖上的目前位置（走路動畫的三層）
+- 最終尺寸：411×400　Gemini 比例：1:1　背景：純白（匯出去背）
+- 注意：三張同尺寸、同座標，疊在一起就是完整角色，面向右。
+
+```
+Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. （由使用者的角色設定圖 generated/traveller_sheet.jpg 拆層而成，不需要再用 AI 出圖；做法見 tools/traveller_rig/）
+```
+
+### `traveller_staff` — 旅人：手杖與提燈
+
+- 用在：環島地圖上的目前位置（走路動畫的三層）
+- 最終尺寸：411×400　Gemini 比例：1:1　背景：純白（匯出去背）
+- 注意：三張同尺寸、同座標，疊在一起就是完整角色，面向右。
+
+```
+Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. （由使用者的角色設定圖 generated/traveller_sheet.jpg 拆層而成，不需要再用 AI 出圖；做法見 tools/traveller_rig/）
+```
+
+### `traveller_hand` — 旅人：握杖的手
+
+- 用在：環島地圖上的目前位置（走路動畫的三層）
+- 最終尺寸：411×400　Gemini 比例：1:1　背景：純白（匯出去背）
+- 注意：三張同尺寸、同座標，疊在一起就是完整角色，面向右。
+
+```
+Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. （由使用者的角色設定圖 generated/traveller_sheet.jpg 拆層而成，不需要再用 AI 出圖；做法見 tools/traveller_rig/）
 ```

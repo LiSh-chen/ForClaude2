@@ -42,8 +42,8 @@
       ],
       "alpha": true,
       "source": "ai",
-      "prompt": "A cheerful hand-drawn simple Taiwan island silhouette in muted moss green with a dotted brass walking route looping around it and one small red map pin, simple bold shapes, centered and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
-      "notes": "重要內容限制在中央 60% 以內（安全區）；需要另外一張單色版（同構圖，單一深色）給主題圖示用。"
+      "prompt": "Use the uploaded character sheet as the exact reference for the character (the small round glossy white spirit with big black eyes, wide-brim cream hat, patched green cloak, backpack, crooked staff with a glowing lantern). Draw this character cheerfully standing in front view on a small simple moss-green Taiwan island silhouette, a dotted brass walking route curling around the island, simple bold shapes, everything centred and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.",
+      "notes": "先上傳 generated/traveller_sheet.jpg 當角色參考。重要內容限制在中央 60% 以內（安全區）；需要另外一張單色版（同構圖，單一深色）給主題圖示用。"
     },
     {
       "id": "paper_page",
@@ -756,8 +756,8 @@
       ],
       "alpha": false,
       "source": "ai",
-      "prompt": "A wide panoramic illustration of the Taiwan coastline drawn as an old travel map vignette: green mountains in the middle, a dotted walking route circling the island, small sketches of a lighthouse, a temple roof, a night-market lantern string and a steam-train station along the route, a small traveller with a backpack in the foreground. Soft irregular edges fading into aged parchment, 1024x500 landscape, calm and warm mood.",
-      "notes": "左右留白約 10%（商店會裁切）；不要文字，App 名稱「來台灣走走」由後製加上。"
+      "prompt": "A wide panoramic illustration of the Taiwan coastline drawn as an old travel map vignette: green mountains in the middle, a dotted walking route circling the island, small sketches of a lighthouse, a temple roof, a night-market lantern string and a steam-train station along the route, the small round white spirit traveller from the uploaded character sheet (hat, patched green cloak, backpack, staff with a glowing lantern) walking along the route in the foreground, matching the reference exactly. Soft irregular edges fading into aged parchment, 1024x500 landscape, calm and warm mood.",
+      "notes": "左右留白約 10%（商店會裁切）；不要文字，App 名稱「來台灣走走」由後製加上。 先上傳 generated/traveller_sheet.jpg 當角色參考。"
     },
     {
       "id": "traveller_body",

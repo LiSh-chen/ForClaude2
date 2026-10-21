@@ -2,15 +2,15 @@
 
 ## 怎麼用
 
-1. 每張開新對話（Gemini 等圖像 AI），**先上傳風格參考圖** `android/assets/previews/style_reference.jpg`（現有景點卡的風格），再貼下面那張的提示詞。
+1. 每張開新對話（Gemini 等圖像 AI）。景點卡先上傳風格參考圖 `previews/style_reference.jpg`；**App 圖示與商店主視覺要改上傳角色設定圖** `generated/traveller_sheet.jpg`，因為畫面裡有你的旅行者。
 2. 比例、背景都已寫在提示詞裡。一律**不要有文字**；圖裡出現字就重生成。
-3. 需要透明的（旅行者、收藏格外框、App 圖示）提示詞已要求純白底，之後由工具去背；景點卡是一般圖，不用去背。
-4. 存成 `android/assets/generated/<id>.png`（檔名用下面標題裡的 id），傳回來給我，我匯出並接進 App。
-5. 旅行者角色已用你的造型，不在這份裡；它的走路動畫圖另見 `WALK_CYCLE_PROMPT.md`。建議先做一張景點卡（例如 `card_lotuspond`）確認風格，滿意再做其餘。
+3. 需要透明的（收藏格外框、App 圖示）提示詞已要求純白底，之後由工具去背；景點卡是一般圖，不用去背。
+4. 存成 `generated/<id>.png`（檔名用標題裡的 id），傳回來給我，我匯出並接進 App。
+5. 建議先做一張景點卡（例如 `card_lotuspond`）確認風格，滿意再做其餘。旅行者走路圖的提示詞另見 `WALK_CYCLE_PROMPT.md`（已完成）。
 
-## 另外：App 圖示要兩張
+## App 圖示要兩張
 
-`icon_foreground` 要出**彩色版**和**單色版**（同構圖，單色版全部改成單一深色，給手機「主題圖示」用）；單色版請在提示詞最後加一句：`Single flat dark brown colour only, no gradients, no other colours.`
+`icon_foreground` 要出**彩色版**和**單色版**（同構圖，全部改成單一深色，給手機「主題圖示」用）；單色版請在提示詞最後加一句：`Single flat dark brown colour only, no gradients, no other colours.`
 
 ---
 
@@ -20,7 +20,7 @@
 - 尺寸：1024×1024　需要透明（純白底，之後去背）
 
 ```
-Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A cheerful hand-drawn simple Taiwan island silhouette in muted moss green with a dotted brass walking route looping around it and one small red map pin, simple bold shapes, centered and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
+Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Use the uploaded character sheet as the exact reference for the character (the small round glossy white spirit with big black eyes, wide-brim cream hat, patched green cloak, backpack, crooked staff with a glowing lantern). Draw this character cheerfully standing in front view on a small simple moss-green Taiwan island silhouette, a dotted brass walking route curling around the island, simple bold shapes, everything centred and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
 ```
 
 ---
@@ -53,7 +53,7 @@ Create an image with aspect ratio 1:1. Vintage botanical field-guide illustratio
 - 尺寸：1024×500　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 16:9. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A wide panoramic illustration of the Taiwan coastline drawn as an old travel map vignette: green mountains in the middle, a dotted walking route circling the island, small sketches of a lighthouse, a temple roof, a night-market lantern string and a steam-train station along the route, a small traveller with a backpack in the foreground. Soft irregular edges fading into aged parchment, 1024x500 landscape, calm and warm mood.
+Create an image with aspect ratio 16:9. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A wide panoramic illustration of the Taiwan coastline drawn as an old travel map vignette: green mountains in the middle, a dotted walking route circling the island, small sketches of a lighthouse, a temple roof, a night-market lantern string and a steam-train station along the route, the small round white spirit traveller from the uploaded character sheet (hat, patched green cloak, backpack, staff with a glowing lantern) walking along the route in the foreground, matching the reference exactly. Soft irregular edges fading into aged parchment, 1024x500 landscape, calm and warm mood.
 ```
 
 ---
