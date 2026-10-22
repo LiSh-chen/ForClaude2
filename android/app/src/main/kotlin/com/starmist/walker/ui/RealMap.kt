@@ -319,21 +319,17 @@ internal fun DrawScope.drawRealMap(
         }
     }
 
-    // Region mode: the townships walked through are tinted and outlined (dashed), the one picked is outlined firmly, and their names lie on the ground.
+    // Region mode: the mist already shows what is walked, so the townships get no colour: only a thin dark-grey outline and their names.
+    // The one the walker is in has a slightly firmer line, the one picked a firm one.
     if (regionMode && areas != null && explored.isNotEmpty()) {
-        val boost = if (w < 1700f) 1.7f else 1f
-        val blue = if (w < 1700f) Color(0xFF1A8CFF) else Color(0xFF6FBCFF)
-        val yellow = Color(0xFFFFE680)      // the township the walker is in
         val here = if (currentTown >= 0) currentTown else selectedTown
-        explored.forEach { id ->
-            val c = if (id == here && w >= 1700f) yellow else blue
-            val base = if (id == here && w >= 1700f) 0.55f else 0.30f
-            drawPath(areas.path(id, w, h), c.copy(alpha = (base * boost).coerceAtMost(0.85f)))
-        }
+        val grey = Color(0xFF3A3F44)
         if (w >= 1700f) {
-            explored.forEach { id -> if (id != selectedTown) drawPath(areas.path(id, w, h), Color(0xFF0058C8), style = Stroke(1.8.dp.toPx(), join = StrokeJoin.Round)) }
+            explored.forEach { id ->
+                if (id != selectedTown) drawPath(areas.path(id, w, h), grey.copy(alpha = if (id == here) 0.55f else 0.30f), style = Stroke((if (id == here) 1.6f else 1.0f).dp.toPx(), join = StrokeJoin.Round))
+            }
         }
-        if (selectedTown in areas.towns.indices) { drawPath(areas.path(selectedTown, w, h), Color.White, style = Stroke(6.dp.toPx(), join = StrokeJoin.Round)); drawPath(areas.path(selectedTown, w, h), Color(0xFF0058C8), style = Stroke(3.2.dp.toPx(), join = StrokeJoin.Round)) }
+        if (selectedTown in explored) { drawPath(areas.path(selectedTown, w, h), Color.White.copy(alpha = 0.9f), style = Stroke(5.dp.toPx(), join = StrokeJoin.Round)); drawPath(areas.path(selectedTown, w, h), grey, style = Stroke(2.2.dp.toPx(), join = StrokeJoin.Round)) }
         if (w > 3000f) {
             val placedNames = ArrayList<Rect>()
             val pxPerKm = w / 222.5f
@@ -345,7 +341,7 @@ internal fun DrawScope.drawRealMap(
                 val sel = id == selectedTown
                 val maxW = (t.widthKm * pxPerKm * 0.92).toFloat().coerceAtLeast(1f)
                 var sp = if (sel) 15f else 13f
-                var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF0B2A5B)))
+                var tx = measurer.measure(t.name, TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = sp.sp, color = Color(0xFF3A3F44)))
                 while (sp > 6f && tx.size.width > maxW) { sp -= 0.5f; tx = measurer.measure(t.name, tx.layoutInput.style.copy(fontSize = sp.sp)) }
                 if (tx.size.width > maxW && !sel) return@forEach
                 val hw = tx.size.width / 2f; val hh = tx.size.height / 2f
