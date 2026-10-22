@@ -76,7 +76,7 @@ class RouteTest {
         assertEquals(route.cards.map { it.first.id }.toSet(), ccw.cards.map { it.first.id }.toSet())
         assertEquals(route.supplies.map { it.first.id }.toSet(), ccw.supplies.map { it.first.id }.toSet())
         assertEquals("taipei101", ccw.cards.first().first.id)
-        assertEquals("finish", ccw.cards.last().first.id)
+        assertEquals("台北", ccw.stops.last().name)
         assertEquals(2, ccw.stops.count { it.transit != null && !it.via })
         assertEquals(route.totalKm, ccw.totalKm, 40.0)
         assertEquals(2, Routes.families.single().size)

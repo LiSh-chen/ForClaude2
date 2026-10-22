@@ -513,16 +513,6 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old trading street: a row of two-storey red-brick Baroque-style shophouses with a covered arcade walkway on the ground floor, low Minnan-style brick houses and a few western-style facades standing side by side, dried goods and bags of produce displayed at the shop fronts, a busy crowd of shoppers seen from a distance. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
-### `card_finish` — 景點卡：回到台北
-
-- 用在：景點卡「回到台北」：大廳地板像愛麗絲棋盤
-- 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The great hall of a big city railway station with a black-and-white checkerboard floor, a high ceiling and tall windows with warm light, a few travellers with suitcases walking through, a backpack set down beside a pillar. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
-```
-
 ## map
 
 ### `real_map_base` — 真實世界（台灣）地圖底圖
