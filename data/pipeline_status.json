@@ -1,14 +1,14 @@
 {
- "attempt_at": "2026-10-21T12:55:44+00:00",
+ "attempt_at": "2026-10-22T00:11:24+00:00",
  "date": "2026-10-21",
  "level": "warn",
  "published": true,
  "issues": [
   {
-   "code": "us_patch",
-   "label": "美股最新收盤補值",
+   "code": "macro",
+   "label": "總經資料",
    "level": "warn",
-   "msg": "暫定補上 0 檔、失敗 1 檔（失敗檔使用前一日價格）"
+   "msg": "8／11 項因子有資料；缺：升息機率與利率路徑、通膨（CPI）、就業與景氣；FRED：CPIAUCSL 無資料；CPILFESL 無資料；UNRATE 無資料"
   }
  ],
  "checks": [
@@ -34,7 +34,7 @@
    "code": "fresh_US",
    "label": "美股行情新鮮度",
    "level": "ok",
-   "msg": "行情截至 2026-10-20，已是最新收盤"
+   "msg": "行情截至 2026-10-21，已是最新收盤"
   },
   {
    "code": "tw_cross",
@@ -45,14 +45,14 @@
   {
    "code": "macro",
    "label": "總經資料",
-   "level": "ok",
-   "msg": "11／11 項因子有資料"
+   "level": "warn",
+   "msg": "8／11 項因子有資料；缺：升息機率與利率路徑、通膨（CPI）、就業與景氣；FRED：CPIAUCSL 無資料；CPILFESL 無資料；UNRATE 無資料"
   },
   {
    "code": "us_patch",
    "label": "美股最新收盤補值",
-   "level": "warn",
-   "msg": "暫定補上 0 檔、失敗 1 檔（失敗檔使用前一日價格）"
+   "level": "ok",
+   "msg": "暫定補上 107 檔、失敗 1 檔（失敗檔使用前一日價格）"
   },
   {
    "code": "jumps",
@@ -64,7 +64,7 @@
    "code": "valuation",
    "label": "財報可估值比例",
    "level": "ok",
-   "msg": "94% 的標的取得足夠財報與預估資料，可估算目標價"
+   "msg": "93% 的標的取得足夠財報與預估資料，可估算目標價"
   },
   {
    "code": "news",
