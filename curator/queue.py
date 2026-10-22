@@ -62,11 +62,14 @@ def expire(q: dict, days: int = 14, today: date | None = None) -> int:
     return n
 
 
-def set_status(q: dict, ids: list[int], status: str) -> list[int]:
-    """回傳實際變更的 id。只允許從 pending/approved 之間互轉或駁回,已寄的不動。"""
+def set_status(q: dict, ids: list[int], status: str, force: bool = False) -> list[int]:
+    """回傳實際變更的 id。只允許從 pending/approved 之間互轉或駁回,已寄的不動。
+    有數字檢查旗標 (detail.flags) 的項目,核准時需先修正 (清空 flags) 或 force。"""
     changed = []
     for i in q["items"]:
         if i["id"] in ids and i["status"] in ("pending", "approved", "rejected"):
+            if status == "approved" and not force and (i.get("detail") or {}).get("flags"):
+                continue
             i["status"] = status
             changed.append(i["id"])
     return changed
@@ -86,7 +89,13 @@ def format_item(i: dict) -> str:
     d = i.get("detail") or {}
     head = d.get("headline") or i["title"]
     lines = [f"[{i['id']}] {i['score']:g}分 · {i.get('category') or '-'} · {i['source']}  <{i['status']}>", f"    {head}"]
-    if d:
+    if d.get("myth"):
+        lines += [f"    迷思:{d['myth']}", f"    真相:{d['truth']}", f"    機制:{d['mechanism']}",
+                  f"    怎麼做:{d['how_to_use']}", f"    注意:{d['caveat']}",
+                  f"    證據:{d['evidence']} ({d['confidence']})", f"    論文:{d.get('source_title', '')}"]
+        if d.get("flags"):
+            lines.append(f"    ⚠ 摘要中找不到這些數字:{', '.join(d['flags'])}  → 修正文字並清空 flags,或 approve --force")
+    elif d:
         lines += [f"    發生什麼:{d['what']}", f"    怎麼用:{d['how_to_use']}",
                   f"    注意:{d['caveat']} ({d['confidence']})"]
     else:

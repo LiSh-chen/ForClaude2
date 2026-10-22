@@ -37,6 +37,8 @@ class Profile:
     enrich: bool = False            # 入選後是否再請 Claude 讀內文,寫成小短文
     categories: tuple = ()
     interests: str = ""             # 讀者關注主題 (可被 --interests 覆蓋)
+    mode: str = "news"              # news=RSS 新聞;topics=題庫 + PubMed 原始論文
+    per_category: int = 0           # 每期同一分類最多幾則 (0=不限)
     labels: dict = field(default_factory=dict)
 
     @property
@@ -64,6 +66,8 @@ def validate(cfg: dict) -> None:
         raise ProfileError("weights 與 penalties 的維度名稱不可重複")
     if not all(0 < v <= 0.6 for v in pen.values()):
         raise ProfileError("penalties 每項須介於 0~0.6")
+    if cfg.get("mode", "news") not in ("news", "topics"):
+        raise ProfileError("mode 須為 news 或 topics")
     if not 0 <= cfg.get("min_score", 55) <= 100:
         raise ProfileError("min_score 須介於 0~100")
 
@@ -81,6 +85,7 @@ def load(directory: Path) -> Profile:
         min_score=cfg.get("min_score", 55.0), top=cfg.get("top", 7), per_source=cfg.get("per_source", 2),
         subject_prefix=cfg.get("subject_prefix", cfg["title"]), enrich=cfg.get("enrich", False),
         categories=tuple(cfg.get("categories", ())), interests=cfg.get("interests", ""),
+        mode=cfg.get("mode", "news"), per_category=cfg.get("per_category", 0),
     )
 
 

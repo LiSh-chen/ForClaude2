@@ -23,6 +23,19 @@
 - 評分者也可以是你手動開的 Claude Code,或任何能讀寫檔案的工具/本機模型,介面只是兩個 JSON 檔。
 - 沒有 outbox 時 `ingest` 什麼都不做;評分者漏評的項目會在之後再次進入 inbox。
 
+## 題庫模式 (`"mode": "topics"`,例如 `myth` 每日生活新知)
+新聞型來源適合「找新東西」,但「推翻一個常見說法 + 附論文」這類常青知識不需要新,需要的是**可查證的原始論文**。流程:
+1. `newsletters/<名稱>/topics.json` 是題庫:每題有分類、想驗證的說法 `claim`、PubMed 搜尋關鍵字 `query`、狀態。
+2. `collect` 每次從題庫輪流各分類取 8 題,用 NCBI E-utilities 抓真實摘要(優先統合分析 > 隨機對照試驗),寫進 inbox。
+3. 外部評分者(`scorer-prompt` 的指示)**只能根據摘要**寫「常見說法 / 實際上 / 為什麼 / 怎麼做 / 證據與限制」,摘要不足的題目標為 `usable: false`(之後不再使用)。題庫剩不到 10 題時由評分者補題。
+4. `ingest` 做**數字檢查**:短文裡每個數字必須出現在引用論文的摘要裡(數值 ≥100 容許 6% 誤差),找不到的記在 `detail.flags`。
+   有旗標的項目 `queue approve` 會拒絕,需先改文字並清空 `flags`,或 `approve --force`(Actions 的 `approve-force`)。
+   引用的 pmid 不在抓回的結果裡、或欄位不齊的,直接駁回。
+5. `send` 時同一分類最多 `per_category` 則(`myth` 為 2),避免全是同一領域。
+- 數字檢查只能抓「憑空編出來的數字」,不能證明內容正確。摘要有該數字只代表有出處;結論是否被摘要真的支持,仍要靠你審。
+- 目前題庫模式只支援外部評分者(檔案交接),沒有 API 評分版。
+- PubMed 抓取尚未在可連網環境實測;請先在 Actions 跑 `python -m curator check myth`。
+
 ## 部署(自己用,或 fork 當模板給別人)
 1. Fork / 以此 repo 為模板。
 2. Repo Secrets:`ANTHROPIC_API_KEY`、`NEWS_SUBSCRIBERS`、`SMTP_HOST`、`SMTP_PORT`、`SMTP_USER`、`SMTP_PASSWORD`、`MAIL_FROM`。

@@ -158,7 +158,8 @@ def test_all_shipped_newsletters_load():
     assert {"gems", "insight"} <= set(profiles.names())
     for n in profiles.names():
         p = profiles.get(n)
-        assert p.sources.exists() and json.loads(p.sources.read_text())["feeds"]
+        assert p.sources.exists()
+        assert p.mode == "topics" or json.loads(p.sources.read_text())["feeds"]
 
 
 def test_parse_definition_and_copy(tmp_path, monkeypatch):
@@ -205,3 +206,109 @@ def test_scorer_prompt_mentions_files_and_dims():
     t = handoff.scorer_prompt(profiles.get("gems"))
     assert "data/inbox/gems.json" in t and "data/outbox/gems.json" in t and '"mainstream"' in t
     assert "detail" in t and "忽略" in t
+
+
+PUBMED_XML = b"""<PubmedArticleSet><PubmedArticle><MedlineCitation><PMID>111</PMID><Article>
+<Journal><Title>Am J Physiol</Title><JournalIssue><PubDate><Year>2016</Year></PubDate></JournalIssue></Journal>
+<ArticleTitle>Leg <i>endothelial</i> dysfunction prevented by fidgeting</ArticleTitle>
+<Abstract><AbstractText Label="RESULTS">Sitting for 3 hours reduced FMD by 1.6%; fidgeting for 1 minute each 5 minutes prevented the decline in 11 participants.</AbstractText>
+<AbstractText>""" + b"x" * 200 + b"""</AbstractText></Abstract>
+<PublicationTypeList><PublicationType>Randomized Controlled Trial</PublicationType></PublicationTypeList></Article></MedlineCitation></PubmedArticle>
+<PubmedArticle><MedlineCitation><PMID>222</PMID><Article><Journal><Title>J</Title></Journal><ArticleTitle>No abstract</ArticleTitle></Article></MedlineCitation></PubmedArticle></PubmedArticleSet>"""
+
+
+def test_pubmed_parse_and_rank():
+    from curator import pubmed
+    papers = pubmed.parse_papers(PUBMED_XML)
+    assert papers[0]["pmid"] == "111" and papers[0]["title"] == "Leg endothelial dysfunction prevented by fidgeting"
+    assert papers[0]["year"] == "2016" and "Randomized Controlled Trial" in papers[0]["types"]
+    kept = pubmed.rank(papers)
+    assert [p["pmid"] for p in kept] == ["111"]          # 沒有摘要的被排除
+
+
+def test_ground_check():
+    from curator import ground
+    src = "Sitting for 3 hours reduced FMD by 1.6%; 16,010 women followed for 2.5 years (2012)."
+    assert ground.check({"truth": "久坐 3 小時使 FMD 下降 1.6%"}, src) == []
+    assert ground.check({"truth": "追蹤 1.6 萬名女性 2.5 年"}, src) == []        # 萬 換算 + 6% 容許
+    assert ground.check({"truth": "風險高 22%,150 萬隻"}, src) == ["truth:22", "truth:150 萬"]
+    assert ground.check({"truth": "2012 年的研究"}, src) == []                    # 年份不檢查
+
+
+def test_topics_pick_balances_categories():
+    from curator import topics
+    d = {"topics": [{"id": "a1", "category": "A"}, {"id": "a2", "category": "A"},
+                    {"id": "b1", "category": "B"}, {"id": "c1", "category": "C", "status": "rejected"}]}
+    assert [t["id"] for t in topics.pick_new(d, 3)] == ["a1", "b1", "a2"]
+
+
+def _myth_setup(tmp_path, monkeypatch):
+    from curator import handoff, profiles, queue, topics
+    monkeypatch.setattr(handoff, "ROOT", tmp_path)
+    monkeypatch.setattr(queue, "ROOT", tmp_path)
+    nd = tmp_path / "newsletters" / "myth"
+    nd.mkdir(parents=True)
+    import shutil
+    for f in ("newsletter.json", "rubric.md", "sources.json"):
+        shutil.copy(profiles.NEWSLETTERS / "myth" / f, nd / f)
+    (nd / "topics.json").write_text(json.dumps({"topics": [
+        {"id": "t1", "category": "健康", "claim": "c1", "query": "q", "status": "new"},
+        {"id": "t2", "category": "飲食", "claim": "c2", "query": "q", "status": "new"},
+        {"id": "t3", "category": "居家", "claim": "c3", "query": "q", "status": "new"}]}), encoding="utf-8")
+    monkeypatch.setattr(profiles, "NEWSLETTERS", tmp_path / "newsletters")
+    return profiles.get("myth")
+
+
+def test_myth_collect_and_ingest(tmp_path, monkeypatch):
+    from curator import handoff, pubmed, queue, topics
+    prof = _myth_setup(tmp_path, monkeypatch)
+    paper = pubmed.parse_papers(PUBMED_XML)[0]
+    monkeypatch.setattr(pubmed, "find", lambda q, keep=3: [paper] if q == "q" else [])
+    assert handoff.write_topic_inbox(prof, 3, log=lambda *a: None) == 3
+    det = dict(headline="H", myth="M", truth="久坐 3 小時 FMD 降 1.6%,22 人", mechanism="X", how_to_use="每 5 分鐘動 1 分鐘",
+               caveat="C", evidence="RCT,11 人", confidence="medium")
+    good = dict(practical=8, surprise=8, life=8, evidence=8, mainstream=0, one_liner="o", why="w", pmid="111", usable=True)
+    out = [{"key": "t1", **good, "detail": det},
+           {"key": "t2", "usable": False},
+           {"key": "t3", **good, "pmid": "999", "detail": det}]        # 引用不存在的 pmid → 駁回
+    handoff.outbox_path(prof).parent.mkdir(parents=True, exist_ok=True)
+    handoff.outbox_path(prof).write_text(json.dumps(out))
+    q = queue.load(tmp_path / "q.json")
+    assert handoff.ingest_topics(prof, q, 12, 40, 5, log=lambda *a: None) == 1
+    item = q["items"][0]
+    assert item["detail"]["flags"] == ["truth:22"]                      # 22 不在摘要中
+    assert item["url"].endswith("/111/") and item["score"] == 80.0
+    st = {t["id"]: t["status"] for t in topics.load(prof)["topics"]}
+    assert st == {"t1": "queued", "t2": "rejected", "t3": "rejected"}
+    # 有旗標不能核准,除非 force
+    assert queue.set_status(q, [item["id"]], "approved") == []
+    assert queue.set_status(q, [item["id"]], "approved", force=True) == [item["id"]]
+    assert "⚠" in queue.format_item(item)
+
+
+def test_send_caps_per_category(tmp_path, monkeypatch):
+    from curator import cli, queue
+    prof = _myth_setup(tmp_path, monkeypatch)
+    q = queue.load(queue.path_for(prof))
+    for n, cat in enumerate(["健康", "健康", "健康", "飲食"], 1):
+        a = _art(n, 90 - n)
+        a.category = cat
+        queue.add(q, [a])
+    queue.set_status(q, [1, 2, 3, 4], "approved")
+    queue.save(queue.path_for(prof), q)
+    monkeypatch.setattr(cli, "_deliver", lambda *a, **k: True)
+    assert cli.main(["send", "--profile", "myth"]) == 0
+    sent = [i["id"] for i in queue.items(queue.load(queue.path_for(prof)), "sent")]
+    assert sorted(sent) == [1, 2, 4]                                  # 健康最多 2 則
+
+
+def test_myth_digest_layout():
+    from curator import digest, profiles
+    a = _art(1)
+    a.detail = dict(headline="H", myth="M1", truth="T1", mechanism="X1", how_to_use="U1", caveat="C1",
+                    evidence="E1", confidence="medium", source_title="Paper", flags=["truth:9"])
+    page = digest.render_html([a], "", profiles.get("myth"))
+    text = digest.render_text([a], "", profiles.get("myth"))
+    for w in ("常見說法", "實際上", "怎麼做", "證據與限制", "Paper"):
+        assert w in page
+    assert "M1" in text and "truth:9" not in page and "truth:9" not in text   # 旗標只給審稿者看

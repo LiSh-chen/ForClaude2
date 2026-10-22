@@ -7,7 +7,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from . import digest, enrich, handoff, init as initmod, fetch, mailer, queue, score, subscribers
+from . import pubmed, digest, enrich, handoff, topics, init as initmod, fetch, mailer, queue, score, subscribers
 from . import profiles
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -82,6 +82,10 @@ def _deliver(prof, subj, text, page, picks) -> bool:
 def cmd_collect(a) -> int:
     """每天跑:抓取→評分→寫短文→放進待審佇列。不寄信。"""
     prof = profiles.get(a.profile)
+    if prof.mode == "topics":
+        n = handoff.write_topic_inbox(prof, a.topics_per_run)
+        print(f"inbox 寫入 {n} 個題目 → {handoff.inbox_path(prof).relative_to(ROOT)};題庫剩 {topics.remaining(topics.load(prof))} 個未用")
+        return 0
     feeds = json.loads(Path(a.sources or prof.sources).read_text(encoding="utf-8"))["feeds"]
     arts = fetch.fetch_all(feeds)
     qpath = queue.path_for(prof)
@@ -115,7 +119,8 @@ def cmd_ingest(a) -> int:
     prof = profiles.get(a.profile)
     qpath = queue.path_for(prof)
     q = queue.load(qpath)
-    n = handoff.ingest(prof, q, a.top, a.min_score if a.min_score is not None else prof.min_score - 10,
+    fn = handoff.ingest_topics if prof.mode == "topics" else handoff.ingest
+    n = fn(prof, q, a.top, a.min_score if a.min_score is not None else prof.min_score - 10,
                        a.per_source or 3)
     if n < 0:
         print("沒有可收的 outbox。")
@@ -135,7 +140,10 @@ def cmd_queue(a) -> int:
         print("\n\n".join(queue.format_item(i) for i in rows) or f"(沒有 {a.status} 的項目)")
         return 0
     status = {"approve": "approved", "reject": "rejected", "unapprove": "pending"}[a.action]
-    changed = queue.set_status(q, a.ids, status)
+    changed = queue.set_status(q, a.ids, status, force=a.force)
+    skipped = [i for i in a.ids if i not in changed]
+    if skipped and status == "approved":
+        print(f"未核准 {skipped}:有數字檢查旗標、已寄出或不存在。修正文字並清空 detail.flags,或加 --force")
     queue.save(qpath, q)
     queue.write_review_md(q, qpath.with_suffix('.md'))
     print(f"{a.action}: {changed or '無變動'}")
@@ -147,7 +155,14 @@ def cmd_send(a) -> int:
     prof = profiles.get(a.profile)
     qpath = queue.path_for(prof)
     q = queue.load(qpath)
-    chosen = queue.items(q, "approved")[:a.top or prof.top]
+    chosen, per_cat = [], {}
+    for i in queue.items(q, "approved"):
+        if len(chosen) >= (a.top or prof.top):
+            break
+        if prof.per_category and per_cat.get(i.get("category"), 0) >= prof.per_category:
+            continue
+        per_cat[i.get("category")] = per_cat.get(i.get("category"), 0) + 1
+        chosen.append(i)
     if not chosen:
         print("沒有已核准的項目,不寄信。")
         return 0
@@ -194,7 +209,16 @@ def cmd_check(a) -> int:
     ok_all = True
     for name in a.names or profiles.names():
         print(name)
-        ok, total = initmod.check_sources(profiles.get(name), a.prune)
+        prof = profiles.get(name)
+        if prof.mode == "topics":
+            try:
+                print(f"  ✓ PubMed: {len(pubmed.search('sleep', 3))} 筆")
+                continue
+            except Exception as e:
+                print(f"  ✗ PubMed: {type(e).__name__}: {e}")
+                ok_all = False
+                continue
+        ok, total = initmod.check_sources(prof, a.prune)
         print(f"  → {ok}/{total} 可用")
         ok_all &= ok > 0
     return 0 if ok_all else 1
@@ -241,6 +265,7 @@ def main(argv=None) -> int:
     c.add_argument("--sources", default="")
     c.add_argument("--model", default=score.DEFAULT_MODEL)
     c.add_argument("--write-model", default=enrich.WRITE_MODEL)
+    c.add_argument("--topics-per-run", type=int, default=8, help="topics 模式:每次從題庫取幾題")
     c.add_argument("--no-llm", action="store_true", help="不呼叫 LLM:候選寫到 data/inbox,由外部評分者處理")
     c.add_argument("--inbox-size", type=int, default=40, help="--no-llm 時最多放幾則進 inbox")
     c.set_defaults(fn=cmd_collect)
@@ -252,10 +277,11 @@ def main(argv=None) -> int:
     ig.set_defaults(fn=cmd_ingest)
     sprompt = sub.add_parser("scorer-prompt", help="印出外部評分者 (如 Claude Code) 該遵循的完整指示")
     sprompt.add_argument("--profile", default="gems")
-    sprompt.set_defaults(fn=lambda a: print(handoff.scorer_prompt(profiles.get(a.profile))) or 0)
+    sprompt.set_defaults(fn=lambda a: print((handoff.scorer_prompt_topics if profiles.get(a.profile).mode == "topics" else handoff.scorer_prompt)(profiles.get(a.profile))) or 0)
     qp = sub.add_parser("queue", help="審稿:list / approve / reject / unapprove")
     qp.add_argument("action", choices=["list", "approve", "reject", "unapprove"])
     qp.add_argument("ids", nargs="*", type=int)
+    qp.add_argument("--force", action="store_true", help="略過數字檢查旗標強制核准")
     qp.add_argument("--status", default="pending", choices=queue.STATUSES)
     qp.add_argument("--profile", default="gems")
     qp.set_defaults(fn=cmd_queue)

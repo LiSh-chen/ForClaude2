@@ -25,7 +25,11 @@ def render_text(arts: list[Article], unsub_hint: str = "", profile: Profile | No
     for i, a in enumerate(arts, 1):
         d = a.detail
         lines.append(f"{i}. {d.get('headline') or a.title}")
-        if d:
+        if d.get("myth"):
+            lines += [f"   常見說法:{d['myth']}", f"   實際上:{d['truth']}", f"   為什麼:{d['mechanism']}",
+                      f"   怎麼做:{d['how_to_use']}", f"   證據與限制:{d['evidence']};{d['caveat']} ({_CONF.get(d['confidence'], '')})",
+                      f"   論文:{d.get('source_title', '')}"]
+        elif d:
             lines += [f"   {d['what']}", f"   為什麼少人知道:{d['why_unknown']}",
                       f"   怎麼用:{d['how_to_use']}", f"   注意:{d['caveat']} ({_CONF.get(d['confidence'], '')})"]
         else:
@@ -51,7 +55,12 @@ def render_html(arts: list[Article], unsub_html: str = "", profile: Profile | No
         meta = f'<div style="font-size:12px;color:#888">{i:02d}{cat} · {e(a.source)} · 價值分 {a.score:g}</div>'
         head = (f'<a href="{e(a.url, quote=True)}" style="font-size:19px;font-weight:600;color:#111;'
                 f'text-decoration:none;line-height:1.4">{e(d.get("headline") or a.title)}</a>')
-        if d:
+        if d.get("myth"):
+            body = (_block("常見說法", d["myth"], "#666") + _block("實際上", d["truth"], "#111")
+                    + _block("為什麼", d["mechanism"], "#8a5a00") + _block("怎麼做", d["how_to_use"], "#0b6b3a")
+                    + _block("證據與限制", f'{d["evidence"]};{d["caveat"]} ({_CONF.get(d["confidence"], "")})', "#a33")
+                    + f'<p style="margin:8px 0 0;font-size:12px;color:#888">論文:{e(d.get("source_title", ""))}</p>')
+        elif d:
             body = (f'<p style="margin:8px 0 4px;color:#333;font-size:15px;line-height:1.6">{e(d["what"])}</p>'
                     + _block("為什麼少人知道", d["why_unknown"], "#8a5a00")
                     + _block("怎麼用", d["how_to_use"], "#0b6b3a")
