@@ -1,4 +1,4 @@
-# 還缺的圖片提示詞（共 18 張）
+# 還缺的圖片提示詞（共 14 張）
 
 ## 怎麼用
 
@@ -8,40 +8,7 @@
 4. 存成 `generated/<id>.png`（檔名用標題裡的 id），傳回來給我，我匯出並接進 App。
 5. 景點卡提示詞只寫「查證確認或單一來源」的外觀細節；查不到的顏色、尺寸沒有指定，圖像工具會自己決定，所以**這幾張可能仍與實景有差**：通霄精鹽廠、布袋、新竹城隍廟、大甲鎮瀾宮、桃園神社。
 
-## App 圖示要兩張
 
-`icon_foreground` 要出**彩色版**和**單色版**（同構圖，全部改成單一深色，給手機「主題圖示」用）；單色版請在提示詞最後加一句：`Single flat dark brown colour only, no gradients, no other colours.`
-
----
-
-### `icon_foreground` — App 圖示前景
-
-- 用在：自適應圖示（桌面圖示）
-- 尺寸：1024×1024　需要透明（純白底，之後去背）
-
-```
-Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Use the uploaded character sheet as the exact reference for the character (the small round glossy white spirit with big black eyes, wide-brim cream hat, patched green cloak, backpack, crooked staff with a glowing lantern). Draw this character cheerfully standing in front view on a small simple moss-green Taiwan island silhouette, a dotted brass walking route curling around the island, simple bold shapes, everything centred and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
-```
----
-
-### `collection_slot_locked` — 收藏格：尚未收集
-
-- 用在：收藏頁尚未收集景點的格子（取代目前的問號徽章）
-- 尺寸：512×512　需要透明（純白底，之後去背）
-
-```
-Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A blank collectible card slot drawn like an empty pressed-specimen mount in an old naturalist's album: a faint pencil outline of a small landmark silhouette inside a rounded rectangle of aged paper with soft hatched shading, a tiny brass corner mount at each corner, muted and quiet. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
-```
----
-
-### `collection_slot_frame` — 收藏格：已收集外框
-
-- 用在：收藏頁已收集景點卡的外框（透明中央，疊在景點插圖上）
-- 尺寸：512×512　需要透明（純白底，之後去背）
-
-```
-Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A thin ornamental picture frame for a postcard-like collectible card: aged cream paper border with fine sepia pen lines, small brass corner pieces, subtle watercolor stains at the edges, empty transparent centre. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
-```
 ---
 
 ### `store_feature` — 商店主視覺（1024x500）
@@ -51,16 +18,6 @@ Create an image with aspect ratio 1:1. Vintage botanical field-guide illustratio
 
 ```
 Create an image with aspect ratio 16:9. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A wide panoramic illustration of the Taiwan coastline drawn as an old travel map vignette: green mountains in the middle, a dotted walking route circling the island, small sketches of a lighthouse, a temple roof, a night-market lantern string and a steam-train station along the route, the small round white spirit traveller from the uploaded character sheet (hat, patched green cloak, backpack, staff with a glowing lantern) walking along the route in the foreground, matching the reference exactly. Soft irregular edges fading into aged parchment, 1024x500 landscape, calm and warm mood.
-```
----
-
-### `card_budai` — 景點卡：布袋
-
-- 用在：景點卡「布袋」：沙洲圍出的布袋狀潟湖
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The Haomeiliao sandbar near Budai, Chiayi, Taiwan, drawn only from these facts: a low flat sandbar of soft pale sand beside a quiet lagoon, a windbreak forest of casuarina trees behind it with a few coconut palms and beach morning-glory on the sand, clam ponds, rows of oyster racks standing in the shallow water around the harbour, calm light. A flat sandy shore, not rocky cliffs, no salt pyramids, no church. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 ---
 
