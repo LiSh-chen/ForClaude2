@@ -100,7 +100,21 @@ class ScreenshotTest {
                 val colW = size.width / 7f
                 for (i in 0..6) {
                     val p = androidx.compose.ui.geometry.Offset(colW * (i + 0.5f), size.height * 0.5f)
-                    drawWalker(p, 4500f, art, if (i == 0) 0f else (i - 1) / 6f + 0.01f, walking = i > 0)
+                    drawWalker(p, 4500f, art, if (i == 0) 0f else (i - 1) / 6f + 0.01f, walk = if (i > 0) 1f else 0f)
+                }
+            }
+        }
+    }
+
+    /** Facing left, standing, and halfway through the turn and through the start of a walk. */
+    @Test fun walker_turns() = paparazzi.snapshot {
+        StarMistTheme {
+            val art = rememberWalkerArt()
+            androidx.compose.foundation.Canvas(Modifier.fillMaxSize().background(Vintage.parchment)) {
+                val colW = size.width / 6f
+                val states = listOf(Triple(1f, 0f, 0f), Triple(-1f, 0f, 0f), Triple(0.5f, 0f, 0f), Triple(0f, 0f, 0f), Triple(-1f, 0.5f, 0.2f), Triple(-1f, 1f, 0.4f))
+                states.forEachIndexed { i, (face, walk, phase) ->
+                    drawWalker(androidx.compose.ui.geometry.Offset(colW * (i + 0.5f), size.height * 0.5f), 4500f, art, phase, walk, face)
                 }
             }
         }

@@ -41,6 +41,13 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,9 +72,23 @@ fun RouteMapView(
     val measurer = rememberMapMeasurer()
     val data = rememberRealMapData(route)
     val walker = rememberWalkerArt()
-    val phase: State<Float> = if (walking) {
+    // The walk eases in and out (a quarter of a second) instead of switching; the step cycle keeps running while it fades out.
+    val walk = animateFloatAsState(if (walking) 1f else 0f, tween(260, easing = FastOutSlowInEasing), label = "walkBlend")
+    var cycling by remember { mutableStateOf(walking) }
+    LaunchedEffect(walking) { if (walking) cycling = true else { delay(320); cycling = false } }
+    val phase: State<Float> = if (cycling) {
         rememberInfiniteTransition(label = "walk").animateFloat(0f, 1f, infiniteRepeatable(tween(1000, easing = LinearEasing)), label = "phase")
     } else remember { mutableFloatStateOf(0f) }
+    // Which way the traveller faces: the way the route runs on the screen a little ahead (kept when it runs straight up or down).
+    val heading = remember(route, walkedKm.toInt()) {
+        val a = route.positionAt(walkedKm).unit().x
+        val ahead = route.positionAt((walkedKm + 1.0).coerceAtMost(route.totalKm)).unit().x
+        val dx = if (walkedKm + 1.0 > route.totalKm) a - route.positionAt((walkedKm - 1.0).coerceAtLeast(0.0)).unit().x else ahead - a
+        if (dx > 0.0004f) 1f else if (dx < -0.0004f) -1f else 0f
+    }
+    var faceTarget by remember { mutableFloatStateOf(if (heading == 0f) 1f else heading) }
+    LaunchedEffect(heading) { if (heading != 0f) faceTarget = heading }
+    val face = animateFloatAsState(faceTarget, tween(260, easing = FastOutSlowInEasing), label = "face")
     val base = rememberArt("real_map_base")
     val tiles = rememberMapTiles()
     val areas = rememberTownAreas()
@@ -85,7 +106,7 @@ fun RouteMapView(
         onTap = if (regionMode && onTapTown != null) { u ->
             onTapTown(areas.find(MAP_LAT_MAX - u.y.toDouble() * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + u.x.toDouble() * (MAP_LON_MAX - MAP_LON_MIN)))
         } else null,
-        top = { w, h, _, _ -> drawWalker(Offset(here.unit().x * w, here.unit().y * h), w, walker, phase.value, walking) },
+        top = { w, h, _, _ -> drawWalker(Offset(here.unit().x * w, here.unit().y * h), w, walker, phase.value, walk.value, face.value) },
     ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown) }
 }
 

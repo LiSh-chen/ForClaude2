@@ -519,7 +519,7 @@ private const val LANTERN_Y = 0.331f
  * brighter. [phase] runs 0 to 1 once per pair of steps. Standing still it is a plain picture, so
  * nothing needs redrawing.
  */
-internal fun DrawScope.drawWalker(p: Offset, w: Float, art: WalkerArt?, phase: Float, walking: Boolean) {
+internal fun DrawScope.drawWalker(p: Offset, w: Float, art: WalkerArt?, phase: Float, walk: Float, face: Float = 1f) {
     if (art == null || w < 1700f) {
         drawCircle(Color(0xFFFF8A00).copy(alpha = 0.25f), 13.dp.toPx(), p)
         drawCircle(Color(0xFFFF8A00).copy(alpha = 0.45f), 8.dp.toPx(), p)
@@ -527,43 +527,51 @@ internal fun DrawScope.drawWalker(p: Offset, w: Float, art: WalkerArt?, phase: F
         drawCircle(Color(0xFFFF8A00), 3.2.dp.toPx(), p)
         return
     }
+    val k = walk.coerceIn(0f, 1f)                          // 0 standing, 1 walking; eases in and out
+    val framesMode = art.frames.isNotEmpty()
+    val m = if (framesMode) 0f else k                      // the code-driven motion is only used without drawn frames
     val height = 60.dp.toPx() * (w / 4500f).coerceIn(0.4f, 1f)
     val width = height * art.body.width / art.body.height
     val turn = (phase * 2.0 * Math.PI).toFloat()
-    val rock = if (walking) kotlin.math.sin(turn) else 0f                       // -1..1, foot to foot
-    val hop = if (walking) kotlin.math.abs(kotlin.math.sin(turn)) else 0f       // 0 on each landing, 1 mid-step
+    val rock = kotlin.math.sin(turn) * m                   // -1..1, foot to foot
+    val hop = kotlin.math.abs(kotlin.math.sin(turn)) * m   // 0 on each landing, 1 mid-step
     val lift = height * 0.05f * hop
-    val squash = if (walking) 1f - hop else 0f                                  // how recently it landed
+    val squash = m * (1f - kotlin.math.abs(kotlin.math.sin(turn)))   // how recently it landed
 
-    drawOval(Color.Black.copy(alpha = 0.18f - 0.06f * hop), Offset(p.x - width * 0.3f * (1f - 0.12f * hop), p.y - 3.dp.toPx()), Size(width * 0.6f * (1f - 0.12f * hop), 6.dp.toPx()))
+    // Turning round: the whole figure is mirrored about its feet, passing through edge-on, so it turns instead of jumping.
+    withTransform({ scale(face, 1f, p) }) {
+        drawOval(Color.Black.copy(alpha = 0.18f - 0.06f * hop), Offset(p.x - width * 0.3f * (1f - 0.12f * hop), p.y - 3.dp.toPx()), Size(width * 0.6f * (1f - 0.12f * hop), 6.dp.toPx()))
 
-    val feet = Offset(width * FEET_X, height * FEET_Y)
-    val hand = Offset(width * HAND_X, height * HAND_Y)
-    if (walking && art.frames.isNotEmpty()) {
-        // A drawn walk cycle: one picture per pose, the whole cycle once per phase.
-        val frame = art.frames[(phase * art.frames.size).toInt().coerceIn(0, art.frames.size - 1)]
-        translate(p.x - width / 2f, p.y - height + 2.dp.toPx()) {
-            drawImage(frame, dstSize = IntSize(width.toInt(), height.toInt()))
-        }
-        return
-    }
-    translate(p.x - width / 2f, p.y - height + 2.dp.toPx() - lift) {
-        withTransform({
-            rotate(3.5f * rock, feet)
-            scale(1f + 0.035f * squash, 1f - 0.045f * squash, feet)
-        }) {
-            drawImage(art.body, dstSize = IntSize(width.toInt(), height.toInt()))
-            val swing = if (walking) 8f * kotlin.math.sin(turn - 0.9f) else 0f
-            withTransform({ rotate(swing, hand) }) {
-                drawImage(art.staff, dstSize = IntSize(width.toInt(), height.toInt()))
-                val glow = if (walking) 0.30f + 0.15f * kotlin.math.sin(turn * 2f) else 0.22f
-                val lantern = Offset(width * LANTERN_X, height * LANTERN_Y)
-                drawCircle(
-                    Brush.radialGradient(listOf(Color(0xFFFFE9A8).copy(alpha = glow), Color.Transparent), lantern, height * 0.16f),
-                    height * 0.16f, lantern,
-                )
+        val feet = Offset(width * FEET_X, height * FEET_Y)
+        val hand = Offset(width * HAND_X, height * HAND_Y)
+        // Drawn walk cycle: faded in over the standing picture when the walk starts and out when it stops.
+        if (framesMode && k > 0.01f) {
+            val frame = art.frames[(phase * art.frames.size).toInt().coerceIn(0, art.frames.size - 1)]
+            translate(p.x - width / 2f, p.y - height + 2.dp.toPx()) {
+                drawImage(frame, dstSize = IntSize(width.toInt(), height.toInt()), alpha = k)
             }
-            drawImage(art.hand, dstSize = IntSize(width.toInt(), height.toInt()))
+        }
+        val standing = if (framesMode) 1f - k else 1f
+        if (standing > 0.01f) {
+            translate(p.x - width / 2f, p.y - height + 2.dp.toPx() - lift) {
+                withTransform({
+                    rotate(3.5f * rock, feet)
+                    scale(1f + 0.035f * squash, 1f - 0.045f * squash, feet)
+                }) {
+                    drawImage(art.body, dstSize = IntSize(width.toInt(), height.toInt()), alpha = standing)
+                    val swing = 8f * kotlin.math.sin(turn - 0.9f) * m
+                    withTransform({ rotate(swing, hand) }) {
+                        drawImage(art.staff, dstSize = IntSize(width.toInt(), height.toInt()), alpha = standing)
+                        val glow = (0.22f + (0.08f + 0.15f * kotlin.math.sin(turn * 2f)) * m) * standing
+                        val lantern = Offset(width * LANTERN_X, height * LANTERN_Y)
+                        drawCircle(
+                            Brush.radialGradient(listOf(Color(0xFFFFE9A8).copy(alpha = glow), Color.Transparent), lantern, height * 0.16f),
+                            height * 0.16f, lantern,
+                        )
+                    }
+                    drawImage(art.hand, dstSize = IntSize(width.toInt(), height.toInt()), alpha = standing)
+                }
+            }
         }
     }
 }
