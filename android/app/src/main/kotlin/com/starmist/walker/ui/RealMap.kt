@@ -296,8 +296,27 @@ internal fun DrawScope.drawRealMap(
     }
 
     // Mist over everything not walked yet: only the townships the route has passed through are clear.
+    // A flat veil, soft drifting banks of mist on it, and mist creeping a little way into the cleared area along its edge.
     if (areas != null && explored.isNotEmpty()) {
-        drawPath(areas.fog(explored, w, h), Color(0xFFEDE6D2).copy(alpha = 0.80f))
+        val fog = areas.fog(explored, w, h)
+        drawPath(fog, MIST_VEIL.copy(alpha = 0.84f))
+        clipPath(fog) {
+            val pad = w * 0.09f
+            val seen = Rect(view.left - pad, view.top - pad, view.right + pad, view.bottom + pad)
+            for (b in (if (w > 3000f) MIST_BANKS + MIST_WISPS else MIST_BANKS)) {
+                val c = Offset(b.u * w, b.v * h)
+                if (c.x !in seen.left..seen.right || c.y !in seen.top..seen.bottom) continue
+                val r = b.r * w
+                withTransform({ scale(b.stretch, 1f, c) }) {
+                    drawCircle(Brush.radialGradient(listOf(b.color.copy(alpha = b.alpha), Color.Transparent), center = c, radius = r), radius = r, center = c)
+                }
+            }
+        }
+        val edge = areas.fogEdge(explored, w, h)
+        val k = (w / 3000f).coerceIn(0.35f, 2.5f)
+        for ((width, alpha) in listOf(44f to 0.07f, 28f to 0.10f, 16f to 0.14f, 7f to 0.20f)) {
+            drawPath(edge, MIST_VEIL.copy(alpha = alpha), style = Stroke(width.dp.toPx() * k, cap = StrokeCap.Round, join = StrokeJoin.Round))
+        }
     }
 
     // Region mode: the townships walked through are tinted and outlined (dashed), the one picked is outlined firmly, and their names lie on the ground.
@@ -649,3 +668,26 @@ private fun DrawScope.drawCompassRose(c: Offset, r: Float) {
 @Composable
 internal fun rememberMapMeasurer(): TextMeasurer = rememberTextMeasurer()
 
+
+private val MIST_VEIL = Color(0xFFE9E3D1)
+
+/** One soft bank of mist: centre in map units (0 to 1), radius as a share of the map width, how much wider than tall. */
+private class MistBank(val u: Float, val v: Float, val r: Float, val stretch: Float, val color: Color, val alpha: Float)
+
+private fun mistBanks(seed: Int, count: Int, rMin: Float, rMax: Float): List<MistBank> {
+    val rnd = kotlin.random.Random(seed)
+    return List(count) {
+        val light = rnd.nextFloat() < 0.7f
+        MistBank(
+            u = rnd.nextFloat(), v = rnd.nextFloat(),
+            r = rMin + (rMax - rMin) * rnd.nextFloat(),
+            stretch = 1.5f + rnd.nextFloat(),
+            color = if (light) Color(0xFFFAF6EA) else Color(0xFFB9B29C),
+            alpha = if (light) 0.30f + 0.20f * rnd.nextFloat() else 0.14f + 0.12f * rnd.nextFloat(),
+        )
+    }
+}
+
+/** The same banks every time, so the mist always lies in the same places; big ones for the overview, small wisps when zoomed in. */
+private val MIST_BANKS = mistBanks(7, 170, 0.025f, 0.075f)
+private val MIST_WISPS = mistBanks(11, 520, 0.010f, 0.030f)

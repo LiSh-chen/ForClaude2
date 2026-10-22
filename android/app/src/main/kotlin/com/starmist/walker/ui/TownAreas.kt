@@ -86,6 +86,48 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
         return p
     }
 
+    private var edgeExplored: Set<Int>? = null
+    private var edgeW = -1f
+    private var edgePath: Path? = null
+
+    /**
+     * The outline of the walked-through area as a whole: the township edges that belong to one explored
+     * township only (an edge two explored townships share lies inside the area and is left out). The mist
+     * is feathered along it. Cached like [fog].
+     */
+    fun fogEdge(explored: Set<Int>, w: Float, h: Float): Path {
+        val cached = edgePath
+        if (cached != null && edgeW == w && edgeExplored == explored) return cached
+        fun key(la: Double, lo: Double) = Math.round(la * 1e5) * 100_000_000L + Math.round(lo * 1e5)
+        val count = HashMap<Pair<Long, Long>, Int>()
+        for (id in explored) for (r in towns[id].rings) {
+            var i = 0
+            while (i < r.size) {
+                val j = (i + 2) % r.size
+                val a = key(r[i], r[i + 1]); val b = key(r[j], r[j + 1])
+                val k = if (a < b) a to b else b to a
+                count[k] = (count[k] ?: 0) + 1
+                i += 2
+            }
+        }
+        val p = Path()
+        for (id in explored) for (r in towns[id].rings) {
+            var i = 0
+            while (i < r.size) {
+                val j = (i + 2) % r.size
+                val a = key(r[i], r[i + 1]); val b = key(r[j], r[j + 1])
+                val k = if (a < b) a to b else b to a
+                if (count[k] == 1) {
+                    p.moveTo(((r[i + 1] - MAP_LON_MIN) / (MAP_LON_MAX - MAP_LON_MIN) * w).toFloat(), ((MAP_LAT_MAX - r[i]) / (MAP_LAT_MAX - MAP_LAT_MIN) * h).toFloat())
+                    p.lineTo(((r[j + 1] - MAP_LON_MIN) / (MAP_LON_MAX - MAP_LON_MIN) * w).toFloat(), ((MAP_LAT_MAX - r[j]) / (MAP_LAT_MAX - MAP_LAT_MIN) * h).toFloat())
+                }
+                i += 2
+            }
+        }
+        edgeExplored = explored.toSet(); edgeW = w; edgePath = p
+        return p
+    }
+
     /** The townships the walk has passed through so far, with the kilometres walked in each (sampled every half kilometre). */
     fun visited(route: RouteDef, walkedKm: Double): Map<Int, Double> {
         val seen = LinkedHashMap<Int, Double>()
