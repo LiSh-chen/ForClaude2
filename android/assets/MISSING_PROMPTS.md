@@ -1,4 +1,4 @@
-# 還缺的圖片提示詞（共 14 張）
+# 還缺的圖片提示詞（共 11 張）
 
 ## 怎麼用
 
@@ -9,36 +9,6 @@
 5. 景點卡提示詞只寫「查證確認或單一來源」的外觀細節；查不到的顏色、尺寸沒有指定，圖像工具會自己決定，所以**這幾張可能仍與實景有差**：通霄精鹽廠、布袋、新竹城隍廟、大甲鎮瀾宮、桃園神社。
 
 
----
-
-### `store_feature` — 商店主視覺（1024x500）
-
-- 用在：Google Play 商店頁頂端橫幅
-- 尺寸：1024×500　一般圖，不用去背
-
-```
-Create an image with aspect ratio 16:9. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A wide panoramic illustration of the Taiwan coastline drawn as an old travel map vignette: green mountains in the middle, a dotted walking route circling the island, small sketches of a lighthouse, a temple roof, a night-market lantern string and a steam-train station along the route, the small round white spirit traveller from the uploaded character sheet (hat, patched green cloak, backpack, staff with a glowing lantern) walking along the route in the foreground, matching the reference exactly. Soft irregular edges fading into aged parchment, 1024x500 landscape, calm and warm mood.
-```
----
-
-### `card_hinoki` — 景點卡：檜意森活村
-
-- 用在：景點卡「檜意森活村」：阿里山林業的檜町宿舍
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Hinoki Village in Chiayi, Taiwan, drawn only from these facts: rows of single-storey Japanese-style wooden houses raised about 75 centimetres off the ground on posts with ventilation gaps, walls of overlapping horizontal wooden boards, Japanese-style tiled roofs, quiet paths between the houses under big shady trees, warm cypress-wood tones. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
-```
----
-
-### `card_lukang` — 景點卡：鹿港老街
-
-- 用在：景點卡「鹿港老街」：摸乳巷窄處約六十公分
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The old street of Lukang, Taiwan, drawn only from these facts: red-brick Minnan-style shophouses and red-brick paved lanes, wooden doors and wooden lattice windows, a winding lane with orange-red brick walls, and between two buildings a very narrow gap only one person wide (about 60 to 70 centimetres) where a person must turn sideways. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
-```
 ---
 
 ### `card_gaomei` — 景點卡：高美濕地
