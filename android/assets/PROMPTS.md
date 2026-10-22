@@ -257,10 +257,10 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 - 用在：景點卡「車城福安宮」：福德正神穿龍袍戴官帽
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A traditional Taiwanese Earth God temple with a curved swallowtail roof, a very tall four-storey golden-paper burner beside it, red lanterns, incense smoke, and inside the doorway an Earth God statue dressed in a dragon robe and an official's hat, tropical trees behind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Fu-An Temple, an Earth God temple in Checheng, Pingtung, Taiwan, drawn only from these facts: a grand palace-style temple of three halls with an unusually tall main hall about five to six storeys high; in the forecourt a large octagonal paper-burning furnace with three-tiered eaves and four storeys; inside the main doorway the Earth God statue has a black face, a prime minister's hat and a dragon robe, with many small gold medals hanging all over its body. Red lanterns and drifting incense smoke. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_hengchun` — 景點卡：恆春古城
@@ -377,10 +377,10 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 - 用在：景點卡「布袋」：沙洲圍出的布袋狀潟湖
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A low flat sandbar beside a quiet lagoon, tall casuarina trees forming a windbreak forest behind it, clam ponds and flocks of water birds, rows of oyster racks standing in the shallow water, evening light. A flat sandy shore, not rocky cliffs, no palm trees, no salt pyramids, no church. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The Haomeiliao sandbar near Budai, Chiayi, Taiwan, drawn only from these facts: a low flat sandbar of soft pale sand beside a quiet lagoon, a windbreak forest of casuarina trees behind it with a few coconut palms and beach morning-glory on the sand, clam ponds, rows of oyster racks standing in the shallow water around the harbour, calm light. A flat sandy shore, not rocky cliffs, no salt pyramids, no church. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_peitian` — 景點卡：朴子配天宮
@@ -397,20 +397,20 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 - 用在：景點卡「水上北回歸線標」：夏至正午立竿沒有影子
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A monument for the Tropic of Cancer beside a main highway: a tall three-sided triangular stone tower with three rings (a coordinate-instrument crown) on its top, and behind it a round domed building shaped like a sun or flying saucer glowing soft blue, a small rocket on display and a few planet sculptures in the plaza. It is noon and the sun is overhead, so the tower casts almost no shadow. It is NOT a white round pillar or an obelisk. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The Tropic of Cancer Marker park in Shuishang, Chiayi, Taiwan, drawn only from these facts: a tall monument tower with a triangular (three-sided) cross-section and a three-ring instrument on its top; beside it a five-storey observatory-style building with a rounded dome; in the plaza planet sculptures, a ringed Saturn model and a rocket on display; a main road beside the park. It is noon and the sun is overhead, so the tower casts almost no shadow. The tower is NOT a white round pillar or a square obelisk (that is the Hualien marker). Leave the exact colours natural and muted, not pure white. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_hinoki` — 景點卡：檜意森活村
 
 - 用在：景點卡「檜意森活村」：阿里山林業的檜町宿舍
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Rows of low single-storey Japanese-style wooden bungalow dormitories built of cypress on raised foundations with small under-floor ventilation openings, red cement-tile roofs, a quiet garden street between them with big shady trees, warm cypress-wood colours. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Hinoki Village in Chiayi, Taiwan, drawn only from these facts: rows of single-storey Japanese-style wooden houses raised about 75 centimetres off the ground on posts with ventilation gaps, walls of overlapping horizontal wooden boards, Japanese-style tiled roofs, quiet paths between the houses under big shady trees, warm cypress-wood tones. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_xiluo` — 景點卡：西螺大橋
@@ -427,10 +427,10 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 - 用在：景點卡「鹿港老街」：摸乳巷窄處約六十公分
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old town lane of red-brick Minnan-style long narrow shophouses along a winding red-brick paved street, and between two houses a very narrow gap only one person wide (about 60 to 70 centimetres), where a person has to turn sideways, with a few hanging lanterns. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The old street of Lukang, Taiwan, drawn only from these facts: red-brick Minnan-style shophouses and red-brick paved lanes, wooden doors and wooden lattice windows, a winding lane with orange-red brick walls, and between two buildings a very narrow gap only one person wide (about 60 to 70 centimetres) where a person must turn sideways. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_roundhouse` — 景點卡：彰化扇形車庫
@@ -447,70 +447,70 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 - 用在：景點卡「高美濕地」：萬歲大眼蟹舉螯的濕地
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A coastal tidal wetland: eighteen very tall slender white wind turbines standing in a long line along the coast, a disused octagonal lighthouse with red and white horizontal bands, a long curving wooden boardwalk running out across the tidal flat, patches of marsh grass, and small fiddler crabs each raising one big claw in the foreground. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The Gaomei wetland in Taichung, Taiwan, drawn only from these facts: a dozen or so pure white wind turbines standing in a row along the seawall road, a disused octagonal lighthouse with red and white parallel stripes, a long curving wooden boardwalk out over the tidal flat, patches of green marsh grass turning golden, shallow water that mirrors the sky at low tide, the sea turning gold and orange-red at sunset, and small fiddler crabs each raising one big claw in the foreground. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_dajia` — 景點卡：大甲鎮瀾宮
 
 - 用在：景點卡「大甲鎮瀾宮」：九天遶境三百四十公里
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A grand traditional Minnan temple with a two-hall layout and a three-door front porch, a double-eaved hip-and-gable roof covered with colourful cut-and-paste ceramic decorations, the three star gods and a dragon-riding general on the front roof ridge, a wide stone courtyard in front, incense smoke and dawn light. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Zhenlan Temple in Dajia, Taichung, Taiwan, drawn only from these facts: a traditional Minnan temple with a front hall and a main hall around a courtyard, a big open forecourt, a roof ridge covered with colourful cut-and-paste ceramic figures with gold leaf (the three star gods and a dragon-riding general on the front ridge), and a large plaque above the entrance with no readable writing. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_tongxiao` — 景點卡：通霄精鹽廠
 
 - 用在：景點卡「通霄精鹽廠」：巨大精鹽包造景的鹽廠
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A modern salt-works visitor park by the sea (not a salt pan, not a salt mountain): at the entrance an oversized salt-bag installation taller than a person, white salt-themed sculptures, a sundial-like pattern on the paved ground, clean low buildings and the sea behind. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The Tongxiao salt-works visitor park in Miaoli, Taiwan, drawn only from these facts: a giant salt-sack landmark taller than a person near the entrance, a sundial-shaped pattern on the paved ground, a fresh blue-and-white colour theme, clean modern low buildings, the sea in the background. It is a visitor park, not a salt pan and not a salt mountain. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_hsinchu` — 景點卡：新竹城隍廟
 
 - 用在：景點卡「新竹城隍廟」：城隍廟對面掛著大算盤
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A traditional Minnan three-hall city-god temple with undulating gable walls and cut-and-paste dragons and swallowtail roof ridges, a pair of stone lions at the central door, a lively open-air food-stall square in front of the temple, and a big wooden abacus hanging in the scene. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The City God Temple of Hsinchu, Taiwan, drawn only from these facts: a traditional Minnan temple whose gable walls rise and fall in continuous waves, roof ridges with swallowtail ends and ceramic dragons, three bays with a pair of blue-stone lions at the central door, and in front of the temple a lively open plaza of food stalls. Do not draw an abacus. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_taoyuan` — 景點卡：桃園神社
 
 - 用在：景點卡「桃園神社」：石燈籠夾道的神社參道
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A Japanese Shinto shrine complex built of wood (not a Taiwanese temple): a torii gate, a stone-paved approach with rows of stone lanterns, a purification water pavilion, a worship hall and main hall with copper-plated roofs, a pair of stone guardian lions that look like Taiwanese stone lions, big old trees. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The Taoyuan Shinto shrine in Taiwan, drawn only from these facts: Japanese shrine buildings of unpainted cypress and cedar wood (not a Taiwanese temple), roofs of copper tiles weathered to green, a long stone-paved approach with stone lanterns on both sides, a purification water pavilion, and one single surviving torii gate whose top crossbeams have been removed. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_shihsanhang` — 景點卡：十三行博物館
 
 - 用在：景點卡「十三行博物館」：羅盤偏轉發現煉鐵遺址
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A modern museum in grey exposed concrete: a three-storey block under a long low-sloping steel whale-back roof, and beside it an octagonal tower leaning about 17 degrees like a tilted chimney; seen from the north plaza the whole building looks like a big ship; keep it in grey tones, not white or colourful. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The Shihsanhang Museum of Archaeology in Bali, New Taipei, Taiwan, drawn only from these facts: raw grey concrete, sandstone and weathered metal panels, a three-storey block under a long steel roof shaped like a whale's back, an octagonal tower that visibly leans (about 17 degrees) like a tilted chimney, long grey stairs outside, and seen from the north plaza the whole building looks like a big ship. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_dihua` — 景點卡：迪化街
 
 - 用在：景點卡「迪化街」：中藥南北貨的年貨大街
 - 最終尺寸：1024×768　Gemini 比例：4:3　背景：一般圖，不用去背
-- 注意：4:3 橫式；不要任何文字；邊緣淡出到羊皮紙色即可，不必去背。 外觀依 docs/research/visual_out_*.md 查證改寫；建議附實景照片。
+- 注意：外觀只用查證確認或單一來源的細節（docs/research/visual_out_*.md、visual2_out_*.md），不附參考照片；未查到的細節不指定。
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old trading street: a row of two-storey red-brick Baroque-style shophouses with a covered arcade walkway on the ground floor, low Minnan-style brick houses and a few western-style facades standing side by side, dried goods and bags of produce displayed at the shop fronts, a busy crowd of shoppers seen from a distance. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Dihua Street in Taipei, Taiwan, drawn only from these facts: narrow deep two-storey shophouses in a continuous row with a covered arcade walkway, a mix of red-brick facades and Baroque-style facades in red brick and grey concrete with moulded Baroque gable decoration, a regular pattern of four columns and three windows on the front, dried goods in open sacks displayed under the arcade, a crowd of shoppers seen from a distance. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ## map
