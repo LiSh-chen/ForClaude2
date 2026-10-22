@@ -1,4 +1,4 @@
-# 還缺的圖片提示詞（共 18 張）
+# 還缺的圖片提示詞（共 15 張）
 
 ## 怎麼用
 
@@ -58,17 +58,6 @@ Create an image with aspect ratio 16:9. Vintage botanical field-guide illustrati
 
 ---
 
-### `card_anping` — 景點卡：安平古堡
-
-- 用在：景點卡「安平古堡」：鄭成功收復的荷蘭古堡
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A stone-and-brick fort with a red-brick watchtower on a hill, old banyan trees, harbour behind, 17th-century Dutch style. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
 ### `card_budai` — 景點卡：布袋
 
 - 用在：景點卡「布袋」：沙洲圍出的布袋狀潟湖
@@ -76,28 +65,6 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 
 ```
 Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A fishing port on a lagoon with fishing boats, old salt-pan remains and gulls, a quiet evening. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
-### `card_peitian` — 景點卡：朴子配天宮
-
-- 用在：景點卡「朴子配天宮」：相傳神像搬不動而建廟
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A grand Mazu temple, in the main hall a large dark wooden Mazu statue whose base still joins the roots of the tree it was carved from, drifting incense smoke and lanterns. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
-```
-
----
-
-### `card_shuishang` — 景點卡：水上北回歸線標
-
-- 用在：景點卡「水上北回歸線標」：夏至正午立竿沒有影子
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A monument marking the Tropic of Cancer at noon: a tall stone pillar with an arch, the sun directly overhead so the pillar casts almost no shadow, a line on the ground, plain fields. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
 ```
 
 ---
