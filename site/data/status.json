@@ -1,14 +1,14 @@
 {
- "attempt_at": "2026-10-22T00:11:24+00:00",
- "date": "2026-10-21",
+ "attempt_at": "2026-10-22T12:58:08+00:00",
+ "date": "2026-10-22",
  "level": "warn",
  "published": true,
  "issues": [
   {
-   "code": "macro",
-   "label": "總經資料",
+   "code": "us_patch",
+   "label": "美股最新收盤補值",
    "level": "warn",
-   "msg": "8／11 項因子有資料；缺：升息機率與利率路徑、通膨（CPI）、就業與景氣；FRED：CPIAUCSL 無資料；CPILFESL 無資料；UNRATE 無資料"
+   "msg": "暫定補上 0 檔、失敗 1 檔（失敗檔使用前一日價格）"
   }
  ],
  "checks": [
@@ -28,7 +28,7 @@
    "code": "fresh_TW",
    "label": "台股行情新鮮度",
    "level": "ok",
-   "msg": "行情截至 2026-10-21，已是最新收盤"
+   "msg": "行情截至 2026-10-22，已是最新收盤"
   },
   {
    "code": "fresh_US",
@@ -40,19 +40,19 @@
    "code": "tw_cross",
    "label": "台股官方資料校正",
    "level": "ok",
-   "msg": "官方 2026-10-21：與 Yahoo 一致 97 檔、修正 0 檔（差異率 0%）、補缺 0 檔、官方查無 0 檔"
+   "msg": "官方 2026-10-22：與 Yahoo 一致 97 檔、修正 0 檔（差異率 0%）、補缺 0 檔、官方查無 0 檔"
   },
   {
    "code": "macro",
    "label": "總經資料",
-   "level": "warn",
-   "msg": "8／11 項因子有資料；缺：升息機率與利率路徑、通膨（CPI）、就業與景氣；FRED：CPIAUCSL 無資料；CPILFESL 無資料；UNRATE 無資料"
+   "level": "ok",
+   "msg": "11／11 項因子有資料"
   },
   {
    "code": "us_patch",
    "label": "美股最新收盤補值",
-   "level": "ok",
-   "msg": "暫定補上 107 檔、失敗 1 檔（失敗檔使用前一日價格）"
+   "level": "warn",
+   "msg": "暫定補上 0 檔、失敗 1 檔（失敗檔使用前一日價格）"
   },
   {
    "code": "jumps",
