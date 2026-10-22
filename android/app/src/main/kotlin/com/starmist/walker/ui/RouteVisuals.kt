@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -110,12 +111,19 @@ fun RouteMapView(
     ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown) }
 }
 
-/** Small round picture for a card: the painted card art if the asset library has it, a letter tile otherwise. */
+/** Small square picture for a card: the painted art inside the album frame once collected, an empty album slot before. */
 @Composable
 fun CardEmblem(card: Landmark, owned: Boolean, modifier: Modifier = Modifier) {
     val art = rememberArt("card_${card.id}")
+    val frame = rememberArt("collection_slot_frame")
+    val slot = rememberArt("collection_slot_locked")
     if (owned && art != null) {
-        Image(art, contentDescription = card.name, modifier = modifier.clip(CircleShape), contentScale = ContentScale.Crop)
+        Box(modifier) {
+            Image(art, contentDescription = card.name, modifier = Modifier.matchParentSize().padding(4.dp).clip(RoundedCornerShape(2.dp)), contentScale = ContentScale.Crop)
+            if (frame != null) Image(frame, contentDescription = null, modifier = Modifier.matchParentSize(), contentScale = ContentScale.FillBounds)
+        }
+    } else if (!owned && slot != null) {
+        Image(slot, contentDescription = null, modifier = modifier, contentScale = ContentScale.Fit)
     } else {
         Box(
             modifier.clip(CircleShape).background(if (owned) Vintage.mossLight else Vintage.edge.copy(alpha = 0.5f)),

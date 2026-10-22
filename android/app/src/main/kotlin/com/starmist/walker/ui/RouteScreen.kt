@@ -125,7 +125,7 @@ internal fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState
             colors = CardDefaults.cardColors(containerColor = if (owned) Vintage.parchmentLight else Vintage.parchmentDark.copy(alpha = 0.6f)),
         ) {
             Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                CardEmblem(card, owned, Modifier.size(52.dp))
+                CardEmblem(card, owned, Modifier.size(64.dp))
                 Column(Modifier.weight(1f)) {
                     if (owned) {
                         Text(card.name, fontWeight = FontWeight.Bold)
