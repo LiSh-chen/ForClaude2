@@ -66,6 +66,26 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
         }
     }
 
+    private var fogExplored: Set<Int>? = null
+    private var fogW = -1f
+    private var fogPath: Path? = null
+
+    /**
+     * Everything on a map [w] by [h] except the [explored] townships (even-odd fill: the box plus the township
+     * outlines), cached until the set or the size changes. Drawn as mist over the places not walked yet.
+     */
+    fun fog(explored: Set<Int>, w: Float, h: Float): Path {
+        val cached = fogPath
+        if (cached != null && fogW == w && fogExplored == explored) return cached
+        val p = Path().apply {
+            fillType = androidx.compose.ui.graphics.PathFillType.EvenOdd
+            addRect(androidx.compose.ui.geometry.Rect(-w, -h, 2 * w, 2 * h))
+            explored.forEach { addPath(path(it, w, h)) }
+        }
+        fogExplored = explored.toSet(); fogW = w; fogPath = p
+        return p
+    }
+
     /** The townships the walk has passed through so far, with the kilometres walked in each (sampled every half kilometre). */
     fun visited(route: RouteDef, walkedKm: Double): Map<Int, Double> {
         val seen = LinkedHashMap<Int, Double>()

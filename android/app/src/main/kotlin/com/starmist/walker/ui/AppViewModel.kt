@@ -207,15 +207,25 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val townTags by lazy { loadTownBlurbs(getApplication()) }
     private var lastRegionCheckKm = -1.0
 
-    /** Gives each township walked through since the last check its tag for this lap, and says so when one is new. */
+    /** Kilometres of each route through each township, worked out once per route (it decides which townships count as long). */
+    private val townLengthKm = HashMap<String, Map<Int, Double>>()
+
+    /**
+     * Gives each township walked through its feature when it is entered and, in a long one, a second feature at about
+     * half the way across; says so when one is new.
+     */
     private suspend fun collectRegionTags(route: com.starmist.core.route.RouteDef, walkedKm: Double) {
         if (lastRegionCheckKm >= 0 && walkedKm - lastRegionCheckKm < 0.5 && walkedKm >= lastRegionCheckKm) return
         lastRegionCheckKm = walkedKm
-        for (id in townAreas.visited(route, walkedKm).keys) {
+        val total = townLengthKm.getOrPut(route.id) { townAreas.visited(route, route.totalKm) }
+        for ((id, km) in townAreas.visited(route, walkedKm)) {
             val t = townAreas.towns[id]
             val key = "${t.county}|${t.name}"
             val tags = townTags[key] ?: continue
-            val found = container.regions.visit(key, tags.size)
+            var found = container.regions.visit(key, tags.size, stage = 1)
+            if (found == null && com.starmist.core.route.TagDiscovery.reachedHalfway(total[id] ?: 0.0, km)) {
+                found = container.regions.visit(key, tags.size, stage = 2)
+            }
             if (found != null) _message.value = "${t.name}：發現新特色「${tags[found].tag}」"
         }
     }
@@ -315,6 +325,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun setStableMode(on: Boolean) = updateSettings { it.copy(stableMode = on) }
 
     private companion object {
+
         const val LIVE_MIN_INTERVAL_MS = 300L
 
         /** Caps how far the detector may run ahead of the counter, so a false positive cannot pile up. */

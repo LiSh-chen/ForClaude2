@@ -229,8 +229,9 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
         }
         val a = region.area
         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(a.name, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 20.sp, color = Color(0xFF0058C8), maxLines = 1)
-            Text(a.county, fontSize = 11.sp, color = Vintage.inkSoft, modifier = Modifier.padding(bottom = 2.dp), maxLines = 1)
+            // The name is told only when the township has been walked through.
+            Text(if (region.explored) a.name else "？？？", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 20.sp, color = Color(0xFF0058C8), maxLines = 1)
+            if (region.explored) Text(a.county, fontSize = 11.sp, color = Vintage.inkSoft, modifier = Modifier.padding(bottom = 2.dp), maxLines = 1)
             Spacer(Modifier.weight(1f))
             Text(if (isCurrent) "目前所在" else if (region.explored) "第 ${region.order} 區" else "", fontSize = 11.sp, color = Vintage.brassDark, modifier = Modifier.padding(bottom = 2.dp))
         }

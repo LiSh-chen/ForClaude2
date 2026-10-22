@@ -295,6 +295,11 @@ internal fun DrawScope.drawRealMap(
 
     }
 
+    // Mist over everything not walked yet: only the townships the route has passed through are clear.
+    if (areas != null && explored.isNotEmpty()) {
+        drawPath(areas.fog(explored, w, h), Color(0xFFEDE6D2).copy(alpha = 0.80f))
+    }
+
     // Region mode: the townships walked through are tinted and outlined (dashed), the one picked is outlined firmly, and their names lie on the ground.
     if (regionMode && areas != null && explored.isNotEmpty()) {
         val boost = if (w < 1700f) 1.7f else 1f
@@ -313,7 +318,7 @@ internal fun DrawScope.drawRealMap(
         if (w > 3000f) {
             val placedNames = ArrayList<Rect>()
             val pxPerKm = w / 222.5f
-            val ids = explored.toMutableList().also { if (selectedTown >= 0 && selectedTown !in it) it += selectedTown }
+            val ids = explored.toList()   // a township not walked through keeps its name hidden
             ids.forEach { id ->
                 val t = areas.towns[id]
                 val q = GeoPoint(t.lat, t.lon).px()
