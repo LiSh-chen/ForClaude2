@@ -1,33 +1,30 @@
-# 用實景照片重畫：安平古堡、朴子配天宮、水上北回歸線標
+# 重畫：外觀查證後修正的 4 張（安平古堡、朴子配天宮、水上北回歸線標、車城福安宮）
 
-這三張現在的圖風格對、構圖也好看，但建築樣子和實景不像（原因：我寫提示詞時只有文字資料，沒有照片，圖像工具只能憑想像畫）。想畫得像，要**給它實景照片當參考**。
+每張請附**實景照片**（自己拍或可自由使用的），並上傳 `previews/style_reference.jpg` 當風格參考。提示詞已依查證結果改寫，若與照片不同以照片為準。
 
-## 做法（每張一個新對話）
+## 查證發現
 
-1. 先上傳三樣：
-   - 風格參考圖 `previews/style_reference.jpg`（現有卡圖的畫風）
-   - **一到兩張該景點的實景照片**（請用你自己拍的，或可自由使用的照片；不要直接拿有版權的商業照片）
-   - 要重畫的那張現有插圖（可選，讓它保留構圖與好的細節）
-2. 貼下面的提示詞（已加上「照片對照」的要求）。
-3. 結果存成 `generated/card_<id>.png` 傳回來，我替換掉舊圖。
-
-## 提示詞
+- **水上北回歸線標**：之前那張畫的白色方尖碑其實是**花蓮瑞穗**的樣式，水上是**三角形三面碑塔，頂有三環座標儀**，旁邊有圓頂的太陽館。需要重畫。
+- **安平古堡**：塔是 20 世紀的紅白瞭望塔（1975 年加紅色尖頂），真正古蹟是殘破的紅磚牆，不是完整城堡。現在那張大致相符，可視情況保留。
+- **配天宮**：鎮殿媽是老樹雕成、底下樹根連地，神帽是紙製金色，虎爺穿龍袍坐在供桌上；坐姿或站姿查不到，以照片為準。現在那張的樹根保留得好，但神像畫成站姿、細節可能不符。
+- **福安宮**：土地公是**黑面**、戴宰相帽、穿龍袍、全身掛金牌；現在那張畫成白鬍老者，不符。
 
 ### `card_anping` — 安平古堡
 ```
-Create an image with aspect ratio 4:3. Redraw the place in the attached PHOTO as a vintage field-guide watercolor and pen-and-ink illustration, in exactly the style of the attached style-reference picture. Keep the real architecture, layout, proportions, colours and viewpoint of the photo: the fort's old brick wall remains and the watchtower must look the same as in the photo (same shape, same colours, same roof). Keep the old banyan roots creeping over the brick wall. Soft irregular vignette edges fading into aged parchment, 4:3 landscape. No text, no letters, no numbers, no watermarks.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration in exactly the style of the attached style-reference picture, redrawing the place in the attached PHOTO. The remains of an old fort on a hill: weathered red-brick walls and red-brick stairways (the surviving old south wall is only a broken ruin, not a complete castle), old banyan roots creeping over the brick wall, and a slender 20th-century lookout tower with a white body and a red pointed roof standing beside the ruins; the harbour town and sea far behind. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_peitian` — 朴子配天宮
 ```
-Create an image with aspect ratio 4:3. Redraw the place in the attached PHOTO as a vintage field-guide watercolor and pen-and-ink illustration, in exactly the style of the attached style-reference picture. Keep the real temple architecture, layout, pose of the Mazu statue (seated or standing exactly as in the photo), colours and viewpoint. KEEP this memorable detail from the earlier version: the dark wooden statue's base is joined to the roots of the tree it was carved from, spreading across the floor. Lanterns and drifting incense smoke. Soft irregular vignette edges fading into aged parchment, 4:3 landscape. No text, no letters, no numbers, no watermarks.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration in exactly the style of the attached style-reference picture, redrawing the place in the attached PHOTO. Inside a traditional Hokkien-style temple hall: a large dark wooden Mazu statue carved from an old tree, its base still joined to thick tree roots that spread into the floor, a golden paper crown with dragons, phoenixes and hanging beads on its head, a small tiger-god statue wearing a dragon robe sitting on top of the offering table, red lanterns and drifting incense smoke. Do not decide whether the statue sits or stands: follow the reference photo. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
 ### `card_shuishang` — 水上北回歸線標
 ```
-Create an image with aspect ratio 4:3. Redraw the monument in the attached PHOTO as a vintage field-guide watercolor and pen-and-ink illustration, in exactly the style of the attached style-reference picture. Keep the real shape, proportions, materials, colours and viewpoint of the monument and its surroundings exactly as in the photo. It is noon and the sun is overhead, so the monument casts almost no shadow. Soft irregular vignette edges fading into aged parchment, 4:3 landscape. No text, no letters, no numbers, no watermarks.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration in exactly the style of the attached style-reference picture, redrawing the place in the attached PHOTO. A monument for the Tropic of Cancer beside a main highway: a tall three-sided triangular stone tower with three rings (a coordinate-instrument crown) on its top, and behind it a round domed building shaped like a sun or flying saucer glowing soft blue, a small rocket on display and a few planet sculptures in the plaza. It is noon and the sun is overhead, so the tower casts almost no shadow. It is NOT a white round pillar or an obelisk. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
 
-## 另一個辦法：照原樣收下
-
-如果覺得「示意插畫」已經夠用，也可以不重畫。卡片上的標語和補充句才是主要資訊，圖是氣氛。但這個 App 是帶人去真實地點的，使用者到了現場可能會對照，所以樣子差太多還是建議重畫。
+### `card_checheng` — 車城福安宮
+```
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration in exactly the style of the attached style-reference picture, redrawing the place in the attached PHOTO. A traditional Taiwanese Earth God temple with a curved swallowtail roof, a very tall four-storey golden-paper burner beside it, red lanterns, incense smoke, and in the doorway an Earth God statue with a black face, wearing a chancellor's hat and a dragon robe, with many small gold plaques hanging all over its body; do not give it a throne, a staff or gold ingots. Do not decide whether it sits or stands: follow the reference photo. If the photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, calm and healing mood. No text, no letters, no numbers, no signboards.
+```

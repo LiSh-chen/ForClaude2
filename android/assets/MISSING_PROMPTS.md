@@ -22,7 +22,6 @@
 ```
 Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Use the uploaded character sheet as the exact reference for the character (the small round glossy white spirit with big black eyes, wide-brim cream hat, patched green cloak, backpack, crooked staff with a glowing lantern). Draw this character cheerfully standing in front view on a small simple moss-green Taiwan island silhouette, a dotted brass walking route curling around the island, simple bold shapes, everything centred and kept inside the middle 60% of the frame with generous empty margin around it. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
 ```
-
 ---
 
 ### `collection_slot_locked` — 收藏格：尚未收集
@@ -33,7 +32,6 @@ Create an image with aspect ratio 1:1. Vintage botanical field-guide illustratio
 ```
 Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A blank collectible card slot drawn like an empty pressed-specimen mount in an old naturalist's album: a faint pencil outline of a small landmark silhouette inside a rounded rectangle of aged paper with soft hatched shading, a tiny brass corner mount at each corner, muted and quiet. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
 ```
-
 ---
 
 ### `collection_slot_frame` — 收藏格：已收集外框
@@ -44,7 +42,6 @@ Create an image with aspect ratio 1:1. Vintage botanical field-guide illustratio
 ```
 Create an image with aspect ratio 1:1. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A thin ornamental picture frame for a postcard-like collectible card: aged cream paper border with fine sepia pen lines, small brass corner pieces, subtle watercolor stains at the edges, empty transparent centre. Isolated on a completely flat, plain, pure white background (#FFFFFF) with nothing else in the frame, no shadow on the background, no paper texture, clean edges so it can be cut out.
 ```
-
 ---
 
 ### `store_feature` — 商店主視覺（1024x500）
@@ -55,7 +52,6 @@ Create an image with aspect ratio 1:1. Vintage botanical field-guide illustratio
 ```
 Create an image with aspect ratio 16:9. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A wide panoramic illustration of the Taiwan coastline drawn as an old travel map vignette: green mountains in the middle, a dotted walking route circling the island, small sketches of a lighthouse, a temple roof, a night-market lantern string and a steam-train station along the route, the small round white spirit traveller from the uploaded character sheet (hat, patched green cloak, backpack, staff with a glowing lantern) walking along the route in the foreground, matching the reference exactly. Soft irregular edges fading into aged parchment, 1024x500 landscape, calm and warm mood.
 ```
-
 ---
 
 ### `card_budai` — 景點卡：布袋
@@ -64,9 +60,8 @@ Create an image with aspect ratio 16:9. Vintage botanical field-guide illustrati
 - 尺寸：1024×768　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A fishing port on a lagoon with fishing boats, old salt-pan remains and gulls, a quiet evening. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A low flat sandbar beside a quiet lagoon, tall casuarina trees forming a windbreak forest behind it, clam ponds and flocks of water birds, rows of oyster racks standing in the shallow water, evening light. A flat sandy shore, not rocky cliffs, no palm trees, no salt pyramids, no church. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
-
 ---
 
 ### `card_hinoki` — 景點卡：檜意森活村
@@ -75,9 +70,8 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 - 尺寸：1024×768　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Rows of old Japanese-style cypress-wood dormitories with tiled roofs, trees and a garden path. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Rows of low single-storey Japanese-style wooden bungalow dormitories built of cypress on raised foundations with small under-floor ventilation openings, red cement-tile roofs, a quiet garden street between them with big shady trees, warm cypress-wood colours. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
-
 ---
 
 ### `card_lukang` — 景點卡：鹿港老街
@@ -86,9 +80,8 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 - 尺寸：1024×768　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A very narrow stone-paved alley between old brick houses, a half-moon well set into a wall, hanging lanterns. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old town lane of red-brick Minnan-style long narrow shophouses along a winding red-brick paved street, and between two houses a very narrow gap only one person wide (about 60 to 70 centimetres), where a person has to turn sideways, with a few hanging lanterns. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
-
 ---
 
 ### `card_gaomei` — 景點卡：高美濕地
@@ -97,9 +90,8 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 - 尺寸：1024×768　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Tidal wetlands at sunset with wind turbines in silhouette, a wooden boardwalk, and in the foreground small fiddler crabs each raising one big claw as if cheering. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A coastal tidal wetland: eighteen very tall slender white wind turbines standing in a long line along the coast, a disused octagonal lighthouse with red and white horizontal bands, a long curving wooden boardwalk running out across the tidal flat, patches of marsh grass, and small fiddler crabs each raising one big claw in the foreground. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
-
 ---
 
 ### `card_dajia` — 景點卡：大甲鎮瀾宮
@@ -108,9 +100,8 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 - 尺寸：1024×768　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A grand Mazu temple at dawn with a long procession carrying a palanquin, banners and firecracker smoke. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A grand traditional Minnan temple with a two-hall layout and a three-door front porch, a double-eaved hip-and-gable roof covered with colourful cut-and-paste ceramic decorations, the three star gods and a dragon-riding general on the front roof ridge, a wide stone courtyard in front, incense smoke and dawn light. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
-
 ---
 
 ### `card_tongxiao` — 景點卡：通霄精鹽廠
@@ -119,9 +110,8 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 - 尺寸：1024×768　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A salt-works visitor factory with a giant salt-bag shaped sculpture, white pyramids of salt, the sea behind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A modern salt-works visitor park by the sea (not a salt pan, not a salt mountain): at the entrance an oversized salt-bag installation taller than a person, white salt-themed sculptures, a sundial-like pattern on the paved ground, clean low buildings and the sea behind. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
-
 ---
 
 ### `card_hsinchu` — 景點卡：新竹城隍廟
@@ -130,9 +120,8 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 - 尺寸：1024×768　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old city-god temple with ornate red roofs, a giant abacus hanging on the facade opposite it, a stone city gate beside, racks of rice noodles drying in the wind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A traditional Minnan three-hall city-god temple with undulating gable walls and cut-and-paste dragons and swallowtail roof ridges, a pair of stone lions at the central door, a lively open-air food-stall square in front of the temple, and a big wooden abacus hanging in the scene. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
-
 ---
 
 ### `card_taoyuan` — 景點卡：桃園神社
@@ -141,9 +130,8 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 - 尺寸：1024×768　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A Japanese-style shrine with stone lanterns and a torii gate, large trees, stone steps. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A Japanese Shinto shrine complex built of wood (not a Taiwanese temple): a torii gate, a stone-paved approach with rows of stone lanterns, a purification water pavilion, a worship hall and main hall with copper-plated roofs, a pair of stone guardian lions that look like Taiwanese stone lions, big old trees. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
-
 ---
 
 ### `card_shihsanhang` — 景點卡：十三行博物館
@@ -152,9 +140,8 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 - 尺寸：1024×768　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A modern museum building at a river mouth with ancient pottery and iron-smelting finds displayed, the sea behind. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. A modern museum in grey exposed concrete: a three-storey block under a long low-sloping steel whale-back roof, and beside it an octagonal tower leaning about 17 degrees like a tilted chimney; seen from the north plaza the whole building looks like a big ship; keep it in grey tones, not white or colourful. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
-
 ---
 
 ### `card_dihua` — 景點卡：迪化街
@@ -163,9 +150,8 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 - 尺寸：1024×768　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old trading street with narrow baroque-style shop facades, hanging dried goods, red lanterns, cobbles. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. An old trading street: a row of two-storey red-brick Baroque-style shophouses with a covered arcade walkway on the ground floor, low Minnan-style brick houses and a few western-style facades standing side by side, dried goods and bags of produce displayed at the shop fronts, a busy crowd of shoppers seen from a distance. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
-
 ---
 
 ### `card_finish` — 景點卡：回到台北
@@ -174,5 +160,5 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 - 尺寸：1024×768　一般圖，不用去背
 
 ```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The great hall of a big city railway station with a black-and-white checkerboard floor, a few travellers sitting on the black squares, a backpack set down, warm light from tall windows. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no people's faces in close-up.
+Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The great hall of a big city railway station with a black-and-white checkerboard floor, a high ceiling and tall windows with warm light, a few travellers with suitcases walking through, a backpack set down beside a pillar. If an attached reference photo disagrees with this description, follow the photo. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
 ```
