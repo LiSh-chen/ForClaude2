@@ -241,7 +241,7 @@ def factors(prices: dict, fed: dict, infl: dict, p: dict) -> list[dict]:
     sp = lambda x, d=1: f"{x * 100:+.{d}f}%" if isnum(x) else "—"
     short = {"rate_shock": f"{y10:.2f}% {_fmt_bp(c20)}" if isnum(y10) else "—", "vol": f"{vix:.1f}" if isnum(vix) else "—",
              "equity": f"費半 {sp(sox5)}", "usd": sp(dx), "oil": sp(oil), "credit": sp(cr),
-             "fed": (f"{m['prob'] * 100:.0f}% {m['date'][5:]}" if m else "—"),
+             "fed": (f"{'升息' if m['dir'] == 'hike' else '降息' if m['dir'] == 'cut' else '持平'} {m['prob'] * 100:.0f}%（{m['date'][5:].replace('-', '/')}）" if m else "—"),
              "inflation": (f"年增 {hc['yoy'] * 100:.1f}%" if hc and isnum(hc.get("yoy")) else "—"),
              "growth": (f"失業 {ur['value']:.1f}%" if ur else "—"), "tw_fx": sp(twd), "tw_semi": f"費半 {sp(sox5)}"}
     for f in F:
