@@ -16,6 +16,13 @@ class ContentPackTest {
     }
 
     @Test
+    fun `every card has at least one feature and no more than three`() {
+        val lines = TestPack.lines(ContentPack.FACTS).filter { it.isNotBlank() && !it.startsWith("#") }
+        val counts = lines.associate { it.split('|').let { f -> f[0] to f.size - 1 } }
+        ids.forEach { id -> assertTrue((counts[id] ?: 0) in 1..3, "$id has ${counts[id] ?: 0} features") }
+    }
+
+    @Test
     fun `texts replace the card name on both directions`() {
         Routes.applyTexts(mapOf("keelung" to CardText("廟口")))
         try {
