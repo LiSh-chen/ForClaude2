@@ -1,4 +1,4 @@
-# 還缺的圖片提示詞（共 1 張）
+# 還缺的圖片提示詞（共 0 張）
 
 ## 怎麼用
 
@@ -10,14 +10,3 @@
 
 
 ---
-
----
-
-### `card_shuishang` — 景點卡：水上北回歸線標（依實景照片重畫）
-
-- 用在：景點卡「水上北回歸線標」
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The Tropic of Cancer Marker park in Shuishang, Chiayi, Taiwan, drawn exactly like this real view, seen from the plaza in front on a calm overcast day. On the right, large in the foreground, stands a tall narrow white monument: a plain slender rectangular slab of white panels, taller than it is wide, with a column of six orange-red vertical characters running down its front (draw them only as abstract orange-red brush marks, not readable), a lower thick white base block, and below that a wide round black polished-granite plinth; on top of the slab a delicate cage of three silver metal rings crossing each other like an armillary sphere. In the middle behind it, on a low round grassy mound, stands a white saucer-shaped sun hall like a flying saucer: a round flat disc with a continuous band of long narrow windows around its rim, resting on a thick white cylindrical tower, with a metal railing around the foot of the mound. Two big smooth pale-grey angular arches rise from the ground on the left and right of the saucer, curve inward and meet above it at a small top cap with a thin antenna mast, so the saucer seems cradled under a grey tripod of arches. In front a wide plaza paved in pale pinkish-grey brick with thin red and grey stripes, a few thin young trees held by stakes, a few round planters, two or three small white stone lanterns near the monument, a short grey bollard in the lower foreground, low green lawn edges, a row of slim palm trees and one lamp post at the far right, and a flat pale grey-white sky with no clouds worth drawing. Keep the monument and the saucer building as the two clear subjects, side by side, nothing else large. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, the picture occupying only the middle 75% with a wide margin of plain empty parchment around it, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
-```
