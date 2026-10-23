@@ -1,4 +1,4 @@
-# 還缺的圖片提示詞（共 3 張）
+# 還缺的圖片提示詞（共 1 張）
 
 ## 怎麼用
 
@@ -21,21 +21,3 @@ Create an image with aspect ratio 4:3. Vintage botanical field-guide illustratio
 ```
 ---
 
-### `card_shihsanhang` — 景點卡：十三行博物館
-
-- 用在：景點卡「十三行博物館」：羅盤偏轉發現煉鐵遺址
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The Shihsanhang Museum of Archaeology in Bali, New Taipei, Taiwan, drawn exactly like this real aerial view, taken from a medium height looking toward the sea, with the whole building complex fairly small in the frame and the green park and sea taking up most of the picture. The buildings are LOW and horizontal, not tall boxes. On the left a long low wing: its roof is one big gently sloping plane of small grey metal-clad panels that rises from the left end toward the middle, and along its front-left edge a smooth curved concrete wall bends like a ship's hull or the back of a whale; the wing is only about as tall as two storeys. In the centre a single compact octagonal tower clad in dark brown, only a little taller than the wings, its faces visibly tilted so it leans like a slanted chimney, with a flat pale grey cap and a tiny white box on top. To its right a lower long wing of raw light-grey concrete with a gently sloped pale roof, and a dark blue-green glass panel on its end face. Between the wings an entrance courtyard with wide grey steps and a small green lawn bank beside the tower, and a car park with white stripes in front. Behind the buildings a very large green park: wide smooth lawns, curving light paths, scattered round trees, three small dark-red-roofed pavilions, and at the far right a round pale-yellow cylindrical tank. Beyond the park a dense belt of trees, then a long RAISED pale-grey concrete viaduct road carried on slender piers running across the whole width of the picture, then a strip of green marsh grass, a band of dark grey sand, and a teal-green sea with small white waves reaching up to a pale hazy sky at the top. In the foreground a wide city road with striped crosswalks, and in the lower right corner a tall tan-brown apartment building with white equipment on its roof. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
-```
----
-
-### `card_dihua` — 景點卡：迪化街
-
-- 用在：景點卡「迪化街」：中藥南北貨的年貨大街
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Dihua Street in Taipei, Taiwan at New Year, drawn as a LIGHT, AIRY vignette on cream parchment (not a dark night scene). The view looks straight down a narrow street: overhead, rows of round paper lanterns in muted dusty red and old-brass yellow hung on thin lines across the street, getting smaller toward the distance, with two or three plain dusty-red horizontal banners hung across (leave the banners completely blank, no marks); on both sides low two-storey shop fronts and open market stalls with corrugated metal awnings, a few bare light bulbs hanging under the awnings, shelves and open sacks of dried goods and small red decorations, and a pale yellow wall at the far right. A modest crowd of about ten to fifteen shoppers in winter jackets and backpacks seen from behind and from a distance, drawn as small simple figures, never a packed mass. Keep the sky and the far end of the street as pale warm cream and soft grey-blue watercolor wash, the same paper-coloured background as the style reference; show the evening only through the warm glow around the lanterns, never fill the picture with dark navy or black. Use the same restrained, low-saturation palette as the reference (dusty rose, muted red, old brass, moss green, soft grey), thin dark-sepia ink lines with light cross-hatching, light transparent washes with plenty of white paper showing through.  A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, the picture occupying only the middle 75% with a wide margin of plain empty parchment around it, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
-```
