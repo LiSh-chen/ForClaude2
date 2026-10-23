@@ -1,4 +1,4 @@
-# 還缺的圖片提示詞（共 11 張）
+# 還缺的圖片提示詞（共 7 張）
 
 ## 怎麼用
 
@@ -9,46 +9,6 @@
 5. 景點卡提示詞只寫「查證確認或單一來源」的外觀細節；查不到的顏色、尺寸沒有指定，圖像工具會自己決定，所以**這幾張可能仍與實景有差**：通霄精鹽廠、布袋、新竹城隍廟、大甲鎮瀾宮、桃園神社。
 
 
----
-
-### `card_gaomei` — 景點卡：高美濕地
-
-- 用在：景點卡「高美濕地」：萬歲大眼蟹舉螯的濕地
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The Gaomei wetland in Taichung, Taiwan, drawn only from these facts: a dozen or so pure white wind turbines standing in a row along the seawall road, a disused octagonal lighthouse with red and white parallel stripes, a long curving wooden boardwalk out over the tidal flat, patches of green marsh grass turning golden, shallow water that mirrors the sky at low tide, the sea turning gold and orange-red at sunset, and small fiddler crabs each raising one big claw in the foreground. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
-```
----
-
-### `card_dajia` — 景點卡：大甲鎮瀾宮
-
-- 用在：景點卡「大甲鎮瀾宮」：九天遶境三百四十公里
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. Zhenlan Temple in Dajia, Taichung, Taiwan, drawn only from these facts: a traditional Minnan temple with a front hall and a main hall around a courtyard, a big open forecourt, a roof ridge covered with colourful cut-and-paste ceramic figures with gold leaf (the three star gods and a dragon-riding general on the front ridge), and a large plaque above the entrance with no readable writing. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
-```
----
-
-### `card_tongxiao` — 景點卡：通霄精鹽廠
-
-- 用在：景點卡「通霄精鹽廠」：巨大精鹽包造景的鹽廠
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The Tongxiao salt-works visitor park in Miaoli, Taiwan, drawn only from these facts: a giant salt-sack landmark taller than a person near the entrance, a sundial-shaped pattern on the paved ground, a fresh blue-and-white colour theme, clean modern low buildings, the sea in the background. It is a visitor park, not a salt pan and not a salt mountain. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
-```
----
-
-### `card_hsinchu` — 景點卡：新竹城隍廟
-
-- 用在：景點卡「新竹城隍廟」：城隍廟對面掛著大算盤
-- 尺寸：1024×768　一般圖，不用去背
-
-```
-Create an image with aspect ratio 4:3. Vintage botanical field-guide illustration: fine pen-and-ink linework in dark sepia brown, delicate watercolor washes in muted moss green, dusty rose and old brass, drawn by hand in a naturalist's notebook, gentle cross-hatching, calm, warm and slightly nostalgic travel-journal mood. Absolutely no text, letters, numbers, logos, watermarks or signatures. The City God Temple of Hsinchu, Taiwan, drawn only from these facts: a traditional Minnan temple whose gable walls rise and fall in continuous waves, roof ridges with swallowtail ends and ceramic dragons, three bays with a pair of blue-stone lions at the central door, and in front of the temple a lively open plaza of food stalls. Do not draw an abacus. A vignette illustration with soft irregular edges fading into aged parchment, 4:3 landscape, one clear focal subject in the centre, calm and healing mood. No text, no letters, no numbers, no signboards, no people's faces in close-up.
-```
 ---
 
 ### `card_taoyuan` — 景點卡：桃園神社
