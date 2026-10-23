@@ -3,153 +3,62 @@
  "params_version": 1,
  "picks": [
   {
-   "ticker": "ON",
-   "name": "ON Semiconductor Corporation",
-   "zh_name": "onsemi",
-   "market": "US",
-   "sector": "power_semis",
-   "rank": 1,
-   "entry_price": 76.94,
-   "entry_date": "2026-10-21",
-   "composite": 61.66,
-   "scores": {
-    "sector": null,
-    "leader": 66.7,
-    "quality": 71.9,
-    "growth": 66.9,
-    "valuation": 86.2,
-    "momentum": 15.5,
-    "news": 40.0
-   },
-   "target": {
-    "base": 98.89,
-    "bull": 136.65,
-    "bear": 42.24,
-    "ev": 92.28,
-    "confidence": "中",
-    "upside": 0.2853,
-    "ev_upside": 0.1994,
-    "horizon_days": 250,
-    "methods": {
-     "pe": {
-      "value": 83.83,
-      "weight": 0.4,
-      "upside": 0.0896
-     },
-     "peg": {
-      "value": 136.32,
-      "weight": 0.15,
-      "upside": 0.7718
-     },
-     "dcf": {
-      "value": 96.02,
-      "weight": 0.2,
-      "upside": 0.248
-     },
-     "consensus": {
-      "value": 102.81,
-      "weight": 0.25,
-      "upside": 0.3363
-     }
-    }
-   },
-   "stop": 67.95,
-   "fundamentals": {
-    "market_cap": 29954174976,
-    "pe_ttm": 51.9865,
-    "pe_fwd": 16.955,
-    "peg": 0.17,
-    "roe": 0.0831,
-    "gross_margin": 0.4278,
-    "op_margin": 0.1953,
-    "net_margin": 0.1017,
-    "rev_growth": 0.092,
-    "eps_growth": 0.366,
-    "de": 0.6506,
-    "beta": 2.052,
-    "target_mean": 102.8148,
-    "n_analysts": 27,
-    "fcf_margin": 0.2673
-   },
-   "tech": {
-    "ret_1m": 0.045380489626770215,
-    "ret_3m": -0.14634411643135292,
-    "rel_3m": -0.19343590893234708,
-    "dist200": -0.060722764033919296,
-    "vol_ann": 0.5253452418904622
-   },
-   "book": "bargain",
-   "also_main": false,
-   "bargain_score": 64.7,
-   "facts": {
-    "from_high": -0.4255,
-    "pos52": 0.3599,
-    "bounce20": 0.0683,
-    "ret_1m": 0.0454,
-    "dist200": -0.0607,
-    "pe_discount": 0.1519,
-    "eps_up": 2.0661,
-    "rev_growth": 0.092,
-    "upside": 0.2853
-   }
-  },
-  {
    "ticker": "SYK",
    "name": "Stryker Corporation",
    "zh_name": "Stryker",
    "market": "US",
    "sector": "aging_care",
-   "rank": 2,
-   "entry_price": 297.6,
-   "entry_date": "2026-10-21",
-   "composite": 68.41,
+   "rank": 1,
+   "entry_price": 307.08,
+   "entry_date": "2026-10-22",
+   "composite": 68.62,
    "scores": {
     "sector": null,
     "leader": 100.0,
     "quality": 83.9,
     "growth": 70.6,
-    "valuation": 71.4,
-    "momentum": 23.2,
+    "valuation": 70.4,
+    "momentum": 25.9,
     "news": 40.0
    },
    "target": {
-    "base": 373.7,
-    "bull": 494.2,
-    "bear": 192.96,
-    "ev": 352.61,
+    "base": 381.59,
+    "bull": 502.73,
+    "bear": 199.88,
+    "ev": 360.39,
     "confidence": "中",
-    "upside": 0.2557,
-    "ev_upside": 0.1849,
+    "upside": 0.2426,
+    "ev_upside": 0.1736,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 314.0,
+      "value": 323.65,
       "weight": 0.4,
-      "upside": 0.0551
+      "upside": 0.054
      },
      "peg": {
-      "value": 500.54,
+      "value": 508.9,
       "weight": 0.15,
-      "upside": 0.6819
+      "upside": 0.6572
      },
      "dcf": {
-      "value": 411.83,
+      "value": 425.7,
       "weight": 0.2,
-      "upside": 0.3838
+      "upside": 0.3863
      },
      "consensus": {
       "value": 362.62,
       "weight": 0.25,
-      "upside": 0.2185
+      "upside": 0.1808
      }
     }
    },
-   "stop": 276.67,
+   "stop": 285.02,
    "fundamentals": {
-    "market_cap": 114151342080,
-    "pe_ttm": 30.8394,
-    "pe_fwd": 17.8608,
-    "peg": 1.42,
+    "market_cap": 117787607040,
+    "pe_ttm": 31.8218,
+    "pe_fwd": 18.4297,
+    "peg": 1.39,
     "roe": 0.1651,
     "gross_margin": 0.6559,
     "op_margin": 0.2702,
@@ -163,25 +72,25 @@
     "fcf_margin": 0.159
    },
    "tech": {
-    "ret_1m": 0.0852536264867243,
-    "ret_3m": -0.06404233029705786,
-    "rel_3m": -0.11113412279805202,
-    "dist200": -0.08183927252267642,
-    "vol_ann": 0.35061179134905096
+    "ret_1m": 0.12674627184552323,
+    "ret_3m": -0.06721441568649411,
+    "rel_3m": -0.10113925034269855,
+    "dist200": -0.05176939561896232,
+    "vol_ann": 0.35553934087094863
    },
    "book": "bargain",
    "also_main": false,
-   "bargain_score": 61.4,
+   "bargain_score": 61.6,
    "facts": {
-    "from_high": -0.2253,
-    "pos52": 0.249,
-    "bounce20": 0.1067,
-    "ret_1m": 0.0853,
-    "dist200": -0.0818,
-    "pe_discount": 0.0401,
+    "from_high": -0.2007,
+    "pos52": 0.3312,
+    "bounce20": 0.131,
+    "ret_1m": 0.1267,
+    "dist200": -0.0518,
+    "pe_discount": 0.0392,
     "eps_up": 0.7267,
     "rev_growth": 0.094,
-    "upside": 0.2557
+    "upside": 0.2426
    }
   }
  ]
