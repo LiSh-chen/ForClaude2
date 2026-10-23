@@ -117,6 +117,7 @@ internal fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState
     }
 
     val collected = route.collected(km).map { it.id }.toSet()
+    val features = rememberLandmarkFacts()
     Text("景點卡 ${collected.size} / ${route.cards.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
     route.cards.forEach { (card, at) ->
         val owned = card.id in collected
@@ -129,7 +130,7 @@ internal fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState
                 Column(Modifier.weight(1f)) {
                     if (owned) {
                         Text(card.name, fontWeight = FontWeight.Bold)
-                        Text(card.blurb, style = MaterialTheme.typography.bodyMedium)
+                        Text(features[card.id].orEmpty().joinToString(" · ") { it.tag }, style = MaterialTheme.typography.bodyMedium)
                     } else {
                         Text("？？？", fontWeight = FontWeight.Bold)
                         Text("第 ${at.roundToInt()} 公里解鎖", style = MaterialTheme.typography.bodySmall)

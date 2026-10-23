@@ -196,20 +196,21 @@ fun rememberTownAreas(): TownAreas {
     return remember(context) { TownAreas.load(context.applicationContext) }
 }
 
-/** "Did you know" lines of the landmark cards: `id|fact|fact` per line in res/raw/landmark_facts.txt. */
-fun loadLandmarkFacts(context: Context): Map<String, List<String>> {
+/** Up to three features per landmark card: `id|tag:fact|tag:fact|tag:fact` per line in res/raw/landmark_facts.txt. */
+fun loadLandmarkFacts(context: Context): Map<String, List<TownTag>> {
     return runCatching {
         ContentStore(context).lines(ContentPack.FACTS)
             .filter { it.isNotBlank() && !it.startsWith("#") }
             .mapNotNull { l ->
                 val f = l.split('|')
-                if (f.size < 2) null else f[0] to f.drop(1).map { it.trim() }.filter { it.isNotEmpty() }
+                if (f.size < 2) null
+                else f[0] to f.drop(1).take(3).mapNotNull { x -> x.split(':', limit = 2).takeIf { it.size == 2 }?.let { TownTag(it[0].trim(), it[1].trim()) } }
             }.filter { it.second.isNotEmpty() }.toMap()
     }.getOrDefault(emptyMap())
 }
 
 @Composable
-fun rememberLandmarkFacts(): Map<String, List<String>> {
+fun rememberLandmarkFacts(): Map<String, List<TownTag>> {
     val context = LocalContext.current
     return remember(context) { loadLandmarkFacts(context.applicationContext) }
 }

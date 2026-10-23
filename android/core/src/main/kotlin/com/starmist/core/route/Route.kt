@@ -21,8 +21,8 @@ data class GeoPoint(val lat: Double, val lng: Double) {
     }
 }
 
-/** A collectable place on a route. [blurb] is exactly ten characters about what makes it special. */
-data class Landmark(val id: String, val name: String, val blurb: String)
+/** A collectable place on a route. What is special about it (up to three features) lives in the facts file. */
+data class Landmark(val id: String, val name: String)
 
 /** What a small roadside sight looks like on the map. */
 enum class PoiKind { HARBOR, TEMPLE, MUSEUM, SPRING, WATERFALL, PARK, THEATER, FORT, LIGHTHOUSE }

@@ -22,7 +22,7 @@ object TaiwanLoop {
 
     /** The card's ten-character line is not kept here: it lives in the content pack (res/raw/card_texts.txt). */
     private fun card(id: String, name: String, lat: Double, lng: Double) =
-        Stop(name, GeoPoint(lat, lng), Landmark(id, name, ""))
+        Stop(name, GeoPoint(lat, lng), Landmark(id, name))
 
     private fun poi(id: String, name: String, lat: Double, lng: Double, kind: PoiKind) =
         Poi(id, name, GeoPoint(lat, lng), kind)

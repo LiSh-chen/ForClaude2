@@ -11,13 +11,6 @@ class RouteTest {
     private val route = Routes.byId("taiwan_loop")!!
 
     @Test
-    fun `every card blurb is exactly ten characters`() {
-        route.cards.forEach { (card, _) ->
-            assertEquals(10, card.blurb.length, "${card.name}: ${card.blurb}")
-        }
-    }
-
-    @Test
     fun `card ids are unique and cards come in route order`() {
         val ids = route.cards.map { it.first.id }
         assertEquals(ids.size, ids.toSet().size)
@@ -106,7 +99,7 @@ class RouteTest {
     fun `write review table`() {
         val out = File("build/review").apply { mkdirs() }
         val rows = route.cards.mapIndexed { i, (card, km) ->
-            "| ${i + 1} | ${card.name} | ${card.blurb} | ${"%.0f".format(km)} |"
+            "| ${i + 1} | ${card.name} | ${"%.0f".format(km)} |"
         }
         val all = (route.cards.map { it.first.name to it.second } + route.supplies.map { "🚉" + it.first.name to it.second }).sortedBy { it.second }
         File(out, "taiwan_gaps_all.txt").writeText(all.zipWithNext { a, b -> "${a.first}→${b.first} ${"%.0f".format(b.second - a.second)} km" }.joinToString("\n"))
@@ -117,7 +110,7 @@ class RouteTest {
                 st.transit != null -> "transit"
                 else -> "via"
             }
-            val label = st.landmark?.blurb ?: st.supply?.opened ?: st.transit ?: ""
+            val label = st.landmark?.name ?: st.supply?.opened ?: st.transit ?: ""
             """{"name":"${st.name}","lat":${st.at.lat},"lng":${st.at.lng},"kind":"$kind","km":${"%.1f".format(route.cumulativeKm[i])},"text":"$label"}"""
         }
         File(out, "taiwan_route.json").writeText("[" + json.joinToString(",\n") + "]")
