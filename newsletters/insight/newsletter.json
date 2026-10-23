@@ -1,0 +1,20 @@
+{
+  "name": "insight",
+  "title": "精選新聞",
+  "tagline": "本期只挑真正有料的內容,沒達標寧可不湊數。",
+  "subject_prefix": "精選",
+  "weights": {
+    "novelty": 0.3,
+    "depth": 0.25,
+    "impact": 0.3,
+    "evidence": 0.15
+  },
+  "penalties": {
+    "trivia": 0.4
+  },
+  "min_score": 55.0,
+  "top": 7,
+  "per_source": 2,
+  "enrich": false,
+  "seen_file": "data/seen.json"
+}
