@@ -1,6 +1,7 @@
 package com.starmist.walker.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -122,7 +124,7 @@ internal fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState
     route.cards.forEach { (card, at) ->
         val owned = card.id in collected
         Card(
-            Modifier.fillMaxWidth(),
+            Modifier.fillMaxWidth().then(if (owned) Modifier.clickable { detail = card } else Modifier),
             colors = CardDefaults.cardColors(containerColor = if (owned) Vintage.parchmentLight else Vintage.parchmentDark.copy(alpha = 0.6f)),
         ) {
             Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -136,7 +138,7 @@ internal fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState
                         Text("第 ${at.roundToInt()} 公里解鎖", style = MaterialTheme.typography.bodySmall)
                     }
                 }
-                if (owned) TextButton(onClick = { detail = card }) { Text("看") }
+                if (owned) FilledTonalButton(onClick = { detail = card }, contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)) { Text("查看") }
             }
         }
     }
