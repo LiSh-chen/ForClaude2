@@ -9,7 +9,11 @@
 程式裡的支點座標（`RealMap.kt` 的 `HAND_*`、`FEET_*`、`LANTERN_*`）是依這個尺寸算出的比例。換角色圖就要重新量。
 腳本裡的路徑指向暫存資料夾，重做時請改成實際路徑。
 
-## 逐格走路動畫（選用）
+## 現行角色（2026-10 起）
+
+地圖上的旅行者改用使用者提供的可愛版角色 `generated/traveller_cute.jpg`（角色站在島上的正面圖）。`tools/cute_traveller/make_cute_traveller.py` 用墨線輪廓把角色從島上摳出來，輸出 `art_traveller_body.webp`，手杖與手兩層留空（整隻角色是一張圖，程式照舊讓它彈跳、搖擺、提燈發光），同時產生 App 圖示前景 `art_icon_foreground.webp`。舊的三視圖版本與逐格走路圖備份在 `assets/archive/traveller_sheet_version/`。以下是舊版（三視圖）的做法，換回時才用得到。
+
+## 逐格走路動畫（舊版，選用）
 
 使用者另外做的連續動作圖 `generated/traveller_walk_sheet.jpg`（3 欄 × 2 列、6 個走路姿勢，角色朝左）用 `3_slice_walk.py` 處理：
 

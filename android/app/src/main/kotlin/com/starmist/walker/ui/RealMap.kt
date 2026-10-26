@@ -506,12 +506,12 @@ internal fun rememberWalkerArt(): WalkerArt? {
 private const val WALK_FRAMES = 6
 
 // Where things are in the traveller pictures, as fractions of their size.
-private const val HAND_X = 0.783f      // the staff swings about the hand
-private const val HAND_Y = 0.540f
-private const val FEET_X = 0.501f      // the body tilts about its feet
+private const val HAND_X = 0.20f       // unused while the staff layer is empty (the cute traveller is one picture)
+private const val HAND_Y = 0.62f
+private const val FEET_X = 0.56f       // the body tilts about its feet
 private const val FEET_Y = 0.975f
-private const val LANTERN_X = 0.860f
-private const val LANTERN_Y = 0.331f
+private const val LANTERN_X = 0.122f
+private const val LANTERN_Y = 0.435f
 
 /**
  * Draws the walker standing at [p]. With [walking] it takes steps: the body hops and rocks from foot to
