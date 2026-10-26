@@ -62,6 +62,14 @@ import kotlin.math.roundToInt
 
 private val STAMP_INK = Color(0xFFB04A3A)
 
+/** Which way the traveller faces on the screen: +1 right (east), -1 left (west), 0 when the route runs straight up or down here. */
+internal fun walkerHeading(route: RouteDef, walkedKm: Double): Float {
+    val a = route.positionAt(walkedKm).unit().x
+    val ahead = route.positionAt((walkedKm + 1.0).coerceAtMost(route.totalKm)).unit().x
+    val dx = if (walkedKm + 1.0 > route.totalKm) a - route.positionAt((walkedKm - 1.0).coerceAtLeast(0.0)).unit().x else ahead - a
+    return if (dx > 0.0004f) 1f else if (dx < -0.0004f) -1f else 0f
+}
+
 /** The island walk as a map the player can pinch and drag; it opens on the walker and cannot zoom out past the whole island. */
 @Composable
 fun RouteMapView(
@@ -81,12 +89,7 @@ fun RouteMapView(
         rememberInfiniteTransition(label = "walk").animateFloat(0f, 1f, infiniteRepeatable(tween(1000, easing = LinearEasing)), label = "phase")
     } else remember { mutableFloatStateOf(0f) }
     // Which way the traveller faces: the way the route runs on the screen a little ahead (kept when it runs straight up or down).
-    val heading = remember(route, walkedKm.toInt()) {
-        val a = route.positionAt(walkedKm).unit().x
-        val ahead = route.positionAt((walkedKm + 1.0).coerceAtMost(route.totalKm)).unit().x
-        val dx = if (walkedKm + 1.0 > route.totalKm) a - route.positionAt((walkedKm - 1.0).coerceAtLeast(0.0)).unit().x else ahead - a
-        if (dx > 0.0004f) 1f else if (dx < -0.0004f) -1f else 0f
-    }
+    val heading = remember(route, walkedKm.toInt()) { walkerHeading(route, walkedKm) }
     var faceTarget by remember { mutableFloatStateOf(if (heading == 0f) 1f else heading) }
     LaunchedEffect(heading) { if (heading != 0f) faceTarget = heading }
     val face = animateFloatAsState(faceTarget, tween(260, easing = FastOutSlowInEasing), label = "face")

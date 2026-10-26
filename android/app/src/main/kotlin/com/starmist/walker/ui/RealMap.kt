@@ -506,12 +506,12 @@ internal fun rememberWalkerArt(): WalkerArt? {
 private const val WALK_FRAMES = 6
 
 // Where things are in the traveller pictures, as fractions of their size.
-private const val HAND_X = 0.20f       // unused while the staff layer is empty (the cute traveller is one picture)
+private const val HAND_X = 0.20f       // unused while the staff layer is empty (the traveller is one picture per pose)
 private const val HAND_Y = 0.62f
-private const val FEET_X = 0.56f       // the body tilts about its feet
+private const val FEET_X = 0.40f       // the middle of the body (not the staff): it stands on the map point, and the picture is mirrored about it when the walker turns
 private const val FEET_Y = 0.975f
-private const val LANTERN_X = 0.122f
-private const val LANTERN_Y = 0.435f
+private const val LANTERN_X = 0.885f   // the lantern hangs on the staff in front of the walker
+private const val LANTERN_Y = 0.49f
 
 /**
  * Draws the walker standing at [p]. With [walking] it takes steps: the body hops and rocks from foot to
@@ -547,13 +547,19 @@ internal fun DrawScope.drawWalker(p: Offset, w: Float, art: WalkerArt?, phase: F
         // Drawn walk cycle: faded in over the standing picture when the walk starts and out when it stops.
         if (framesMode && k > 0.01f) {
             val frame = art.frames[(phase * art.frames.size).toInt().coerceIn(0, art.frames.size - 1)]
-            translate(p.x - width / 2f, p.y - height + 2.dp.toPx()) {
+            translate(p.x - width * FEET_X, p.y - height + 2.dp.toPx()) {
                 drawImage(frame, dstSize = IntSize(width.toInt(), height.toInt()), alpha = k)
+                val lantern = Offset(width * LANTERN_X, height * LANTERN_Y)
+                val glow = (0.30f + 0.12f * kotlin.math.sin(turn * 2f)) * k
+                drawCircle(
+                    Brush.radialGradient(listOf(Color(0xFFFFE9A8).copy(alpha = glow), Color.Transparent), lantern, height * 0.16f),
+                    height * 0.16f, lantern,
+                )
             }
         }
         val standing = if (framesMode) 1f - k else 1f
         if (standing > 0.01f) {
-            translate(p.x - width / 2f, p.y - height + 2.dp.toPx() - lift) {
+            translate(p.x - width * FEET_X, p.y - height + 2.dp.toPx() - lift) {
                 withTransform({
                     rotate(3.5f * rock, feet)
                     scale(1f + 0.035f * squash, 1f - 0.045f * squash, feet)
