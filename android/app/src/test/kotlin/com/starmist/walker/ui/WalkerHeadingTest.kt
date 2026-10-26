@@ -21,12 +21,11 @@ class WalkerHeadingTest {
 
     @Test
     fun counterClockwiseFacesTheOtherWayAtTheSamePlaces() {
-        val total = clockwise.totalKm
-        val fulong = kmOf(clockwise, "fulong"); val sandiao = kmOf(clockwise, "sandiaojiao")
-        // The same stretch of coast, walked backwards: the traveller faces west.
-        assertEquals(-1f, walkerHeading(counter, total - (fulong + sandiao) / 2), 0f)
-        val eluanbi = kmOf(clockwise, "eluanbi"); val maobitou = kmOf(clockwise, "maobitou")
-        assertEquals(1f, walkerHeading(counter, total - (eluanbi + maobitou) / 2), 0f)
+        // The same two stretches of coast, walked backwards: Sandiaojiao comes first, then Fulong, so the traveller faces west.
+        val fulong = kmOf(counter, "fulong"); val sandiao = kmOf(counter, "sandiaojiao")
+        assertEquals(-1f, walkerHeading(counter, (fulong + sandiao) / 2), 0f)
+        val eluanbi = kmOf(counter, "eluanbi"); val maobitou = kmOf(counter, "maobitou")
+        assertEquals(1f, walkerHeading(counter, (eluanbi + maobitou) / 2), 0f)
     }
 
     @Test
