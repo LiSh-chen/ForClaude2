@@ -4,7 +4,7 @@
     python3 3_slice_walk.py <sheet.png|jpg> <out_dir> [--rows 2] [--cols 3] [--flip]
 
 Each cell is cut out of the white background, scaled with ONE common factor (so the traveller does
-not change size between frames), put on a 411 x 400 canvas with the feet on the same line and the
+not change size between frames), put on a canvas the size of art_traveller_body.webp with the feet on the same line and the
 body centred on the same column as the standing pictures, and saved as art_traveller_walk_<n>.webp.
 A contact sheet (contact.png, frames side by side on a checkerboard) is written too, for a look.
 --flip mirrors the frames: the app wants the traveller facing right.
@@ -13,24 +13,42 @@ import argparse, pathlib, sys
 import cv2, numpy as np
 from PIL import Image
 
-CANVAS = (411, 400)           # same as art_traveller_body.webp
-FEET_Y = 0.975
 RES = pathlib.Path(__file__).resolve().parents[3] / "app/src/main/res/drawable-nodpi"
-POCKET_MIN_PIXELS = 3000       # at the sheet's own resolution (cells of about 650 px)
+CANVAS = Image.open(RES / "art_traveller_body.webp").size   # frames are drawn stretched to the standing picture, so use its size
+FEET_Y = 0.975
+POCKET_MIN_PIXELS = 150
+POCKET_MAX_PIXELS = 40000
+POCKET_RING_LUMA = 150
+GLOW_MAX_PIXELS = 60000
 
 def cut_out(cell: np.ndarray) -> np.ndarray:
-    """RGBA of one cell: white connected to the border becomes transparent."""
+    """RGBA of one cell: white connected to the border becomes transparent, and so does the pale glow round the lantern."""
     white = (cell.min(axis=2) > 232).astype(np.uint8)
     n, lab = cv2.connectedComponents(white, connectivity=4)
     border = set(lab[0, :]) | set(lab[-1, :]) | set(lab[:, 0]) | set(lab[:, -1])
     bg = np.isin(lab, [b for b in border if b != 0]) & (white > 0)
-    # Pockets of background fully enclosed by the drawing (between the hat brim and the staff, say) are
-    # not reached from the border. They are big and almost pure white; the body's highlights are small.
+    # Pockets of background fully enclosed by the drawing (inside the staff's hook, say) are not reached from the border.
+    # They are pure white and ringed by dark ink; the body's glossy highlights are ringed by pale body colour.
     pure = (cell.min(axis=2) > 245).astype(np.uint8)
+    gray = cv2.cvtColor(cell, cv2.COLOR_RGB2GRAY)
     n2, lab2, stats2, _ = cv2.connectedComponentsWithStats(pure, connectivity=4)
     for i in range(1, n2):
-        if stats2[i, 4] > POCKET_MIN_PIXELS:
-            bg |= cv2.dilate((lab2 == i).astype(np.uint8), np.ones((3, 3), np.uint8)) > 0
+        if stats2[i, 4] < POCKET_MIN_PIXELS or stats2[i, 4] > POCKET_MAX_PIXELS:
+            continue
+        comp = (lab2 == i).astype(np.uint8)
+        ring = (cv2.dilate(comp, np.ones((9, 9), np.uint8)) > 0) & (comp == 0)
+        if gray[ring].mean() < POCKET_RING_LUMA:
+            bg |= cv2.dilate(comp, np.ones((3, 3), np.uint8)) > 0
+    # The lantern's glow is a pale yellow blob touching the background. The body and hat are the same pale colours but
+    # are one big region behind the ink outline, so only small pale regions that touch the background are removed.
+    hsv = cv2.cvtColor(cell, cv2.COLOR_RGB2HSV)
+    pale = ((~bg) & (hsv[..., 1] > 6) & (hsv[..., 1] < 90) & (hsv[..., 2] > 225)).astype(np.uint8)
+    n3, lab3, stats3, _ = cv2.connectedComponentsWithStats(pale, connectivity=4)
+    touch = cv2.dilate(bg.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0
+    for i in range(1, n3):
+        if stats3[i, 4] < GLOW_MAX_PIXELS and (touch & (lab3 == i)).any():
+            bg |= cv2.dilate((lab3 == i).astype(np.uint8), np.ones((3, 3), np.uint8)) > 0
+    bg = cv2.dilate(bg.astype(np.uint8), np.ones((2, 2), np.uint8)) > 0   # eat the pale fringe left against the outline
     alpha = cv2.GaussianBlur(np.where(bg, 0, 255).astype(np.uint8), (3, 3), 0)
     return np.dstack([cell, alpha])
 

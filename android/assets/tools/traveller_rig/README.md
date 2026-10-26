@@ -13,6 +13,10 @@
 
 地圖上的旅行者改用使用者提供的可愛版角色 `generated/traveller_cute.jpg`（角色站在島上的正面圖）。`tools/cute_traveller/make_cute_traveller.py` 用墨線輪廓把角色從島上摳出來，輸出 `art_traveller_body.webp`，手杖與手兩層留空（整隻角色是一張圖，程式照舊讓它彈跳、搖擺、提燈發光），同時產生 App 圖示前景 `art_icon_foreground.webp`。舊的三視圖版本與逐格走路圖備份在 `assets/archive/traveller_sheet_version/`。以下是舊版（三視圖）的做法，換回時才用得到。
 
+## 逐格走路動畫（可愛版，2026-10 起）
+
+使用者用 Gemini 畫的走路連續動作圖 `generated/traveller_walk_sheet_cute.jpg`（3 欄 × 2 列、側面朝右）用同一支 `3_slice_walk.py` 處理（`--rows 2 --cols 3`，不用 `--flip`），輸出的 6 格放進 `drawable-nodpi/art_traveller_walk_0..5.webp`；站立圖 `art_traveller_body.webp` 用第 0 格，這樣站著和走路是同一個側面造型。畫布大小跟著 `art_traveller_body.webp`（681×708）。去背時提燈外圍的淡黃光暈也會去掉（程式在走路與站立時另外畫光暈）。
+
 ## 逐格走路動畫（舊版，選用）
 
 使用者另外做的連續動作圖 `generated/traveller_walk_sheet.jpg`（3 欄 × 2 列、6 個走路姿勢，角色朝左）用 `3_slice_walk.py` 處理：
