@@ -1,0 +1,97 @@
+{
+ "date": "2026-10-26",
+ "params_version": 1,
+ "picks": [
+  {
+   "ticker": "SYK",
+   "name": "Stryker Corporation",
+   "zh_name": "Stryker",
+   "market": "US",
+   "sector": "aging_care",
+   "rank": 1,
+   "entry_price": 306.13,
+   "entry_date": "2026-10-26",
+   "composite": 68.0,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 83.9,
+    "growth": 70.6,
+    "valuation": 69.8,
+    "momentum": 22.5,
+    "news": 40.0
+   },
+   "target": {
+    "base": 381.22,
+    "bull": 498.94,
+    "bear": 204.65,
+    "ev": 360.62,
+    "confidence": "中",
+    "upside": 0.2453,
+    "ev_upside": 0.178,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 324.49,
+      "weight": 0.4,
+      "upside": 0.06
+     },
+     "peg": {
+      "value": 507.47,
+      "weight": 0.15,
+      "upside": 0.6577
+     },
+     "dcf": {
+      "value": 423.27,
+      "weight": 0.2,
+      "upside": 0.3826
+     },
+     "consensus": {
+      "value": 362.62,
+      "weight": 0.25,
+      "upside": 0.1845
+     }
+    }
+   },
+   "stop": 285.67,
+   "fundamentals": {
+    "market_cap": 117423218688,
+    "pe_ttm": 31.7233,
+    "pe_fwd": 18.3727,
+    "peg": 1.44,
+    "roe": 0.1651,
+    "gross_margin": 0.6559,
+    "op_margin": 0.2702,
+    "net_margin": 0.1443,
+    "rev_growth": 0.094,
+    "eps_growth": 0.441,
+    "de": 0.6439,
+    "beta": 0.781,
+    "target_mean": 362.6154,
+    "n_analysts": 26,
+    "fcf_margin": 0.159
+   },
+   "tech": {
+    "ret_1m": 0.12754975738263474,
+    "ret_3m": -0.11396590056632772,
+    "rel_3m": -0.1473482650389587,
+    "dist200": -0.053015089003215166,
+    "vol_ann": 0.3303092405230211
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 61.5,
+   "facts": {
+    "from_high": -0.2031,
+    "pos52": 0.323,
+    "bounce20": 0.1215,
+    "ret_1m": 0.1275,
+    "dist200": -0.053,
+    "pe_discount": 0.0494,
+    "eps_up": 0.7267,
+    "rev_growth": 0.094,
+    "upside": 0.2453
+   }
+  }
+ ]
+}
