@@ -53,7 +53,8 @@ fun ZoomPanMap(
     maxZoom: Float = 8f,
     background: Color = Vintage.parchmentLight,
     overlay: @Composable BoxScope.() -> Unit = {},
-    onTap: ((Offset) -> Unit)? = null,
+    /** Called with the tapped map point (0 to 1) and how much map one screen pixel is, across and down, so a caller can ask "within 30 dp?". */
+    onTap: ((Offset, Offset) -> Unit)? = null,
     /** Drawn above [content] in a layer of its own, so something that animates (the walker) does not make the whole map redraw. */
     top: (DrawScope.(w: Float, h: Float, zoom: Float, view: Rect) -> Unit)? = null,
     content: DrawScope.(w: Float, h: Float, zoom: Float, view: Rect) -> Unit,
@@ -62,6 +63,7 @@ fun ZoomPanMap(
     var center by remember(aspect) { mutableStateOf(focus) }
     var lastTouch by remember { mutableLongStateOf(0L) }
     var viewport by remember { mutableStateOf(IntSize.Zero) }
+    val latestTap by androidx.compose.runtime.rememberUpdatedState(onTap)   // the tap handler reads the walked distance, which moves on
 
     fun clamp(c: Offset, z: Float): Offset {
         if (viewport.width == 0 || viewport.height == 0) return c
@@ -88,10 +90,11 @@ fun ZoomPanMap(
             .onSizeChanged { viewport = it }
             .pointerInput(aspect, onTap != null) {
                 if (onTap != null) detectTapGestures { tap ->
+                    val onTap = latestTap ?: return@detectTapGestures
                     val vw = size.width.toFloat(); val vh = size.height.toFloat()
                     val w0 = min(vw, vh * aspect); val h0 = w0 / aspect
                     val c = clamp(center, zoom)
-                    onTap(Offset(c.x + (tap.x - vw / 2f) / (w0 * zoom), c.y + (tap.y - vh / 2f) / (h0 * zoom)))
+                    onTap(Offset(c.x + (tap.x - vw / 2f) / (w0 * zoom), c.y + (tap.y - vh / 2f) / (h0 * zoom)), Offset(1f / (w0 * zoom), 1f / (h0 * zoom)))
                 }
             }
             .pointerInput(aspect) {

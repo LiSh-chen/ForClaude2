@@ -356,6 +356,14 @@ internal fun DrawScope.drawRealMap(
         }
     }
 
+    // Region mode, a township not walked through yet that has been picked: no name, but its border in a dashed line so the player can see how far it reaches.
+    if (regionMode && areas != null && w >= 1700f && selectedTown in areas.towns.indices && selectedTown !in explored) {
+        val edge = areas.path(selectedTown, w, h)
+        val dashes = PathEffect.dashPathEffect(floatArrayOf(9.dp.toPx(), 6.dp.toPx()))
+        drawPath(edge, Color.White.copy(alpha = 0.85f), style = Stroke(4.5.dp.toPx(), join = StrokeJoin.Round, pathEffect = dashes))
+        drawPath(edge, Color(0xFF3A3F44), style = Stroke(2.dp.toPx(), join = StrokeJoin.Round, pathEffect = dashes))
+    }
+
     // The route: a bold solid line behind the walker, a dashed dark line ahead, a dotted red one where a train or ferry carries the walker.
     // Each is one path so the dashes run on unbroken; a pale casing under both keeps them readable on the painting.
     val walkedPath = Path(); val aheadPath = Path(); val ridePath = Path(); val rideAhead = Path()
@@ -520,7 +528,11 @@ private const val LANTERN_Y = 0.49f
  * brighter. [phase] runs 0 to 1 once per pair of steps. Standing still it is a plain picture, so
  * nothing needs redrawing.
  */
-internal fun DrawScope.drawWalker(p: Offset, w: Float, art: WalkerArt?, phase: Float, walk: Float, face: Float = 1f) {
+internal fun DrawScope.drawWalker(
+    p: Offset, w: Float, art: WalkerArt?, phase: Float, walk: Float, face: Float = 1f,
+    /** A little thing it does while standing (see [Idle]) and how far through it is, 0 to 1; [measurer] draws its marks. */
+    idle: Int = Idle.NONE, idleT: Float = 0f, measurer: androidx.compose.ui.text.TextMeasurer? = null,
+) {
     if (art == null || w < 1700f) {
         drawCircle(Color(0xFFFF8A00).copy(alpha = 0.25f), 13.dp.toPx(), p)
         drawCircle(Color(0xFFFF8A00).copy(alpha = 0.45f), 8.dp.toPx(), p)
@@ -539,9 +551,11 @@ internal fun DrawScope.drawWalker(p: Offset, w: Float, art: WalkerArt?, phase: F
     val lift = height * 0.05f * hop
     val squash = m * (1f - kotlin.math.abs(kotlin.math.sin(turn)))   // how recently it landed
 
+    val pose = if (idle != Idle.NONE) idlePose(idle, idleT) else IdlePose()
+    val air = (hop + pose.lift * 8f).coerceIn(0f, 1f)       // how far off the ground, for the shadow
     // Turning round: the whole figure is mirrored about its feet, passing through edge-on, so it turns instead of jumping.
-    withTransform({ scale(face, 1f, p) }) {
-        drawOval(Color.Black.copy(alpha = 0.18f - 0.06f * hop), Offset(p.x - width * 0.3f * (1f - 0.12f * hop), p.y - 3.dp.toPx()), Size(width * 0.6f * (1f - 0.12f * hop), 6.dp.toPx()))
+    withTransform({ scale(face * pose.face, 1f, p) }) {
+        drawOval(Color.Black.copy(alpha = 0.18f - 0.06f * air), Offset(p.x - width * 0.3f * (1f - 0.12f * air), p.y - 3.dp.toPx()), Size(width * 0.6f * (1f - 0.12f * air), 6.dp.toPx()))
 
         val feet = Offset(width * FEET_X, height * FEET_Y)
         val hand = Offset(width * HAND_X, height * HAND_Y)
@@ -550,14 +564,19 @@ internal fun DrawScope.drawWalker(p: Offset, w: Float, art: WalkerArt?, phase: F
         if (framesMode) {
             val n = art.frames.size
             val frame = art.frames[((phase * n).toInt() + REST_FRAME) % n]
-            translate(p.x - width * FEET_X, p.y - height + 2.dp.toPx()) {
-                drawImage(frame, dstSize = IntSize(width.toInt(), height.toInt()))
-                val lantern = Offset(width * LANTERN_X, height * LANTERN_Y)
-                val glow = 0.30f + 0.12f * kotlin.math.sin(turn * 2f) * k
-                drawCircle(
-                    Brush.radialGradient(listOf(Color(0xFFFFE9A8).copy(alpha = glow), Color.Transparent), lantern, height * 0.16f),
-                    height * 0.16f, lantern,
-                )
+            translate(p.x - width * FEET_X, p.y - height + 2.dp.toPx() - pose.lift * height) {
+                withTransform({
+                    rotate(pose.rot, feet)
+                    scale(pose.sx, pose.sy, feet)
+                }) {
+                    drawImage(frame, dstSize = IntSize(width.toInt(), height.toInt()))
+                    val lantern = Offset(width * LANTERN_X, height * LANTERN_Y)
+                    val glow = 0.30f + 0.12f * kotlin.math.sin(turn * 2f) * k
+                    drawCircle(
+                        Brush.radialGradient(listOf(Color(0xFFFFE9A8).copy(alpha = glow), Color.Transparent), lantern, height * 0.16f),
+                        height * 0.16f, lantern,
+                    )
+                }
             }
         }
         val standing = if (framesMode) 0f else 1f
@@ -582,6 +601,10 @@ internal fun DrawScope.drawWalker(p: Offset, w: Float, art: WalkerArt?, phase: F
                 }
             }
         }
+    }
+    if (idle != Idle.NONE && measurer != null) {
+        val sign = if (face >= 0f) 1f else -1f
+        drawIdleEmote(measurer, idle, idleT, Offset(p.x, p.y - height * 1.02f), height, sign)
     }
 }
 

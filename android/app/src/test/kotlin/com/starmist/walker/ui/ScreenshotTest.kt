@@ -119,4 +119,22 @@ class ScreenshotTest {
             }
         }
     }
+
+    /** The standing-still acts, one per row, at five moments each. */
+    @Test fun walker_idle() = paparazzi.snapshot {
+        StarMistTheme {
+            val art = rememberWalkerArt()
+            val measurer = androidx.compose.ui.text.rememberTextMeasurer()
+            androidx.compose.foundation.Canvas(Modifier.fillMaxSize().background(Vintage.parchment)) {
+                val colW = size.width / 5f
+                val rowH = size.height / 6f
+                for (act in 1..Idle.COUNT) {
+                    val ts = listOf(0.1f, 0.3f, 0.5f, 0.7f, 0.9f)
+                    ts.forEachIndexed { i, t ->
+                        drawWalker(androidx.compose.ui.geometry.Offset(colW * (i + 0.5f), rowH * (act + 0.2f)), 4500f, art, 0f, 0f, 1f, act, t, measurer)
+                    }
+                }
+            }
+        }
+    }
 }

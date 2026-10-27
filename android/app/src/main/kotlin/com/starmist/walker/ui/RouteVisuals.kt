@@ -16,6 +16,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -71,10 +74,13 @@ internal fun walkerHeading(route: RouteDef, walkedKm: Double): Float {
 fun RouteMapView(
     route: RouteDef, walkedKm: Double, modifier: Modifier = Modifier, initialZoom: Float? = null,
     regionMode: Boolean = false, selectedTown: Int = -1, onTapTown: ((Int) -> Unit)? = null,
+    /** Route mode: a collected card's marker was tapped (its id). */
+    onTapCard: ((String) -> Unit)? = null,
     /** True while steps are being counted: the traveller walks. */
     walking: Boolean = false,
 ) {
     val measurer = rememberMapMeasurer()
+    val density = androidx.compose.ui.platform.LocalDensity.current.density
     val data = rememberRealMapData(route)
     val walker = rememberWalkerArt()
     // The step cycle: one turn of [phase] is a pair of steps, and 0 and 0.5 are the standing (passing) poses. A walk starts
@@ -110,6 +116,31 @@ fun RouteMapView(
             walk.floatValue = 0f
         }
     }
+    // While it stands still the traveller does a little something every few seconds (see Idle); walking, or still finishing a step, stops it.
+    val idleAct = remember { mutableIntStateOf(Idle.NONE) }
+    val idleT = remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(walking) {
+        idleAct.intValue = Idle.NONE
+        if (walking) return@LaunchedEffect
+        while (walk.floatValue > 0f) delay(100)
+        val dice = kotlin.random.Random(System.nanoTime())
+        var previous = Idle.NONE
+        while (true) {
+            delay(3_500L + dice.nextInt(4_500))
+            var act: Int
+            do { act = 1 + dice.nextInt(Idle.COUNT) } while (act == previous)
+            previous = act
+            idleAct.intValue = act
+            val begin = withFrameNanos { it }
+            while (true) {
+                val t = (withFrameNanos { it } - begin) / 1e6f / Idle.MS[act]
+                if (t >= 1f) break
+                idleT.floatValue = t
+            }
+            idleAct.intValue = Idle.NONE
+            idleT.floatValue = 0f
+        }
+    }
     // Which way the traveller faces: the way the route runs on the screen a little ahead (kept when it runs straight up or down).
     val heading = remember(route, walkedKm.toInt()) { walkerHeading(route, walkedKm) }
     var faceTarget by remember { mutableFloatStateOf(if (heading == 0f) 1f else heading) }
@@ -129,10 +160,23 @@ fun RouteMapView(
         initialZoom = initialZoom ?: if (base != null) 5.5f else 12f,
         maxZoom = 12f,
         background = SEA_COLOR,
-        onTap = if (regionMode && onTapTown != null) { u ->
+        onTap = if (regionMode && onTapTown != null) { u, _ ->
             onTapTown(areas.find(MAP_LAT_MAX - u.y.toDouble() * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + u.x.toDouble() * (MAP_LON_MAX - MAP_LON_MIN)))
+        } else if (!regionMode && onTapCard != null) { u, perPx ->
+            // The nearest collected card's marker within about 30 dp of the tap.
+            val owned = route.collected(walkedKm).map { it.id }.toSet()
+            var best: String? = null
+            var bestPx = 30f * density
+            route.stops.forEach { stop ->
+                val id = stop.landmark?.id ?: return@forEach
+                if (id !in owned) return@forEach
+                val q = stop.at.unit()
+                val d = kotlin.math.hypot((q.x - u.x) / perPx.x, (q.y - u.y) / perPx.y)
+                if (d < bestPx) { bestPx = d; best = id }
+            }
+            best?.let(onTapCard)
         } else null,
-        top = { w, h, _, _ -> drawWalker(Offset(here.unit().x * w, here.unit().y * h), w, walker, phase.floatValue, walk.floatValue, face.value) },
+        top = { w, h, _, _ -> drawWalker(Offset(here.unit().x * w, here.unit().y * h), w, walker, phase.floatValue, walk.floatValue, face.value, idleAct.intValue, idleT.floatValue, measurer) },
     ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown) }
 }
 
@@ -162,7 +206,8 @@ fun CardEmblem(card: Landmark, owned: Boolean, modifier: Modifier = Modifier) {
 /** A collected card, large: picture, the ten-character line, and where on the route it was found. */
 @Composable
 fun CardFace(card: Landmark, atKm: Double) {
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    // Scrolls: inside a dialog on a small phone the picture and three features can be taller than the room, and the text was cut off.
+    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
         val art = rememberArt("card_${card.id}")
         if (art != null) {
             Image(art, contentDescription = card.name, modifier = Modifier.fillMaxWidth().aspectRatio(4f / 3f).clip(RoundedCornerShape(10.dp)), contentScale = ContentScale.Crop)

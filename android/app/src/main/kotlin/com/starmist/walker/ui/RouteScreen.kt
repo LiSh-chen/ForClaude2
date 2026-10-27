@@ -27,6 +27,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +48,7 @@ import kotlin.math.roundToInt
 
 /** Walk a real-world route: pick one, watch the distance grow, and collect a card and a station stamp along the way. */
 @Composable
-fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues) {
+fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues, openCardId: String? = null, onCardOpened: () -> Unit = {}) {
     val state by vm.routeState.collectAsStateWithLifecycle()
     val current = state
     val route = current?.let { Routes.byId(it.routeId) }
@@ -60,7 +61,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
         if (current == null || route == null) {
             RoutePicker(onStart = { vm.startRoute(it) })
         } else {
-            RouteProgressContent(route, current, onRestart = { vm.restartRoute() }, onSwitch = { vm.startRoute(it) })
+            RouteProgressContent(route, current, onRestart = { vm.restartRoute() }, onSwitch = { vm.startRoute(it) }, openCardId = openCardId, onCardOpened = onCardOpened)
         }
     }
 }
@@ -90,7 +91,7 @@ internal fun RoutePicker(onStart: (String) -> Unit) {
 }
 
 @Composable
-internal fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState, onRestart: () -> Unit, onSwitch: (String) -> Unit) {
+internal fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState, onRestart: () -> Unit, onSwitch: (String) -> Unit, openCardId: String? = null, onCardOpened: () -> Unit = {}) {
     val km = state.walkedKm
     val done = km >= route.totalKm - 1e-9
     val next = route.next(km)
@@ -119,6 +120,13 @@ internal fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState
     }
 
     val collected = route.collected(km).map { it.id }.toSet()
+    // A card tapped on the home map arrives here: open it (only cards already collected can be).
+    LaunchedEffect(openCardId) {
+        if (openCardId != null) {
+            route.cards.firstOrNull { it.first.id == openCardId && it.first.id in collected }?.let { detail = it.first }
+            onCardOpened()
+        }
+    }
     val features = rememberLandmarkFacts()
     Text("景點卡 ${collected.size} / ${route.cards.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
     route.cards.forEach { (card, at) ->

@@ -65,6 +65,7 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
     val message by vm.message.collectAsStateWithLifecycle()
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var showDiagnostics by rememberSaveable { mutableStateOf(false) }
+    var openCard by rememberSaveable { mutableStateOf<String?>(null) }   // a card tapped on the map: the collection opens it
     val snackbar = remember { SnackbarHostState() }
 
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -130,9 +131,9 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
     ) { padding ->
         when {
             showDiagnostics -> DiagnosticsScreen(vm, padding, openAppSettings)
-            tab == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings)
+            tab == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings, onOpenCard = { openCard = it; tab = 3 })
             tab == 1 -> StatsScreen(vm, current, padding)
-            tab == 3 -> RouteScreen(vm, current, padding)
+            tab == 3 -> RouteScreen(vm, current, padding, openCardId = openCard, onCardOpened = { openCard = null })
             else -> SettingsScreen(vm, current, padding, onOpenDiagnostics = { showDiagnostics = true })
         }
     }

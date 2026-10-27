@@ -81,6 +81,8 @@ fun HomeScreen(
     padding: PaddingValues,
     onRequestPermission: () -> Unit,
     onOpenAppSettings: () -> Unit,
+    /** A collected card's marker on the route map was tapped: open that card in the collection. */
+    onOpenCard: (String) -> Unit = {},
 ) {
     val steps by vm.todaySteps.collectAsStateWithLifecycle()
     val routeState by vm.routeState.collectAsStateWithLifecycle()
@@ -119,6 +121,7 @@ fun HomeScreen(
         onOpenAppSettings = onOpenAppSettings,
         onSync = { vm.refresh(announce = true) },
         onStartRoute = { vm.startRoute(it) },
+        onOpenCard = onOpenCard,
         strideM = BodyMetrics.strideMeters(profile),
         currentTown = currentTown,
         exploredTowns = visited.keys,
@@ -162,6 +165,7 @@ internal fun HomeContent(
     onOpenAppSettings: () -> Unit,
     onSync: () -> Unit,
     onStartRoute: (String) -> Unit,
+    onOpenCard: (String) -> Unit = {},
     strideM: Double = 0.7,
     currentTown: Int = -1,
     exploredTowns: Set<Int> = emptySet(),
@@ -188,6 +192,7 @@ internal fun HomeContent(
                         map.route, map.walkedKm, Modifier.fillMaxWidth(), initialZoom = map.zoom,
                         regionMode = regionMode, selectedTown = if (regionMode) shown else -1,
                         onTapTown = { id -> picked = if (id >= 0) id else -1 },
+                        onTapCard = onOpenCard,
                         walking = walking,
                     )
                     ModeSwitch(regionMode, Modifier.align(Alignment.TopEnd).padding(8.dp)) { regionMode = it; if (!it) picked = -1 }
@@ -249,7 +254,7 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
                 if (!found) LockedTag() else {
                     val on = picked == i
                     Text(
-                        t.tag, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1,
+                        if (t.icon.isEmpty()) t.tag else "${t.icon} ${t.tag}", fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1,
                         color = if (on) Color.White else Color(0xFF0058C8),
                         modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(if (on) Color(0xFF1A8CFF) else Color(0xFF1A8CFF).copy(alpha = 0.14f))
                             .clickable { picked = i }.padding(horizontal = 10.dp, vertical = 3.dp),
@@ -258,7 +263,10 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
             }
         }
         val p = picked
-        Text(if (p != null) "你知道嗎？${tags[p].fact}" else "再走一段，就會發現這裡的特色。", fontSize = 11.sp, color = Vintage.inkSoft, maxLines = 3)
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+            if (p != null && tags[p].icon.isNotEmpty()) Text(tags[p].icon, fontSize = 24.sp)
+            Text(if (p != null) "你知道嗎？${tags[p].fact}" else "再走一段，就會發現這裡的特色。", fontSize = 11.sp, color = Vintage.inkSoft, maxLines = 3, modifier = Modifier.weight(1f))
+        }
     }
 }
 

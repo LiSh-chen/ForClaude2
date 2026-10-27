@@ -168,8 +168,16 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
     }
 }
 
-/** One of a township's three features: a short tag and the "did you know" that goes with it. */
-class TownTag(val tag: String, val fact: String)
+/** One of a township's three features: a short tag, the "did you know" that goes with it and a small emoji picture ("" when there is none). */
+class TownTag(val tag: String, val fact: String, val icon: String = "")
+
+/** A tag written as "🍵 包種茶鄉" is an emoji and a name; a tag with no emoji in front is just the name. */
+internal fun parseTag(raw: String, fact: String): TownTag {
+    val t = raw.trim()
+    val first = t.substringBefore(' ')
+    val hasIcon = ' ' in t && first.isNotEmpty() && first.codePoints().noneMatch { Character.isLetterOrDigit(it) }
+    return if (hasIcon) TownTag(t.substringAfter(' ').trim(), fact.trim(), first) else TownTag(t, fact.trim())
+}
 
 /** Three features per township, for the township card (res/raw/town_blurbs.txt: county|name|tag:fact|tag:fact|tag:fact). */
 fun loadTownBlurbs(context: Context): Map<String, List<TownTag>> {
@@ -179,7 +187,7 @@ fun loadTownBlurbs(context: Context): Map<String, List<TownTag>> {
             .mapNotNull { l ->
                 val f = l.split('|')
                 if (f.size < 3) null
-                else "${f[0]}|${f[1]}" to f.drop(2).take(3).mapNotNull { x -> x.split(':', limit = 2).takeIf { it.size == 2 }?.let { TownTag(it[0].trim(), it[1].trim()) } }
+                else "${f[0]}|${f[1]}" to f.drop(2).take(3).mapNotNull { x -> x.split(':', limit = 2).takeIf { it.size == 2 }?.let { parseTag(it[0], it[1]) } }
             }.filter { it.second.isNotEmpty() }.toMap()
     }.getOrDefault(emptyMap())
 }
