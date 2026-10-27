@@ -595,8 +595,11 @@ internal fun DrawScope.drawWalker(
                         val edge = minOf(1f, idleT / 0.08f, (1f - idleT) / 0.08f).coerceIn(0f, 1f)
                         if (edge < 1f && frame != null) drawImage(frame, dstSize = dst)
                         val shown = idleFrame(idle, idleT)
-                        drawImage(idleArt[shown.a], dstSize = dst, alpha = edge)
-                        if (shown.mix > 0.01f) drawImage(idleArt[shown.b], dstSize = dst, alpha = shown.mix * edge)
+                        // The act's pictures have extra room left and right (a wide pose needs it): same height, centred on the standing picture.
+                        val wide = (height * idleArt[0].width / idleArt[0].height).toInt()
+                        val at = IntOffset(-(wide - dst.width) / 2, 0)
+                        drawImage(idleArt[shown.a], dstOffset = at, dstSize = IntSize(wide, dst.height), alpha = edge)
+                        if (shown.mix > 0.01f) drawImage(idleArt[shown.b], dstOffset = at, dstSize = IntSize(wide, dst.height), alpha = shown.mix * edge)
                     } else if (frame != null) drawImage(frame, dstSize = dst)
                     val lantern = Offset(width * LANTERN_X, height * LANTERN_Y)
                     val glow = 0.30f + 0.12f * kotlin.math.sin(turn * 2f) * k

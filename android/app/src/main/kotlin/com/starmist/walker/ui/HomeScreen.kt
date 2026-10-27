@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -285,34 +286,50 @@ private fun LockedTag() {
 
 // ---- the dashboard ---------------------------------------------------------------------------
 
-/** Today's steps as a ring, then the way ahead as two bars: to the next stop, and around the island. */
+/** Today's steps as a ring; beside it the region panel (region mode) or, on the route, the day's walk with the way ahead as a table below. */
 @Composable
 private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double, regionMode: Boolean, region: RegionInfo?, isCurrent: Boolean) {
     val progress = BodyMetrics.goalProgress(steps, goal).toFloat().coerceIn(0f, 1f)
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(3.dp)) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.size(96.dp), contentAlignment = Alignment.Center) {
-                    Canvas(Modifier.size(96.dp)) {
-                        val stroke = 10.dp.toPx()
-                        val inset = stroke / 2
-                        drawArc(Vintage.edge.copy(alpha = 0.3f), -90f, 360f, false, Offset(inset, inset), Size(size.width - stroke, size.height - stroke), style = Stroke(stroke, cap = StrokeCap.Round))
-                        drawArc(Color(0xFF6B4A24), -90f, 360f * progress, false, Offset(inset, inset), Size(size.width - stroke, size.height - stroke), style = Stroke(stroke, cap = StrokeCap.Round))
+            if (map != null && !regionMode) {
+                Row(horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
+                    StepRing(steps, goal, progress, 76.dp)
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text("今日走了 ${km.twoDecimals()} 公里", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                        Text("消耗約 ${kcal.roundToInt()} 大卡", fontSize = 12.sp, color = Vintage.inkSoft)
                     }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(steps.withCommas(), fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 19.sp, maxLines = 1)
-                        Text("/ ${goal.toLong().withCommas()}", fontSize = 10.sp, color = Vintage.inkSoft, maxLines = 1)
-                    }
+                    TextButton(onClick = onSync) { Text(lastSnapshot?.let { formatTime(it) } ?: "同步", fontSize = 12.sp) }
                 }
-                if (map != null && regionMode) RegionPanel(region, isCurrent, Modifier.weight(1f))
-                else if (map != null) RouteBars(map.route, map.walkedKm, strideM, goal, Modifier.weight(1f))
-                else Spacer(Modifier.weight(1f))
+                RouteBars(map.route, map.walkedKm, strideM, goal, Modifier.fillMaxWidth())
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    StepRing(steps, goal, progress, 96.dp)
+                    if (map != null) RegionPanel(region, isCurrent, Modifier.weight(1f)) else Spacer(Modifier.weight(1f))
+                }
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text("今日走了 ${km.twoDecimals()} 公里，消耗約 ${kcal.roundToInt()} 大卡", fontSize = 12.sp, color = Vintage.inkSoft)
+                    Spacer(Modifier.weight(1f))
+                    TextButton(onClick = onSync) { Text(lastSnapshot?.let { formatTime(it) } ?: "同步", fontSize = 12.sp) }
+                }
             }
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text("今日走了 ${km.twoDecimals()} 公里，消耗約 ${kcal.roundToInt()} 大卡", fontSize = 12.sp, color = Vintage.inkSoft)
-                Spacer(Modifier.weight(1f))
-                TextButton(onClick = onSync) { Text(lastSnapshot?.let { formatTime(it) } ?: "同步", fontSize = 12.sp) }
-            }
+        }
+    }
+}
+
+/** Today's steps against the goal: a ring with the count inside. */
+@Composable
+private fun StepRing(steps: Long, goal: Int, progress: Float, size: androidx.compose.ui.unit.Dp) {
+    Box(Modifier.size(size), contentAlignment = Alignment.Center) {
+        Canvas(Modifier.size(size)) {
+            val stroke = this.size.width / 9.6f
+            val inset = stroke / 2
+            drawArc(Vintage.edge.copy(alpha = 0.3f), -90f, 360f, false, Offset(inset, inset), Size(this.size.width - stroke, this.size.height - stroke), style = Stroke(stroke, cap = StrokeCap.Round))
+            drawArc(Color(0xFF6B4A24), -90f, 360f * progress, false, Offset(inset, inset), Size(this.size.width - stroke, this.size.height - stroke), style = Stroke(stroke, cap = StrokeCap.Round))
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(steps.withCommas(), fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = if (size >= 90.dp) 19.sp else 16.sp, maxLines = 1)
+            Text("/ ${goal.toLong().withCommas()}", fontSize = 10.sp, color = Vintage.inkSoft, maxLines = 1)
         }
     }
 }
@@ -332,9 +349,9 @@ private fun RouteBars(route: RouteDef, walkedKm: Double, strideM: Double, goal: 
     val toNext = next?.let { steps(it.second) } ?: 0L
     val toEnd = steps(route.totalKm - walkedKm)
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        // Three gauges, each: what it is and how far (small), the steps left (big), and a bar.
-        Gauge("下一景點", RED, if (next != null) "${"%.1f".format(next.second)} 公里・${days(toNext)} 天" else "", if (next != null) "${toNext.withCommas()} 步" else "已完成") { w, h ->
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(7.dp)) {
+        // A table without rules: one row per distance, the columns line up (name, bar, steps left over how far).
+        RouteRow("下一景點", RED, if (next != null) "${toNext.withCommas()} 步" else "已完成", if (next != null) "${"%.1f".format(next.second)} 公里・${days(toNext)} 天" else "") { w, h ->
             val r = h / 2
             val x = (w * legFraction.toFloat()).coerceIn(r, w - r)
             drawRoundRect(Vintage.edge.copy(alpha = 0.28f), Offset.Zero, Size(w, h), CornerRadius(r, r))
@@ -343,7 +360,7 @@ private fun RouteBars(route: RouteDef, walkedKm: Double, strideM: Double, goal: 
         }
         if (border != null) {
             val toBorder = steps(border.kmLeft)
-            Gauge("下個區域", GREEN, "${"%.1f".format(border.kmLeft)} 公里・${days(toBorder)} 天", "${toBorder.withCommas()} 步") { w, h ->
+            RouteRow("下個區域", GREEN, "${toBorder.withCommas()} 步", "${"%.1f".format(border.kmLeft)} 公里・${days(toBorder)} 天") { w, h ->
                 val r = h / 2
                 val x = (w * border.fraction.toFloat()).coerceIn(r, w - r)
                 drawRoundRect(Vintage.edge.copy(alpha = 0.28f), Offset.Zero, Size(w, h), CornerRadius(r, r))
@@ -351,7 +368,7 @@ private fun RouteBars(route: RouteDef, walkedKm: Double, strideM: Double, goal: 
                 drawCircle(Color.White, r * 0.85f, Offset(x, r)); drawCircle(GREEN, r * 0.55f, Offset(x, r))
             }
         }
-        Gauge("環島全程", BLUE, if (next != null) "剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里・${days(toEnd)} 天" else "", "${(overall * 100).roundToInt()}%　${collected.size}/$totalCards 景點") { w, h ->
+        RouteRow("環島全程", BLUE, "${(overall * 100).roundToInt()}%　${collected.size}/$totalCards 景點", if (next != null) "剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里・${days(toEnd)} 天" else "") { w, h ->
             val gap = 1.5.dp.toPx()
             val seg = (w - gap * (totalCards - 1)) / totalCards
             for (i in 0 until totalCards) {
@@ -362,17 +379,16 @@ private fun RouteBars(route: RouteDef, walkedKm: Double, strideM: Double, goal: 
     }
 }
 
-/** One gauge of the route dashboard: [label] and [detail] small, [value] big on the right, and a bar drawn by [bar] (given its width and height). */
+/** One row of the route table: [label] in its colour, a bar drawn by [bar] (given its width and height), then [value] big over [detail] small, both right-aligned. */
 @Composable
-private fun Gauge(label: String, color: Color, detail: String, value: String, bar: androidx.compose.ui.graphics.drawscope.DrawScope.(Float, Float) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Row(verticalAlignment = Alignment.Bottom) {
-            Text(label, fontSize = 11.sp, color = color, fontWeight = FontWeight.Bold)
-            if (detail.isNotEmpty()) Text(detail, fontSize = 10.sp, color = color, modifier = Modifier.padding(start = 6.dp), maxLines = 1)
-            Spacer(Modifier.weight(1f))
-            Text(value, fontWeight = FontWeight.Bold, fontSize = 15.sp, fontFamily = FontFamily.Serif, maxLines = 1)
+private fun RouteRow(label: String, color: Color, value: String, detail: String, bar: androidx.compose.ui.graphics.drawscope.DrawScope.(Float, Float) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(label, fontSize = 11.sp, color = color, fontWeight = FontWeight.Bold, maxLines = 1, modifier = Modifier.width(48.dp))
+        Canvas(Modifier.weight(1f).height(8.dp)) { bar(size.width, size.height) }
+        Column(Modifier.width(112.dp), horizontalAlignment = Alignment.End) {
+            Text(value, fontWeight = FontWeight.Bold, fontSize = 14.sp, fontFamily = FontFamily.Serif, maxLines = 1)
+            if (detail.isNotEmpty()) Text(detail, fontSize = 10.sp, color = Vintage.inkSoft, maxLines = 1)
         }
-        Canvas(Modifier.fillMaxWidth().height(8.dp)) { bar(size.width, size.height) }
     }
 }
 
