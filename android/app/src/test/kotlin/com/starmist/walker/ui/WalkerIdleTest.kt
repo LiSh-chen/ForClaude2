@@ -39,4 +39,42 @@ class WalkerIdleTest {
         assertEquals(-1f, idlePose(Idle.LOOK, 0.4f).face, 1e-3f)
         assertEquals(1f, idlePose(Idle.LOOK, 0.9f).face, 1e-3f)
     }
+
+    @Test
+    fun drawnFramesStartAndEndInTheStandingPicture() {
+        for (act in 1..Idle.COUNT) {
+            val keys = Idle.KEYS[act]
+            assertEquals("act $act has six frames", 6, keys.size)
+            assertEquals(0f, keys.first(), 0f); assertEquals(1f, keys.last(), 0f)
+            for (i in 1 until keys.size) assertTrue("act $act keys rise", keys[i] > keys[i - 1])
+            val first = idleFrame(act, 0f); val last = idleFrame(act, 1f)
+            assertEquals(0, first.a); assertEquals(0f, first.mix, 1e-4f)
+            assertEquals(5, last.b); assertEquals(1f, last.mix, 1e-4f)
+        }
+    }
+
+    @Test
+    fun drawnFramesChangeWithoutJumps() {
+        for (act in 1..Idle.COUNT) {
+            // what is on screen is frame a plus mix of b over it: the weight of each frame index must move smoothly with time
+            fun weights(t: Float): FloatArray {
+                val f = idleFrame(act, t)
+                return FloatArray(6).also { it[f.a] += 1f - f.mix; it[f.b] += f.mix }
+            }
+            var previous = weights(0f)
+            var t = 0.002f
+            while (t <= 1f) {
+                val w = weights(t)
+                for (i in 0 until 6) assertTrue("act $act at $t frame $i", kotlin.math.abs(w[i] - previous[i]) < 0.08f)
+                previous = w
+                t += 0.002f
+            }
+        }
+    }
+
+    @Test
+    fun everyActHasItsDrawings() {
+        val res = java.io.File("src/main/res/drawable-nodpi")
+        for (act in 1..Idle.COUNT) for (i in 0 until 6) assertTrue("art_idle_${Idle.NAMES[act]}_$i", java.io.File(res, "art_idle_${Idle.NAMES[act]}_$i.webp").exists())
+    }
 }

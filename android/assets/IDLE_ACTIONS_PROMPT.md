@@ -30,3 +30,10 @@ THE ACTION: curious looking around, then noticing something. The six frames, in 
 ### 5_開心哼歌 ###
 （接在共同提示詞後面）
 THE ACTION: humming happily and swaying to its own tune. The six frames, in order: 1 standing (the reference); 2 sways its body to the left (toward the back), the staff swinging slightly, eyes closed in a contented smile; 3 hops with both feet off the ground, arms out to the sides; 4 lands and sways to the right (toward the front), the lantern swinging forward; 5 a second small hop, cheerful open mouth as if singing; 6 standing (the reference).
+
+
+## 收到圖之後（已完成）
+五張圖存在 assets/generated/idle_sheets/（idle_stretch / look / hum / nap / sit.jpg）。切圖用
+`python3 assets/tools/traveller_rig/5_slice_idle.py <動作> <圖> <輸出資料夾> --fit 0.97`，會輸出 art_idle_<動作>_0..5.webp
+（放進 app/src/main/res/drawable-nodpi）與 contact_<動作>.png（目視檢查）。動作名稱對應 WalkerIdle.kt 的 Idle.NAMES。
+圖中第二列的角色畫得比第一列大，腳本以每列的站姿格為準各自縮放；整張圖一起去背，所以越過格線的手杖與燈籠不會被切斷。

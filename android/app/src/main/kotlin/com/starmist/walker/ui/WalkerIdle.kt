@@ -15,8 +15,9 @@ import kotlin.math.sin
 
 /**
  * Little things the traveller does while it stands still, one every few seconds: a stretch, a look round, humming and hopping to
- * its own tune, and a doze that ends with a start. Each runs for [MS] milliseconds; [t] below runs 0 to 1 over that time.
- * They only squash, tip and hop the standing picture and float a mark above the head, so they need no new drawings.
+ * its own tune, a doze that ends with a start, and a sit-down rest. Each runs for [MS] milliseconds; [t] below runs 0 to 1 over that time.
+ * Each has six drawn frames (art_idle_<name>_0..5, see [NAMES]) that [idleFrame] steps through, with a mark floated above the head;
+ * where the drawings are missing, [idlePose] squashes, tips and hops the standing picture instead.
  */
 internal object Idle {
     const val NONE = 0
@@ -24,8 +25,33 @@ internal object Idle {
     const val LOOK = 2
     const val HUM = 3
     const val NAP = 4
-    const val COUNT = 4
-    val MS = intArrayOf(0, 2600, 2800, 3200, 4200)
+    const val SIT = 5
+    const val COUNT = 5
+    val MS = intArrayOf(0, 3000, 3200, 3400, 4400, 5200)
+    val NAMES = arrayOf("", "stretch", "look", "hum", "nap", "sit")
+
+    /** When each of the six drawn frames is fully shown, as a fraction of the act: frame 0 and 5 are the standing pose. */
+    val KEYS = arrayOf(
+        floatArrayOf(),
+        floatArrayOf(0f, 0.12f, 0.34f, 0.56f, 0.80f, 1f),
+        floatArrayOf(0f, 0.14f, 0.36f, 0.56f, 0.78f, 1f),
+        floatArrayOf(0f, 0.16f, 0.36f, 0.56f, 0.78f, 1f),
+        floatArrayOf(0f, 0.14f, 0.34f, 0.58f, 0.80f, 1f),
+        floatArrayOf(0f, 0.10f, 0.26f, 0.40f, 0.88f, 1f),   // the sitting frame is held, then it gets up
+    )
+}
+
+/** Two drawn frames to show: [a] fully and [b] over it at opacity [mix]. */
+internal class IdleFrame(val a: Int, val b: Int, val mix: Float)
+
+/** Which frames to show [t] of the way through [act]: it holds each frame, then melts into the next one so the moves stay soft. */
+internal fun idleFrame(act: Int, t: Float): IdleFrame {
+    val k = Idle.KEYS[act]
+    val x = t.coerceIn(0f, 1f)
+    var i = 0
+    while (i < k.size - 2 && x >= k[i + 1]) i++
+    val u = ((x - k[i]) / (k[i + 1] - k[i])).coerceIn(0f, 1f)
+    return IdleFrame(i, i + 1, smooth(0.4f, 1f, u))
 }
 
 /** How the standing picture is moved: scaled about the feet, tipped, lifted by a fraction of its height, and turned (-1 is mirrored). */
@@ -66,6 +92,10 @@ internal fun idlePose(act: Int, t: Float): IdlePose = when (act) {
             lift = 0.10f * sin(PI.toFloat() * start),
         )
     }
+    Idle.SIT -> {
+        val down = smooth(0.2f, 0.4f, t) * (1f - smooth(0.7f, 0.9f, t))
+        IdlePose(sx = 1f + 0.03f * down, sy = 1f - 0.08f * down, rot = 3f * down)
+    }
     else -> IdlePose()
 }
 
@@ -96,6 +126,10 @@ internal fun DrawScope.drawIdleEmote(m: TextMeasurer, act: Int, t: Float, head: 
             }
             val s = (t - 0.8f) / 0.17f
             mark("！", head.x, head.y - size * 0.06f, 1.1f + 0.3f * sin(PI.toFloat() * s.coerceIn(0f, 1f)), Color(0xFFB3202A), bell(s))
+        }
+        Idle.SIT -> {
+            val u = (t - 0.40f) / 0.40f
+            mark("呼", head.x + sign * size * 0.30f, head.y + size * 0.10f - size * 0.12f * u, 0.8f, Color(0xFF5A7FA8), bell(u))
         }
     }
 }

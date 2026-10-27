@@ -500,7 +500,18 @@ internal fun DrawScope.drawRealMap(
 
 /** The traveller in three layers so it can walk: body (with hat, cape and pack), staff with its lantern, and the hand that holds the staff. */
 /** [frames] is a drawn walk cycle (art_traveller_walk_0..5); when it is missing the layers below are moved by the code instead. */
-internal class WalkerArt(val body: ImageBitmap, val staff: ImageBitmap, val hand: ImageBitmap, val frames: List<ImageBitmap> = emptyList())
+internal class WalkerArt(
+    val body: ImageBitmap, val staff: ImageBitmap, val hand: ImageBitmap, val frames: List<ImageBitmap> = emptyList(),
+    /** Loads the six drawn frames of an idle act, or null when they are missing (see [Idle]). Only the act in use is kept in memory. */
+    private val loadIdle: (Int) -> List<ImageBitmap>? = { null },
+) {
+    @Volatile private var idleCache: Pair<Int, List<ImageBitmap>?>? = null
+
+    fun idleFrames(act: Int): List<ImageBitmap>? {
+        idleCache?.let { if (it.first == act) return it.second }
+        return loadIdle(act).also { idleCache = act to it }
+    }
+}
 
 @Composable
 internal fun rememberWalkerArt(): WalkerArt? {
@@ -508,7 +519,14 @@ internal fun rememberWalkerArt(): WalkerArt? {
     val staff = rememberArt("traveller_staff")
     val hand = rememberArt("traveller_hand")
     val frames = (0 until WALK_FRAMES).map { rememberArt("traveller_walk_$it") }
-    return if (body != null && staff != null && hand != null) WalkerArt(body, staff, hand, frames.filterNotNull().takeIf { it.size == WALK_FRAMES } ?: emptyList()) else null
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val loadIdle: (Int) -> List<ImageBitmap>? = remember(context) {
+        { act ->
+            val ids = (0 until WALK_FRAMES).map { context.resources.getIdentifier("art_idle_${Idle.NAMES[act]}_$it", "drawable", context.packageName) }
+            if (ids.any { it == 0 }) null else runCatching { ids.map { ImageBitmap.imageResource(context.resources, it) } }.getOrNull()
+        }
+    }
+    return if (body != null && staff != null && hand != null) WalkerArt(body, staff, hand, frames.filterNotNull().takeIf { it.size == WALK_FRAMES } ?: emptyList(), loadIdle) else null
 }
 
 private const val WALK_FRAMES = 6
@@ -551,7 +569,8 @@ internal fun DrawScope.drawWalker(
     val lift = height * 0.05f * hop
     val squash = m * (1f - kotlin.math.abs(kotlin.math.sin(turn)))   // how recently it landed
 
-    val pose = if (idle != Idle.NONE) idlePose(idle, idleT) else IdlePose()
+    val idleArt = if (idle != Idle.NONE) art.idleFrames(idle) else null
+    val pose = if (idle != Idle.NONE && idleArt == null) idlePose(idle, idleT) else IdlePose()   // the code-made poses only stand in for missing drawings
     val air = (hop + pose.lift * 8f).coerceIn(0f, 1f)       // how far off the ground, for the shadow
     // Turning round: the whole figure is mirrored about its feet, passing through edge-on, so it turns instead of jumping.
     withTransform({ scale(face * pose.face, 1f, p) }) {
@@ -561,15 +580,23 @@ internal fun DrawScope.drawWalker(
         val hand = Offset(width * HAND_X, height * HAND_Y)
         // Drawn walk cycle: the picture is always one of the frames. Phase 0 and 0.5 are the passing poses, which is how it
         // stands, so a walk starts from and ends on a standing pose and nothing has to be cross-faded.
-        if (framesMode) {
+        if (framesMode || idleArt != null) {
             val n = art.frames.size
-            val frame = art.frames[((phase * n).toInt() + REST_FRAME) % n]
+            val frame = if (framesMode) art.frames[((phase * n).toInt() + REST_FRAME) % n] else null
             translate(p.x - width * FEET_X, p.y - height + 2.dp.toPx() - pose.lift * height) {
                 withTransform({
                     rotate(pose.rot, feet)
                     scale(pose.sx, pose.sy, feet)
                 }) {
-                    drawImage(frame, dstSize = IntSize(width.toInt(), height.toInt()))
+                    val dst = IntSize(width.toInt(), height.toInt())
+                    if (idleArt != null) {
+                        // The standing picture of the walk is what it rests in, so the act melts in from it and back out to it.
+                        val edge = minOf(1f, idleT / 0.08f, (1f - idleT) / 0.08f).coerceIn(0f, 1f)
+                        if (edge < 1f && frame != null) drawImage(frame, dstSize = dst)
+                        val shown = idleFrame(idle, idleT)
+                        drawImage(idleArt[shown.a], dstSize = dst, alpha = edge)
+                        if (shown.mix > 0.01f) drawImage(idleArt[shown.b], dstSize = dst, alpha = shown.mix * edge)
+                    } else if (frame != null) drawImage(frame, dstSize = dst)
                     val lantern = Offset(width * LANTERN_X, height * LANTERN_Y)
                     val glow = 0.30f + 0.12f * kotlin.math.sin(turn * 2f) * k
                     drawCircle(
@@ -579,7 +606,7 @@ internal fun DrawScope.drawWalker(
                 }
             }
         }
-        val standing = if (framesMode) 0f else 1f
+        val standing = if (framesMode || idleArt != null) 0f else 1f
         if (standing > 0.01f) {
             translate(p.x - width * FEET_X, p.y - height + 2.dp.toPx() - lift) {
                 withTransform({

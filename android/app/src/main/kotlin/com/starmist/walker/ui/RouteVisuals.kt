@@ -47,7 +47,9 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -130,6 +132,7 @@ fun RouteMapView(
             var act: Int
             do { act = 1 + dice.nextInt(Idle.COUNT) } while (act == previous)
             previous = act
+            walker?.let { art -> withContext(Dispatchers.Default) { art.idleFrames(act) } }   // decode off the main thread so it does not stutter
             idleAct.intValue = act
             val begin = withFrameNanos { it }
             while (true) {
