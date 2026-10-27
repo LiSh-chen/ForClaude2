@@ -16,7 +16,8 @@ import kotlin.math.sin
 /**
  * Little things the traveller does while it stands still, one every few seconds: a stretch, a look round, humming and hopping to
  * its own tune, a doze that ends with a start, and a sit-down rest. Each runs for [MS] milliseconds; [t] below runs 0 to 1 over that time.
- * Each has six drawn frames (art_idle_<name>_0..5, see [NAMES]) that [idleFrame] steps through, with a mark floated above the head;
+ * Each is a run of [FRAMES] pictures (art_idle_<name>_0..20, see [NAMES]): the six drawn poses with [STEPS] - 1 in-betweens
+ * made from the optical flow between them (assets/tools/traveller_rig/5_slice_idle.py), which [idleFrame] steps through, with a mark floated above the head;
  * where the drawings are missing, [idlePose] squashes, tips and hops the standing picture instead.
  */
 internal object Idle {
@@ -29,8 +30,10 @@ internal object Idle {
     const val COUNT = 5
     val MS = intArrayOf(0, 3000, 3200, 3400, 4400, 5200)
     val NAMES = arrayOf("", "stretch", "look", "hum", "nap", "sit")
+    const val STEPS = 4                 // pictures from one drawn pose to the next
+    const val FRAMES = 5 * STEPS + 1
 
-    /** When each of the six drawn frames is fully shown, as a fraction of the act: frame 0 and 5 are the standing pose. */
+    /** When each of the six drawn poses is fully shown, as a fraction of the act: pose 0 and 5 are the standing pose. */
     val KEYS = arrayOf(
         floatArrayOf(),
         floatArrayOf(0f, 0.12f, 0.34f, 0.56f, 0.80f, 1f),
@@ -41,21 +44,20 @@ internal object Idle {
     )
 }
 
-/** Two drawn frames to show: [a] fully and [b] over it at opacity [mix]. */
+/** Two pictures to show: [a] fully and [b] over it at opacity [mix]. */
 internal class IdleFrame(val a: Int, val b: Int, val mix: Float)
 
-/** Which frames to show [t] of the way through [act]: it holds each frame, then melts into the next one so the moves stay soft. */
+/** Which pictures to show [t] of the way through [act]: it eases from one drawn pose to the next through the in-betweens, a little slower at each pose. */
 internal fun idleFrame(act: Int, t: Float): IdleFrame {
     val k = Idle.KEYS[act]
     val x = t.coerceIn(0f, 1f)
     var i = 0
     while (i < k.size - 2 && x >= k[i + 1]) i++
     val u = ((x - k[i]) / (k[i + 1] - k[i])).coerceIn(0f, 1f)
-    return IdleFrame(i, i + 1, smooth(0.4f, 1f, u))
+    val pos = (i + smooth(0.2f, 1f, u)) * Idle.STEPS
+    val a = pos.toInt().coerceAtMost(Idle.FRAMES - 1)
+    return IdleFrame(a, (a + 1).coerceAtMost(Idle.FRAMES - 1), if (a >= Idle.FRAMES - 1) 0f else pos - a)
 }
-
-/** How the standing picture is moved: scaled about the feet, tipped, lifted by a fraction of its height, and turned (-1 is mirrored). */
-internal class IdlePose(val sx: Float = 1f, val sy: Float = 1f, val rot: Float = 0f, val lift: Float = 0f, val face: Float = 1f)
 
 private fun smooth(a: Float, b: Float, x: Float): Float {
     val u = ((x - a) / (b - a)).coerceIn(0f, 1f)

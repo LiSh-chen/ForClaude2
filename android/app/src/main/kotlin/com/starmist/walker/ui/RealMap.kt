@@ -503,7 +503,7 @@ internal fun DrawScope.drawRealMap(
 /** [frames] is a drawn walk cycle (art_traveller_walk_0..5); when it is missing the layers below are moved by the code instead. */
 internal class WalkerArt(
     val body: ImageBitmap, val staff: ImageBitmap, val hand: ImageBitmap, val frames: List<ImageBitmap> = emptyList(),
-    /** Loads the six drawn frames of an idle act, or null when they are missing (see [Idle]). Only the act in use is kept in memory. */
+    /** Loads the pictures of an idle act, or null when they are missing (see [Idle]). Only the act in use is kept in memory. */
     private val loadIdle: (Int) -> List<ImageBitmap>? = { null },
 ) {
     @Volatile private var idleCache: Pair<Int, List<ImageBitmap>?>? = null
@@ -523,7 +523,7 @@ internal fun rememberWalkerArt(): WalkerArt? {
     val context = androidx.compose.ui.platform.LocalContext.current
     val loadIdle: (Int) -> List<ImageBitmap>? = remember(context) {
         { act ->
-            val ids = (0 until WALK_FRAMES).map { context.resources.getIdentifier("art_idle_${Idle.NAMES[act]}_$it", "drawable", context.packageName) }
+            val ids = (0 until Idle.FRAMES).map { context.resources.getIdentifier("art_idle_${Idle.NAMES[act]}_$it", "drawable", context.packageName) }
             if (ids.any { it == 0 }) null else runCatching { ids.map { ImageBitmap.imageResource(context.resources, it) } }.getOrNull()
         }
     }

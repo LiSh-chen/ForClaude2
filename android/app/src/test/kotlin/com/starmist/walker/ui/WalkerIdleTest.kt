@@ -49,7 +49,7 @@ class WalkerIdleTest {
             for (i in 1 until keys.size) assertTrue("act $act keys rise", keys[i] > keys[i - 1])
             val first = idleFrame(act, 0f); val last = idleFrame(act, 1f)
             assertEquals(0, first.a); assertEquals(0f, first.mix, 1e-4f)
-            assertEquals(5, last.b); assertEquals(1f, last.mix, 1e-4f)
+            assertEquals(Idle.FRAMES - 1, last.a); assertEquals(0f, last.mix, 1e-4f)
         }
     }
 
@@ -59,13 +59,13 @@ class WalkerIdleTest {
             // what is on screen is frame a plus mix of b over it: the weight of each frame index must move smoothly with time
             fun weights(t: Float): FloatArray {
                 val f = idleFrame(act, t)
-                return FloatArray(6).also { it[f.a] += 1f - f.mix; it[f.b] += f.mix }
+                return FloatArray(Idle.FRAMES).also { it[f.a] += 1f - f.mix; it[f.b] += f.mix }
             }
             var previous = weights(0f)
             var t = 0.002f
             while (t <= 1f) {
                 val w = weights(t)
-                for (i in 0 until 6) assertTrue("act $act at $t frame $i", kotlin.math.abs(w[i] - previous[i]) < 0.08f)
+                for (i in 0 until Idle.FRAMES) assertTrue("act $act at $t frame $i", kotlin.math.abs(w[i] - previous[i]) < 0.2f)
                 previous = w
                 t += 0.002f
             }
@@ -75,6 +75,6 @@ class WalkerIdleTest {
     @Test
     fun everyActHasItsDrawings() {
         val res = java.io.File("src/main/res/drawable-nodpi")
-        for (act in 1..Idle.COUNT) for (i in 0 until 6) assertTrue("art_idle_${Idle.NAMES[act]}_$i", java.io.File(res, "art_idle_${Idle.NAMES[act]}_$i.webp").exists())
+        for (act in 1..Idle.COUNT) for (i in 0 until Idle.FRAMES) assertTrue("art_idle_${Idle.NAMES[act]}_$i", java.io.File(res, "art_idle_${Idle.NAMES[act]}_$i.webp").exists())
     }
 }

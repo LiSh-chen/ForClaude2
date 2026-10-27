@@ -3,7 +3,8 @@
 
     python3 5_slice_idle.py <act> <sheet.png|jpg> <out_dir>      e.g.  python3 5_slice_idle.py sit 2_sit.png /tmp/idle
 
-Like 3_slice_walk.py (same cut-out, same canvas), but a frame keeps its height above the ground: each row gets the scale that makes its
+Besides the six drawn frames it writes in-between pictures (optical-flow tweens, --tween per gap, 3 by default: 21 frames),
+all at half size, and evens out the size of the frames by their lantern.  Like 3_slice_walk.py (same cut-out, same canvas), but a frame keeps its height above the ground: each row gets the scale that makes its
 standing frame (1 or 6) as tall as the standing picture; a frame is centred on the standing body column, and moved
 down by the same amount that moves the standing frame of its row onto the feet line, so a hop or a sit stays a hop or a sit.
 """
@@ -24,6 +25,7 @@ def body_center(rgba: np.ndarray) -> float:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("act"); ap.add_argument("sheet"); ap.add_argument("out")
+    ap.add_argument("--tween", type=int, default=3, help="in-between pictures made between two drawn frames")
     ap.add_argument("--fit", type=float, default=1.0, help="extra shrink, the same for all five sheets, so that the widest frame (hat in front, lantern behind) stays inside the canvas")
     a = ap.parse_args()
     rgb = np.array(Image.open(a.sheet).convert("RGB"))
@@ -70,16 +72,65 @@ def main() -> None:
         xs0, ys0 = max(ox, 0), max(oy, 0)
         xs1, ys1 = min(ox + fw, sw.CANVAS[0]), min(oy + fh, sw.CANVAS[1])
         canvas[ys0:ys1, xs0:xs1] = g[ys0 - oy:ys1 - oy, xs0 - ox:xs1 - ox]
-        Image.fromarray(canvas).save(out / f"art_idle_{a.act}_{i}.webp", quality=90)
         tiles.append(canvas)
-    sheet = np.full((sw.CANVAS[1], sw.CANVAS[0] * 6, 3), 235, np.uint8)
-    for i, t in enumerate(tiles):
-        chk = ((np.indices(t.shape[:2]).sum(axis=0) // 20) % 2 * 25 + 215).astype(np.uint8)
+    tiles = even_out_size(tiles, target_cx)
+    frames = [tiles[0]]
+    for i in range(5):                                             # in-between pictures: the app steps through these, not just the six drawn ones
+        frames += tween(tiles[i], tiles[i + 1], a.tween) + [tiles[i + 1]]
+    half = (sw.CANVAS[0] // 2, sw.CANVAS[1] // 2)                  # drawn at most about 180 px tall on screen, so half size is plenty
+    small = [cv2.resize(t, half, interpolation=cv2.INTER_AREA) for t in frames]
+    for i, t in enumerate(small):
+        Image.fromarray(t).save(out / f"art_idle_{a.act}_{i}.webp", quality=88)
+    sheet = np.full((half[1] * 3, half[0] * 7, 3), 235, np.uint8)
+    for i, t in enumerate(small[:21]):
+        r, c = divmod(i, 7)
+        chk = ((np.indices(t.shape[:2]).sum(axis=0) // 12) % 2 * 25 + 215).astype(np.uint8)
         bgc = np.dstack([chk] * 3).astype(float); al = t[..., 3:4] / 255.0
-        sheet[:, i * sw.CANVAS[0]:(i + 1) * sw.CANVAS[0]] = (t[..., :3] * al + bgc * (1 - al)).astype(np.uint8)
-        sheet[int(sw.CANVAS[1] * sw.FEET_Y), i * sw.CANVAS[0]:(i + 1) * sw.CANVAS[0]] = (255, 0, 0)
+        sheet[r * half[1]:(r + 1) * half[1], c * half[0]:(c + 1) * half[0]] = (t[..., :3] * al + bgc * (1 - al)).astype(np.uint8)
     Image.fromarray(sheet).save(out / f"contact_{a.act}.png")
-    print(a.act, "scales", {k: round(v, 3) for k, v in scales.items()})
+    print(a.act, len(small), "frames; scales", {k: round(v, 3) for k, v in scales.items()})
+
+def lantern_area(rgba: np.ndarray) -> float:
+    """Pixels of the lantern's lit glass: the one part of the drawing that is the same size whatever the pose."""
+    hsv = cv2.cvtColor(rgba[..., :3], cv2.COLOR_RGB2HSV).astype(int)
+    m = ((hsv[..., 0] >= 12) & (hsv[..., 0] <= 32) & (hsv[..., 1] >= 90) & (hsv[..., 2] >= 190) & (rgba[..., 3] > 200)).astype(np.uint8)
+    m = cv2.morphologyEx(m, cv2.MORPH_CLOSE, np.ones((7, 7), np.uint8))
+    n, _, st, _ = cv2.connectedComponentsWithStats(m, connectivity=8)
+    return float(st[1:, 4].max()) if n > 1 else 0.0
+
+def even_out_size(tiles, pivot_x):
+    """Scales every frame about the feet so its lantern is as big as the standing picture's (art_traveller_walk_2): the generated
+    frames differ a few percent in size, which shows as the traveller swelling and shrinking when they follow each other."""
+    ref = lantern_area(np.array(Image.open(sw.RES / "art_traveller_walk_2.webp").convert("RGBA")))
+    out = []
+    for t in tiles:
+        area = lantern_area(t)
+        r = float(np.clip(np.sqrt(ref / area), 0.94, 1.06)) if area > 0 else 1.0
+        M = np.float32([[r, 0, pivot_x * (1 - r)], [0, r, sw.CANVAS[1] * sw.FEET_Y * (1 - r)]])
+        out.append(cv2.warpAffine(t, M, sw.CANVAS, flags=cv2.INTER_AREA if r < 1 else cv2.INTER_CUBIC))
+    return out
+
+def tween(A: np.ndarray, B: np.ndarray, n: int):
+    """n in-between pictures of A -> B: both are bent along the optical flow between them and melted, so an arm rises
+    instead of one picture fading into the other."""
+    white = lambda t: (t[..., :3] * (t[..., 3:] / 255.0) + 255 * (1 - t[..., 3:] / 255.0)).astype(np.uint8)
+    ga, gb = cv2.cvtColor(white(A), cv2.COLOR_RGB2GRAY), cv2.cvtColor(white(B), cv2.COLOR_RGB2GRAY)
+    flow = cv2.DISOpticalFlow_create(cv2.DISOPTICAL_FLOW_PRESET_MEDIUM).calc(ga, gb, None)
+    flow = cv2.GaussianBlur(flow, (0, 0), 6)
+    h, w = ga.shape
+    gx, gy = np.meshgrid(np.arange(w, dtype=np.float32), np.arange(h, dtype=np.float32))
+    pa = np.dstack([A[..., :3] * (A[..., 3:] / 255.0), A[..., 3:]]).astype(np.float32)   # premultiplied, so edges melt cleanly
+    pb = np.dstack([B[..., :3] * (B[..., 3:] / 255.0), B[..., 3:]]).astype(np.float32)
+    out = []
+    for k in range(1, n + 1):
+        t = k / (n + 1)
+        wa = cv2.remap(pa, gx - t * flow[..., 0], gy - t * flow[..., 1], cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
+        wb = cv2.remap(pb, gx + (1 - t) * flow[..., 0], gy + (1 - t) * flow[..., 1], cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
+        m = (1 - t) * wa + t * wb
+        al = m[..., 3:]
+        rgb = np.where(al > 1, m[..., :3] / np.maximum(al, 1) * 255.0, 0)
+        out.append(np.dstack([np.clip(rgb, 0, 255), np.clip(al, 0, 255)]).astype(np.uint8))
+    return out
 
 if __name__ == "__main__":
     sys.exit(main())
