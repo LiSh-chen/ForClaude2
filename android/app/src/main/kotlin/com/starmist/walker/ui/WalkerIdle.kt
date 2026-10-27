@@ -59,6 +59,9 @@ internal fun idleFrame(act: Int, t: Float): IdleFrame {
     return IdleFrame(a, (a + 1).coerceAtMost(Idle.FRAMES - 1), if (a >= Idle.FRAMES - 1) 0f else pos - a)
 }
 
+/** How the standing picture is moved: scaled about the feet, tipped, lifted by a fraction of its height, and turned (-1 is mirrored). */
+internal class IdlePose(val sx: Float = 1f, val sy: Float = 1f, val rot: Float = 0f, val lift: Float = 0f, val face: Float = 1f)
+
 private fun smooth(a: Float, b: Float, x: Float): Float {
     val u = ((x - a) / (b - a)).coerceIn(0f, 1f)
     return u * u * (3f - 2f * u)
