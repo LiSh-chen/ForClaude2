@@ -17,6 +17,12 @@
 
 使用者用 Gemini 畫的走路連續動作圖 `generated/traveller_walk_sheet_cute.jpg`（3 欄 × 2 列、側面朝右）用同一支 `3_slice_walk.py` 處理（`--rows 2 --cols 3`，不用 `--flip`），輸出的 6 格放進 `drawable-nodpi/art_traveller_walk_0..5.webp`；站立圖 `art_traveller_body.webp` 用第 0 格，這樣站著和走路是同一個側面造型。畫布大小跟著 `art_traveller_body.webp`（681×708）。去背時提燈外圍的淡黃光暈也會去掉（程式在走路與站立時另外畫光暈）。
 
+### 統一頭部（4_unify_head.py）與走路的起止
+
+Gemini 畫的六格頭部朝向不一致（從 3/4 正面轉到側臉），連起來看像大幅左右轉頭。`4_unify_head.py` 把第 0 格的帽子與臉貼到每一格嘴巴下方的接縫以上，身體與動作維持各格原樣。眼睛座標是針對這六格量的，換新圖要重量。
+
+App 裡的步伐循環從「經過」姿勢（第 2、5 格）開始與結束：開始走有短暫加速；停下時把正在走的那一步走完、減速停在下一個經過姿勢，所以站著和走路之間沒有淡入淡出或跳動（`RouteVisuals.kt` 的 `LaunchedEffect(walking)`）。
+
 ## 逐格走路動畫（舊版，選用）
 
 使用者另外做的連續動作圖 `generated/traveller_walk_sheet.jpg`（3 欄 × 2 列、6 個走路姿勢，角色朝左）用 `3_slice_walk.py` 處理：

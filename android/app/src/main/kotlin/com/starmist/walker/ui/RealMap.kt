@@ -504,6 +504,7 @@ internal fun rememberWalkerArt(): WalkerArt? {
 }
 
 private const val WALK_FRAMES = 6
+private const val REST_FRAME = 2      // the drawn frame at phase 0: a passing pose, the one it stands in
 
 // Where things are in the traveller pictures, as fractions of their size.
 private const val HAND_X = 0.20f       // unused while the staff layer is empty (the traveller is one picture per pose)
@@ -544,20 +545,22 @@ internal fun DrawScope.drawWalker(p: Offset, w: Float, art: WalkerArt?, phase: F
 
         val feet = Offset(width * FEET_X, height * FEET_Y)
         val hand = Offset(width * HAND_X, height * HAND_Y)
-        // Drawn walk cycle: faded in over the standing picture when the walk starts and out when it stops.
-        if (framesMode && k > 0.01f) {
-            val frame = art.frames[(phase * art.frames.size).toInt().coerceIn(0, art.frames.size - 1)]
+        // Drawn walk cycle: the picture is always one of the frames. Phase 0 and 0.5 are the passing poses, which is how it
+        // stands, so a walk starts from and ends on a standing pose and nothing has to be cross-faded.
+        if (framesMode) {
+            val n = art.frames.size
+            val frame = art.frames[((phase * n).toInt() + REST_FRAME) % n]
             translate(p.x - width * FEET_X, p.y - height + 2.dp.toPx()) {
-                drawImage(frame, dstSize = IntSize(width.toInt(), height.toInt()), alpha = k)
+                drawImage(frame, dstSize = IntSize(width.toInt(), height.toInt()))
                 val lantern = Offset(width * LANTERN_X, height * LANTERN_Y)
-                val glow = (0.30f + 0.12f * kotlin.math.sin(turn * 2f)) * k
+                val glow = 0.30f + 0.12f * kotlin.math.sin(turn * 2f) * k
                 drawCircle(
                     Brush.radialGradient(listOf(Color(0xFFFFE9A8).copy(alpha = glow), Color.Transparent), lantern, height * 0.16f),
                     height * 0.16f, lantern,
                 )
             }
         }
-        val standing = if (framesMode) 1f - k else 1f
+        val standing = if (framesMode) 0f else 1f
         if (standing > 0.01f) {
             translate(p.x - width * FEET_X, p.y - height + 2.dp.toPx() - lift) {
                 withTransform({
