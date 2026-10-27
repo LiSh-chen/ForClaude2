@@ -216,7 +216,7 @@ fun CardFace(card: Landmark, atKm: Double) {
         }
         rememberLandmarkFacts()[card.id].orEmpty().forEach { f ->
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(f.tag, fontSize = 17.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, color = Vintage.ink)
+                Text(if (f.icon.isEmpty()) f.tag else "${f.icon} ${f.tag}", fontSize = 17.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, color = Vintage.ink)
                 Text(f.fact, fontSize = 14.sp, color = Vintage.inkSoft, modifier = Modifier.fillMaxWidth())
             }
         }

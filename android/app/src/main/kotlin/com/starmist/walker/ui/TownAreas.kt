@@ -141,7 +141,39 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
         return seen
     }
 
+    /** Where the walk leaves the township it is in: how far to go, and how far through it the walker already is (0 to 1). */
+    class RegionBorder(val kmLeft: Double, val fraction: Double)
+
+    /** The next township border ahead on [route], or null when the walk ends inside this township (or nothing lies ahead). Looks at most 120 km ahead and 120 km back. */
+    fun nextBorder(route: RouteDef, walkedKm: Double): RegionBorder? {
+        val total = route.totalKm
+        fun idAt(km: Double) = route.positionAt(km.coerceIn(0.0, total)).let { find(it.lat, it.lng) }
+        val cur = idAt(walkedKm)
+        var km = walkedKm
+        var exit = -1.0
+        while (km < total && km < walkedKm + 120.0) {
+            km += 0.2
+            val id = idAt(km)
+            if (id != cur && id >= 0) { exit = km; break }
+        }
+        if (exit < 0) return null
+        var start = walkedKm
+        var back = walkedKm
+        while (back > 0.0 && back > walkedKm - 120.0) {
+            back -= 0.2
+            if (idAt(back) != cur) break
+            start = back
+        }
+        val span = (exit - start).coerceAtLeast(0.2)
+        return RegionBorder(exit - walkedKm, ((walkedKm - start) / span).coerceIn(0.0, 1.0))
+    }
+
     companion object {
+        @Volatile private var shared: TownAreas? = null
+
+        /** One copy for the whole app: the map and the dashboard both need the townships, and reading them takes a moment. */
+        fun shared(context: Context): TownAreas = shared ?: synchronized(this) { shared ?: load(context).also { shared = it } }
+
         fun load(context: Context): TownAreas {
             val id = context.resources.getIdentifier("town_areas", "raw", context.packageName)
             if (id == 0) return TownAreas(emptyList())
@@ -201,7 +233,7 @@ fun rememberTownBlurbs(): Map<String, List<TownTag>> {
 @Composable
 fun rememberTownAreas(): TownAreas {
     val context = LocalContext.current
-    return remember(context) { TownAreas.load(context.applicationContext) }
+    return remember(context) { TownAreas.shared(context.applicationContext) }
 }
 
 /** Up to three features per landmark card: `id|tag:fact|tag:fact|tag:fact` per line in res/raw/landmark_facts.txt. */
@@ -212,7 +244,7 @@ fun loadLandmarkFacts(context: Context): Map<String, List<TownTag>> {
             .mapNotNull { l ->
                 val f = l.split('|')
                 if (f.size < 2) null
-                else f[0] to f.drop(1).take(3).mapNotNull { x -> x.split(':', limit = 2).takeIf { it.size == 2 }?.let { TownTag(it[0].trim(), it[1].trim()) } }
+                else f[0] to f.drop(1).take(3).mapNotNull { x -> x.split(':', limit = 2).takeIf { it.size == 2 }?.let { parseTag(it[0], it[1]) } }
             }.filter { it.second.isNotEmpty() }.toMap()
     }.getOrDefault(emptyMap())
 }

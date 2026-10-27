@@ -67,6 +67,7 @@ internal sealed interface HomeMap {
 /** The township being walked through, for the card above the map. */
 internal data class RegionInfo(val area: TownArea, val tags: List<TownTag>?, val foundMask: Int, val walkedKm: Double, val order: Int, val explored: Boolean)
 
+private val GREEN = Color(0xFF3C8D5A)
 private val BLUE = Color(0xFF0E86D4)
 private val RED = Color(0xFFB3202A)
 
@@ -248,7 +249,8 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
         }
         val newest = tags.indices.lastOrNull { region.foundMask and (1 shl it) != 0 }
         var picked by remember(a.name, region.foundMask) { mutableStateOf(newest) }
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+        androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             tags.forEachIndexed { i, t ->
                 val found = region.foundMask and (1 shl i) != 0
                 if (!found) LockedTag() else {
@@ -263,10 +265,8 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
             }
         }
         val p = picked
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-            if (p != null && tags[p].icon.isNotEmpty()) Text(tags[p].icon, fontSize = 24.sp)
-            Text(if (p != null) "你知道嗎？${tags[p].fact}" else "再走一段，就會發現這裡的特色。", fontSize = 11.sp, color = Vintage.inkSoft, maxLines = 3, modifier = Modifier.weight(1f))
-        }
+        // No line limit: the fact can be seventy characters and the panel grows to fit it instead of cutting it off.
+        Text(if (p != null) "你知道嗎？${tags[p].fact}" else "再走一段，就會發現這裡的特色。", fontSize = 11.sp, color = Vintage.inkSoft)
     }
 }
 
@@ -309,7 +309,7 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
                 else Spacer(Modifier.weight(1f))
             }
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text("${(progress * 100).roundToInt()}%　${km.twoDecimals()} 公里　${kcal.roundToInt()} 大卡", fontSize = 12.sp, color = Vintage.inkSoft)
+                Text("今日走了 ${km.twoDecimals()} 公里，消耗約 ${kcal.roundToInt()} 大卡", fontSize = 12.sp, color = Vintage.inkSoft)
                 Spacer(Modifier.weight(1f))
                 TextButton(onClick = onSync) { Text(lastSnapshot?.let { formatTime(it) } ?: "同步", fontSize = 12.sp) }
             }
@@ -322,6 +322,8 @@ private fun RouteBars(route: RouteDef, walkedKm: Double, strideM: Double, goal: 
     val stride = strideM.coerceAtLeast(0.3)
     fun steps(km: Double) = (km * 1000.0 / stride).roundToLong().coerceAtLeast(0L)
     fun days(steps: Long) = if (goal <= 0) 0L else (steps + goal - 1) / goal
+    val areas = rememberTownAreas()
+    val border = remember(areas, route, (walkedKm * 10).toInt()) { areas.nextBorder(route, walkedKm) }
     val next = route.next(walkedKm)
     val collected = route.collected(walkedKm)
     val totalCards = route.stops.count { it.landmark != null }
@@ -330,36 +332,47 @@ private fun RouteBars(route: RouteDef, walkedKm: Double, strideM: Double, goal: 
     val toNext = next?.let { steps(it.second) } ?: 0L
     val toEnd = steps(route.totalKm - walkedKm)
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Row(verticalAlignment = Alignment.Bottom) {
-                Text("下一景點", fontSize = 11.sp, color = RED, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                if (next != null) Text("${"%.1f".format(next.second)} 公里・${days(toNext)} 天", fontSize = 11.sp, color = RED, fontWeight = FontWeight.Bold)
-            }
-            Text(if (next != null) "${toNext.withCommas()} 步" else "已完成", fontWeight = FontWeight.Bold, fontSize = 17.sp, fontFamily = FontFamily.Serif, maxLines = 1)
-            Canvas(Modifier.fillMaxWidth().height(10.dp)) {
-                val r = size.height / 2
-                val x = (size.width * legFraction.toFloat()).coerceIn(r, size.width - r)
-                drawRoundRect(Vintage.edge.copy(alpha = 0.28f), Offset.Zero, size, CornerRadius(r, r))
-                drawRoundRect(RED.copy(alpha = 0.85f), Offset.Zero, Size((size.width * legFraction.toFloat()).coerceAtLeast(size.height), size.height), CornerRadius(r, r))
-                drawCircle(Color.White, r * 0.85f, Offset(x, r)); drawCircle(BLUE, r * 0.55f, Offset(x, r))
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        // Three gauges, each: what it is and how far (small), the steps left (big), and a bar.
+        Gauge("下一景點", RED, if (next != null) "${"%.1f".format(next.second)} 公里・${days(toNext)} 天" else "", if (next != null) "${toNext.withCommas()} 步" else "已完成") { w, h ->
+            val r = h / 2
+            val x = (w * legFraction.toFloat()).coerceIn(r, w - r)
+            drawRoundRect(Vintage.edge.copy(alpha = 0.28f), Offset.Zero, Size(w, h), CornerRadius(r, r))
+            drawRoundRect(RED.copy(alpha = 0.85f), Offset.Zero, Size((w * legFraction.toFloat()).coerceAtLeast(h), h), CornerRadius(r, r))
+            drawCircle(Color.White, r * 0.85f, Offset(x, r)); drawCircle(RED, r * 0.55f, Offset(x, r))
+        }
+        if (border != null) {
+            val toBorder = steps(border.kmLeft)
+            Gauge("下個區域", GREEN, "${"%.1f".format(border.kmLeft)} 公里・${days(toBorder)} 天", "${toBorder.withCommas()} 步") { w, h ->
+                val r = h / 2
+                val x = (w * border.fraction.toFloat()).coerceIn(r, w - r)
+                drawRoundRect(Vintage.edge.copy(alpha = 0.28f), Offset.Zero, Size(w, h), CornerRadius(r, r))
+                drawRoundRect(GREEN.copy(alpha = 0.85f), Offset.Zero, Size((w * border.fraction.toFloat()).coerceAtLeast(h), h), CornerRadius(r, r))
+                drawCircle(Color.White, r * 0.85f, Offset(x, r)); drawCircle(GREEN, r * 0.55f, Offset(x, r))
             }
         }
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Row(verticalAlignment = Alignment.Bottom) {
-                Text("環島全程", fontSize = 11.sp, color = BLUE, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                if (next != null) Text("剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里・${days(toEnd)} 天", fontSize = 11.sp, color = BLUE, fontWeight = FontWeight.Bold)
-            }
-            Text("${(overall * 100).roundToInt()}%　${collected.size}/$totalCards 景點", fontWeight = FontWeight.Bold, fontSize = 17.sp, fontFamily = FontFamily.Serif, maxLines = 1)
-            Canvas(Modifier.fillMaxWidth().height(10.dp)) {
-                val gap = 1.5.dp.toPx()
-                val seg = (size.width - gap * (totalCards - 1)) / totalCards
-                for (i in 0 until totalCards) {
-                    val color = when { i < collected.size -> BLUE; i == collected.size && next != null -> RED.copy(alpha = 0.8f); else -> Vintage.edge.copy(alpha = 0.28f) }
-                    drawRoundRect(color, Offset(i * (seg + gap), 0f), Size(seg, size.height), CornerRadius(2.dp.toPx()))
-                }
+        Gauge("環島全程", BLUE, if (next != null) "剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里・${days(toEnd)} 天" else "", "${(overall * 100).roundToInt()}%　${collected.size}/$totalCards 景點") { w, h ->
+            val gap = 1.5.dp.toPx()
+            val seg = (w - gap * (totalCards - 1)) / totalCards
+            for (i in 0 until totalCards) {
+                val color = when { i < collected.size -> BLUE; i == collected.size && next != null -> RED.copy(alpha = 0.8f); else -> Vintage.edge.copy(alpha = 0.28f) }
+                drawRoundRect(color, Offset(i * (seg + gap), 0f), Size(seg, h), CornerRadius(2.dp.toPx()))
             }
         }
+    }
+}
+
+/** One gauge of the route dashboard: [label] and [detail] small, [value] big on the right, and a bar drawn by [bar] (given its width and height). */
+@Composable
+private fun Gauge(label: String, color: Color, detail: String, value: String, bar: androidx.compose.ui.graphics.drawscope.DrawScope.(Float, Float) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Row(verticalAlignment = Alignment.Bottom) {
+            Text(label, fontSize = 11.sp, color = color, fontWeight = FontWeight.Bold)
+            if (detail.isNotEmpty()) Text(detail, fontSize = 10.sp, color = color, modifier = Modifier.padding(start = 6.dp), maxLines = 1)
+            Spacer(Modifier.weight(1f))
+            Text(value, fontWeight = FontWeight.Bold, fontSize = 15.sp, fontFamily = FontFamily.Serif, maxLines = 1)
+        }
+        Canvas(Modifier.fillMaxWidth().height(8.dp)) { bar(size.width, size.height) }
     }
 }
 
