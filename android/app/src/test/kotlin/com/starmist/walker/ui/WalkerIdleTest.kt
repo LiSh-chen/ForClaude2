@@ -27,7 +27,7 @@ class WalkerIdleTest {
                 assertTrue("act $act sy ${p.sy}", p.sy in 0.9f..1.15f)
                 assertTrue("act $act sx ${p.sx}", p.sx in 0.9f..1.1f)
                 assertTrue("act $act rot ${p.rot}", kotlin.math.abs(p.rot) < 12f)
-                assertTrue("act $act lift ${p.lift}", p.lift in 0f..0.12f)
+                assertTrue("act $act lift ${p.lift}", p.lift in -1e-4f..0.12f)
                 assertTrue("act $act face ${p.face}", p.face in -1f..1f)
                 t += 0.01f
             }

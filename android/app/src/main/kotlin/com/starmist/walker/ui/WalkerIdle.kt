@@ -52,8 +52,8 @@ internal fun idlePose(act: Int, t: Float): IdlePose = when (act) {
     Idle.HUM -> {
         val env = smooth(0f, 0.08f, t) * (1f - smooth(0.92f, 1f, t))
         val hop = abs(sin(PI.toFloat() * 3f * t))                                       // three hops to the beat
-        val sy = 1f + 0.05f * hop - 0.06f * (1f - hop)
-        IdlePose(sx = 1f - (sy - 1f) * 0.6f, sy = sy, rot = 4f * sin(t * 3f * PI.toFloat()) * env, lift = 0.07f * hop * env)
+        val squash = env * (0.05f * hop - 0.06f * (1f - hop))                          // stretched in the air, squashed on landing; none at the start and end
+        IdlePose(sx = 1f - squash * 0.6f, sy = 1f + squash, rot = 4f * sin(t * 3f * PI.toFloat()) * env, lift = 0.07f * hop * env)
     }
     Idle.NAP -> {
         val yawn = sin(PI.toFloat() * (t / 0.15f).coerceIn(0f, 1f))
