@@ -27,6 +27,9 @@ class Article:
     why: str = ""
     one_liner: str = ""
     dims: dict = field(default_factory=dict)
+    category: str = ""
+    # 入選後由 enrich 填入 (僅 gems)
+    detail: dict = field(default_factory=dict)
 
 
 def clean_text(s: str | None, limit: int = 600) -> str:

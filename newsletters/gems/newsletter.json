@@ -1,0 +1,32 @@
+{
+  "name": "gems",
+  "title": "冷知識精選",
+  "tagline": "貼近生活、用得上、多數人還不知道。沒達標的週別寧可不寄。",
+  "subject_prefix": "冷知識",
+  "weights": {
+    "practical": 0.3,
+    "surprise": 0.3,
+    "life": 0.2,
+    "evidence": 0.2
+  },
+  "penalties": {
+    "mainstream": 0.4,
+    "trivia": 0.4
+  },
+  "min_score": 50.0,
+  "top": 5,
+  "per_source": 2,
+  "enrich": true,
+  "categories": [
+    "健康",
+    "飲食",
+    "金錢",
+    "居家",
+    "工作",
+    "學習",
+    "安全",
+    "數位",
+    "自然",
+    "其他"
+  ]
+}
