@@ -229,12 +229,13 @@ fun CardEmblem(card: Landmark, owned: Boolean, modifier: Modifier = Modifier) {
 fun CardFace(card: Landmark, atKm: Double) {
     androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxWidth()) {
         val full = maxHeight
+        val wide = maxWidth
         Column(Modifier.fillMaxWidth().heightIn(max = full), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
             val art = rememberArt("card_${card.id}")
             if (art != null) {
                 Image(
                     art, contentDescription = card.name,
-                    modifier = Modifier.fillMaxWidth().weight(1f, fill = false).heightIn(min = 72.dp, max = maxWidth * 3 / 4)
+                    modifier = Modifier.fillMaxWidth().weight(1f, fill = false).heightIn(min = 72.dp, max = wide * 3 / 4)
                         .clip(RoundedCornerShape(10.dp)),
                     contentScale = ContentScale.Crop,
                 )
