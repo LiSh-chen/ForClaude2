@@ -88,6 +88,17 @@ class ScreenshotTest {
         }
     }
 
+    @Test fun collection_album() = paparazzi.snapshot {
+        Page(tab = 3) { pad ->
+            val places = rememberTownAreas().cardPlaces
+            val features = rememberLandmarkFacts()
+            androidx.compose.foundation.lazy.LazyColumn(Modifier.padding(pad), contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
+                item { androidx.compose.material3.Text("收藏・真實世界") }
+                routeProgressItems(forward, com.starmist.core.route.RouteState(forward.id, 0L, 260.0), places, features, emptyList(), onToggle = {}, onOpen = {}, onRestart = {}, onSwitch = {}, album = true)
+            }
+        }
+    }
+
     /** A few of the daily statistics cards, one under the other. */
     @Test fun stats_cards() = paparazzi.snapshot {
         val today = java.time.LocalDate.of(2026, 10, 28)

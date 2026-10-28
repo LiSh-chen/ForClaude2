@@ -1,6 +1,7 @@
 package com.starmist.walker.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +60,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     var detail by remember { mutableStateOf<Landmark?>(null) }
     // Counties whose open/closed state the player flipped (a county opens by itself once it holds a card).
     var flipped by rememberSaveable { mutableStateOf(listOf<String>()) }
+    var album by rememberSaveable { mutableStateOf(false) }
     val features = rememberLandmarkFacts()
     val places = rememberTownAreas().cardPlaces
 
@@ -75,6 +78,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
                 route, current, places, features, flipped,
                 onToggle = { county -> flipped = if (county in flipped) flipped - county else flipped + county },
                 onOpen = { detail = it }, onRestart = { confirmRestart = true }, onSwitch = { vm.startRoute(it) },
+                album = album, onAlbum = { album = it },
             )
         }
     }
@@ -120,6 +124,8 @@ internal fun RoutePicker(onStart: (String) -> Unit) {
 internal fun LazyListScope.routeProgressItems(
     route: RouteDef, state: RouteState, places: Map<String, TownArea>, features: Map<String, List<TownTag>>, flipped: List<String>,
     onToggle: (String) -> Unit, onOpen: (Landmark) -> Unit, onRestart: () -> Unit, onSwitch: (String) -> Unit,
+    /** True shows every card as a square picture in an album grid instead of the list by county. */
+    album: Boolean = false, onAlbum: (Boolean) -> Unit = {},
 ) {
     val km = state.walkedKm
     val done = km >= route.totalKm - 1e-9
@@ -151,15 +157,39 @@ internal fun LazyListScope.routeProgressItems(
         }
     }
 
-    item { Text("景點卡 ${collected.size} / ${route.cards.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
-    // Counties in the order the route reaches them.
-    route.cards.groupBy { places[it.first.id]?.county ?: "其他" }.forEach { (county, cards) ->
-        val have = cards.count { it.first.id in collected }
-        val open = (have > 0) != (county in flipped)
-        item(key = "county_$county") { CountyHeader(county, have, cards.size, open) { onToggle(county) } }
-        if (open) items(cards, key = { it.first.id }) { (card, at) ->
-            val owned = card.id in collected
-            CardRow(card, at, owned, places[card.id]?.name, features[card.id].orEmpty()) { onOpen(card) }
+    item {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text("景點卡 ${collected.size} / ${route.cards.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+            ViewSwitch(album, onAlbum)
+        }
+    }
+    if (album) {
+        // The album: every card as a picture, three to a row, in the order the route meets them.
+        items(route.cards.chunked(3), key = { row -> "album_" + row.first().first.id }) { row ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                row.forEach { (card, _) ->
+                    val owned = card.id in collected
+                    Column(
+                        Modifier.weight(1f).clip(RoundedCornerShape(8.dp)).then(if (owned) Modifier.clickable { onOpen(card) } else Modifier),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        CardEmblem(card, owned, Modifier.fillMaxWidth().aspectRatio(1f))
+                        Text(if (owned) card.name else "？", fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1, color = if (owned) Vintage.ink else Vintage.inkSoft)
+                    }
+                }
+                repeat(3 - row.size) { Box(Modifier.weight(1f)) {} }
+            }
+        }
+    } else {
+        // Counties in the order the route reaches them.
+        route.cards.groupBy { places[it.first.id]?.county ?: "其他" }.forEach { (county, cards) ->
+            val have = cards.count { it.first.id in collected }
+            val open = (have > 0) != (county in flipped)
+            item(key = "county_$county") { CountyHeader(county, have, cards.size, open) { onToggle(county) } }
+            if (open) items(cards, key = { it.first.id }) { (card, at) ->
+                val owned = card.id in collected
+                CardRow(card, at, owned, places[card.id]?.name, features[card.id].orEmpty()) { onOpen(card) }
+            }
         }
     }
 
@@ -167,6 +197,21 @@ internal fun LazyListScope.routeProgressItems(
     item { Text("車站紀念章 ${stamps.size} / ${route.supplies.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
     item { StampGrid(route, stamps) }
     item { OutlinedButton(onClick = onRestart, modifier = Modifier.fillMaxWidth()) { Text("重新選路線／重新出發") } }
+}
+
+/** The two ways to look at the cards: a list by county, or an album of pictures. */
+@Composable
+private fun ViewSwitch(album: Boolean, onAlbum: (Boolean) -> Unit) {
+    Row(Modifier.clip(RoundedCornerShape(14.dp)).background(Vintage.edge.copy(alpha = 0.18f))) {
+        listOf(false to "清單", true to "相簿").forEach { (isAlbum, label) ->
+            val on = album == isAlbum
+            Text(
+                label, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (on) Color.White else Vintage.brassDark,
+                modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(if (on) Vintage.brass else Color.Transparent)
+                    .clickable { onAlbum(isAlbum) }.padding(horizontal = 14.dp, vertical = 5.dp),
+            )
+        }
+    }
 }
 
 /** A county's name with how many of its cards are collected; tap to open or close its list. */
@@ -189,7 +234,6 @@ private fun CardRow(card: Landmark, at: Double, owned: Boolean, township: String
         colors = CardDefaults.cardColors(containerColor = if (owned) Vintage.parchmentLight else Vintage.parchmentDark.copy(alpha = 0.6f)),
     ) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            CardEmblem(card, owned, Modifier.size(64.dp))
             Column(Modifier.weight(1f)) {
                 if (owned) {
                     Text(card.name, fontWeight = FontWeight.Bold)
