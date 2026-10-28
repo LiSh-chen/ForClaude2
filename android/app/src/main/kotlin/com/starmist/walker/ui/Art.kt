@@ -72,7 +72,8 @@ private fun decodeThumb(context: android.content.Context, cardId: String): Image
     val id = res.getIdentifier("art_card_$cardId", "drawable", context.packageName)
     if (id == 0) return null
     val options = android.graphics.BitmapFactory.Options().apply { inSampleSize = 4 }
-    val bitmap = runCatching { android.graphics.BitmapFactory.decodeResource(res, id, options)?.asImageBitmap() }.getOrNull() ?: return null
+    // Where the small decode is not available (the preview renderer), the full picture is used instead.
+    val bitmap = runCatching { android.graphics.BitmapFactory.decodeResource(res, id, options)?.asImageBitmap() }.getOrNull() ?: ArtCache.get(context, "card_$cardId") ?: return null
     CardThumbs.put(cardId, bitmap)
     return bitmap
 }
