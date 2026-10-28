@@ -248,7 +248,7 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
         }
         val tags = region.tags
         if (!region.explored || tags == null) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { repeat(3) { LockedTag() } }
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { repeat(3) { LockedTag(tags?.getOrNull(it)?.icon.orEmpty()) } }
             Text(if (!region.explored) "還沒走到這裡" else "特色整理中", fontSize = 12.sp, color = Vintage.inkSoft)
             return@Column
         }
@@ -258,7 +258,7 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
         androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             tags.forEachIndexed { i, t ->
                 val found = region.foundMask and (1 shl i) != 0
-                if (!found) LockedTag() else {
+                if (!found) LockedTag(t.icon) else {
                     val on = picked == i
                     Text(
                         if (t.icon.isEmpty()) t.tag else "${t.icon} ${t.tag}", fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1,
@@ -275,11 +275,12 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
     }
 }
 
-/** A feature not found yet: a small padlock instead of a name. */
+/** A feature not found yet: its little picture and question marks, so there is something to guess (a padlock when it has no picture). */
 @Composable
-private fun LockedTag() {
-    Box(Modifier.clip(RoundedCornerShape(12.dp)).background(Vintage.edge.copy(alpha = 0.22f)).padding(horizontal = 14.dp, vertical = 4.dp)) {
-        Canvas(Modifier.size(width = 12.dp, height = 14.dp)) {
+private fun LockedTag(icon: String = "") {
+    Box(Modifier.clip(RoundedCornerShape(12.dp)).background(Vintage.edge.copy(alpha = 0.22f)).padding(horizontal = 10.dp, vertical = 3.dp)) {
+        if (icon.isNotEmpty()) Text("$icon ？？？", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft, maxLines = 1)
+        else Canvas(Modifier.size(width = 12.dp, height = 14.dp)) {
             val c = Vintage.inkSoft.copy(alpha = 0.7f)
             val w = size.width; val h = size.height
             drawArc(c, 180f, 180f, false, Offset(w * 0.2f, h * 0.02f), Size(w * 0.6f, h * 0.6f), style = Stroke(1.6.dp.toPx(), cap = StrokeCap.Round))

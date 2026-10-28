@@ -27,6 +27,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -86,35 +87,41 @@ private fun rememberStatInputs(vm: AppViewModel, settings: UserSettings): StatIn
     }
 }
 
-/** The daily draw: shake the stick tube once a day and the day's statistic opens; the other cards can be browsed any time. */
+/**
+ * The daily draw: shake the stick tube once a day and it picks something familiar (a running track, the Taipei 101, a
+ * marathon ...) to measure the walking with; the charts below then count in that unit. The other statistics can be
+ * browsed from here any time.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun StatDrawSection(vm: AppViewModel, settings: UserSettings) {
+fun StatDrawSection(vm: AppViewModel, settings: UserSettings, onRuler: (Ruler?) -> Unit) {
     val context = LocalContext.current
     val inputs = rememberStatInputs(vm, settings)
     val seed = dayStatSeed(inputs.today)
-    val available = remember(inputs, seed) { availableStats(inputs, seed) }
+    val rulers = remember(inputs.routeTotalKm) { rulersFor(inputs.routeTotalKm) }
+    val available = remember(inputs, seed) { availableStats(inputs, seed).filter { it != StatKind.RULER } }
     val todayKey = inputs.today.toString()
-    // What was drawn today is kept (the day and the kind), so reopening the app shows the same card even if more cards have become available since.
-    val stored = remember(todayKey) {
+    // What was drawn today is kept (the day and the ruler), so reopening the app shows the same one.
+    val stored = remember(todayKey, rulers) {
         val p = drawPrefs(context)
-        if (p.getString("day", null) == todayKey) runCatching { StatKind.valueOf(p.getString("kind", "") ?: "") }.getOrNull() else null
+        if (p.getString("day", null) == todayKey) rulers.firstOrNull { it.id == p.getString("ruler", "") } else null
     }
-    var drawnToday by remember(todayKey) { mutableStateOf(stored) }
-    var shown by remember(todayKey) { mutableStateOf(stored) }
-    val candidate = remember(available, inputs.today) { drawStat(inputs.today, available) }
+    var drawnToday by remember(todayKey, rulers) { mutableStateOf(stored) }
+    var shown by remember(todayKey) { mutableStateOf<StatKind?>(null) }       // null: the measure card itself
+    val candidate = remember(rulers, inputs.today) { drawRuler(inputs.today, rulers) }
+    LaunchedEffect(drawnToday) { onRuler(drawnToday) }
     val shake = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
     var shaking by remember { mutableStateOf(false) }
 
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            val open = drawnToday != null && shown != null
-            if (!open) {
+            val ruler = drawnToday
+            if (ruler == null) {
                 Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("🎋", fontSize = 56.sp, modifier = Modifier.rotate(shake.value))
                     Text("今日籤", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    Text("每天抽一支籤，看看今天要翻開哪一張統計。", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Vintage.inkSoft)
+                    Text("每天抽一樣大家熟悉的東西，拿來量你走了多遠，下面的圖表也跟著換單位。", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Vintage.inkSoft)
                     Button(
                         enabled = candidate != null && !shaking,
                         onClick = {
@@ -122,27 +129,27 @@ fun StatDrawSection(vm: AppViewModel, settings: UserSettings) {
                             scope.launch {
                                 repeat(4) { shake.animateTo(14f, tween(70)); shake.animateTo(-14f, tween(70)) }
                                 shake.animateTo(0f, tween(70))
-                                drawPrefs(context).edit().putString("day", todayKey).putString("kind", candidate?.name).apply()
+                                drawPrefs(context).edit().putString("day", todayKey).putString("ruler", candidate?.id).apply()
                                 drawnToday = candidate
-                                shown = candidate
                                 shaking = false
                             }
                         },
-                    ) { Text(if (candidate == null) "再走幾步就能抽" else "抽一支") }
+                    ) { Text("抽一支") }
                 }
             }
-            AnimatedVisibility(open, enter = fadeIn(tween(500)) + expandVertically(tween(500))) {
-                shown?.let { kind ->
-                    val card = remember(kind, inputs, seed) { buildStat(kind, inputs, seed) }
+            AnimatedVisibility(ruler != null, enter = fadeIn(tween(500)) + expandVertically(tween(500))) {
+                if (ruler != null) {
+                    val kind = shown
+                    val card = remember(kind, inputs, seed, ruler) { buildStat(kind ?: StatKind.RULER, inputs, seed, ruler) }
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text(if (kind == drawnToday) "今日籤" else "看看別張", style = MaterialTheme.typography.labelMedium, color = Vintage.brassDark)
+                        Text(if (kind == null) "今日籤：${ruler.emoji} ${ruler.what}" else "看看別張", style = MaterialTheme.typography.labelMedium, color = Vintage.brassDark)
                         if (card != null) StatCardView(card)
                         Text("也可以翻翻別的：", style = MaterialTheme.typography.labelMedium, color = Vintage.inkSoft)
                         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            available.forEach { k ->
+                            (listOf<StatKind?>(null) + available).forEach { k ->
                                 val on = k == kind
                                 Text(
-                                    "${k.emoji} ${k.title}", fontSize = 12.sp, fontWeight = FontWeight.Bold,
+                                    if (k == null) "${ruler.emoji} 今日量尺" else "${k.emoji} ${k.title}", fontSize = 12.sp, fontWeight = FontWeight.Bold,
                                     color = if (on) Color.White else Vintage.brassDark,
                                     modifier = Modifier.clip(RoundedCornerShape(12.dp))
                                         .background(if (on) Vintage.brass else Vintage.brass.copy(alpha = 0.16f))

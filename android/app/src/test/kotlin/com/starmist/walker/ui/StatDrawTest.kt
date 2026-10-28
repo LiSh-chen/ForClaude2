@@ -41,21 +41,45 @@ class StatDrawTest {
     }
 
     @Test
-    fun withNothingWalkedOnlyTheFortuneIsLeft() {
+    fun withNothingWalkedOnlyTheMeasureAndTheFortuneAreLeft() {
         val empty = StatInputs(today, emptyMap(), 8000, 0.7)
-        assertEquals(listOf(StatKind.FORTUNE), availableStats(empty, 1L))
+        assertEquals(listOf(StatKind.RULER, StatKind.FORTUNE), availableStats(empty, 1L))
     }
 
     @Test
     fun theRulersDoTheirArithmetic() {
         val steps = history.values.sum()
         val km = steps * 0.7 / 1000.0
-        // the same seed gives the same ruler, and the headline is the km divided by that ruler's length
-        val c = buildStat(StatKind.RULER, full, 3L)!!
-        assertTrue(c.line.contains(steps.withCommas()))
-        val n = c.headline.substringBefore(' ').replace(",", "").toDouble()
-        val lengths = listOf(0.4, 42.195, 394.0, 350.0, 1100.0)
-        assertTrue("headline ${c.headline} for $km km", lengths.any { kotlin.math.abs(km / it - n) <= maxOf(0.06, km / it * 0.01) })
+        for (r in rulersFor(1100.0)) {
+            val c = buildStat(StatKind.RULER, full, 3L, r)!!
+            val n = c.headline.substringBefore(' ').replace(",", "").toDouble()
+            val half = when { km / r.km < 1 -> 0.0051; km / r.km < 10 -> 0.051; else -> 0.51 }     // the headline is rounded: two, one or no decimals
+            assertTrue("${c.headline} for $km km with ${r.id}", kotlin.math.abs(km / r.km - n) <= half)
+            assertTrue(c.headline.endsWith(r.unit + r.what))
+            assertTrue(c.line.contains(steps.withCommas()))
+        }
+    }
+
+    @Test
+    fun theRulerListHasFamiliarLengthsAndTheRouteOnlyWithARoute() {
+        assertTrue(rulersFor(0.0).size >= 10)
+        assertTrue(rulersFor(0.0).none { it.id == "route" })
+        assertEquals(1100.0, rulersFor(1100.0).first { it.id == "route" }.km, 0.0)
+        assertEquals(0.4, rulersFor(0.0).first { it.id == "track" }.km, 0.0)
+        assertEquals(42.195, rulersFor(0.0).first { it.id == "full" }.km, 0.0)
+        assertEquals(rulersFor(0.0).map { it.id }.size, rulersFor(0.0).map { it.id }.toSet().size)
+    }
+
+    @Test
+    fun todaysRulerIsSteadyAndNotTheDayBeforesAndAnEveryDayChartUnitIsShort() {
+        val rulers = rulersFor(1100.0)
+        assertEquals(drawRuler(today, rulers)?.id, drawRuler(today, rulers)?.id)
+        for (back in 0..60) {
+            val d = today.minusDays(back.toLong())
+            assertNotEquals("$d repeats the day before", drawRuler(d, rulers)?.id, drawRuler(d.minusDays(1), rulers)?.id)
+        }
+        assertNull(drawRuler(today, emptyList()))
+        assertEquals("0.27", niceCount(0.2712)); assertEquals("3.4", niceCount(3.44)); assertEquals("56", niceCount(55.6)); assertEquals("1,235", niceCount(1234.6))
     }
 
     @Test

@@ -67,9 +67,41 @@ class StatCard(val kind: StatKind, val headline: String, val line: String, val n
 
 private val weekdayNames = arrayOf("週一", "週二", "週三", "週四", "週五", "週六", "週日")
 
-private class Ruler(val doing: String, val unit: String, val km: Double, val note: String)
+/**
+ * Something familiar to measure with: [what] is [km] long (or high), counted in [unit]s. "12 圈標準操場" is a measure of
+ * the form `number + unit + what`; [note] says how long it is (checked facts only), [emoji] marks it.
+ */
+data class Ruler(val id: String, val emoji: String, val unit: String, val what: String, val km: Double, val note: String) {
+    /** How many of it a distance of [distanceKm] is. */
+    fun count(distanceKm: Double) = distanceKm / km
+    /** The short line for a chart: "1 圈 = 標準操場一圈（400 公尺）". */
+    val legend: String get() = "1 $unit = $note"
+}
+
+/** The rulers a day's draw can pick from (every one a length that is the same for everybody; the route one only while walking a route). */
+fun rulersFor(routeTotalKm: Double): List<Ruler> = buildList {
+    add(Ruler("track", "🏃", "圈", "標準操場", 0.4, "標準操場一圈（400 公尺）"))
+    add(Ruler("basketball", "🏀", "個", "籃球場長", 0.028, "籃球場的長度（28 公尺）"))
+    add(Ruler("football", "⚽", "個", "足球場長", 0.105, "國際比賽足球場的長度（約 105 公尺）"))
+    add(Ruler("pool", "🏊", "趟", "長池游泳池", 0.05, "長池游泳池一趟（50 公尺）"))
+    add(Ruler("t101", "🏙️", "座", "台北101", 0.508, "台北101 的高度（約 508 公尺），把路程直立起來比"))
+    add(Ruler("yushan", "⛰️", "座", "玉山主峰", 3.952, "玉山主峰的海拔（3,952 公尺），把路程直立起來比"))
+    add(Ruler("half", "🎽", "場", "半程馬拉松", 21.0975, "半程馬拉松（21.0975 公里）"))
+    add(Ruler("full", "🏅", "場", "全程馬拉松", 42.195, "全程馬拉松（42.195 公里）"))
+    add(Ruler("thsr", "🚄", "趟", "高鐵營運路線", 350.0, "高鐵營運路線（約 350 公里）"))
+    add(Ruler("island_ns", "🗺️", "趟", "台灣本島南北長", 394.0, "台灣本島南北的長度（約 394 公里）"))
+    if (routeTotalKm > 0) add(Ruler("route", "🧭", "圈", "這條環島路線", routeTotalKm, "這條環島路線（約 ${routeTotalKm.roundToInt()} 公里）"))
+}
 
 private fun steps(n: Long) = n.withCommas()
+/** A count for people: 1,234 / 56 / 3.4 / 0.27 */
+fun niceCount(x: Double): String = when {
+    x >= 100 -> x.roundToLong().withCommas()
+    x >= 10 -> String.format("%.0f", x)
+    x >= 1 -> String.format("%.1f", x)
+    else -> String.format("%.2f", x)
+}
+
 private fun nice(x: Double): String = if (x >= 10) x.roundToLong().withCommas() else String.format("%.1f", x)
 
 /** Days from [from] to [to], both included. */
@@ -90,24 +122,19 @@ internal fun streaks(history: Map<LocalDate, Long>, goal: Int, today: LocalDate)
     return cur to maxOf(longest, cur)
 }
 
-/** Builds [kind]'s card, or null when there is not enough yet. [seed] picks among a card's variants (the same all day). */
-fun buildStat(kind: StatKind, i: StatInputs, seed: Long): StatCard? {
+/** Builds [kind]'s card, or null when there is not enough yet. [seed] picks among a card's variants (the same all day); [ruler] is what today's measure card uses. */
+fun buildStat(kind: StatKind, i: StatInputs, seed: Long, ruler: Ruler? = null): StatCard? {
     val rnd = Random(seed * 31 + kind.ordinal)
     val total = i.history.values.sum()
     val daysWithSteps = i.history.count { it.value > 0 }
     return when (kind) {
         StatKind.RULER -> {
-            if (total < 100 || i.strideM <= 0) return null
+            if (i.strideM <= 0) return null
             val km = total * i.strideM / 1000.0
-            val rulers = buildList {
-                add(Ruler("繞標準操場", "圈", 0.4, "標準操場一圈是 400 公尺。"))
-                add(Ruler("跑全程馬拉松", "場", 42.195, "全程馬拉松是 42.195 公里。"))
-                add(Ruler("走完台灣本島的南北長度", "趟", 394.0, "台灣本島南北約長 394 公里。"))
-                add(Ruler("走完高鐵的營運路線", "趟", 350.0, "高鐵營運路線約 350 公里。"))
-                if (i.routeTotalKm > 0) add(Ruler("走完這條環島路線", "圈", i.routeTotalKm, "這條路線全長約 ${i.routeTotalKm.roundToInt()} 公里。"))
-            }
-            val r = rnd.nextInt(rulers.size).let { rulers[it] }
-            StatCard(kind, "${nice(km / r.km)} ${r.unit}", "累計 ${steps(total)} 步，約 ${nice(km)} 公里，等於${r.doing}。", r.note)
+            val rulers = rulersFor(i.routeTotalKm)
+            val r = ruler ?: rulers[rnd.nextInt(rulers.size)]
+            val n = r.count(km)
+            StatCard(kind, "${niceCount(n)} ${r.unit}${r.what}", "累計 ${steps(total)} 步，約 ${nice(km)} 公里，等於 ${niceCount(n)} ${r.unit}${r.what}。", "圖表的單位換成這個：${r.legend}。")
         }
         StatKind.HEATMAP -> {
             val ym = YearMonth.from(i.today)
@@ -266,6 +293,19 @@ fun drawStat(date: LocalDate, available: List<StatKind>): StatKind? {
         var kind = pick(date.minusDays(back.toLong()))
         if (available.size > 1 && kind == previous) kind = available[(available.indexOf(kind) + 1) % available.size]
         previous = kind
+    }
+    return previous
+}
+
+/** Today's ruler: the same all day, and not the one of the day before. */
+fun drawRuler(date: LocalDate, rulers: List<Ruler>): Ruler? {
+    if (rulers.isEmpty()) return null
+    fun pick(d: LocalDate) = rulers[Random(d.toEpochDay() * 104729L + 7).nextInt(rulers.size)]
+    var previous = pick(date.minusDays(30))
+    for (back in 29 downTo 0) {
+        var r = pick(date.minusDays(back.toLong()))
+        if (rulers.size > 1 && r.id == previous.id) r = rulers[(rulers.indexOf(r) + 1) % rulers.size]
+        previous = r
     }
     return previous
 }

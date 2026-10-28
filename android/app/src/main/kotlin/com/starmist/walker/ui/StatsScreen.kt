@@ -21,6 +21,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,6 +51,10 @@ fun StatsScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     val period by vm.period.collectAsStateWithLifecycle()
     val summary by vm.summary.collectAsStateWithLifecycle()
     val today by vm.today.collectAsStateWithLifecycle()
+    // Today's measure from the daily draw: the charts count in it (null until the draw is made: steps).
+    var ruler by remember { mutableStateOf<Ruler?>(null) }
+    val stride = com.starmist.core.metrics.BodyMetrics.strideMeters(settings.profile)
+    val amount: (Long) -> String = { n -> ruler?.let { r -> "${niceCount(r.count(n * stride / 1000.0))} ${r.unit}" } ?: "${n.withCommas()} 步" }
 
     Column(
         Modifier
@@ -58,7 +63,7 @@ fun StatsScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        StatDrawSection(vm, settings)
+        StatDrawSection(vm, settings) { ruler = it }
         TabRow(selectedTabIndex = periods.indexOfFirst { it.first == period }) {
             periods.forEach { (p, label) ->
                 Tab(selected = p == period, onClick = { vm.selectPeriod(p) }, text = { Text(label) })
@@ -85,14 +90,16 @@ fun StatsScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
             buckets = s.buckets,
             period = period,
             goal = settings.dailyGoal,
+            amount = amount,
         )
+        ruler?.let { Text("單位：${it.legend}", style = MaterialTheme.typography.labelSmall, color = Vintage.inkSoft) }
 
         Row(
             Modifier.fillMaxWidth().padding(top = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            SummaryCard("總計", "${s.totalSteps.withCommas()} 步", Modifier.weight(1f))
-            SummaryCard("日均", "${s.averagePerDay.withCommas()} 步", Modifier.weight(1f))
+            SummaryCard("總計", amount(s.totalSteps), Modifier.weight(1f))
+            SummaryCard("日均", amount(s.averagePerDay), Modifier.weight(1f))
         }
         Row(
             Modifier.fillMaxWidth().padding(top = 8.dp),
@@ -100,7 +107,7 @@ fun StatsScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
         ) {
             SummaryCard(
                 "最佳日",
-                s.bestDay?.let { "${it.first.monthValue}/${it.first.dayOfMonth}　${it.second.withCommas()} 步" } ?: "—",
+                s.bestDay?.let { "${it.first.monthValue}/${it.first.dayOfMonth}　${amount(it.second)}" } ?: "—",
                 Modifier.weight(1f),
             )
             SummaryCard("達標天數", "${s.goalDays} 天", Modifier.weight(1f))
@@ -128,7 +135,7 @@ private fun SummaryCard(label: String, value: String, modifier: Modifier = Modif
 }
 
 @Composable
-private fun BarChart(buckets: List<Bucket>, period: Period, goal: Int) {
+private fun BarChart(buckets: List<Bucket>, period: Period, goal: Int, amount: (Long) -> String) {
     var selected by remember(buckets) { mutableIntStateOf(-1) }
     val barColor = MaterialTheme.colorScheme.primary
     val reachedColor = MaterialTheme.colorScheme.tertiary
@@ -143,7 +150,7 @@ private fun BarChart(buckets: List<Bucket>, period: Period, goal: Int) {
 
     Column {
         Text(
-            text = buckets.getOrNull(selected)?.let { "${it.start.monthValue}/${it.start.dayOfMonth}　${it.steps.withCommas()} 步" }
+            text = buckets.getOrNull(selected)?.let { "${it.start.monthValue}/${it.start.dayOfMonth}　${amount(it.steps)}" }
                 ?: "點選長條可看數值",
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(vertical = 4.dp),

@@ -484,6 +484,14 @@ internal fun DrawScope.drawRealMap(
         if (card.id != lastCard?.id && (w <= 3000f || o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f)) return@forEach
         queue += Label(if (card.id == lastCard?.id) 90 else 60) { placeName(card.name, o, 12.sp, Vintage.ink, 11.dp.toPx(), force = card.id == lastCard?.id) }
     }
+    // Stations whose stamp has been collected: the square on the map gets its name.
+    if (w >= 1700f && !regionMode) route.stops.forEachIndexed { i, stop ->
+        val supply = stop.supply ?: return@forEachIndexed
+        if (route.cumulativeKm[i] > walkedKm + 1e-9) return@forEachIndexed
+        val o = stop.at.px()
+        if (w <= 3000f || o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f) return@forEachIndexed
+        queue += Label(45) { placeName("${supply.name}站", o, 11.sp, Vintage.ink, 9.dp.toPx(), plain = true, weight = FontWeight.Medium) }
+    }
     // Small roadside sights near the walker: just the name, underlined to say it can be tapped for a few lines about the place.
     if (w >= 1700f && !regionMode) route.poisNear(here).forEach { (poi, _) ->
         queue += Label(30) { placeName(poi.name, poi.at.px(), 11.sp, Vintage.inkSoft, 6.dp.toPx(), plain = true, weight = FontWeight.Normal, underline = true) }

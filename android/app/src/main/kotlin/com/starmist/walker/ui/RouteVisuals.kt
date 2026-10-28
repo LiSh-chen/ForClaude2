@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -220,25 +221,35 @@ fun CardEmblem(card: Landmark, owned: Boolean, modifier: Modifier = Modifier) {
     }
 }
 
-/** A collected card, large: picture, where it is (county and township), its features, and where on the route it was found. */
+/**
+ * A collected card, large: picture, where it is (county and township), its features, and where on the route it was found.
+ * It is laid out to show everything without scrolling: the text takes the room it needs and the picture takes what is left.
+ */
 @Composable
 fun CardFace(card: Landmark, atKm: Double) {
-    // Scrolls: inside a dialog on a small phone the picture and three features can be taller than the room, and the text was cut off.
-    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        val art = rememberArt("card_${card.id}")
-        if (art != null) {
-            Image(art, contentDescription = card.name, modifier = Modifier.fillMaxWidth().aspectRatio(4f / 3f).clip(RoundedCornerShape(10.dp)), contentScale = ContentScale.Crop)
-        } else {
-            CardEmblem(card, true, Modifier.size(96.dp))
-        }
-        rememberTownAreas().cardPlaces[card.id]?.let { Text("📍 ${it.county} ${it.name}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark, modifier = Modifier.fillMaxWidth()) }
-        rememberLandmarkFacts()[card.id].orEmpty().forEach { f ->
-            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(if (f.icon.isEmpty()) f.tag else "${f.icon} ${f.tag}", fontSize = 17.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, color = Vintage.ink)
-                Text(f.fact, fontSize = 14.sp, color = Vintage.inkSoft, modifier = Modifier.fillMaxWidth())
+    androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxWidth()) {
+        val full = maxHeight
+        Column(Modifier.fillMaxWidth().heightIn(max = full), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            val art = rememberArt("card_${card.id}")
+            if (art != null) {
+                Image(
+                    art, contentDescription = card.name,
+                    modifier = Modifier.fillMaxWidth().weight(1f, fill = false).heightIn(min = 72.dp, max = maxWidth * 3 / 4)
+                        .clip(RoundedCornerShape(10.dp)),
+                    contentScale = ContentScale.Crop,
+                )
+            } else {
+                CardEmblem(card, true, Modifier.size(64.dp))
             }
+            rememberTownAreas().cardPlaces[card.id]?.let { Text("📍 ${it.county} ${it.name}", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark, modifier = Modifier.fillMaxWidth()) }
+            rememberLandmarkFacts()[card.id].orEmpty().forEach { f ->
+                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                    Text(if (f.icon.isEmpty()) f.tag else "${f.icon} ${f.tag}", fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, color = Vintage.ink)
+                    Text(f.fact, fontSize = 12.sp, lineHeight = 16.sp, color = Vintage.inkSoft, modifier = Modifier.fillMaxWidth())
+                }
+            }
+            Text("路線第 ${atKm.roundToInt()} 公里", style = MaterialTheme.typography.labelSmall)
         }
-        Text("路線第 ${atKm.roundToInt()} 公里", style = MaterialTheme.typography.labelMedium)
     }
 }
 
