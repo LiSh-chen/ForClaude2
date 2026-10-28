@@ -22,7 +22,7 @@ FINALS = {  # Tâi-lô final (without checked ending) -> pinyin final
     "iang": "iang", "iong": "iong", "io": "io", "iok": "io",
     "u": "u", "un": "un", "ui": "ui", "ua": "ua", "uai": "uai", "uan": "uan", "uann": "uan",
     "e": "ei", "ee": "ei", "eng": "eng", "enn": "ei", "o": "o", "oo": "o", "ong": "ong", "oa": "ua", "oe": "uei",
-    "ng": "ong", "m": "mu",
+    "ng": "eng", "m": "mu",
 }
 TONE_MAP = {1: [1], 2: [4], 3: [3, 4], 4: [4], 5: [2], 7: [4, 1], 8: [2, 4]}
 
