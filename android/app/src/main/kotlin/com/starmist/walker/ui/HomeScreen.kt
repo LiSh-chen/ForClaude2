@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -298,15 +302,15 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(3.dp)) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (map != null && !regionMode) {
-                Row(horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
-                    StepRing(steps, goal, progress, 76.dp)
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text("今日走了 ${km.twoDecimals()} 公里", fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                        Text("消耗約 ${kcal.roundToInt()} 大卡", fontSize = 12.sp, color = Vintage.inkSoft)
-                    }
-                    TextButton(onClick = onSync) { Text(lastSnapshot?.let { formatTime(it) } ?: "同步", fontSize = 12.sp) }
+                Box(Modifier.fillMaxWidth()) {
+                    InstrumentPanel(map.route, map.walkedKm, strideM, goal, steps, progress, km, kcal, Modifier.fillMaxWidth())
+                    // Syncing is a small button in the corner of the panel.
+                    Icon(
+                        Icons.Filled.Refresh, contentDescription = "同步",
+                        tint = Vintage.inkSoft,
+                        modifier = Modifier.align(Alignment.TopEnd).size(26.dp).clip(RoundedCornerShape(13.dp)).clickable(onClick = onSync).padding(3.dp),
+                    )
                 }
-                RouteBars(map.route, map.walkedKm, strideM, goal, Modifier.fillMaxWidth())
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     StepRing(steps, goal, progress, 96.dp)
@@ -315,7 +319,7 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Text("今日走了 ${km.twoDecimals()} 公里，消耗約 ${kcal.roundToInt()} 大卡", fontSize = 12.sp, color = Vintage.inkSoft)
                     Spacer(Modifier.weight(1f))
-                    TextButton(onClick = onSync) { Text(lastSnapshot?.let { formatTime(it) } ?: "同步", fontSize = 12.sp) }
+                    TextButton(onClick = onSync) { Text("同步", fontSize = 12.sp) }
                 }
             }
         }
@@ -339,10 +343,15 @@ private fun StepRing(steps: Long, goal: Int, progress: Float, size: androidx.com
     }
 }
 
+/**
+ * The way ahead as an instrument panel, like the round gauges of a cockpit: today's steps, the next card, the next township and
+ * the whole island, four dials in a row, each with a ticked scale, a filled arc and a marker, its reading in the middle and two
+ * lines of small print under it.
+ */
 @Composable
-private fun RouteBars(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int, modifier: Modifier) {
+private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int, steps: Long, progress: Float, todayKm: Double, kcal: Double, modifier: Modifier) {
     val stride = strideM.coerceAtLeast(0.3)
-    fun steps(km: Double) = (km * 1000.0 / stride).roundToLong().coerceAtLeast(0L)
+    fun stepsFor(km: Double) = (km * 1000.0 / stride).roundToLong().coerceAtLeast(0L)
     fun days(steps: Long) = if (goal <= 0) 0L else (steps + goal - 1) / goal
     val areas = rememberTownAreas()
     val border = remember(areas, route, (walkedKm * 10).toInt()) { areas.nextBorder(route, walkedKm) }
@@ -351,49 +360,65 @@ private fun RouteBars(route: RouteDef, walkedKm: Double, strideM: Double, goal: 
     val totalCards = route.stops.count { it.landmark != null }
     val legStart = collected.lastOrNull()?.let { c -> route.stops.indexOfFirst { it.landmark?.id == c.id }.takeIf { it >= 0 }?.let { route.cumulativeKm[it] } } ?: 0.0
     val legFraction = next?.let { n -> val end = walkedKm + n.second; if (end > legStart) ((walkedKm - legStart) / (end - legStart)).coerceIn(0.0, 1.0) else 0.0 } ?: 1.0
-    val toNext = next?.let { steps(it.second) } ?: 0L
-    val toEnd = steps(route.totalKm - walkedKm)
+    val toNext = next?.let { stepsFor(it.second) } ?: 0L
+    val toEnd = stepsFor(route.totalKm - walkedKm)
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(7.dp)) {
-        // A table without rules: one row per distance, the columns line up (name, bar, steps left over how far).
-        RouteRow("下一景點", RED, if (next != null) "${toNext.withCommas()} 步" else "已完成", if (next != null) "${"%.1f".format(next.second)} 公里・${days(toNext)} 天" else "") { w, h ->
-            val r = h / 2
-            val x = (w * legFraction.toFloat()).coerceIn(r, w - r)
-            drawRoundRect(Vintage.edge.copy(alpha = 0.28f), Offset.Zero, Size(w, h), CornerRadius(r, r))
-            drawRoundRect(RED.copy(alpha = 0.85f), Offset.Zero, Size((w * legFraction.toFloat()).coerceAtLeast(h), h), CornerRadius(r, r))
-            drawCircle(Color.White, r * 0.85f, Offset(x, r)); drawCircle(RED, r * 0.55f, Offset(x, r))
-        }
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        Dial(
+            "今日步數", Color(0xFF6B4A24), progress, steps.withCommas(), "步",
+            "目標 ${goal.toLong().withCommas()}", "${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡", Modifier.weight(1f),
+        )
+        Dial(
+            "下一景點", RED, legFraction.toFloat(), if (next != null) "%.1f".format(next.second) else "完成", if (next != null) "公里" else "",
+            if (next != null) "${toNext.withCommas()} 步" else "", if (next != null) "約 ${days(toNext)} 天" else "", Modifier.weight(1f),
+        )
         if (border != null) {
-            val toBorder = steps(border.kmLeft)
-            RouteRow("下個區域", GREEN, "${toBorder.withCommas()} 步", "${"%.1f".format(border.kmLeft)} 公里・${days(toBorder)} 天") { w, h ->
-                val r = h / 2
-                val x = (w * border.fraction.toFloat()).coerceIn(r, w - r)
-                drawRoundRect(Vintage.edge.copy(alpha = 0.28f), Offset.Zero, Size(w, h), CornerRadius(r, r))
-                drawRoundRect(GREEN.copy(alpha = 0.85f), Offset.Zero, Size((w * border.fraction.toFloat()).coerceAtLeast(h), h), CornerRadius(r, r))
-                drawCircle(Color.White, r * 0.85f, Offset(x, r)); drawCircle(GREEN, r * 0.55f, Offset(x, r))
-            }
-        }
-        RouteRow("環島全程", BLUE, "${(overall * 100).roundToInt()}%　${collected.size}/$totalCards 景點", if (next != null) "剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里・${days(toEnd)} 天" else "") { w, h ->
-            val gap = 1.5.dp.toPx()
-            val seg = (w - gap * (totalCards - 1)) / totalCards
-            for (i in 0 until totalCards) {
-                val color = when { i < collected.size -> BLUE; i == collected.size && next != null -> RED.copy(alpha = 0.8f); else -> Vintage.edge.copy(alpha = 0.28f) }
-                drawRoundRect(color, Offset(i * (seg + gap), 0f), Size(seg, h), CornerRadius(2.dp.toPx()))
-            }
-        }
+            val toBorder = stepsFor(border.kmLeft)
+            Dial("下個區域", GREEN, border.fraction.toFloat(), "%.1f".format(border.kmLeft), "公里", "${toBorder.withCommas()} 步", "約 ${days(toBorder)} 天", Modifier.weight(1f))
+        } else Dial("下個區域", GREEN, 1f, "終點", "", "", "", Modifier.weight(1f))
+        Dial(
+            "環島全程", BLUE, overall.toFloat(), "${(overall * 100).roundToInt()}%", "${collected.size}/$totalCards 景點",
+            if (next != null) "剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里" else "環島完成", if (next != null) "約 ${days(toEnd)} 天" else "", Modifier.weight(1f),
+        )
     }
 }
 
-/** One row of the route table: [label] in its colour, a bar drawn by [bar] (given its width and height), then [value] big over [detail] small, both right-aligned. */
+/** One round gauge: a ticked scale over 270 degrees with a filled arc and a marker at [fraction], the reading in the middle, the label and two small lines below. */
 @Composable
-private fun RouteRow(label: String, color: Color, value: String, detail: String, bar: androidx.compose.ui.graphics.drawscope.DrawScope.(Float, Float) -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(label, fontSize = 11.sp, color = color, fontWeight = FontWeight.Bold, maxLines = 1, modifier = Modifier.width(48.dp))
-        Canvas(Modifier.weight(1f).height(8.dp)) { bar(size.width, size.height) }
-        Column(Modifier.width(112.dp), horizontalAlignment = Alignment.End) {
-            Text(value, fontWeight = FontWeight.Bold, fontSize = 14.sp, fontFamily = FontFamily.Serif, maxLines = 1)
-            if (detail.isNotEmpty()) Text(detail, fontSize = 10.sp, color = Vintage.inkSoft, maxLines = 1)
+private fun Dial(label: String, color: Color, fraction: Float, big: String, small: String, line1: String, line2: String, modifier: Modifier) {
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(1.dp)) {
+        Box(Modifier.fillMaxWidth().aspectRatio(1f), contentAlignment = Alignment.Center) {
+            Canvas(Modifier.fillMaxSize()) {
+                val c = Offset(size.width / 2, size.height / 2)
+                val outer = size.minDimension / 2 - 1.dp.toPx()
+                val arc = outer - 11.dp.toPx()
+                val start = 135f
+                val sweep = 270f
+                for (i in 0..27) {
+                    val a = Math.toRadians((start + sweep * i / 27f).toDouble())
+                    val dir = Offset(kotlin.math.cos(a).toFloat(), kotlin.math.sin(a).toFloat())
+                    val major = i % 9 == 0
+                    val len = (if (major) 6 else 3).dp.toPx()
+                    drawLine(Vintage.inkSoft.copy(alpha = if (major) 0.75f else 0.4f), c + dir * (outer - len), c + dir * outer, if (major) 1.6.dp.toPx() else 1.dp.toPx())
+                }
+                val topLeft = Offset(c.x - arc, c.y - arc)
+                val box = Size(arc * 2, arc * 2)
+                drawArc(Vintage.edge.copy(alpha = 0.28f), start, sweep, false, topLeft, box, style = Stroke(6.dp.toPx(), cap = StrokeCap.Round))
+                val f = fraction.coerceIn(0f, 1f)
+                if (f > 0.001f) drawArc(color, start, sweep * f, false, topLeft, box, style = Stroke(6.dp.toPx(), cap = StrokeCap.Round))
+                val end = Math.toRadians((start + sweep * f).toDouble())
+                val tip = c + Offset(kotlin.math.cos(end).toFloat(), kotlin.math.sin(end).toFloat()) * arc
+                drawCircle(Color.White, 4.5.dp.toPx(), tip)
+                drawCircle(color, 3.dp.toPx(), tip)
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(big, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = if (big.length > 6) 14.sp else 17.sp, maxLines = 1, color = Vintage.ink)
+                if (small.isNotEmpty()) Text(small, fontSize = 9.sp, color = Vintage.inkSoft, maxLines = 1)
+            }
         }
+        Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = color, maxLines = 1)
+        if (line1.isNotEmpty()) Text(line1, fontSize = 11.sp, fontWeight = FontWeight.Medium, color = Vintage.ink, maxLines = 1)
+        if (line2.isNotEmpty()) Text(line2, fontSize = 9.sp, color = Vintage.inkSoft, maxLines = 1)
     }
 }
 

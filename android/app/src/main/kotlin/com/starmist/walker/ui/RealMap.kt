@@ -521,7 +521,9 @@ internal fun rememberWalkerArt(): WalkerArt? {
     val body = rememberArt("traveller_body")
     val staff = rememberArt("traveller_staff")
     val hand = rememberArt("traveller_hand")
-    val frames = (0 until WALK_FRAMES).map { rememberArt("traveller_walk_$it") }
+    // The smooth cycle (24 pictures: the six drawn frames with in-betweens, half size) when it is there, else the six drawn frames.
+    val smooth = (0 until WALKX_FRAMES).map { rememberArt("traveller_walkx_$it") }
+    val frames = if (smooth.all { it != null }) smooth else (0 until WALK_FRAMES).map { rememberArt("traveller_walk_$it") }
     val context = androidx.compose.ui.platform.LocalContext.current
     val loadIdle: (Int) -> List<ImageBitmap>? = remember(context) {
         { act ->
@@ -529,10 +531,11 @@ internal fun rememberWalkerArt(): WalkerArt? {
             if (ids.any { it == 0 }) null else runCatching { ids.map { ImageBitmap.imageResource(context.resources, it) } }.getOrNull()
         }
     }
-    return if (body != null && staff != null && hand != null) WalkerArt(body, staff, hand, frames.filterNotNull().takeIf { it.size == WALK_FRAMES } ?: emptyList(), loadIdle) else null
+    return if (body != null && staff != null && hand != null) WalkerArt(body, staff, hand, frames.filterNotNull().takeIf { it.size == WALK_FRAMES || it.size == WALKX_FRAMES } ?: emptyList(), loadIdle) else null
 }
 
 private const val WALK_FRAMES = 6
+private const val WALKX_FRAMES = 24     // art_traveller_walkx_0..23: four pictures from one drawn frame to the next
 private const val REST_FRAME = 2      // the drawn frame at phase 0: a passing pose, the one it stands in
 
 // Where things are in the traveller pictures, as fractions of their size.
@@ -585,7 +588,12 @@ internal fun DrawScope.drawWalker(
         // stands, so a walk starts from and ends on a standing pose and nothing has to be cross-faded.
         if (framesMode || idleArt != null) {
             val n = art.frames.size
-            val frame = if (framesMode) art.frames[((phase * n).toInt() + REST_FRAME) % n] else null
+            val per = (n / WALK_FRAMES).coerceAtLeast(1)                // pictures per drawn frame
+            val pos = phase * n
+            val first = if (framesMode) (pos.toInt() + REST_FRAME * per) % n else 0
+            val frame = if (framesMode) art.frames[first] else null
+            val next = if (framesMode) art.frames[(first + 1) % n] else null
+            val between = pos - pos.toInt()                             // how far on from [frame] to [next]
             translate(p.x - width * FEET_X, p.y - height + 2.dp.toPx() - pose.lift * height) {
                 withTransform({
                     rotate(pose.rot, feet)
@@ -602,7 +610,10 @@ internal fun DrawScope.drawWalker(
                         val at = IntOffset(-(wide - dst.width) / 2, 0)
                         drawImage(idleArt[shown.a], dstOffset = at, dstSize = IntSize(wide, dst.height), alpha = edge)
                         if (shown.mix > 0.01f) drawImage(idleArt[shown.b], dstOffset = at, dstSize = IntSize(wide, dst.height), alpha = shown.mix * edge)
-                    } else if (frame != null) drawImage(frame, dstSize = dst)
+                    } else if (frame != null) {
+                        drawImage(frame, dstSize = dst)
+                        if (next != null && between > 0.02f) drawImage(next, dstSize = dst, alpha = between)   // melt into the next picture, so the steps do not click
+                    }
                     val lantern = Offset(width * LANTERN_X, height * LANTERN_Y)
                     val glow = 0.30f + 0.12f * kotlin.math.sin(turn * 2f) * k
                     drawCircle(

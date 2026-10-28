@@ -133,7 +133,7 @@ class ScreenshotTest {
                 val colW = size.width / 7f
                 for (i in 0..6) {
                     val p = androidx.compose.ui.geometry.Offset(colW * (i + 0.5f), size.height * 0.5f)
-                    drawWalker(p, 4500f, art, if (i == 0) 0f else ((i - 1 + 4) % 6) / 6f + 0.01f, walk = if (i > 0) 1f else 0f)   // phase 0 is drawn frame 2, so frame f is at (f + 4) % 6 sixths
+                    drawWalker(p, 4500f, art, if (i == 0) 0f else ((i - 1 + 4) % 6) / 6f + 0.001f, walk = if (i > 0) 1f else 0f)   // phase 0 is drawn frame 2, so frame f is at (f + 4) % 6 sixths
                 }
             }
         }

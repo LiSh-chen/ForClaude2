@@ -43,7 +43,7 @@ internal object ArtCache {
     /** Decodes what the first screens need, off the main thread. */
     suspend fun preload(context: android.content.Context) = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
         listOf("paper_page", "parchment_tile", "real_map_base", "traveller_body", "traveller_staff", "traveller_hand", "collection_slot_frame", "collection_slot_locked") .forEach { get(context, it) }
-        (0 until 6).forEach { get(context, "traveller_walk_$it") }
+        (0 until 24).forEach { get(context, "traveller_walkx_$it") }
     }
 }
 
