@@ -86,6 +86,24 @@ class ScreenshotTest {
         }
     }
 
+    /** A few of the daily statistics cards, one under the other. */
+    @Test fun stats_cards() = paparazzi.snapshot {
+        val today = java.time.LocalDate.of(2026, 10, 28)
+        val history = (0L..100L).associate { back ->
+            val d = today.minusDays(back)
+            d to when { d.dayOfMonth == 20 -> 0L; d.dayOfWeek.value == 6 -> 11000L; d.dayOfWeek.value == 7 -> 9000L; else -> 4000L + (d.dayOfMonth * 137L) % 5000 }
+        }
+        val towns = listOf(TownVisit("鹿港鎮", "彰化縣", 9.5, 39.0, 20, true), TownVisit("秀水鄉", "彰化縣", 3.2, 36.0, 15, true), TownVisit("伸港鄉", "彰化縣", 1.4, 23.0, 10, true), TownVisit("和美鎮", "彰化縣", 4.8, 38.0, 12, false))
+        val inputs = StatInputs(today, history, 8000, 0.7, 1100.0, 275.0, "某某卡" to 12.3, towns, 109, 5, 9, 45)
+        StarMistTheme {
+            androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().background(Vintage.parchment).padding(12.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(14.dp)) {
+                listOf(StatKind.HEATMAP, StatKind.WEEKDAY, StatKind.TOWN_LONGEST, StatKind.FORTUNE).forEach { k ->
+                    buildStat(k, inputs, dayStatSeed(today))?.let { StatCardView(it) }
+                }
+            }
+        }
+    }
+
     @Test fun card_face() = paparazzi.snapshot {
         StarMistTheme { Box(Modifier.fillMaxSize().background(Vintage.parchment).padding(16.dp)) { CardFace(forward.cards[3].first, forward.cards[3].second) } }
     }

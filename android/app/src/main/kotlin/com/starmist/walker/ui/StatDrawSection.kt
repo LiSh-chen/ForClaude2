@@ -160,7 +160,7 @@ fun StatDrawSection(vm: AppViewModel, settings: UserSettings) {
 
 /** One statistic: its name, the big line, what it means, a note, and its picture. */
 @Composable
-private fun StatCardView(card: StatCard) {
+internal fun StatCardView(card: StatCard) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text("${card.kind.emoji} ${card.kind.title}", fontWeight = FontWeight.Bold, color = Vintage.brassDark)
         Text(card.headline, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 30.sp, color = Vintage.ink)
