@@ -121,11 +121,6 @@ class ScreenshotTest {
         StarMistTheme { Box(Modifier.fillMaxSize().background(Vintage.parchment).padding(16.dp)) { CardFace(forward.cards[3].first, forward.cards[3].second) } }
     }
 
-    @Test fun card_face_local() = paparazzi.snapshot {
-        val jiufen = forward.cards.first { it.first.id == "jiufen" }
-        StarMistTheme { Box(Modifier.fillMaxSize().background(Vintage.parchment).padding(16.dp)) { CardFace(jiufen.first, jiufen.second) } }
-    }
-
     @Test fun station_stamp() = paparazzi.snapshot {
         StarMistTheme { Box(Modifier.fillMaxSize().background(Vintage.parchment).padding(16.dp)) { StationStamp("鳳林", "1913", Modifier.padding(8.dp)) } }
     }

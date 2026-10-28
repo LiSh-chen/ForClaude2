@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import com.starmist.core.route.ContentPack
-import com.starmist.core.route.LocalName
 import com.starmist.core.route.RouteDef
 import com.starmist.core.route.Routes
 import com.starmist.walker.content.ContentStore
@@ -292,20 +291,4 @@ fun rememberLandmarkFacts(): Map<String, List<TownTag>> {
 fun rememberPoiIntros(): Map<String, List<String>> {
     val context = LocalContext.current
     return remember(context) { ContentPack.parsePois(ContentStore(context.applicationContext).lines(ContentPack.POIS)) }
-}
-
-/** Hokkien (and Hakka) readings of place names (res/raw/local_names.txt), by card id or "county/township". */
-@Composable
-fun rememberLocalNames(): Map<String, LocalName> {
-    val context = LocalContext.current
-    return remember(context) { ContentPack.parseLocalNames(ContentStore(context.applicationContext).lines(ContentPack.LOCAL)) }
-}
-
-/** One line under an introduction: the name in the local language, how it is spelled, and a sound-alike in Mandarin characters. */
-@Composable
-fun LocalNameLine(n: LocalName, modifier: androidx.compose.ui.Modifier = androidx.compose.ui.Modifier) {
-    androidx.compose.material3.Text(
-        "🗣️ ${n.lang}唸「${n.han}」：${n.roman}（空耳：${n.soundAlike}）",
-        fontSize = 12.sp, color = Vintage.brassDark, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, modifier = modifier,
-    )
 }

@@ -1,8 +1,5 @@
 package com.starmist.core.route
 
-/** A place name as said in another language of Taiwan: [lang] 台語 or 客語, the [han] characters, the official [roman] spelling, a [soundAlike] written with Mandarin characters, and where the reading came from ([source]: 辭典 or 逐字). */
-data class LocalName(val lang: String, val han: String, val roman: String, val soundAlike: String, val source: String)
-
 /** What the content pack says about one card: its name. Its features live in the facts file. */
 data class CardText(val name: String)
 
@@ -19,42 +16,11 @@ object ContentPack {
     const val FACTS = "landmark_facts.txt"
     const val TOWNS = "town_blurbs.txt"
     const val POIS = "poi_intros.txt"
-    const val LOCAL = "local_names.txt"
-    val FILES = listOf(CARDS, FACTS, TOWNS, POIS, LOCAL)
+    val FILES = listOf(CARDS, FACTS, TOWNS, POIS)
 
     private val superlatives = Regex("最|唯一|第一|全台|全國|僅存")
 
     private fun data(lines: List<String>) = lines.filter { it.isNotBlank() && !it.startsWith("#") }
-
-    /** `key|language|characters|romanization|sound-alike|source`, as key to its entry. */
-    fun parseLocalNames(lines: List<String>): Map<String, LocalName> =
-        data(lines).mapNotNull { l ->
-            val f = l.split('|').map { it.trim() }
-            if (f.size == 6 && f.all { it.isNotEmpty() }) f[0] to LocalName(f[1], f[2], f[3], f[4], f[5]) else null
-        }.toMap()
-
-    private val han = Regex("^\\p{IsHan}{2,6}$")
-    private val roman = Regex("^[\\p{L}\\p{M}\\- ]{2,40}$")
-
-    /** `key|language|characters|romanization|sound-alike|source`: a card id or `county/township` key; a Hokkien or Hakka reading of a place name. */
-    fun validateLocalNames(lines: List<String>, knownIds: Set<String>): List<String> {
-        val errors = ArrayList<String>()
-        val seen = HashSet<String>()
-        data(lines).forEach { l ->
-            val f = l.split('|').map { it.trim() }
-            if (f.size != 6 || f.any { it.isEmpty() }) { errors += "bad line: $l"; return@forEach }
-            if (!seen.add(f[0])) errors += "duplicate key ${f[0]}"
-            if ('/' in f[0]) { if (!Regex("^.+[縣市]/.+[鄉鎮市區]$").matches(f[0])) errors += "bad township key ${f[0]}" }
-            else if (f[0] !in knownIds) errors += "unknown card id ${f[0]}"
-            if (f[1] !in setOf("台語", "客語")) errors += "${f[0]}: language must be 台語 or 客語"
-            if (!han.matches(f[2])) errors += "${f[0]}: characters: ${f[2]}"
-            if (!roman.matches(f[3])) errors += "${f[0]}: romanization: ${f[3]}"
-            if (!han.matches(f[4])) errors += "${f[0]}: sound-alike: ${f[4]}"
-            if (f[5] !in setOf("辭典", "逐字")) errors += "${f[0]}: source must be 辭典 or 逐字"
-            if (superlatives.containsMatchIn(l)) errors += "${f[0]}: no superlatives"
-        }
-        return errors
-    }
 
     /** `id|sentence|sentence` as id to its sentences. */
     fun parsePois(lines: List<String>): Map<String, List<String>> =
@@ -143,7 +109,6 @@ object ContentPack {
         FACTS -> validateFacts(lines, knownIds)
         TOWNS -> validateTowns(lines)
         POIS -> validatePois(lines, knownIds)
-        LOCAL -> validateLocalNames(lines, knownIds)
         else -> listOf("unknown file $name")
     }
 }
