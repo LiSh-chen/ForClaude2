@@ -51,12 +51,15 @@ internal object ArtCache {
 @Composable
 fun rememberCardThumb(cardId: String): ImageBitmap? {
     val context = LocalContext.current.applicationContext
-    if (androidx.compose.ui.platform.LocalInspectionMode.current) return remember(cardId) { decodeThumb(context, cardId) }
+    if (decodeThumbsInline || androidx.compose.ui.platform.LocalInspectionMode.current) return remember(cardId) { decodeThumb(context, cardId) }
     val state = produceState(CardThumbs.get(cardId), cardId) {
         if (value == null) value = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) { decodeThumb(context, cardId) }
     }
     return state.value
 }
+
+/** Set by the screenshot tests: their picture is taken before a background decode would finish. */
+internal var decodeThumbsInline = false
 
 private object CardThumbs {
     private val cache = object : android.util.LruCache<String, ImageBitmap>(24 * 1024 * 1024) {

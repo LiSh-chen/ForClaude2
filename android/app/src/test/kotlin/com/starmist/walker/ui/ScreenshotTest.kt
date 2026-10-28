@@ -19,6 +19,8 @@ import org.junit.Test
 
 /** Renders the real screens with made-up data, so a UI change can be looked at before any APK. */
 class ScreenshotTest {
+    init { decodeThumbsInline = true }
+
     @get:Rule
     val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_5)
 
