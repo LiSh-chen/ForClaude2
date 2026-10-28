@@ -254,14 +254,20 @@ fun buildStat(kind: StatKind, i: StatInputs, seed: Long): StatCard? {
 fun availableStats(i: StatInputs, seed: Long): List<StatKind> = StatKind.values().filter { buildStat(it, i, seed) != null }
 
 /**
- * Today's draw: the same all day for the same [available] cards (so reopening the app shows the same one), different
- * from one day to the next, and never the same kind two days in a row when there is a choice.
+ * Today's draw: the same all day for the same [available] cards, different from the day before (never the same kind two days
+ * running when there is a choice).
  */
 fun drawStat(date: LocalDate, available: List<StatKind>): StatKind? {
     if (available.isEmpty()) return null
     fun pick(d: LocalDate) = available[Random(d.toEpochDay() * 7919L + 13).nextInt(available.size)]
-    val today = pick(date)
-    return if (available.size > 1 && today == pick(date.minusDays(1))) available[(available.indexOf(today) + 1) % available.size] else today
+    // Walk forward from a month back so that each day can be made to differ from the day before it, repeats included.
+    var previous = pick(date.minusDays(30))
+    for (back in 29 downTo 0) {
+        var kind = pick(date.minusDays(back.toLong()))
+        if (available.size > 1 && kind == previous) kind = available[(available.indexOf(kind) + 1) % available.size]
+        previous = kind
+    }
+    return previous
 }
 
 /** The seed for a day's variants (which ruler, which fortune). */

@@ -83,9 +83,9 @@ class StatDrawTest {
         val c = buildStat(StatKind.WEEK_VS_LAST, full, 1L)!!
         val bars = (c.visual as StatVisual.Bars).rows
         assertEquals(2, bars.size)
-        // Monday to Wednesday this week against Monday to Wednesday last week: both 3 x 6,000
+        // Monday to Wednesday this week is 3 x 6,000; the same days last week include the rest day, the 20th
         assertEquals(18000.0, bars[0].second, 0.1)
-        assertEquals(18000.0, bars[1].second, 0.1)
+        assertEquals(12000.0, bars[1].second, 0.1)
     }
 
     @Test
@@ -111,7 +111,7 @@ class StatDrawTest {
         assertEquals(drawStat(today, kinds), drawStat(today, kinds))
         for (back in 0..60) {
             val d = today.minusDays(back.toLong())
-            assertNotEquals("$d repeats the day before", drawStat(d, kinds), drawStat(d.minusDays(1), kinds))
+            assertNotEquals("$d repeats the day before", drawStat(d, kinds), drawStat(d.minusDays(1), kinds))   // the same list of cards both days
         }
         assertNull(drawStat(today, emptyList()))
         assertEquals(StatKind.FORTUNE, drawStat(today, listOf(StatKind.FORTUNE)))
