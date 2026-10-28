@@ -1,16 +1,9 @@
 {
- "attempt_at": "2026-10-27T13:10:52+00:00",
+ "attempt_at": "2026-10-28T00:43:45+00:00",
  "date": "2026-10-27",
- "level": "warn",
+ "level": "ok",
  "published": true,
- "issues": [
-  {
-   "code": "us_patch",
-   "label": "美股最新收盤補值",
-   "level": "warn",
-   "msg": "暫定補上 0 檔、失敗 1 檔（失敗檔使用前一日價格）"
-  }
- ],
+ "issues": [],
  "checks": [
   {
    "code": "coverage_TW",
@@ -34,7 +27,7 @@
    "code": "fresh_US",
    "label": "美股行情新鮮度",
    "level": "ok",
-   "msg": "行情截至 2026-10-26，已是最新收盤"
+   "msg": "行情截至 2026-10-27，已是最新收盤"
   },
   {
    "code": "tw_cross",
@@ -51,8 +44,8 @@
   {
    "code": "us_patch",
    "label": "美股最新收盤補值",
-   "level": "warn",
-   "msg": "暫定補上 0 檔、失敗 1 檔（失敗檔使用前一日價格）"
+   "level": "ok",
+   "msg": "暫定補上 108 檔、失敗 1 檔（失敗檔使用前一日價格）"
   },
   {
    "code": "jumps",
