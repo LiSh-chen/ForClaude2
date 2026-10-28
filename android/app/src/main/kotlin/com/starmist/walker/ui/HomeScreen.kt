@@ -304,12 +304,12 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
         Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (map != null && !regionMode) {
                 Box(Modifier.fillMaxWidth()) {
-                    InstrumentPanel(map.route, map.walkedKm, strideM, goal, steps, progress, km, kcal, Modifier.fillMaxWidth())
+                    InstrumentPanel(map.route, map.walkedKm, strideM, goal, steps, progress, km, kcal, Modifier.fillMaxWidth().padding(top = 16.dp))
                     // Syncing is a small button in the corner of the panel.
                     Icon(
                         Icons.Filled.Refresh, contentDescription = "同步",
                         tint = Vintage.inkSoft,
-                        modifier = Modifier.align(Alignment.TopEnd).size(26.dp).clip(RoundedCornerShape(13.dp)).clickable(onClick = onSync).padding(3.dp),
+                        modifier = Modifier.align(Alignment.TopEnd).size(22.dp).clip(RoundedCornerShape(11.dp)).clickable(onClick = onSync).padding(2.dp),
                     )
                 }
             } else {
@@ -374,7 +374,7 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
         }
     }
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        Instrument("今日步數", Color(0xFF6B4A24), "${steps.withCommas()} 步", "目標 ${goal.toLong().withCommas()}", "${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡", Modifier.weight(1f)) {
+        Instrument("今日步數", Color(0xFF6B4A24), "${steps.withCommas()} 步", "目標 ${goal.toLong().withCommas()}", "${todayKm.twoDecimals()} 公里\n${kcal.roundToInt()} 大卡", Modifier.weight(1f)) {
             TankGauge(progress, Color(0xFF6B4A24))
         }
         Instrument("下一景點", RED, if (next != null) "%.1f 公里".format(next.second) else "已完成", if (next != null) "${toNext.withCommas()} 步" else "", if (next != null) "約 ${days(toNext)} 天" else "", Modifier.weight(1f)) {
@@ -383,7 +383,7 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
         Instrument("下個區域", GREEN, if (border != null) "%.1f 公里".format(border.kmLeft) else "終點", if (border != null) "${stepsFor(border.kmLeft).withCommas()} 步" else "", if (border != null) "約 ${days(stepsFor(border.kmLeft))} 天" else "", Modifier.weight(1f)) {
             LevelGauge(border?.fraction?.toFloat() ?: 1f, GREEN)
         }
-        Instrument("環島全程", BLUE, "${(overall * 100).roundToInt()}%", if (next != null) "剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里" else "環島完成", "${collected.size}/$totalCards 景點・約 ${days(toEnd)} 天", Modifier.weight(1f)) {
+        Instrument("環島全程", BLUE, "${(overall * 100).roundToInt()}%", if (next != null) "剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里" else "環島完成", "${collected.size}/$totalCards 景點\n約 ${days(toEnd)} 天", Modifier.weight(1f)) {
             IslandGauge(island, route, walkedKm, BLUE)
         }
     }
@@ -397,7 +397,7 @@ private fun Instrument(label: String, color: Color, value: String, line1: String
         Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = color, maxLines = 1)
         Text(value, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Vintage.ink, maxLines = 1)
         if (line1.isNotEmpty()) Text(line1, fontSize = 10.sp, fontWeight = FontWeight.Medium, color = Vintage.ink, maxLines = 1)
-        if (line2.isNotEmpty()) Text(line2, fontSize = 9.sp, color = Vintage.inkSoft, maxLines = 1)
+        if (line2.isNotEmpty()) Text(line2, fontSize = 9.sp, lineHeight = 12.sp, color = Vintage.inkSoft, maxLines = 2, textAlign = TextAlign.Center)
     }
 }
 
