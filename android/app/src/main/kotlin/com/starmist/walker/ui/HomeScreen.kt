@@ -272,6 +272,7 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
         val p = picked
         // No line limit: the fact can be seventy characters and the panel grows to fit it instead of cutting it off.
         Text(if (p != null) "你知道嗎？${tags[p].fact}" else "再走一段，就會發現這裡的特色。", fontSize = 11.sp, color = Vintage.inkSoft)
+        rememberLocalNames()["${a.county}/${a.name}"]?.let { LocalNameLine(it) }
     }
 }
 

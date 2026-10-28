@@ -231,6 +231,7 @@ fun CardFace(card: Landmark, atKm: Double) {
         } else {
             CardEmblem(card, true, Modifier.size(96.dp))
         }
+        rememberLocalNames()[card.id]?.let { LocalNameLine(it, Modifier.fillMaxWidth()) }
         rememberTownAreas().cardPlaces[card.id]?.let { Text("📍 ${it.county} ${it.name}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark, modifier = Modifier.fillMaxWidth()) }
         rememberLandmarkFacts()[card.id].orEmpty().forEach { f ->
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
