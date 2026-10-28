@@ -1,0 +1,4915 @@
+{
+ "date": "2026-10-28",
+ "rows": [
+  {
+   "ticker": "NVDA",
+   "market": "US",
+   "sector": "ai_chips",
+   "price": 217.94,
+   "composite": 86.4,
+   "scores": {
+    "sector": 85.6,
+    "leader": 100.0,
+    "quality": 93.4,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 36.6,
+    "news": 81.7
+   },
+   "method_upside": {
+    "pe": 0.4477,
+    "peg": 1.2227,
+    "consensus": 0.5094
+   },
+   "upside": 0.6,
+   "picked": true,
+   "in_focus": true
+  },
+  {
+   "ticker": "AVGO",
+   "market": "US",
+   "sector": "ai_chips",
+   "price": 342.33,
+   "composite": 76.24,
+   "scores": {
+    "sector": 85.6,
+    "leader": 50.0,
+    "quality": 95.0,
+    "growth": 100.0,
+    "valuation": 79.8,
+    "momentum": 11.6,
+    "news": 87.4
+   },
+   "method_upside": {
+    "pe": 0.2367,
+    "peg": 0.7277,
+    "dcf": -0.5465,
+    "consensus": 0.5486
+   },
+   "upside": 0.2317,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "AMD",
+   "market": "US",
+   "sector": "ai_chips",
+   "price": 560.26,
+   "composite": 73.91,
+   "scores": {
+    "sector": 85.6,
+    "leader": 25.0,
+    "quality": 81.1,
+    "growth": 100.0,
+    "valuation": 40.0,
+    "momentum": 95.9,
+    "news": 81.3
+   },
+   "method_upside": {
+    "pe": -0.2448,
+    "peg": -0.144,
+    "consensus": 0.1381
+   },
+   "upside": -0.1063,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "TSM",
+   "market": "US",
+   "sector": "ai_chips",
+   "price": 436.87,
+   "composite": 84.07,
+   "scores": {
+    "sector": 85.6,
+    "leader": 75.0,
+    "quality": 99.0,
+    "growth": 100.0,
+    "valuation": 89.7,
+    "momentum": 67.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1805,
+    "peg": 0.6293,
+    "consensus": 0.3377
+   },
+   "upside": 0.3138,
+   "picked": true,
+   "in_focus": true
+  },
+  {
+   "ticker": "MRVL",
+   "market": "US",
+   "sector": "ai_chips",
+   "price": 243.57,
+   "composite": 72.24,
+   "scores": {
+    "sector": 85.6,
+    "leader": 0.0,
+    "quality": 82.0,
+    "growth": 100.0,
+    "valuation": 51.6,
+    "momentum": 100.0,
+    "news": 61.1
+   },
+   "method_upside": {
+    "pe": -0.2269,
+    "peg": -0.0841,
+    "consensus": 0.4018
+   },
+   "upside": -0.0037,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "2330.TW",
+   "market": "TW",
+   "sector": "ai_chips",
+   "price": 2425.0,
+   "composite": 81.14,
+   "scores": {
+    "sector": 70.3,
+    "leader": 100.0,
+    "quality": 99.0,
+    "growth": 100.0,
+    "valuation": 86.1,
+    "momentum": 22.0,
+    "news": 84.5
+   },
+   "method_upside": {
+    "pe": 0.1791,
+    "peg": 0.9358,
+    "dcf": -0.1411,
+    "consensus": 0.3999
+   },
+   "upside": 0.2838,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2454.TW",
+   "market": "TW",
+   "sector": "ai_chips",
+   "price": 4235.0,
+   "composite": 62.77,
+   "scores": {
+    "sector": 70.3,
+    "leader": 83.3,
+    "quality": 66.5,
+    "growth": 8.9,
+    "valuation": 62.0,
+    "momentum": 57.9,
+    "news": 82.9
+   },
+   "method_upside": {
+    "pe": -0.1394,
+    "peg": 0.1117,
+    "consensus": 0.4227
+   },
+   "upside": 0.0833,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3711.TW",
+   "market": "TW",
+   "sector": "ai_chips",
+   "price": 695.0,
+   "composite": 59.0,
+   "scores": {
+    "sector": 70.3,
+    "leader": 66.7,
+    "quality": 35.2,
+    "growth": 95.3,
+    "valuation": 56.0,
+    "momentum": 69.6,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0648,
+    "peg": 0.3417,
+    "consensus": 0.0962
+   },
+   "upside": 0.0617,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3034.TW",
+   "market": "TW",
+   "sector": "ai_chips",
+   "price": 598.0,
+   "composite": 66.43,
+   "scores": {
+    "sector": 70.3,
+    "leader": 16.7,
+    "quality": 77.8,
+    "growth": 70.9,
+    "valuation": 61.7,
+    "momentum": 74.5,
+    "news": 74.5
+   },
+   "method_upside": {
+    "pe": 0.1004,
+    "peg": 0.7657,
+    "dcf": 0.0083,
+    "consensus": -0.1142
+   },
+   "upside": 0.1281,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2379.TW",
+   "market": "TW",
+   "sector": "ai_chips",
+   "price": 791.0,
+   "composite": 59.1,
+   "scores": {
+    "sector": 70.3,
+    "leader": 33.3,
+    "quality": 62.8,
+    "growth": 39.6,
+    "valuation": 70.1,
+    "momentum": 69.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0262,
+    "peg": 0.5198,
+    "dcf": 0.4441,
+    "consensus": -0.0765
+   },
+   "upside": 0.1581,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3443.TW",
+   "market": "TW",
+   "sector": "ai_chips",
+   "price": 8170.0,
+   "composite": 63.09,
+   "scores": {
+    "sector": 70.3,
+    "leader": 50.0,
+    "quality": 56.2,
+    "growth": 100.0,
+    "valuation": 32.0,
+    "momentum": 85.0,
+    "news": 62.0
+   },
+   "method_upside": {
+    "pe": -0.3452,
+    "peg": -0.5228,
+    "consensus": -0.1527
+   },
+   "upside": -0.3184,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3661.TW",
+   "market": "TW",
+   "sector": "ai_chips",
+   "price": 3800.0,
+   "composite": 50.36,
+   "scores": {
+    "sector": 70.3,
+    "leader": 0.0,
+    "quality": 62.5,
+    "growth": 26.9,
+    "valuation": 79.0,
+    "momentum": 24.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0486,
+    "peg": 0.5639,
+    "consensus": 0.5272
+   },
+   "upside": 0.2948,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "SMCI",
+   "market": "US",
+   "sector": "ai_servers",
+   "price": 35.09,
+   "composite": 64.36,
+   "scores": {
+    "sector": 67.5,
+    "leader": 0.0,
+    "quality": 50.0,
+    "growth": 100.0,
+    "valuation": 98.0,
+    "momentum": 66.3,
+    "news": 71.2
+   },
+   "method_upside": {
+    "pe": 1.0776,
+    "consensus": 0.233
+   },
+   "upside": 0.6,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "DELL",
+   "market": "US",
+   "sector": "ai_servers",
+   "price": 501.96,
+   "composite": 61.23,
+   "scores": {
+    "sector": 67.5,
+    "leader": 100.0,
+    "quality": 23.3,
+    "growth": 100.0,
+    "valuation": 75.9,
+    "momentum": 61.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0973,
+    "peg": 0.8351,
+    "dcf": -0.0586,
+    "consensus": 0.1854
+   },
+   "upside": 0.1988,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "HPE",
+   "market": "US",
+   "sector": "ai_servers",
+   "price": 60.84,
+   "composite": 68.7,
+   "scores": {
+    "sector": 67.5,
+    "leader": 50.0,
+    "quality": 47.2,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 85.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.2676,
+    "peg": 1.3582,
+    "dcf": 0.4827,
+    "consensus": 0.1792
+   },
+   "upside": 0.4521,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "2382.TW",
+   "market": "TW",
+   "sector": "ai_servers",
+   "price": 330.0,
+   "composite": 44.71,
+   "scores": {
+    "sector": 28.0,
+    "leader": 80.0,
+    "quality": 25.7,
+    "growth": 100.0,
+    "valuation": 61.6,
+    "momentum": 18.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0048,
+    "consensus": 0.303
+   },
+   "upside": 0.1136,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3231.TW",
+   "market": "TW",
+   "sector": "ai_servers",
+   "price": 194.5,
+   "composite": 48.92,
+   "scores": {
+    "sector": 28.0,
+    "leader": 40.0,
+    "quality": 24.0,
+    "growth": 100.0,
+    "valuation": 80.8,
+    "momentum": 66.6,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1516,
+    "consensus": 0.4206
+   },
+   "upside": 0.2551,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6669.TW",
+   "market": "TW",
+   "sector": "ai_servers",
+   "price": 1950.0,
+   "composite": 42.27,
+   "scores": {
+    "sector": 28.0,
+    "leader": 60.0,
+    "quality": 34.5,
+    "growth": 69.7,
+    "valuation": 55.9,
+    "momentum": 29.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0048,
+    "consensus": 0.4593
+   },
+   "upside": 0.1796,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2317.TW",
+   "market": "TW",
+   "sector": "ai_servers",
+   "price": 251.5,
+   "composite": 57.93,
+   "scores": {
+    "sector": 28.0,
+    "leader": 100.0,
+    "quality": 30.8,
+    "growth": 94.2,
+    "valuation": 100.0,
+    "momentum": 45.4,
+    "news": 59.3
+   },
+   "method_upside": {
+    "pe": -0.0331,
+    "peg": 1.8932,
+    "consensus": 0.3815
+   },
+   "upside": 0.4576,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2356.TW",
+   "market": "TW",
+   "sector": "ai_servers",
+   "price": 63.8,
+   "composite": 40.92,
+   "scores": {
+    "sector": 28.0,
+    "leader": 0.0,
+    "quality": 19.2,
+    "growth": 100.0,
+    "valuation": 70.7,
+    "momentum": 55.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1526,
+    "peg": 1.1525,
+    "consensus": 0.051
+   },
+   "upside": 0.1557,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2376.TW",
+   "market": "TW",
+   "sector": "ai_servers",
+   "price": 362.5,
+   "composite": 43.09,
+   "scores": {
+    "sector": 28.0,
+    "leader": 20.0,
+    "quality": 31.4,
+    "growth": 100.0,
+    "valuation": 47.5,
+    "momentum": 61.1,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0283,
+    "consensus": 0.3116
+   },
+   "upside": 0.1373,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "VRT",
+   "market": "US",
+   "sector": "cooling_power",
+   "price": 208.56,
+   "composite": 45.86,
+   "scores": {
+    "sector": 18.8,
+    "leader": 0.0,
+    "quality": 72.9,
+    "growth": 91.6,
+    "valuation": 67.0,
+    "momentum": 12.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0673,
+    "peg": 0.3419,
+    "dcf": -0.2422,
+    "consensus": 0.5967
+   },
+   "upside": 0.1251,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ETN",
+   "market": "US",
+   "sector": "cooling_power",
+   "price": 384.2,
+   "composite": 41.02,
+   "scores": {
+    "sector": 18.8,
+    "leader": 100.0,
+    "quality": 53.6,
+    "growth": 37.7,
+    "valuation": 25.7,
+    "momentum": 25.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0837,
+    "peg": 0.291,
+    "dcf": -0.3715,
+    "consensus": 0.2636
+   },
+   "upside": 0.0018,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2308.TW",
+   "market": "TW",
+   "sector": "cooling_power",
+   "price": 1550.0,
+   "composite": 60.31,
+   "scores": {
+    "sector": 40.3,
+    "leader": 100.0,
+    "quality": 66.9,
+    "growth": 100.0,
+    "valuation": 55.8,
+    "momentum": 6.5,
+    "news": 79.6
+   },
+   "method_upside": {
+    "pe": -0.1296,
+    "peg": 0.2939,
+    "dcf": -0.5463,
+    "consensus": 0.613
+   },
+   "upside": 0.0362,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3017.TW",
+   "market": "TW",
+   "sector": "cooling_power",
+   "price": 3215.0,
+   "composite": 65.66,
+   "scores": {
+    "sector": 40.3,
+    "leader": 66.7,
+    "quality": 74.0,
+    "growth": 100.0,
+    "valuation": 91.2,
+    "momentum": 46.2,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0466,
+    "peg": 0.5839,
+    "dcf": 1.0463,
+    "consensus": 0.3106
+   },
+   "upside": 0.3559,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3324.TWO",
+   "market": "TW",
+   "sector": "cooling_power",
+   "price": 1435.0,
+   "composite": 53.68,
+   "scores": {
+    "sector": 40.3,
+    "leader": 0.0,
+    "quality": 57.4,
+    "growth": 100.0,
+    "valuation": 58.4,
+    "momentum": 77.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0513,
+    "peg": 0.7466,
+    "consensus": 0.0851
+   },
+   "upside": 0.1922,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2301.TW",
+   "market": "TW",
+   "sector": "cooling_power",
+   "price": 261.5,
+   "composite": 56.49,
+   "scores": {
+    "sector": 40.3,
+    "leader": 33.3,
+    "quality": 49.7,
+    "growth": 100.0,
+    "valuation": 81.1,
+    "momentum": 60.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0725,
+    "peg": 0.8135,
+    "consensus": 0.2017
+   },
+   "upside": 0.2518,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ANET",
+   "market": "US",
+   "sector": "networking_optics",
+   "price": 187.0,
+   "composite": 64.06,
+   "scores": {
+    "sector": 44.1,
+    "leader": 75.0,
+    "quality": 100.0,
+    "growth": 95.7,
+    "valuation": 30.7,
+    "momentum": 44.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.2416,
+    "peg": -0.1508,
+    "dcf": -0.6277,
+    "consensus": 0.3026
+   },
+   "upside": -0.1691,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "CSCO",
+   "market": "US",
+   "sector": "networking_optics",
+   "price": 111.38,
+   "composite": 66.61,
+   "scores": {
+    "sector": 44.1,
+    "leader": 100.0,
+    "quality": 76.8,
+    "growth": 82.3,
+    "valuation": 65.3,
+    "momentum": 61.6,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0911,
+    "peg": 0.5364,
+    "dcf": -0.1437,
+    "consensus": 0.2225
+   },
+   "upside": 0.1438,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "CIEN",
+   "market": "US",
+   "sector": "networking_optics",
+   "price": 351.15,
+   "composite": 55.9,
+   "scores": {
+    "sector": 44.1,
+    "leader": 50.0,
+    "quality": 69.5,
+    "growth": 100.0,
+    "valuation": 58.7,
+    "momentum": 22.6,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1871,
+    "peg": 0.0283,
+    "consensus": 0.4609
+   },
+   "upside": 0.0558,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "COHR",
+   "market": "US",
+   "sector": "networking_optics",
+   "price": 235.79,
+   "composite": 54.82,
+   "scores": {
+    "sector": 44.1,
+    "leader": 25.0,
+    "quality": 51.8,
+    "growth": 100.0,
+    "valuation": 97.8,
+    "momentum": 22.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.2286,
+    "peg": 0.7954,
+    "consensus": 0.6795
+   },
+   "upside": 0.4758,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "CRDO",
+   "market": "US",
+   "sector": "networking_optics",
+   "price": 167.43,
+   "composite": 62.74,
+   "scores": {
+    "sector": 44.1,
+    "leader": 0.0,
+    "quality": 93.6,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 19.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.2166,
+    "peg": 0.7656,
+    "consensus": 0.6965
+   },
+   "upside": 0.4695,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2345.TW",
+   "market": "TW",
+   "sector": "networking_optics",
+   "price": 1815.0,
+   "composite": 58.54,
+   "scores": {
+    "sector": 32.0,
+    "leader": 100.0,
+    "quality": 52.9,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 6.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.9219,
+    "peg": 0.9887,
+    "consensus": 0.8038
+   },
+   "upside": 0.6,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3081.TWO",
+   "market": "TW",
+   "sector": "networking_optics",
+   "price": 2580.0,
+   "composite": 54.28,
+   "scores": {
+    "sector": 32.0,
+    "leader": 75.0,
+    "quality": 81.5,
+    "growth": 100.0,
+    "valuation": 0.0,
+    "momentum": 46.0,
+    "news": 55.9
+   },
+   "method_upside": {
+    "pe": -0.3129,
+    "peg": -0.5195,
+    "consensus": 0.2179
+   },
+   "upside": -0.1858,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "4979.TWO",
+   "market": "TW",
+   "sector": "networking_optics",
+   "price": 488.5,
+   "composite": 44.2,
+   "scores": {
+    "sector": 32.0,
+    "leader": 25.0,
+    "quality": 66.7,
+    "growth": 83.6,
+    "valuation": 28.7,
+    "momentum": 22.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1508,
+    "peg": -0.0897,
+    "consensus": -0.0481
+   },
+   "upside": 0.0435,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3363.TWO",
+   "market": "TW",
+   "sector": "networking_optics",
+   "price": 533.0,
+   "composite": 22.71,
+   "scores": {
+    "sector": 32.0,
+    "leader": 0.0,
+    "quality": 33.1,
+    "growth": 0.0,
+    "valuation": 26.6,
+    "momentum": 7.1,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.2158,
+    "consensus": 0.4309
+   },
+   "upside": 0.0329,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6442.TW",
+   "market": "TW",
+   "sector": "networking_optics",
+   "price": 1405.0,
+   "composite": 60.49,
+   "scores": {
+    "sector": 32.0,
+    "leader": 50.0,
+    "quality": 99.5,
+    "growth": 95.0,
+    "valuation": null,
+    "momentum": 20.3,
+    "news": 40.0
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "MU",
+   "market": "US",
+   "sector": "memory_storage",
+   "price": 928.76,
+   "composite": 87.01,
+   "scores": {
+    "sector": 66.2,
+    "leader": 100.0,
+    "quality": 99.7,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 68.1,
+    "news": 70.8
+   },
+   "method_upside": {
+    "pe": 0.7821,
+    "dcf": -0.3742,
+    "consensus": 0.6817
+   },
+   "upside": 0.4805,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "WDC",
+   "market": "US",
+   "sector": "memory_storage",
+   "price": 380.88,
+   "composite": 59.18,
+   "scores": {
+    "sector": 66.2,
+    "leader": 0.0,
+    "quality": 87.9,
+    "growth": 100.0,
+    "valuation": 53.2,
+    "momentum": 10.6,
+    "news": 58.7
+   },
+   "method_upside": {
+    "pe": -0.0757,
+    "dcf": -0.568,
+    "consensus": 0.6104
+   },
+   "upside": 0.0103,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "STX",
+   "market": "US",
+   "sector": "memory_storage",
+   "price": 667.85,
+   "composite": 68.81,
+   "scores": {
+    "sector": 66.2,
+    "leader": 33.3,
+    "quality": 72.2,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 21.2,
+    "news": 82.9
+   },
+   "method_upside": {
+    "pe": -0.156,
+    "peg": 1.6178,
+    "consensus": 0.6345
+   },
+   "upside": 0.4236,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "SNDK",
+   "market": "US",
+   "sector": "memory_storage",
+   "price": 1304.84,
+   "composite": 80.45,
+   "scores": {
+    "sector": 66.2,
+    "leader": 66.7,
+    "quality": 99.9,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 61.3,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.6327,
+    "dcf": 0.3552,
+    "consensus": 0.643
+   },
+   "upside": 0.5704,
+   "picked": true,
+   "in_focus": true
+  },
+  {
+   "ticker": "2408.TW",
+   "market": "TW",
+   "sector": "memory_storage",
+   "price": 477.0,
+   "composite": 86.12,
+   "scores": {
+    "sector": 72.3,
+    "leader": 100.0,
+    "quality": 98.8,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 53.3,
+    "news": 69.4
+   },
+   "method_upside": {
+    "pe": 1.8728,
+    "consensus": 0.3329
+   },
+   "upside": 0.6,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "2344.TW",
+   "market": "TW",
+   "sector": "memory_storage",
+   "price": 172.0,
+   "composite": 72.8,
+   "scores": {
+    "sector": 72.3,
+    "leader": 66.7,
+    "quality": 78.0,
+    "growth": 100.0,
+    "valuation": null,
+    "momentum": 51.8,
+    "news": 62.8
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "2337.TW",
+   "market": "TW",
+   "sector": "memory_storage",
+   "price": 103.5,
+   "composite": 67.49,
+   "scores": {
+    "sector": 72.3,
+    "leader": 0.0,
+    "quality": 85.4,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 6.0,
+    "news": 74.5
+   },
+   "method_upside": {
+    "pe": 1.9495,
+    "dcf": 0.6004,
+    "consensus": 0.6147
+   },
+   "upside": 0.6,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "8299.TWO",
+   "market": "TW",
+   "sector": "memory_storage",
+   "price": 2040.0,
+   "composite": 75.66,
+   "scores": {
+    "sector": 72.3,
+    "leader": 33.3,
+    "quality": 79.9,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 58.3,
+    "news": 73.6
+   },
+   "method_upside": {
+    "pe": 0.7133,
+    "consensus": 0.3547
+   },
+   "upside": 0.5754,
+   "picked": true,
+   "in_focus": true
+  },
+  {
+   "ticker": "AMAT",
+   "market": "US",
+   "sector": "semi_equipment",
+   "price": 395.93,
+   "composite": 61.24,
+   "scores": {
+    "sector": 19.1,
+    "leader": 66.7,
+    "quality": 85.7,
+    "growth": 92.6,
+    "valuation": 85.0,
+    "momentum": 18.2,
+    "news": 64.3
+   },
+   "method_upside": {
+    "pe": 0.0323,
+    "peg": 0.4215,
+    "consensus": 0.5857
+   },
+   "upside": 0.2782,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "LRCX",
+   "market": "US",
+   "sector": "semi_equipment",
+   "price": 240.85,
+   "composite": 58.13,
+   "scores": {
+    "sector": 19.1,
+    "leader": 33.3,
+    "quality": 92.6,
+    "growth": 100.0,
+    "valuation": 83.2,
+    "momentum": 17.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0752,
+    "peg": 0.5359,
+    "consensus": 0.5115
+   },
+   "upside": 0.2979,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "KLAC",
+   "market": "US",
+   "sector": "semi_equipment",
+   "price": 153.66,
+   "composite": 46.13,
+   "scores": {
+    "sector": 19.1,
+    "leader": 0.0,
+    "quality": 91.4,
+    "growth": 52.7,
+    "valuation": 65.5,
+    "momentum": 9.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0304,
+    "peg": 0.3352,
+    "consensus": 0.5123
+   },
+   "upside": 0.2078,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ASML",
+   "market": "US",
+   "sector": "semi_equipment",
+   "price": 1635.5699,
+   "composite": 63.19,
+   "scores": {
+    "sector": 19.1,
+    "leader": 100.0,
+    "quality": 90.2,
+    "growth": 100.0,
+    "valuation": 61.0,
+    "momentum": 37.2,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0887,
+    "peg": 0.1693,
+    "consensus": 0.3047
+   },
+   "upside": 0.0826,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3131.TWO",
+   "market": "TW",
+   "sector": "semi_equipment",
+   "price": 2080.0,
+   "composite": 43.62,
+   "scores": {
+    "sector": 25.3,
+    "leader": 25.0,
+    "quality": 61.7,
+    "growth": 65.6,
+    "valuation": 67.7,
+    "momentum": 6.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0398,
+    "peg": 0.5338,
+    "dcf": -0.031,
+    "consensus": 0.7212
+   },
+   "upside": 0.2383,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6196.TW",
+   "market": "TW",
+   "sector": "semi_equipment",
+   "price": 592.0,
+   "composite": 56.16,
+   "scores": {
+    "sector": 25.3,
+    "leader": 50.0,
+    "quality": 55.0,
+    "growth": 100.0,
+    "valuation": 65.3,
+    "momentum": 77.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0682,
+    "peg": 0.7669,
+    "consensus": 0.1548
+   },
+   "upside": 0.2263,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2404.TW",
+   "market": "TW",
+   "sector": "semi_equipment",
+   "price": 1100.0,
+   "composite": 62.0,
+   "scores": {
+    "sector": 25.3,
+    "leader": 100.0,
+    "quality": 69.9,
+    "growth": 100.0,
+    "valuation": 92.5,
+    "momentum": 19.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.5205,
+    "consensus": 0.5977
+   },
+   "upside": 0.5502,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1560.TW",
+   "market": "TW",
+   "sector": "semi_equipment",
+   "price": 914.0,
+   "composite": 54.6,
+   "scores": {
+    "sector": 25.3,
+    "leader": 75.0,
+    "quality": 69.2,
+    "growth": 82.7,
+    "valuation": 0.0,
+    "momentum": 95.8,
+    "news": 62.0
+   },
+   "method_upside": {
+    "pe": -0.2833,
+    "peg": -0.2778,
+    "consensus": -0.0117
+   },
+   "upside": -0.1974,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3583.TW",
+   "market": "TW",
+   "sector": "semi_equipment",
+   "price": 615.0,
+   "composite": 47.04,
+   "scores": {
+    "sector": 25.3,
+    "leader": 0.0,
+    "quality": 67.8,
+    "growth": 61.1,
+    "valuation": 100.0,
+    "momentum": 6.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.02,
+    "peg": 0.5765,
+    "dcf": 0.4638,
+    "consensus": 0.9458
+   },
+   "upside": 0.4077,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "GLW",
+   "market": "US",
+   "sector": "pcb_materials",
+   "price": 126.3,
+   "composite": 54.69,
+   "scores": {
+    "sector": 30.6,
+    "leader": 100.0,
+    "quality": 57.1,
+    "growth": 59.4,
+    "valuation": 62.3,
+    "momentum": 19.2,
+    "news": 83.8
+   },
+   "method_upside": {
+    "pe": -0.1556,
+    "peg": 0.0681,
+    "consensus": 0.4839
+   },
+   "upside": 0.0862,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "TTMI",
+   "market": "US",
+   "sector": "pcb_materials",
+   "price": 86.78,
+   "composite": 48.0,
+   "scores": {
+    "sector": 30.6,
+    "leader": 0.0,
+    "quality": 51.8,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 6.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.4517,
+    "peg": 1.9239,
+    "consensus": 1.141
+   },
+   "upside": 0.6,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3037.TW",
+   "market": "TW",
+   "sector": "pcb_materials",
+   "price": 1100.0,
+   "composite": 70.94,
+   "scores": {
+    "sector": 72.3,
+    "leader": 100.0,
+    "quality": 53.6,
+    "growth": 100.0,
+    "valuation": 43.3,
+    "momentum": 81.0,
+    "news": 85.6
+   },
+   "method_upside": {
+    "pe": -0.1431,
+    "peg": 0.144,
+    "consensus": 0.2254
+   },
+   "upside": 0.0259,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "8046.TW",
+   "market": "TW",
+   "sector": "pcb_materials",
+   "price": 1300.0,
+   "composite": 60.41,
+   "scores": {
+    "sector": 72.3,
+    "leader": 50.0,
+    "quality": 63.3,
+    "growth": 100.0,
+    "valuation": 28.5,
+    "momentum": 63.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1004,
+    "peg": 0.2806,
+    "consensus": 0.4327
+   },
+   "upside": 0.1376,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "2368.TW",
+   "market": "TW",
+   "sector": "pcb_materials",
+   "price": 1185.0,
+   "composite": 68.52,
+   "scores": {
+    "sector": 72.3,
+    "leader": 25.0,
+    "quality": 67.6,
+    "growth": 100.0,
+    "valuation": 90.5,
+    "momentum": 65.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1365,
+    "peg": 0.7477,
+    "consensus": 0.3586
+   },
+   "upside": 0.3205,
+   "picked": true,
+   "in_focus": true
+  },
+  {
+   "ticker": "2383.TW",
+   "market": "TW",
+   "sector": "pcb_materials",
+   "price": 5025.0,
+   "composite": 65.55,
+   "scores": {
+    "sector": 72.3,
+    "leader": 75.0,
+    "quality": 58.9,
+    "growth": 100.0,
+    "valuation": 83.5,
+    "momentum": 23.7,
+    "news": 43.4
+   },
+   "method_upside": {
+    "pe": 0.0004,
+    "peg": 0.4794,
+    "consensus": 0.5528
+   },
+   "upside": 0.2629,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "6274.TWO",
+   "market": "TW",
+   "sector": "pcb_materials",
+   "price": 1375.0,
+   "composite": 65.97,
+   "scores": {
+    "sector": 72.3,
+    "leader": 0.0,
+    "quality": 66.0,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 36.9,
+    "news": 69.6
+   },
+   "method_upside": {
+    "pe": 0.1634,
+    "peg": 0.8216,
+    "consensus": 0.6095
+   },
+   "upside": 0.4262,
+   "picked": true,
+   "in_focus": true
+  },
+  {
+   "ticker": "MSFT",
+   "market": "US",
+   "sector": "cloud_software",
+   "price": 531.33,
+   "composite": 78.51,
+   "scores": {
+    "sector": 74.4,
+    "leader": 100.0,
+    "quality": 74.4,
+    "growth": 74.1,
+    "valuation": 69.5,
+    "momentum": 88.1,
+    "news": 83.0
+   },
+   "method_upside": {
+    "pe": 0.3532,
+    "peg": 0.3571,
+    "consensus": 0.1389
+   },
+   "upside": 0.2869,
+   "picked": true,
+   "in_focus": true
+  },
+  {
+   "ticker": "ORCL",
+   "market": "US",
+   "sector": "cloud_software",
+   "price": 130.53,
+   "composite": 70.83,
+   "scores": {
+    "sector": 74.4,
+    "leader": 75.0,
+    "quality": 55.2,
+    "growth": 99.4,
+    "valuation": 100.0,
+    "momentum": 26.6,
+    "news": 81.7
+   },
+   "method_upside": {
+    "pe": 1.1787,
+    "peg": 1.5631,
+    "consensus": 0.8065
+   },
+   "upside": 0.6,
+   "picked": true,
+   "in_focus": true
+  },
+  {
+   "ticker": "PLTR",
+   "market": "US",
+   "sector": "cloud_software",
+   "price": 198.73,
+   "composite": 79.21,
+   "scores": {
+    "sector": 74.4,
+    "leader": 87.5,
+    "quality": 99.8,
+    "growth": 100.0,
+    "valuation": 18.6,
+    "momentum": 96.3,
+    "news": 78.6
+   },
+   "method_upside": {
+    "pe": -0.4678,
+    "peg": -0.64,
+    "consensus": 0.0515
+   },
+   "upside": -0.3378,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "CRM",
+   "market": "US",
+   "sector": "cloud_software",
+   "price": 240.89,
+   "composite": 70.8,
+   "scores": {
+    "sector": 74.4,
+    "leader": 37.5,
+    "quality": 66.1,
+    "growth": 72.6,
+    "valuation": 98.5,
+    "momentum": 86.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.826,
+    "peg": 1.0246,
+    "dcf": 1.4784,
+    "consensus": 0.1918
+   },
+   "upside": 0.6,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "NOW",
+   "market": "US",
+   "sector": "cloud_software",
+   "price": 154.78,
+   "composite": 58.26,
+   "scores": {
+    "sector": 74.4,
+    "leader": 25.0,
+    "quality": 56.1,
+    "growth": 41.4,
+    "valuation": 51.2,
+    "momentum": 98.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0754,
+    "peg": -0.0164,
+    "dcf": 0.0732,
+    "consensus": 0.0113
+   },
+   "upside": 0.0452,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "SNOW",
+   "market": "US",
+   "sector": "cloud_software",
+   "price": 337.42,
+   "composite": 50.09,
+   "scores": {
+    "sector": 74.4,
+    "leader": 0.0,
+    "quality": 41.2,
+    "growth": 100.0,
+    "valuation": 0.0,
+    "momentum": 87.0,
+    "news": 55.9
+   },
+   "method_upside": {
+    "pe": -0.5963,
+    "dcf": -0.6186,
+    "consensus": 0.264
+   },
+   "upside": -0.3485,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "CRWD",
+   "market": "US",
+   "sector": "cloud_software",
+   "price": 268.02,
+   "composite": 67.25,
+   "scores": {
+    "sector": 74.4,
+    "leader": 50.0,
+    "quality": 60.3,
+    "growth": 88.0,
+    "valuation": null,
+    "momentum": 85.0,
+    "news": 40.0
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "PANW",
+   "market": "US",
+   "sector": "cloud_software",
+   "price": 401.7,
+   "composite": 59.58,
+   "scores": {
+    "sector": 74.4,
+    "leader": 62.5,
+    "quality": 54.4,
+    "growth": 100.0,
+    "valuation": 14.7,
+    "momentum": 78.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.4534,
+    "peg": -0.6303,
+    "dcf": -0.5504,
+    "consensus": -0.0079
+   },
+   "upside": -0.388,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "FTNT",
+   "market": "US",
+   "sector": "cloud_software",
+   "price": 185.0,
+   "composite": 63.7,
+   "scores": {
+    "sector": 74.4,
+    "leader": 12.5,
+    "quality": 87.0,
+    "growth": 93.7,
+    "valuation": 17.8,
+    "momentum": 88.1,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.2348,
+    "peg": -0.3762,
+    "dcf": -0.4624,
+    "consensus": -0.0841
+   },
+   "upside": -0.2638,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "GOOGL",
+   "market": "US",
+   "sector": "internet_platforms",
+   "price": 320.58,
+   "composite": 68.24,
+   "scores": {
+    "sector": 64.4,
+    "leader": 75.0,
+    "quality": 86.0,
+    "growth": 91.7,
+    "valuation": 58.6,
+    "momentum": 15.6,
+    "news": 81.7
+   },
+   "method_upside": {
+    "pe": -0.0466,
+    "consensus": 0.3403
+   },
+   "upside": 0.1022,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "META",
+   "market": "US",
+   "sector": "internet_platforms",
+   "price": 620.19,
+   "composite": 68.8,
+   "scores": {
+    "sector": 64.4,
+    "leader": 25.0,
+    "quality": 84.3,
+    "growth": 94.4,
+    "valuation": 89.5,
+    "momentum": 24.5,
+    "news": 81.7
+   },
+   "method_upside": {
+    "pe": 0.2112,
+    "peg": 0.5127,
+    "consensus": 0.3654
+   },
+   "upside": 0.3159,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "NFLX",
+   "market": "US",
+   "sector": "internet_platforms",
+   "price": 62.52,
+   "composite": 56.39,
+   "scores": {
+    "sector": 64.4,
+    "leader": 0.0,
+    "quality": 79.1,
+    "growth": 74.0,
+    "valuation": 68.3,
+    "momentum": 6.0,
+    "news": 67.3
+   },
+   "method_upside": {
+    "pe": 0.2118,
+    "peg": -0.3391,
+    "dcf": 0.2238,
+    "consensus": 0.3558
+   },
+   "upside": 0.1676,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "AAPL",
+   "market": "US",
+   "sector": "internet_platforms",
+   "price": 347.1,
+   "composite": 63.61,
+   "scores": {
+    "sector": 64.4,
+    "leader": 100.0,
+    "quality": 75.8,
+    "growth": 69.3,
+    "valuation": 4.4,
+    "momentum": 63.9,
+    "news": 81.7
+   },
+   "method_upside": {
+    "pe": -0.2212,
+    "dcf": -0.6294,
+    "consensus": -0.0492
+   },
+   "upside": -0.2667,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "AMZN",
+   "market": "US",
+   "sector": "internet_platforms",
+   "price": 253.1,
+   "composite": 56.94,
+   "scores": {
+    "sector": 64.4,
+    "leader": 50.0,
+    "quality": 54.3,
+    "growth": 85.1,
+    "valuation": 44.3,
+    "momentum": 31.5,
+    "news": 81.7
+   },
+   "method_upside": {
+    "pe": -0.1414,
+    "consensus": 0.3127
+   },
+   "upside": 0.0332,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3008.TW",
+   "market": "TW",
+   "sector": "internet_platforms",
+   "price": 6335.0,
+   "composite": 68.76,
+   "scores": {
+    "sector": 80.3,
+    "leader": 100.0,
+    "quality": 86.0,
+    "growth": 81.6,
+    "valuation": 2.2,
+    "momentum": 61.0,
+    "news": 67.4
+   },
+   "method_upside": {
+    "pe": -0.2893,
+    "consensus": 0.1513
+   },
+   "upside": -0.1198,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "4938.TW",
+   "market": "TW",
+   "sector": "internet_platforms",
+   "price": 108.0,
+   "composite": 56.56,
+   "scores": {
+    "sector": 80.3,
+    "leader": 50.0,
+    "quality": 26.8,
+    "growth": 61.0,
+    "valuation": 62.6,
+    "momentum": 73.2,
+    "news": 56.3
+   },
+   "method_upside": {
+    "pe": 0.079,
+    "peg": 1.1676,
+    "consensus": -0.1413
+   },
+   "upside": 0.2143,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "2474.TW",
+   "market": "TW",
+   "sector": "internet_platforms",
+   "price": 199.0,
+   "composite": 30.97,
+   "scores": {
+    "sector": 80.3,
+    "leader": 0.0,
+    "quality": 31.7,
+    "growth": 0.0,
+    "valuation": 9.0,
+    "momentum": 20.3,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0487,
+    "consensus": 0.0121
+   },
+   "upside": -0.0253,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "CEG",
+   "market": "US",
+   "sector": "power_grid",
+   "price": 258.98,
+   "composite": 35.36,
+   "scores": {
+    "sector": 23.1,
+    "leader": 50.0,
+    "quality": 38.3,
+    "growth": 40.0,
+    "valuation": 45.4,
+    "momentum": 18.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1521,
+    "peg": 0.5652,
+    "consensus": 0.3082
+   },
+   "upside": 0.2783,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "VST",
+   "market": "US",
+   "sector": "power_grid",
+   "price": 146.66,
+   "composite": 35.93,
+   "scores": {
+    "sector": 23.1,
+    "leader": 0.0,
+    "quality": 36.3,
+    "growth": 3.8,
+    "valuation": 100.0,
+    "momentum": 30.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.5024,
+    "peg": 1.1744,
+    "consensus": 0.4198
+   },
+   "upside": 0.6,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "GEV",
+   "market": "US",
+   "sector": "power_grid",
+   "price": 895.08,
+   "composite": 47.96,
+   "scores": {
+    "sector": 23.1,
+    "leader": 100.0,
+    "quality": 56.0,
+    "growth": 81.2,
+    "valuation": 28.0,
+    "momentum": 17.1,
+    "news": 62.0
+   },
+   "method_upside": {
+    "pe": -0.2846,
+    "dcf": -0.1678,
+    "consensus": 0.3674
+   },
+   "upside": -0.0653,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "NEE",
+   "market": "US",
+   "sector": "power_grid",
+   "price": 82.42,
+   "composite": 42.13,
+   "scores": {
+    "sector": 23.1,
+    "leader": 75.0,
+    "quality": 46.6,
+    "growth": 59.4,
+    "valuation": 44.1,
+    "momentum": 21.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0151,
+    "consensus": 0.1475
+   },
+   "upside": 0.066,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "PWR",
+   "market": "US",
+   "sector": "power_grid",
+   "price": 578.83,
+   "composite": 37.86,
+   "scores": {
+    "sector": 23.1,
+    "leader": 25.0,
+    "quality": 36.2,
+    "growth": 100.0,
+    "valuation": 39.1,
+    "momentum": 21.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1185,
+    "peg": 0.0482,
+    "dcf": -0.3817,
+    "consensus": 0.3146
+   },
+   "upside": -0.0379,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1519.TW",
+   "market": "TW",
+   "sector": "power_grid",
+   "price": 592.0,
+   "composite": 43.67,
+   "scores": {
+    "sector": 11.3,
+    "leader": 100.0,
+    "quality": 73.9,
+    "growth": 39.5,
+    "valuation": 31.6,
+    "momentum": 8.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1665,
+    "peg": 0.2828,
+    "dcf": -0.184,
+    "consensus": 0.4751
+   },
+   "upside": 0.0578,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1513.TW",
+   "market": "TW",
+   "sector": "power_grid",
+   "price": 159.0,
+   "composite": 40.79,
+   "scores": {
+    "sector": 11.3,
+    "leader": 25.0,
+    "quality": 65.3,
+    "growth": 60.3,
+    "valuation": 54.8,
+    "momentum": 18.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0645,
+    "peg": 0.4749,
+    "consensus": 0.1682
+   },
+   "upside": 0.1739,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1503.TW",
+   "market": "TW",
+   "sector": "power_grid",
+   "price": 191.0,
+   "composite": 35.46,
+   "scores": {
+    "sector": 11.3,
+    "leader": 50.0,
+    "quality": 45.4,
+    "growth": 60.1,
+    "valuation": 41.8,
+    "momentum": 11.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1438,
+    "peg": 1.015,
+    "dcf": -0.1517,
+    "consensus": 0.2749
+   },
+   "upside": 0.2481,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1504.TW",
+   "market": "TW",
+   "sector": "power_grid",
+   "price": 70.2,
+   "composite": 47.97,
+   "scores": {
+    "sector": 11.3,
+    "leader": 75.0,
+    "quality": 50.7,
+    "growth": 66.3,
+    "valuation": 84.0,
+    "momentum": 25.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1333,
+    "peg": 0.9917,
+    "dcf": -0.1326,
+    "consensus": 0.3655
+   },
+   "upside": 0.2669,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1514.TW",
+   "market": "TW",
+   "sector": "power_grid",
+   "price": 98.4,
+   "composite": 30.36,
+   "scores": {
+    "sector": 11.3,
+    "leader": 0.0,
+    "quality": 50.8,
+    "growth": 60.8,
+    "valuation": 30.0,
+    "momentum": 13.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1844,
+    "peg": 0.2853,
+    "dcf": -0.1183,
+    "consensus": 0.4177
+   },
+   "upside": 0.0498,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "LLY",
+   "market": "US",
+   "sector": "healthcare",
+   "price": 1281.91,
+   "composite": 64.55,
+   "scores": {
+    "sector": 46.6,
+    "leader": 100.0,
+    "quality": 72.4,
+    "growth": 86.2,
+    "valuation": 32.2,
+    "momentum": 75.9,
+    "news": 57.2
+   },
+   "method_upside": {
+    "pe": -0.1733,
+    "peg": 0.1252,
+    "dcf": -0.4984,
+    "consensus": 0.0404
+   },
+   "upside": -0.1401,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "NVO",
+   "market": "US",
+   "sector": "healthcare",
+   "price": 38.67,
+   "composite": 47.44,
+   "scores": {
+    "sector": 46.6,
+    "leader": 60.0,
+    "quality": 71.9,
+    "growth": 10.1,
+    "valuation": 49.4,
+    "momentum": 9.5,
+    "news": 57.2
+   },
+   "method_upside": {
+    "pe": 0.4079,
+    "consensus": 0.1588
+   },
+   "upside": 0.3121,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ISRG",
+   "market": "US",
+   "sector": "healthcare",
+   "price": 445.88,
+   "composite": 52.55,
+   "scores": {
+    "sector": 46.6,
+    "leader": 40.0,
+    "quality": 94.3,
+    "growth": 38.1,
+    "valuation": 16.5,
+    "momentum": 51.3,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.2532,
+    "peg": -0.15,
+    "dcf": -0.4679,
+    "consensus": 0.0824
+   },
+   "upside": -0.1967,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "VRTX",
+   "market": "US",
+   "sector": "healthcare",
+   "price": 521.03,
+   "composite": 50.45,
+   "scores": {
+    "sector": 46.6,
+    "leader": 20.0,
+    "quality": 96.5,
+    "growth": 43.0,
+    "valuation": 17.8,
+    "momentum": 40.3,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1901,
+    "peg": -0.0973,
+    "dcf": -0.1896,
+    "consensus": 0.0968
+   },
+   "upside": -0.1044,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "REGN",
+   "market": "US",
+   "sector": "healthcare",
+   "price": 816.1,
+   "composite": 59.31,
+   "scores": {
+    "sector": 46.6,
+    "leader": 0.0,
+    "quality": 86.6,
+    "growth": 36.5,
+    "valuation": 89.5,
+    "momentum": 67.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.4803,
+    "peg": 1.3386,
+    "dcf": 0.9237,
+    "consensus": 0.0628
+   },
+   "upside": 0.5933,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ABBV",
+   "market": "US",
+   "sector": "healthcare",
+   "price": 286.39,
+   "composite": 69.8,
+   "scores": {
+    "sector": 46.6,
+    "leader": 80.0,
+    "quality": 75.2,
+    "growth": 71.7,
+    "valuation": 92.7,
+    "momentum": 78.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.2218,
+    "peg": 0.7219,
+    "dcf": 0.7267,
+    "consensus": -0.0112
+   },
+   "upside": 0.3396,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6446.TW",
+   "market": "TW",
+   "sector": "healthcare",
+   "price": 1200.0,
+   "composite": 61.7,
+   "scores": {
+    "sector": 33.3,
+    "leader": 100.0,
+    "quality": 92.8,
+    "growth": 100.0,
+    "valuation": 20.7,
+    "momentum": 46.1,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1739,
+    "peg": 0.1525,
+    "consensus": 0.1977
+   },
+   "upside": 0.0035,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1795.TW",
+   "market": "TW",
+   "sector": "healthcare",
+   "price": 174.0,
+   "composite": 48.93,
+   "scores": {
+    "sector": 33.3,
+    "leader": 50.0,
+    "quality": 49.8,
+    "growth": 50.0,
+    "valuation": 100.0,
+    "momentum": 13.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.7308,
+    "consensus": 0.68
+   },
+   "upside": 0.6,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "4743.TWO",
+   "market": "TW",
+   "sector": "healthcare",
+   "price": 46.85,
+   "composite": 39.5,
+   "scores": {
+    "sector": 33.3,
+    "leader": 0.0,
+    "quality": 42.4,
+    "growth": 100.0,
+    "valuation": null,
+    "momentum": 25.8,
+    "news": 40.0
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "JPM",
+   "market": "US",
+   "sector": "financials",
+   "price": 335.79,
+   "composite": 55.46,
+   "scores": {
+    "sector": 57.8,
+    "leader": 80.0,
+    "quality": 57.4,
+    "growth": 41.6,
+    "valuation": 61.1,
+    "momentum": 26.2,
+    "news": 63.6
+   },
+   "method_upside": {
+    "pe": 0.4004,
+    "peg": -0.3433,
+    "consensus": 0.1086
+   },
+   "upside": 0.1698,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "GS",
+   "market": "US",
+   "sector": "financials",
+   "price": 911.77,
+   "composite": 60.78,
+   "scores": {
+    "sector": 57.8,
+    "leader": 0.0,
+    "quality": 74.2,
+    "growth": 89.2,
+    "valuation": 85.1,
+    "momentum": 17.9,
+    "news": 85.5
+   },
+   "method_upside": {
+    "pe": 0.4447,
+    "consensus": 0.1309
+   },
+   "upside": 0.324,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "MS",
+   "market": "US",
+   "sector": "financials",
+   "price": 186.91,
+   "composite": 49.83,
+   "scores": {
+    "sector": 57.8,
+    "leader": 20.0,
+    "quality": 66.7,
+    "growth": 40.8,
+    "valuation": 54.3,
+    "momentum": 17.1,
+    "news": 66.7
+   },
+   "method_upside": {
+    "pe": 0.3557,
+    "peg": -0.4163,
+    "consensus": 0.1291
+   },
+   "upside": 0.1401,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "V",
+   "market": "US",
+   "sector": "financials",
+   "price": 401.86,
+   "composite": 63.28,
+   "scores": {
+    "sector": 57.8,
+    "leader": 60.0,
+    "quality": 80.3,
+    "growth": 47.9,
+    "valuation": 37.3,
+    "momentum": 70.0,
+    "news": 85.7
+   },
+   "method_upside": {
+    "pe": -0.16,
+    "peg": 0.2913,
+    "dcf": 0.1861,
+    "consensus": 0.0679
+   },
+   "upside": 0.0339,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "MA",
+   "market": "US",
+   "sector": "financials",
+   "price": 609.85,
+   "composite": 57.56,
+   "scores": {
+    "sector": 57.8,
+    "leader": 40.0,
+    "quality": 70.3,
+    "growth": 59.4,
+    "valuation": 40.0,
+    "momentum": 64.5,
+    "news": 59.3
+   },
+   "method_upside": {
+    "pe": -0.2138,
+    "peg": 0.1514,
+    "dcf": 0.2857,
+    "consensus": 0.1085
+   },
+   "upside": 0.0215,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "BRK-B",
+   "market": "US",
+   "sector": "financials",
+   "price": 542.99,
+   "composite": 62.44,
+   "scores": {
+    "sector": 57.8,
+    "leader": 100.0,
+    "quality": 79.0,
+    "growth": 71.4,
+    "valuation": 15.7,
+    "momentum": 59.6,
+    "news": 55.9
+   },
+   "method_upside": {
+    "pe": -0.2411,
+    "dcf": 0.585,
+    "consensus": 0.0233
+   },
+   "upside": 0.0311,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2881.TW",
+   "market": "TW",
+   "sector": "financials",
+   "price": 161.0,
+   "composite": 71.38,
+   "scores": {
+    "sector": 89.7,
+    "leader": 100.0,
+    "quality": 81.9,
+    "growth": 0.0,
+    "valuation": 60.7,
+    "momentum": 88.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0194,
+    "peg": 1.0278,
+    "consensus": -0.1441
+   },
+   "upside": 0.1574,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "2882.TW",
+   "market": "TW",
+   "sector": "financials",
+   "price": 115.5,
+   "composite": 66.32,
+   "scores": {
+    "sector": 89.7,
+    "leader": 80.0,
+    "quality": 66.5,
+    "growth": 0.0,
+    "valuation": 56.0,
+    "momentum": 81.1,
+    "news": 70.2
+   },
+   "method_upside": {
+    "pe": 0.1363,
+    "peg": 1.3921,
+    "consensus": 0.0388
+   },
+   "upside": 0.3413,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "2891.TW",
+   "market": "TW",
+   "sector": "financials",
+   "price": 74.2,
+   "composite": 64.81,
+   "scores": {
+    "sector": 89.7,
+    "leader": 60.0,
+    "quality": 72.1,
+    "growth": 50.0,
+    "valuation": 38.2,
+    "momentum": 74.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0731,
+    "peg": -0.1395,
+    "consensus": -0.0219
+   },
+   "upside": -0.0696,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "2886.TW",
+   "market": "TW",
+   "sector": "financials",
+   "price": 53.9,
+   "composite": 55.23,
+   "scores": {
+    "sector": 89.7,
+    "leader": 20.0,
+    "quality": 46.7,
+    "growth": 71.0,
+    "valuation": 33.9,
+    "momentum": 68.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1148,
+    "peg": 0.3052,
+    "consensus": -0.1223
+   },
+   "upside": -0.0384,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "2884.TW",
+   "market": "TW",
+   "sector": "financials",
+   "price": 48.35,
+   "composite": 63.88,
+   "scores": {
+    "sector": 89.7,
+    "leader": 40.0,
+    "quality": 53.0,
+    "growth": 100.0,
+    "valuation": 30.5,
+    "momentum": 91.1,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0451,
+    "peg": 0.8066,
+    "consensus": -0.171
+   },
+   "upside": 0.0753,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "5880.TW",
+   "market": "TW",
+   "sector": "financials",
+   "price": 28.45,
+   "composite": 63.17,
+   "scores": {
+    "sector": 89.7,
+    "leader": 0.0,
+    "quality": 45.3,
+    "growth": 95.9,
+    "valuation": 88.2,
+    "momentum": 65.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0725,
+    "peg": 1.0574
+   },
+   "upside": 0.3411,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "ZIM",
+   "market": "US",
+   "sector": "shipping",
+   "price": 29.73,
+   "composite": 52.62,
+   "scores": {
+    "sector": 46.6,
+    "leader": 0.0,
+    "quality": 38.3,
+    "growth": 69.9,
+    "valuation": 100.0,
+    "momentum": 71.3,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 1.7327,
+    "consensus": -0.0187
+   },
+   "upside": 0.6,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "MATX",
+   "market": "US",
+   "sector": "shipping",
+   "price": 231.74,
+   "composite": 50.08,
+   "scores": {
+    "sector": 46.6,
+    "leader": 50.0,
+    "quality": 44.0,
+    "growth": 81.0,
+    "valuation": 29.1,
+    "momentum": 75.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1216,
+    "peg": 0.1504,
+    "dcf": -0.6354,
+    "consensus": 0.1942
+   },
+   "upside": -0.0073,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "UPS",
+   "market": "US",
+   "sector": "shipping",
+   "price": 106.09,
+   "composite": 54.95,
+   "scores": {
+    "sector": 46.6,
+    "leader": 100.0,
+    "quality": 37.1,
+    "growth": 18.0,
+    "valuation": 88.5,
+    "momentum": 37.7,
+    "news": 84.5
+   },
+   "method_upside": {
+    "pe": 0.2545,
+    "peg": 1.3182,
+    "dcf": 1.2515,
+    "consensus": 0.0608
+   },
+   "upside": 0.5651,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2603.TW",
+   "market": "TW",
+   "sector": "shipping",
+   "price": 263.0,
+   "composite": 63.69,
+   "scores": {
+    "sector": 53.7,
+    "leader": 100.0,
+    "quality": 42.5,
+    "growth": 88.0,
+    "valuation": 58.4,
+    "momentum": 81.2,
+    "news": 62.8
+   },
+   "method_upside": {
+    "pe": 0.084,
+    "consensus": 0.0327
+   },
+   "upside": 0.0643,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2609.TW",
+   "market": "TW",
+   "sector": "shipping",
+   "price": 62.9,
+   "composite": 49.98,
+   "scores": {
+    "sector": 53.7,
+    "leader": 25.0,
+    "quality": 42.4,
+    "growth": 84.0,
+    "valuation": 40.0,
+    "momentum": 71.3,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.2631,
+    "consensus": 0.0906
+   },
+   "upside": -0.127,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2615.TW",
+   "market": "TW",
+   "sector": "shipping",
+   "price": 118.5,
+   "composite": 68.56,
+   "scores": {
+    "sector": 53.7,
+    "leader": 75.0,
+    "quality": 61.9,
+    "growth": 90.1,
+    "valuation": 54.0,
+    "momentum": 100.0,
+    "news": 71.8
+   },
+   "method_upside": {
+    "pe": -0.0689,
+    "consensus": 0.1544
+   },
+   "upside": 0.017,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2618.TW",
+   "market": "TW",
+   "sector": "shipping",
+   "price": 42.4,
+   "composite": 47.2,
+   "scores": {
+    "sector": 53.7,
+    "leader": 50.0,
+    "quality": 47.6,
+    "growth": 39.3,
+    "valuation": 27.3,
+    "momentum": 54.2,
+    "news": 62.8
+   },
+   "method_upside": {
+    "pe": 0.0227,
+    "consensus": 0.1141
+   },
+   "upside": 0.0578,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2610.TW",
+   "market": "TW",
+   "sector": "shipping",
+   "price": 20.25,
+   "composite": 36.04,
+   "scores": {
+    "sector": 53.7,
+    "leader": 0.0,
+    "quality": 20.3,
+    "growth": 41.9,
+    "valuation": 70.8,
+    "momentum": 18.6,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0648,
+    "peg": 0.574,
+    "consensus": 0.2574
+   },
+   "upside": 0.2204,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "LMT",
+   "market": "US",
+   "sector": "defense_aero",
+   "price": 622.99,
+   "composite": 49.56,
+   "scores": {
+    "sector": 36.6,
+    "leader": 60.0,
+    "quality": 36.0,
+    "growth": 48.0,
+    "valuation": 69.6,
+    "momentum": 52.1,
+    "news": 72.0
+   },
+   "method_upside": {
+    "pe": 0.1592,
+    "peg": 0.1697,
+    "dcf": 0.5392,
+    "consensus": 0.0361
+   },
+   "upside": 0.206,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "RTX",
+   "market": "US",
+   "sector": "defense_aero",
+   "price": 194.6,
+   "composite": 48.19,
+   "scores": {
+    "sector": 36.6,
+    "leader": 80.0,
+    "quality": 43.6,
+    "growth": 67.0,
+    "valuation": 49.1,
+    "momentum": 21.8,
+    "news": 66.2
+   },
+   "method_upside": {
+    "pe": -0.0721,
+    "peg": 0.2585,
+    "dcf": 0.6375,
+    "consensus": 0.1777
+   },
+   "upside": 0.1819,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "NOC",
+   "market": "US",
+   "sector": "defense_aero",
+   "price": 551.23,
+   "composite": 33.74,
+   "scores": {
+    "sector": 36.6,
+    "leader": 20.0,
+    "quality": 48.1,
+    "growth": 29.6,
+    "valuation": 14.9,
+    "momentum": 33.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0882,
+    "dcf": -0.2608,
+    "consensus": 0.1492
+   },
+   "upside": 0.024,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "GE",
+   "market": "US",
+   "sector": "defense_aero",
+   "price": 297.66,
+   "composite": 41.55,
+   "scores": {
+    "sector": 36.6,
+    "leader": 100.0,
+    "quality": 53.2,
+    "growth": 48.8,
+    "valuation": 8.3,
+    "momentum": 13.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.2191,
+    "consensus": 0.2713
+   },
+   "upside": -0.0305,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "GD",
+   "market": "US",
+   "sector": "defense_aero",
+   "price": 354.89,
+   "composite": 42.04,
+   "scores": {
+    "sector": 36.6,
+    "leader": 40.0,
+    "quality": 48.7,
+    "growth": 42.1,
+    "valuation": 46.7,
+    "momentum": 34.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1206,
+    "peg": -0.1298,
+    "dcf": 0.5036,
+    "consensus": 0.1462
+   },
+   "upside": 0.1661,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "HWM",
+   "market": "US",
+   "sector": "defense_aero",
+   "price": 191.99,
+   "composite": 46.74,
+   "scores": {
+    "sector": 36.6,
+    "leader": 0.0,
+    "quality": 76.1,
+    "growth": 84.6,
+    "valuation": 53.5,
+    "momentum": 6.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1347,
+    "peg": 0.0311,
+    "dcf": -0.5544,
+    "consensus": 0.6905
+   },
+   "upside": 0.0125,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2634.TW",
+   "market": "TW",
+   "sector": "defense_aero",
+   "price": 60.9,
+   "composite": 32.95,
+   "scores": {
+    "sector": 24.3,
+    "leader": 0.0,
+    "quality": 43.7,
+    "growth": 51.4,
+    "valuation": 28.1,
+    "momentum": 25.5,
+    "news": 59.3
+   },
+   "method_upside": {
+    "pe": -0.1247,
+    "peg": 0.3939,
+    "consensus": 0.092
+   },
+   "upside": 0.0403,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2645.TW",
+   "market": "TW",
+   "sector": "defense_aero",
+   "price": 167.5,
+   "composite": 56.19,
+   "scores": {
+    "sector": 24.3,
+    "leader": 100.0,
+    "quality": 64.5,
+    "growth": 74.0,
+    "valuation": 92.6,
+    "momentum": 6.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0426,
+    "peg": 0.8968,
+    "dcf": 0.648,
+    "consensus": 0.3264
+   },
+   "upside": 0.3628,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "TSLA",
+   "market": "US",
+   "sector": "robotics_auto",
+   "price": 407.46,
+   "composite": 52.05,
+   "scores": {
+    "sector": 46.6,
+    "leader": 100.0,
+    "quality": 39.1,
+    "growth": 6.9,
+    "valuation": null,
+    "momentum": 65.1,
+    "news": 83.3
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ROK",
+   "market": "US",
+   "sector": "robotics_auto",
+   "price": 439.2,
+   "composite": 48.12,
+   "scores": {
+    "sector": 46.6,
+    "leader": 33.3,
+    "quality": 65.3,
+    "growth": 68.4,
+    "valuation": 21.3,
+    "momentum": 49.2,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1673,
+    "peg": 0.0335,
+    "dcf": -0.3618,
+    "consensus": 0.0812
+   },
+   "upside": -0.114,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "SYM",
+   "market": "US",
+   "sector": "robotics_auto",
+   "price": 38.98,
+   "composite": 40.68,
+   "scores": {
+    "sector": 46.6,
+    "leader": 0.0,
+    "quality": 49.8,
+    "growth": 76.3,
+    "valuation": 42.1,
+    "momentum": 14.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.3126,
+    "peg": -0.4188,
+    "dcf": 1.4408,
+    "consensus": 0.6034
+   },
+   "upside": 0.2512,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "TER",
+   "market": "US",
+   "sector": "robotics_auto",
+   "price": 323.68,
+   "composite": 62.96,
+   "scores": {
+    "sector": 46.6,
+    "leader": 66.7,
+    "quality": 91.0,
+    "growth": 100.0,
+    "valuation": 58.6,
+    "momentum": 18.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1534,
+    "peg": 0.0749,
+    "consensus": 0.3763
+   },
+   "upside": 0.0549,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2049.TW",
+   "market": "TW",
+   "sector": "robotics_auto",
+   "price": 343.5,
+   "composite": 46.42,
+   "scores": {
+    "sector": 36.0,
+    "leader": 25.0,
+    "quality": 55.8,
+    "growth": 95.3,
+    "valuation": 10.5,
+    "momentum": 51.4,
+    "news": 68.7
+   },
+   "method_upside": {
+    "pe": -0.0778,
+    "peg": 0.0372,
+    "dcf": -0.1504,
+    "consensus": 0.1717
+   },
+   "upside": -0.0127,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1590.TW",
+   "market": "TW",
+   "sector": "robotics_auto",
+   "price": 1140.0,
+   "composite": 61.91,
+   "scores": {
+    "sector": 36.0,
+    "leader": 50.0,
+    "quality": 85.6,
+    "growth": 100.0,
+    "valuation": 96.0,
+    "momentum": 6.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.4218,
+    "peg": 0.8743,
+    "dcf": -0.154,
+    "consensus": 0.5759
+   },
+   "upside": 0.413,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2207.TW",
+   "market": "TW",
+   "sector": "robotics_auto",
+   "price": 535.0,
+   "composite": 55.28,
+   "scores": {
+    "sector": 36.0,
+    "leader": 75.0,
+    "quality": 33.5,
+    "growth": 100.0,
+    "valuation": 68.8,
+    "momentum": 49.9,
+    "news": 73.7
+   },
+   "method_upside": {
+    "pe": 0.3887,
+    "peg": -0.295,
+    "dcf": -0.0315
+   },
+   "upside": 0.1399,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1536.TW",
+   "market": "TW",
+   "sector": "robotics_auto",
+   "price": 45.9,
+   "composite": 18.03,
+   "scores": {
+    "sector": 36.0,
+    "leader": 0.0,
+    "quality": 6.3,
+    "growth": 22.0,
+    "valuation": null,
+    "momentum": 9.6,
+    "news": 40.0
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2360.TW",
+   "market": "TW",
+   "sector": "robotics_auto",
+   "price": 2035.0,
+   "composite": 58.57,
+   "scores": {
+    "sector": 36.0,
+    "leader": 100.0,
+    "quality": 90.7,
+    "growth": 100.0,
+    "valuation": 25.0,
+    "momentum": 14.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0615,
+    "peg": 0.0614,
+    "consensus": 0.4092
+   },
+   "upside": 0.1086,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "COST",
+   "market": "US",
+   "sector": "consumer",
+   "price": 992.13,
+   "composite": 41.8,
+   "scores": {
+    "sector": 49.1,
+    "leader": 75.0,
+    "quality": 39.5,
+    "growth": 48.0,
+    "valuation": 0.0,
+    "momentum": 34.0,
+    "news": 71.8
+   },
+   "method_upside": {
+    "pe": -0.2103,
+    "peg": -0.3688,
+    "dcf": -0.5257,
+    "consensus": 0.0761
+   },
+   "upside": -0.2256,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "WMT",
+   "market": "US",
+   "sector": "consumer",
+   "price": 119.32,
+   "composite": 40.17,
+   "scores": {
+    "sector": 49.1,
+    "leader": 100.0,
+    "quality": 33.2,
+    "growth": 16.5,
+    "valuation": 0.0,
+    "momentum": 33.2,
+    "news": 80.2
+   },
+   "method_upside": {
+    "pe": -0.1949,
+    "peg": -0.4435,
+    "consensus": 0.0683
+   },
+   "upside": -0.1593,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "HD",
+   "market": "US",
+   "sector": "consumer",
+   "price": 318.5,
+   "composite": 40.74,
+   "scores": {
+    "sector": 49.1,
+    "leader": 50.0,
+    "quality": 40.6,
+    "growth": 29.9,
+    "valuation": 42.0,
+    "momentum": 27.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.2608,
+    "peg": -0.2563,
+    "dcf": -0.3169,
+    "consensus": 0.19
+   },
+   "upside": 0.05,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "MCD",
+   "market": "US",
+   "sector": "consumer",
+   "price": 249.47,
+   "composite": 46.21,
+   "scores": {
+    "sector": 49.1,
+    "leader": 25.0,
+    "quality": 79.5,
+    "growth": 28.1,
+    "valuation": 36.8,
+    "momentum": 20.6,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.3297,
+    "peg": -0.2203,
+    "dcf": 0.0718,
+    "consensus": 0.1692
+   },
+   "upside": 0.1555,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "NKE",
+   "market": "US",
+   "sector": "consumer",
+   "price": 37.56,
+   "composite": 31.01,
+   "scores": {
+    "sector": 49.1,
+    "leader": 0.0,
+    "quality": 60.4,
+    "growth": 8.9,
+    "valuation": 0.0,
+    "momentum": 16.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0163,
+    "dcf": -0.5471,
+    "consensus": -0.0282
+   },
+   "upside": -0.1293,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2912.TW",
+   "market": "TW",
+   "sector": "consumer",
+   "price": 224.0,
+   "composite": 41.91,
+   "scores": {
+    "sector": 47.7,
+    "leader": 100.0,
+    "quality": 30.0,
+    "growth": 29.5,
+    "valuation": 28.2,
+    "momentum": 37.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1029,
+    "peg": -0.1518,
+    "dcf": 0.7782,
+    "consensus": 0.1729
+   },
+   "upside": 0.135,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "9910.TW",
+   "market": "TW",
+   "sector": "consumer",
+   "price": 70.2,
+   "composite": 42.96,
+   "scores": {
+    "sector": 47.7,
+    "leader": 66.7,
+    "quality": 45.9,
+    "growth": 57.0,
+    "valuation": 21.8,
+    "momentum": 26.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1362,
+    "dcf": -0.3307,
+    "consensus": 0.0779
+   },
+   "upside": 0.0092,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "8454.TW",
+   "market": "TW",
+   "sector": "consumer",
+   "price": 247.0,
+   "composite": 34.12,
+   "scores": {
+    "sector": 47.7,
+    "leader": 33.3,
+    "quality": 34.3,
+    "growth": 19.6,
+    "valuation": 0.0,
+    "momentum": 62.6,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.2041,
+    "dcf": -0.2307,
+    "consensus": -0.0903
+   },
+   "upside": -0.1769,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2727.TW",
+   "market": "TW",
+   "sector": "consumer",
+   "price": 242.5,
+   "composite": 49.25,
+   "scores": {
+    "sector": 47.7,
+    "leader": 0.0,
+    "quality": 51.2,
+    "growth": 81.1,
+    "valuation": 62.6,
+    "momentum": 51.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.2274,
+    "peg": -0.0873,
+    "consensus": 0.0928
+   },
+   "upside": 0.1263,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "XOM",
+   "market": "US",
+   "sector": "energy_materials",
+   "price": 179.91,
+   "composite": 68.73,
+   "scores": {
+    "sector": 73.1,
+    "leader": 100.0,
+    "quality": 48.6,
+    "growth": 100.0,
+    "valuation": 68.8,
+    "momentum": 70.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0072,
+    "peg": 1.0656,
+    "dcf": 0.4474,
+    "consensus": -0.0028
+   },
+   "upside": 0.2457,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "CVX",
+   "market": "US",
+   "sector": "energy_materials",
+   "price": 228.23,
+   "composite": 73.42,
+   "scores": {
+    "sector": 73.1,
+    "leader": 66.7,
+    "quality": 61.8,
+    "growth": 100.0,
+    "valuation": 96.4,
+    "momentum": 75.1,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0073,
+    "peg": 1.096,
+    "dcf": 1.4757,
+    "consensus": 0.0187
+   },
+   "upside": 0.4671,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "FCX",
+   "market": "US",
+   "sector": "energy_materials",
+   "price": 65.95,
+   "composite": 48.32,
+   "scores": {
+    "sector": 73.1,
+    "leader": 0.0,
+    "quality": 73.5,
+    "growth": 38.1,
+    "valuation": 24.6,
+    "momentum": 38.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0237,
+    "peg": 0.9966,
+    "dcf": -0.4186,
+    "consensus": 0.1934
+   },
+   "upside": 0.1046,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "NEM",
+   "market": "US",
+   "sector": "energy_materials",
+   "price": 112.64,
+   "composite": 68.58,
+   "scores": {
+    "sector": 73.1,
+    "leader": 33.3,
+    "quality": 98.7,
+    "growth": 78.9,
+    "valuation": 64.0,
+    "momentum": 43.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0747,
+    "peg": 0.5745,
+    "dcf": 1.5746,
+    "consensus": 0.2043
+   },
+   "upside": 0.4821,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "6505.TW",
+   "market": "TW",
+   "sector": "energy_materials",
+   "price": 103.0,
+   "composite": 64.54,
+   "scores": {
+    "sector": 83.0,
+    "leader": 100.0,
+    "quality": 51.0,
+    "growth": 87.7,
+    "valuation": 23.6,
+    "momentum": 80.6,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0898,
+    "consensus": 0.1068
+   },
+   "upside": 0.0963,
+   "picked": true,
+   "in_focus": true
+  },
+  {
+   "ticker": "1301.TW",
+   "market": "TW",
+   "sector": "energy_materials",
+   "price": 75.4,
+   "composite": 50.27,
+   "scores": {
+    "sector": 83.0,
+    "leader": 66.7,
+    "quality": 36.1,
+    "growth": 26.0,
+    "valuation": 16.4,
+    "momentum": 81.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.003,
+    "peg": 0.2709,
+    "consensus": -0.0394
+   },
+   "upside": 0.037,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "1101.TW",
+   "market": "TW",
+   "sector": "energy_materials",
+   "price": 28.0,
+   "composite": 52.16,
+   "scores": {
+    "sector": 83.0,
+    "leader": 0.0,
+    "quality": 49.3,
+    "growth": 68.3,
+    "valuation": 41.3,
+    "momentum": 58.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.198,
+    "peg": 0.506,
+    "consensus": 0.0
+   },
+   "upside": 0.1939,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "2002.TW",
+   "market": "TW",
+   "sector": "energy_materials",
+   "price": 19.75,
+   "composite": 35.24,
+   "scores": {
+    "sector": 83.0,
+    "leader": 33.3,
+    "quality": 18.6,
+    "growth": 26.9,
+    "valuation": 0.0,
+    "momentum": 26.9,
+    "news": 59.3
+   },
+   "method_upside": {
+    "pe": -0.3179,
+    "consensus": 0.043
+   },
+   "upside": -0.1791,
+   "picked": false,
+   "in_focus": true
+  },
+  {
+   "ticker": "IBM",
+   "market": "US",
+   "sector": "pq_security",
+   "price": 250.25,
+   "composite": 55.05,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 58.8,
+    "growth": 48.9,
+    "valuation": 27.0,
+    "momentum": 46.0,
+    "news": 61.1
+   },
+   "method_upside": {
+    "pe": -0.0469,
+    "peg": -0.1675,
+    "dcf": 0.347,
+    "consensus": 0.0278
+   },
+   "upside": 0.0325,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "NET",
+   "market": "US",
+   "sector": "pq_security",
+   "price": 327.8,
+   "composite": 62.61,
+   "scores": {
+    "sector": null,
+    "leader": 50.0,
+    "quality": 47.5,
+    "growth": 100.0,
+    "valuation": null,
+    "momentum": 88.5,
+    "news": 40.0
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "AKAM",
+   "market": "US",
+   "sector": "pq_security",
+   "price": 99.59,
+   "composite": 42.51,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 51.6,
+    "growth": 14.9,
+    "valuation": 93.6,
+    "momentum": 19.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1801,
+    "peg": 1.0895,
+    "dcf": 1.2793,
+    "consensus": 0.556
+   },
+   "upside": 0.6,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6214.TW",
+   "market": "TW",
+   "sector": "pq_security",
+   "price": 200.5,
+   "composite": 56.33,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 39.5,
+    "growth": 100.0,
+    "valuation": 0.0,
+    "momentum": 100.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0775,
+    "peg": -0.5479
+   },
+   "upside": -0.2058,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6690.TWO",
+   "market": "TW",
+   "sector": "pq_security",
+   "price": 188.0,
+   "composite": 50.69,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 71.7,
+    "growth": 45.2,
+    "valuation": 52.1,
+    "momentum": 59.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0472,
+    "peg": 0.5583,
+    "consensus": 0.1037
+   },
+   "upside": 0.1607,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ONTO",
+   "market": "US",
+   "sector": "process_control",
+   "price": 214.17,
+   "composite": 71.72,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 74.5,
+    "growth": 100.0,
+    "valuation": 76.2,
+    "momentum": 16.0,
+    "news": 67.4
+   },
+   "method_upside": {
+    "pe": 0.0411,
+    "peg": 0.6624,
+    "dcf": -0.5593,
+    "consensus": 0.7899
+   },
+   "upside": 0.2014,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "CAMT",
+   "market": "US",
+   "sector": "process_control",
+   "price": 128.9,
+   "composite": 38.68,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 70.2,
+    "growth": 10.7,
+    "valuation": 45.7,
+    "momentum": 18.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1133,
+    "peg": 0.1994,
+    "consensus": 0.3406
+   },
+   "upside": 0.0872,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "NVMI",
+   "market": "US",
+   "sector": "process_control",
+   "price": 327.6,
+   "composite": 53.36,
+   "scores": {
+    "sector": null,
+    "leader": 50.0,
+    "quality": 79.3,
+    "growth": 42.8,
+    "valuation": 62.1,
+    "momentum": 9.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0908,
+    "peg": 0.2692,
+    "consensus": 0.5724
+   },
+   "upside": 0.184,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3587.TWO",
+   "market": "TW",
+   "sector": "process_control",
+   "price": 227.0,
+   "composite": 55.87,
+   "scores": {
+    "sector": null,
+    "leader": 50.0,
+    "quality": 67.3,
+    "growth": 35.3,
+    "valuation": 100.0,
+    "momentum": 9.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1016,
+    "peg": 1.103,
+    "consensus": 0.6109
+   },
+   "upside": 0.4485,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3289.TWO",
+   "market": "TW",
+   "sector": "process_control",
+   "price": 138.5,
+   "composite": 29.06,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 36.6,
+    "growth": 4.7,
+    "valuation": 53.0,
+    "momentum": 20.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0261,
+    "peg": 0.6746
+   },
+   "upside": 0.165,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6830.TW",
+   "market": "TW",
+   "sector": "process_control",
+   "price": 507.0,
+   "composite": 37.9,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 22.6,
+    "growth": 61.7,
+    "valuation": 0.0,
+    "momentum": 44.1,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.2316,
+    "peg": -0.0516
+   },
+   "upside": -0.1825,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "AMKR",
+   "market": "US",
+   "sector": "adv_packaging_supply",
+   "price": 39.94,
+   "composite": 58.08,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 44.6,
+    "growth": 93.7,
+    "valuation": 97.2,
+    "momentum": 12.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.342,
+    "peg": 0.0094,
+    "consensus": 0.6525
+   },
+   "upside": 0.3766,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ENTG",
+   "market": "US",
+   "sector": "adv_packaging_supply",
+   "price": 150.1,
+   "composite": 65.15,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 65.8,
+    "growth": 73.6,
+    "valuation": 38.4,
+    "momentum": 77.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0284,
+    "peg": 0.0323,
+    "dcf": -0.4709,
+    "consensus": 0.1987
+   },
+   "upside": -0.051,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "FORM",
+   "market": "US",
+   "sector": "adv_packaging_supply",
+   "price": 106.85,
+   "composite": 60.21,
+   "scores": {
+    "sector": null,
+    "leader": 33.3,
+    "quality": 76.5,
+    "growth": 100.0,
+    "valuation": 42.2,
+    "momentum": 40.0,
+    "news": 57.2
+   },
+   "method_upside": {
+    "pe": 0.0149,
+    "peg": 0.1032,
+    "dcf": -0.5988,
+    "consensus": 0.4246
+   },
+   "upside": 0.0078,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "COHU",
+   "market": "US",
+   "sector": "adv_packaging_supply",
+   "price": 50.98,
+   "composite": 50.31,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 52.0,
+    "growth": 100.0,
+    "valuation": 49.7,
+    "momentum": 54.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0145,
+    "peg": 0.0799,
+    "dcf": -0.3483,
+    "consensus": 0.3903
+   },
+   "upside": 0.0341,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6223.TWO",
+   "market": "TW",
+   "sector": "adv_packaging_supply",
+   "price": 5115.0,
+   "composite": 58.25,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 72.3,
+    "growth": 100.0,
+    "valuation": 49.6,
+    "momentum": 10.2,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0524,
+    "peg": -0.1482,
+    "consensus": 0.6468
+   },
+   "upside": 0.1482,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6510.TWO",
+   "market": "TW",
+   "sector": "adv_packaging_supply",
+   "price": 3200.0,
+   "composite": 59.52,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 91.0,
+    "growth": 100.0,
+    "valuation": 27.7,
+    "momentum": 41.0,
+    "news": 72.5
+   },
+   "method_upside": {
+    "pe": 0.1598,
+    "peg": 0.1241,
+    "dcf": -0.5967,
+    "consensus": 0.3005
+   },
+   "upside": 0.0383,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3374.TWO",
+   "market": "TW",
+   "sector": "adv_packaging_supply",
+   "price": 500.0,
+   "composite": 51.59,
+   "scores": {
+    "sector": null,
+    "leader": 33.3,
+    "quality": 58.1,
+    "growth": 100.0,
+    "valuation": 0.0,
+    "momentum": 85.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1817,
+    "peg": -0.3942,
+    "consensus": -0.443
+   },
+   "upside": -0.3032,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3189.TW",
+   "market": "TW",
+   "sector": "adv_packaging_supply",
+   "price": 1035.0,
+   "composite": 69.94,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 54.5,
+    "growth": 100.0,
+    "valuation": 47.7,
+    "momentum": 85.0,
+    "news": 62.0
+   },
+   "method_upside": {
+    "pe": 0.0585,
+    "peg": -0.0485,
+    "consensus": 0.1173
+   },
+   "upside": 0.0568,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "HUBB",
+   "market": "US",
+   "sector": "grid_hardware",
+   "price": 434.28,
+   "composite": 50.71,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 59.5,
+    "growth": 38.1,
+    "valuation": 47.3,
+    "momentum": 13.2,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0167,
+    "peg": 0.6221,
+    "dcf": -0.1929,
+    "consensus": 0.2712
+   },
+   "upside": 0.1292,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "POWL",
+   "market": "US",
+   "sector": "grid_hardware",
+   "price": 161.36,
+   "composite": 45.51,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 81.4,
+    "growth": 37.5,
+    "valuation": 55.3,
+    "momentum": 6.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0879,
+    "peg": 0.3184,
+    "dcf": -0.0519,
+    "consensus": 0.6578
+   },
+   "upside": 0.1667,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1609.TW",
+   "market": "TW",
+   "sector": "grid_hardware",
+   "price": 37.25,
+   "composite": 42.48,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 27.7,
+    "growth": 66.8,
+    "valuation": null,
+    "momentum": 23.3,
+    "news": 56.8
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1605.TW",
+   "market": "TW",
+   "sector": "grid_hardware",
+   "price": 37.55,
+   "composite": 50.82,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 28.4,
+    "growth": 67.0,
+    "valuation": 60.0,
+    "momentum": 38.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.6053,
+    "consensus": 0.0919
+   },
+   "upside": 0.4078,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1608.TW",
+   "market": "TW",
+   "sector": "grid_hardware",
+   "price": 34.6,
+   "composite": 45.01,
+   "scores": {
+    "sector": null,
+    "leader": 33.3,
+    "quality": 46.6,
+    "growth": 71.0,
+    "valuation": null,
+    "momentum": 33.1,
+    "news": 40.0
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1618.TW",
+   "market": "TW",
+   "sector": "grid_hardware",
+   "price": 37.55,
+   "composite": 37.83,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 61.9,
+    "growth": 39.4,
+    "valuation": null,
+    "momentum": 16.5,
+    "news": 40.0
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ON",
+   "market": "US",
+   "sector": "power_semis",
+   "price": 78.67,
+   "composite": 65.5,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 71.9,
+    "growth": 66.9,
+    "valuation": 83.4,
+    "momentum": 26.4,
+    "news": 67.4
+   },
+   "method_upside": {
+    "pe": 0.0746,
+    "peg": 0.7655,
+    "dcf": 0.2206,
+    "consensus": 0.2918
+   },
+   "upside": 0.2618,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "NVTS",
+   "market": "US",
+   "sector": "power_semis",
+   "price": 9.35,
+   "composite": 23.99,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 42.7,
+    "growth": 0.0,
+    "valuation": null,
+    "momentum": 14.4,
+    "news": 40.0
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "MPWR",
+   "market": "US",
+   "sector": "power_semis",
+   "price": 1211.89,
+   "composite": 69.83,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 91.0,
+    "growth": 100.0,
+    "valuation": 53.9,
+    "momentum": 15.3,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.2144,
+    "peg": -0.1141,
+    "consensus": 0.4851
+   },
+   "upside": 0.023,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "AEIS",
+   "market": "US",
+   "sector": "power_semis",
+   "price": 232.9,
+   "composite": 52.26,
+   "scores": {
+    "sector": null,
+    "leader": 33.3,
+    "quality": 57.1,
+    "growth": 100.0,
+    "valuation": 64.2,
+    "momentum": 11.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1609,
+    "peg": 1.0306,
+    "consensus": 0.7819
+   },
+   "upside": 0.518,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3016.TW",
+   "market": "TW",
+   "sector": "power_semis",
+   "price": 139.5,
+   "composite": 47.96,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 52.7,
+    "growth": 100.0,
+    "valuation": 0.0,
+    "momentum": 100.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.4968,
+    "peg": -0.6481
+   },
+   "upside": -0.538,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6415.TW",
+   "market": "TW",
+   "sector": "power_semis",
+   "price": 525.0,
+   "composite": 55.11,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 59.3,
+    "growth": 100.0,
+    "valuation": 13.7,
+    "momentum": 61.2,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1073,
+    "peg": 0.0017,
+    "consensus": 0.0696
+   },
+   "upside": -0.0316,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6488.TWO",
+   "market": "TW",
+   "sector": "power_semis",
+   "price": 849.0,
+   "composite": 50.95,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 33.3,
+    "growth": 50.0,
+    "valuation": 73.3,
+    "momentum": 26.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1367,
+    "peg": 0.2755,
+    "consensus": 0.2241
+   },
+   "upside": 0.19,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2481.TW",
+   "market": "TW",
+   "sector": "power_semis",
+   "price": 155.5,
+   "composite": 55.27,
+   "scores": {
+    "sector": null,
+    "leader": 33.3,
+    "quality": 43.9,
+    "growth": 80.4,
+    "valuation": 82.8,
+    "momentum": 52.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.2525,
+    "peg": 0.5077,
+    "consensus": 0.1125
+   },
+   "upside": 0.2566,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "QCOM",
+   "market": "US",
+   "sector": "edge_ai_industrial",
+   "price": 184.17,
+   "composite": 59.57,
+   "scores": {
+    "sector": null,
+    "leader": 33.3,
+    "quality": 87.1,
+    "growth": 1.4,
+    "valuation": 68.4,
+    "momentum": 74.6,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.2732,
+    "peg": 0.2053,
+    "dcf": -0.0925,
+    "consensus": 0.0659
+   },
+   "upside": 0.138,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ARM",
+   "market": "US",
+   "sector": "edge_ai_industrial",
+   "price": 226.6,
+   "composite": 60.29,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 79.3,
+    "growth": 89.1,
+    "valuation": 17.0,
+    "momentum": 31.1,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.391,
+    "peg": -0.5881,
+    "consensus": 0.2829
+   },
+   "upside": -0.2174,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "LSCC",
+   "market": "US",
+   "sector": "edge_ai_industrial",
+   "price": 103.52,
+   "composite": 54.69,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 77.0,
+    "growth": 100.0,
+    "valuation": 65.6,
+    "momentum": 12.2,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.09,
+    "peg": -0.0317,
+    "consensus": 0.5263
+   },
+   "upside": 0.1135,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ADI",
+   "market": "US",
+   "sector": "edge_ai_industrial",
+   "price": 425.35,
+   "composite": 69.96,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 78.8,
+    "growth": 100.0,
+    "valuation": 53.4,
+    "momentum": 69.9,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.1097,
+    "peg": 0.1808,
+    "dcf": -0.4333,
+    "consensus": 0.1107
+   },
+   "upside": 0.012,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "2395.TW",
+   "market": "TW",
+   "sector": "edge_ai_industrial",
+   "price": 689.0,
+   "composite": 67.93,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 68.9,
+    "growth": 100.0,
+    "valuation": 33.0,
+    "momentum": 61.3,
+    "news": 60.0
+   },
+   "method_upside": {
+    "pe": -0.1599,
+    "peg": 0.0886,
+    "consensus": 0.0504
+   },
+   "upside": -0.0476,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6166.TW",
+   "market": "TW",
+   "sector": "edge_ai_industrial",
+   "price": 113.5,
+   "composite": 63.3,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 50.3,
+    "growth": 100.0,
+    "valuation": 98.2,
+    "momentum": 29.0,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.2647,
+    "peg": 0.9769,
+    "dcf": 0.2748
+   },
+   "upside": 0.4098,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "3088.TWO",
+   "market": "TW",
+   "sector": "edge_ai_industrial",
+   "price": 122.0,
+   "composite": 44.91,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 58.6,
+    "growth": 100.0,
+    "valuation": 39.7,
+    "momentum": 17.6,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0038,
+    "consensus": 0.25
+   },
+   "upside": 0.0985,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6579.TW",
+   "market": "TW",
+   "sector": "edge_ai_industrial",
+   "price": 142.5,
+   "composite": 49.6,
+   "scores": {
+    "sector": null,
+    "leader": 33.3,
+    "quality": 55.2,
+    "growth": 100.0,
+    "valuation": null,
+    "momentum": 16.0,
+    "news": 40.0
+   },
+   "method_upside": {},
+   "upside": null,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "RMD",
+   "market": "US",
+   "sector": "aging_care",
+   "price": 250.8,
+   "composite": 66.71,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 95.6,
+    "growth": 31.8,
+    "valuation": 53.8,
+    "momentum": 69.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0204,
+    "peg": 0.6088,
+    "dcf": 0.0798,
+    "consensus": 0.0029
+   },
+   "upside": 0.0998,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "DXCM",
+   "market": "US",
+   "sector": "aging_care",
+   "price": 78.56,
+   "composite": 59.43,
+   "scores": {
+    "sector": null,
+    "leader": 33.3,
+    "quality": 88.7,
+    "growth": 75.9,
+    "valuation": 40.4,
+    "momentum": 43.3,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1541,
+    "peg": 0.1592,
+    "dcf": -0.1976,
+    "consensus": 0.2244
+   },
+   "upside": -0.0212,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "PODD",
+   "market": "US",
+   "sector": "aging_care",
+   "price": 149.83,
+   "composite": 51.67,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 76.6,
+    "growth": 90.7,
+    "valuation": 52.7,
+    "momentum": 16.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.019,
+    "peg": 0.5688,
+    "dcf": -0.2987,
+    "consensus": 0.1158
+   },
+   "upside": 0.0621,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "SYK",
+   "market": "US",
+   "sector": "aging_care",
+   "price": 301.42,
+   "composite": 67.78,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 83.9,
+    "growth": 70.6,
+    "valuation": 71.9,
+    "momentum": 18.3,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0705,
+    "peg": 0.6815,
+    "dcf": 0.4025,
+    "consensus": 0.203
+   },
+   "upside": 0.2617,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "4104.TW",
+   "market": "TW",
+   "sector": "aging_care",
+   "price": 73.3,
+   "composite": 38.07,
+   "scores": {
+    "sector": null,
+    "leader": 50.0,
+    "quality": 48.4,
+    "growth": 50.2,
+    "valuation": 0.0,
+    "momentum": 42.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.0005,
+    "dcf": -0.4095
+   },
+   "upside": -0.1368,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "6491.TW",
+   "market": "TW",
+   "sector": "aging_care",
+   "price": 430.5,
+   "composite": 73.13,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 69.8,
+    "growth": 100.0,
+    "valuation": 47.0,
+    "momentum": 90.1,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0754,
+    "peg": 1.162,
+    "dcf": -0.358,
+    "consensus": 0.009
+   },
+   "upside": 0.1351,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "1565.TWO",
+   "market": "TW",
+   "sector": "aging_care",
+   "price": 90.9,
+   "composite": 48.3,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 49.9,
+    "growth": 50.0,
+    "valuation": 97.7,
+    "momentum": 27.5,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1316,
+    "dcf": -0.4251,
+    "consensus": 1.8713
+   },
+   "upside": 0.3884,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "XYL",
+   "market": "US",
+   "sector": "water_infra",
+   "price": 92.86,
+   "composite": 55.44,
+   "scores": {
+    "sector": null,
+    "leader": 60.0,
+    "quality": 61.7,
+    "growth": 38.8,
+    "valuation": 90.5,
+    "momentum": 6.0,
+    "news": 59.3
+   },
+   "method_upside": {
+    "pe": 0.2688,
+    "peg": 1.0226,
+    "dcf": 0.8194,
+    "consensus": 0.5359
+   },
+   "upside": 0.5588,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "ECL",
+   "market": "US",
+   "sector": "water_infra",
+   "price": 291.27,
+   "composite": 50.12,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 63.3,
+    "growth": 34.3,
+    "valuation": 7.3,
+    "momentum": 54.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.2103,
+    "peg": -0.0205,
+    "dcf": -0.3432,
+    "consensus": 0.1253
+   },
+   "upside": -0.1245,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "PNR",
+   "market": "US",
+   "sector": "water_infra",
+   "price": 62.29,
+   "composite": 49.6,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 68.3,
+    "growth": 0.0,
+    "valuation": 98.5,
+    "momentum": 21.8,
+    "news": 65.2
+   },
+   "method_upside": {
+    "pe": 0.4792,
+    "peg": 1.5762,
+    "dcf": 0.7942,
+    "consensus": 0.1366
+   },
+   "upside": 0.6,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "WTS",
+   "market": "US",
+   "sector": "water_infra",
+   "price": 361.38,
+   "composite": 48.41,
+   "scores": {
+    "sector": null,
+    "leader": 20.0,
+    "quality": 76.8,
+    "growth": 61.0,
+    "valuation": 3.3,
+    "momentum": 64.4,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1545,
+    "peg": 0.1661,
+    "dcf": -0.3229,
+    "consensus": 0.1171
+   },
+   "upside": -0.0722,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "AWK",
+   "market": "US",
+   "sector": "water_infra",
+   "price": 141.1,
+   "composite": 42.29,
+   "scores": {
+    "sector": null,
+    "leader": 80.0,
+    "quality": 45.3,
+    "growth": 34.6,
+    "valuation": 9.5,
+    "momentum": 53.7,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": -0.1085,
+    "peg": -0.2197,
+    "consensus": -0.0001
+   },
+   "upside": -0.0955,
+   "picked": false,
+   "in_focus": false
+  },
+  {
+   "ticker": "WTRG",
+   "market": "US",
+   "sector": "water_infra",
+   "price": 42.64,
+   "composite": 38.71,
+   "scores": {
+    "sector": null,
+    "leader": 40.0,
+    "quality": 44.1,
+    "growth": 19.0,
+    "valuation": 26.9,
+    "momentum": 56.8,
+    "news": 40.0
+   },
+   "method_upside": {
+    "pe": 0.0872,
+    "peg": 0.4616,
+    "consensus": -0.0197
+   },
+   "upside": 0.124,
+   "picked": false,
+   "in_focus": false
+  }
+ ]
+}

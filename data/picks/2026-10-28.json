@@ -1,0 +1,662 @@
+{
+ "date": "2026-10-28",
+ "params_version": 1,
+ "provider": "live",
+ "llm": false,
+ "picks": [
+  {
+   "ticker": "8299.TWO",
+   "name": "PHISON ELECTRONICS CORP",
+   "zh_name": "群聯",
+   "market": "TW",
+   "sector": "memory_storage",
+   "rank": 1,
+   "entry_price": 2040.0,
+   "entry_date": "2026-10-28",
+   "composite": 75.66,
+   "scores": {
+    "sector": 72.3,
+    "leader": 33.3,
+    "quality": 79.9,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 58.3,
+    "news": 73.6
+   },
+   "target": {
+    "base": 3213.75,
+    "bull": 4046.6,
+    "bear": 1964.48,
+    "ev": 3068.01,
+    "confidence": "中",
+    "upside": 0.5754,
+    "ev_upside": 0.5039,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 3495.14,
+      "weight": 0.615,
+      "upside": 0.7133
+     },
+     "consensus": {
+      "value": 2763.54,
+      "weight": 0.385,
+      "upside": 0.3547
+     }
+    }
+   },
+   "stop": 1819.46,
+   "fundamentals": {
+    "market_cap": 451176595456,
+    "pe_ttm": 9.8044,
+    "pe_fwd": 7.246,
+    "peg": null,
+    "roe": 0.6408,
+    "gross_margin": 0.5685,
+    "op_margin": 0.3884,
+    "net_margin": 0.3221,
+    "rev_growth": 2.795,
+    "eps_growth": 30.955,
+    "de": 0.2873,
+    "beta": 1.838,
+    "target_mean": 2763.5386,
+    "n_analysts": 13,
+    "fcf_margin": -0.1209
+   },
+   "tech": {
+    "ret_1m": -0.07900677200902939,
+    "ret_3m": 0.1208791208791209,
+    "rel_3m": 0.0434366587523467,
+    "dist200": 0.012741890763381392,
+    "vol_ann": 0.5690326269785286
+   }
+  },
+  {
+   "ticker": "2368.TW",
+   "name": "GOLD CIRCUIT ELECTRONICS CO",
+   "zh_name": "金像電",
+   "market": "TW",
+   "sector": "pcb_materials",
+   "rank": 2,
+   "entry_price": 1185.0,
+   "entry_date": "2026-10-28",
+   "composite": 68.52,
+   "scores": {
+    "sector": 72.3,
+    "leader": 25.0,
+    "quality": 67.6,
+    "growth": 100.0,
+    "valuation": 90.5,
+    "momentum": 65.7,
+    "news": 40.0
+   },
+   "target": {
+    "base": 1564.84,
+    "bull": 2190.78,
+    "bear": 625.94,
+    "ev": 1455.31,
+    "confidence": "中",
+    "upside": 0.3205,
+    "ev_upside": 0.2281,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 1346.79,
+      "weight": 0.5,
+      "upside": 0.1365
+     },
+     "peg": {
+      "value": 2071.07,
+      "weight": 0.187,
+      "upside": 0.7477
+     },
+     "consensus": {
+      "value": 1610.0,
+      "weight": 0.312,
+      "upside": 0.3586
+     }
+    }
+   },
+   "stop": 971.7,
+   "fundamentals": {
+    "market_cap": 608796475392,
+    "pe_ttm": 42.3214,
+    "pe_fwd": 18.0056,
+    "peg": 0.67,
+    "roe": 0.4595,
+    "gross_margin": 0.3469,
+    "op_margin": 0.2643,
+    "net_margin": 0.1857,
+    "rev_growth": 0.753,
+    "eps_growth": 1.739,
+    "de": 0.3323,
+    "beta": 0.952,
+    "target_mean": 1610.0,
+    "n_analysts": 9,
+    "fcf_margin": 0.0261
+   },
+   "tech": {
+    "ret_1m": 0.03947368421052633,
+    "ret_3m": 0.3240223463687151,
+    "rel_3m": 0.24657988424194088,
+    "dist200": 0.1384162679217007,
+    "vol_ann": 0.7700706996857323
+   }
+  },
+  {
+   "ticker": "6274.TWO",
+   "name": "TAIWAN UNION TECHNOLOGY CORPORA",
+   "zh_name": "台燿",
+   "market": "TW",
+   "sector": "pcb_materials",
+   "rank": 3,
+   "entry_price": 1375.0,
+   "entry_date": "2026-10-28",
+   "composite": 65.97,
+   "scores": {
+    "sector": 72.3,
+    "leader": 0.0,
+    "quality": 66.0,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 36.9,
+    "news": 69.6
+   },
+   "target": {
+    "base": 1961.07,
+    "bull": 2745.5,
+    "bear": 784.43,
+    "ev": 1823.8,
+    "confidence": "中",
+    "upside": 0.4262,
+    "ev_upside": 0.3264,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 1599.73,
+      "weight": 0.5,
+      "upside": 0.1634
+     },
+     "peg": {
+      "value": 2504.75,
+      "weight": 0.187,
+      "upside": 0.8216
+     },
+     "consensus": {
+      "value": 2213.0,
+      "weight": 0.312,
+      "upside": 0.6095
+     }
+    }
+   },
+   "stop": 1127.5,
+   "fundamentals": {
+    "market_cap": 397065650176,
+    "pe_ttm": 70.8033,
+    "pe_fwd": 17.2752,
+    "peg": null,
+    "roe": 0.3074,
+    "gross_margin": 0.2577,
+    "op_margin": 0.2348,
+    "net_margin": 0.1369,
+    "rev_growth": 1.109,
+    "eps_growth": 2.445,
+    "de": 0.271,
+    "beta": 2.368,
+    "target_mean": 2213.0,
+    "n_analysts": 15,
+    "fcf_margin": -0.1654
+   },
+   "tech": {
+    "ret_1m": -0.05821917808219179,
+    "ret_3m": 0.095617529880478,
+    "rel_3m": 0.01817506775370381,
+    "dist200": 0.2052485282619365,
+    "vol_ann": 0.7511270116335205
+   }
+  },
+  {
+   "ticker": "6505.TW",
+   "name": "FORMOSA PETROCHEMICAL CORPORATI",
+   "zh_name": "台塑化",
+   "market": "TW",
+   "sector": "energy_materials",
+   "rank": 4,
+   "entry_price": 103.0,
+   "entry_date": "2026-10-28",
+   "composite": 64.54,
+   "scores": {
+    "sector": 83.0,
+    "leader": 100.0,
+    "quality": 51.0,
+    "growth": 87.7,
+    "valuation": 23.6,
+    "momentum": 80.6,
+    "news": 40.0
+   },
+   "target": {
+    "base": 112.92,
+    "bull": 131.56,
+    "bear": 84.96,
+    "ev": 109.66,
+    "confidence": "中",
+    "upside": 0.0963,
+    "ev_upside": 0.0647,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 112.25,
+      "weight": 0.615,
+      "upside": 0.0898
+     },
+     "consensus": {
+      "value": 114.0,
+      "weight": 0.385,
+      "upside": 0.1068
+     }
+    }
+   },
+   "stop": 84.46,
+   "fundamentals": {
+    "market_cap": 981173862400,
+    "pe_ttm": 17.913,
+    "pe_fwd": 17.2181,
+    "peg": 5.22,
+    "roe": 0.1399,
+    "gross_margin": 0.1115,
+    "op_margin": 0.1251,
+    "net_margin": 0.0841,
+    "rev_growth": 0.257,
+    "eps_growth": null,
+    "de": 0.0464,
+    "beta": 0.084,
+    "target_mean": 114.0,
+    "n_analysts": 6,
+    "fcf_margin": 0.0173
+   },
+   "tech": {
+    "ret_1m": 0.17983959220406986,
+    "ret_3m": 0.3222079330227319,
+    "rel_3m": 0.24476547089595768,
+    "dist200": 0.6032112681226767,
+    "vol_ann": 0.629168154358301
+   }
+  },
+  {
+   "ticker": "NVDA",
+   "name": "NVIDIA Corporation",
+   "zh_name": "NVIDIA",
+   "market": "US",
+   "sector": "ai_chips",
+   "rank": 1,
+   "entry_price": 217.94,
+   "entry_date": "2026-10-27",
+   "composite": 86.4,
+   "scores": {
+    "sector": 85.6,
+    "leader": 100.0,
+    "quality": 93.4,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 36.6,
+    "news": 81.7
+   },
+   "target": {
+    "base": 348.7,
+    "bull": 457.72,
+    "bear": 185.18,
+    "ev": 329.63,
+    "confidence": "中",
+    "upside": 0.6,
+    "ev_upside": 0.5125,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 315.52,
+      "weight": 0.5,
+      "upside": 0.4477
+     },
+     "peg": {
+      "value": 484.41,
+      "weight": 0.187,
+      "upside": 1.2227
+     },
+     "consensus": {
+      "value": 328.95,
+      "weight": 0.312,
+      "upside": 0.5094
+     }
+    }
+   },
+   "stop": 202.44,
+   "fundamentals": {
+    "market_cap": 5262596898816,
+    "pe_ttm": 27.5525,
+    "pe_fwd": 13.6943,
+    "peg": 0.26,
+    "roe": 1.1721,
+    "gross_margin": 0.7467,
+    "op_margin": 0.6624,
+    "net_margin": 0.6366,
+    "rev_growth": 1.059,
+    "eps_growth": 1.278,
+    "de": 0.1697,
+    "beta": 2.216,
+    "target_mean": 328.9535,
+    "n_analysts": 58,
+    "fcf_margin": 0.138
+   },
+   "tech": {
+    "ret_1m": -0.04771475198733954,
+    "ret_3m": 0.14827572317958881,
+    "rel_3m": 0.09272051986393604,
+    "dist200": 0.06997631532480497,
+    "vol_ann": 0.3528978516218504
+   }
+  },
+  {
+   "ticker": "TSM",
+   "name": "Taiwan Semiconductor Manufactur",
+   "zh_name": "台積電 ADR",
+   "market": "US",
+   "sector": "ai_chips",
+   "rank": 2,
+   "entry_price": 436.87,
+   "entry_date": "2026-10-27",
+   "composite": 84.07,
+   "scores": {
+    "sector": 85.6,
+    "leader": 75.0,
+    "quality": 99.0,
+    "growth": 100.0,
+    "valuation": 89.7,
+    "momentum": 67.0,
+    "news": 40.0
+   },
+   "target": {
+    "base": 573.95,
+    "bull": 709.32,
+    "bear": 370.89,
+    "ev": 550.26,
+    "confidence": "高",
+    "upside": 0.3138,
+    "ev_upside": 0.2595,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 515.73,
+      "weight": 0.5,
+      "upside": 0.1805
+     },
+     "peg": {
+      "value": 711.81,
+      "weight": 0.187,
+      "upside": 0.6293
+     },
+     "consensus": {
+      "value": 584.39,
+      "weight": 0.312,
+      "upside": 0.3377
+     }
+    }
+   },
+   "stop": 401.26,
+   "fundamentals": {
+    "market_cap": 2265814925312,
+    "pe_ttm": 28.313,
+    "pe_fwd": 18.6814,
+    "peg": 0.77,
+    "roe": 0.4185,
+    "gross_margin": 0.6585,
+    "op_margin": 0.5866,
+    "net_margin": 0.5112,
+    "rev_growth": 0.509,
+    "eps_growth": 0.687,
+    "de": 0.1162,
+    "beta": 1.239,
+    "target_mean": 584.3929,
+    "n_analysts": 20,
+    "fcf_margin": 0.2433
+   },
+   "tech": {
+    "ret_1m": -0.03535154918082051,
+    "ret_3m": 0.16914077599452293,
+    "rel_3m": 0.11358557267887015,
+    "dist200": 0.09994705463717679,
+    "vol_ann": 0.29412495994923965
+   }
+  },
+  {
+   "ticker": "SNDK",
+   "name": "Sandisk Corporation",
+   "zh_name": "Sandisk",
+   "market": "US",
+   "sector": "memory_storage",
+   "rank": 3,
+   "entry_price": 1304.84,
+   "entry_date": "2026-10-27",
+   "composite": 80.45,
+   "scores": {
+    "sector": 66.2,
+    "leader": 66.7,
+    "quality": 99.9,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 61.3,
+    "news": 40.0
+   },
+   "target": {
+    "base": 2049.13,
+    "bull": 2649.46,
+    "bear": 1148.64,
+    "ev": 1944.08,
+    "confidence": "高",
+    "upside": 0.5704,
+    "ev_upside": 0.4899,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 2130.38,
+      "weight": 0.471,
+      "upside": 0.6327
+     },
+     "dcf": {
+      "value": 1768.27,
+      "weight": 0.235,
+      "upside": 0.3552
+     },
+     "consensus": {
+      "value": 2143.83,
+      "weight": 0.294,
+      "upside": 0.643
+     }
+    }
+   },
+   "stop": 1078.42,
+   "fundamentals": {
+    "market_cap": 188585345024,
+    "pe_ttm": 17.6903,
+    "pe_fwd": 4.8999,
+    "peg": null,
+    "roe": 0.9164,
+    "gross_margin": 0.7147,
+    "op_margin": 0.7847,
+    "net_margin": 0.5646,
+    "rev_growth": 3.716,
+    "eps_growth": null,
+    "de": 0.0128,
+    "beta": null,
+    "target_mean": 2143.8333,
+    "n_analysts": 24,
+    "fcf_margin": 0.3813
+   },
+   "tech": {
+    "ret_1m": -0.23822314645921694,
+    "ret_3m": 0.28443034876356177,
+    "rel_3m": 0.228875145447909,
+    "dist200": 0.04758249155467942,
+    "vol_ann": 0.7989472433594716
+   }
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft Corporation",
+   "zh_name": "Microsoft",
+   "market": "US",
+   "sector": "cloud_software",
+   "rank": 4,
+   "entry_price": 531.33,
+   "entry_date": "2026-10-27",
+   "composite": 78.51,
+   "scores": {
+    "sector": 74.4,
+    "leader": 100.0,
+    "quality": 74.4,
+    "growth": 74.1,
+    "valuation": 69.5,
+    "momentum": 88.1,
+    "news": 83.0
+   },
+   "target": {
+    "base": 683.79,
+    "bull": 779.09,
+    "bear": 540.84,
+    "ev": 667.11,
+    "confidence": "高",
+    "upside": 0.2869,
+    "ev_upside": 0.2555,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 718.97,
+      "weight": 0.5,
+      "upside": 0.3532
+     },
+     "peg": {
+      "value": 721.07,
+      "weight": 0.187,
+      "upside": 0.3571
+     },
+     "consensus": {
+      "value": 605.12,
+      "weight": 0.312,
+      "upside": 0.1389
+     }
+    }
+   },
+   "stop": 499.45,
+   "fundamentals": {
+    "market_cap": 3945415311360,
+    "pe_ttm": 29.6006,
+    "pe_fwd": 22.4287,
+    "peg": 1.73,
+    "roe": 0.3404,
+    "gross_margin": 0.6794,
+    "op_margin": 0.4511,
+    "net_margin": 0.4031,
+    "rev_growth": 0.177,
+    "eps_growth": 0.317,
+    "de": 0.2912,
+    "beta": 1.099,
+    "target_mean": 605.1243,
+    "n_analysts": 53,
+    "fcf_margin": 0.0499
+   },
+   "tech": {
+    "ret_1m": 0.043419378296489564,
+    "ret_3m": 0.3630620560958677,
+    "rel_3m": 0.30750685278021495,
+    "dist200": 0.2188412801010926,
+    "vol_ann": 0.21733657767351683
+   }
+  },
+  {
+   "ticker": "ORCL",
+   "name": "Oracle Corporation",
+   "zh_name": "Oracle",
+   "market": "US",
+   "sector": "cloud_software",
+   "rank": 5,
+   "entry_price": 130.53,
+   "entry_date": "2026-10-27",
+   "composite": 70.83,
+   "scores": {
+    "sector": 74.4,
+    "leader": 75.0,
+    "quality": 55.2,
+    "growth": 99.4,
+    "valuation": 100.0,
+    "momentum": 26.6,
+    "news": 81.7
+   },
+   "target": {
+    "base": 208.85,
+    "bull": 271.05,
+    "bear": 115.54,
+    "ev": 197.96,
+    "confidence": "高",
+    "upside": 0.6,
+    "ev_upside": 0.5166,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 284.38,
+      "weight": 0.5,
+      "upside": 1.1787
+     },
+     "peg": {
+      "value": 334.57,
+      "weight": 0.187,
+      "upside": 1.5631
+     },
+     "consensus": {
+      "value": 235.8,
+      "weight": 0.312,
+      "upside": 0.8065
+     }
+    }
+   },
+   "stop": 113.47,
+   "fundamentals": {
+    "market_cap": 395701813248,
+    "pe_ttm": 20.4592,
+    "pe_fwd": 11.8754,
+    "peg": 0.71,
+    "roe": 0.4119,
+    "gross_margin": 0.6396,
+    "op_margin": 0.3563,
+    "net_margin": 0.2636,
+    "rev_growth": 0.296,
+    "eps_growth": 0.545,
+    "de": 2.5172,
+    "beta": 1.77,
+    "target_mean": 235.8034,
+    "n_analysts": 41,
+    "fcf_margin": -0.6388
+   },
+   "tech": {
+    "ret_1m": -0.011970129077533809,
+    "ret_3m": 0.11272949585543279,
+    "rel_3m": 0.057174292539780014,
+    "dist200": -0.16764266823562224,
+    "vol_ann": 0.4980976159850458
+   }
+  }
+ ],
+ "focus_sectors": {
+  "US": [
+   "ai_chips",
+   "cloud_software",
+   "energy_materials",
+   "ai_servers",
+   "memory_storage"
+  ],
+  "TW": [
+   "financials",
+   "energy_materials",
+   "internet_platforms",
+   "memory_storage",
+   "pcb_materials"
+  ]
+ }
+}
