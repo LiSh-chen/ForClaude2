@@ -345,9 +345,9 @@ private fun StepRing(steps: Long, goal: Int, progress: Float, size: androidx.com
 }
 
 /**
- * The way ahead as an instrument panel, like the round gauges of a cockpit: today's steps, the next card, the next township and
- * the whole island, four dials in a row, each with a ticked scale, a filled arc and a marker, its reading in the middle and two
- * lines of small print under it.
+ * The way ahead as an instrument panel, four different gauges that say at a glance what they measure: a fuel tank for today's
+ * steps, a compass for the next card, a spirit level for the township boundary and a little map for the whole island. Under each,
+ * its name and two lines of numbers.
  */
 @Composable
 private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int, steps: Long, progress: Float, todayKm: Double, kcal: Double, modifier: Modifier) {
@@ -359,66 +359,44 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
     val next = route.next(walkedKm)
     val collected = route.collected(walkedKm)
     val totalCards = route.stops.count { it.landmark != null }
-    val legStart = collected.lastOrNull()?.let { c -> route.stops.indexOfFirst { it.landmark?.id == c.id }.takeIf { it >= 0 }?.let { route.cumulativeKm[it] } } ?: 0.0
-    val legFraction = next?.let { n -> val end = walkedKm + n.second; if (end > legStart) ((walkedKm - legStart) / (end - legStart)).coerceIn(0.0, 1.0) else 0.0 } ?: 1.0
     val toNext = next?.let { stepsFor(it.second) } ?: 0L
     val toEnd = stepsFor(route.totalKm - walkedKm)
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        Dial(
-            "今日步數", Color(0xFF6B4A24), progress, steps.withCommas(), "步",
-            "目標 ${goal.toLong().withCommas()}", "${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡", Modifier.weight(1f),
-        )
-        Dial(
-            "下一景點", RED, legFraction.toFloat(), if (next != null) "%.1f".format(next.second) else "完成", if (next != null) "公里" else "",
-            if (next != null) "${toNext.withCommas()} 步" else "", if (next != null) "約 ${days(toNext)} 天" else "", Modifier.weight(1f),
-        )
-        if (border != null) {
-            val toBorder = stepsFor(border.kmLeft)
-            Dial("下個區域", GREEN, border.fraction.toFloat(), "%.1f".format(border.kmLeft), "公里", "${toBorder.withCommas()} 步", "約 ${days(toBorder)} 天", Modifier.weight(1f))
-        } else Dial("下個區域", GREEN, 1f, "終點", "", "", "", Modifier.weight(1f))
-        Dial(
-            "環島全程", BLUE, overall.toFloat(), "${(overall * 100).roundToInt()}%", "${collected.size}/$totalCards 景點",
-            if (next != null) "剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里" else "環島完成", if (next != null) "約 ${days(toEnd)} 天" else "", Modifier.weight(1f),
-        )
+    val island = remember(route) { islandShape(route) }
+    // The compass needle points from where the traveller is to the next card, in degrees clockwise from north.
+    val bearing = remember(route, next?.first?.id, (walkedKm * 5).toInt()) {
+        next?.let { n ->
+            val to = route.stops.first { it.landmark?.id == n.first.id }.at
+            val from = route.positionAt(walkedKm)
+            val east = (to.lng - from.lng) * kotlin.math.cos(Math.toRadians(from.lat))
+            val north = to.lat - from.lat
+            ((Math.toDegrees(kotlin.math.atan2(east, north)) + 360.0) % 360.0).toFloat()
+        }
+    }
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Instrument("今日步數", Color(0xFF6B4A24), "${steps.withCommas()} 步", "目標 ${goal.toLong().withCommas()}", "${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡", Modifier.weight(1f)) {
+            TankGauge(progress, Color(0xFF6B4A24))
+        }
+        Instrument("下一景點", RED, if (next != null) "%.1f 公里".format(next.second) else "已完成", if (next != null) "${toNext.withCommas()} 步" else "", if (next != null) "約 ${days(toNext)} 天" else "", Modifier.weight(1f)) {
+            CompassGauge(bearing, RED)
+        }
+        Instrument("下個區域", GREEN, if (border != null) "%.1f 公里".format(border.kmLeft) else "終點", if (border != null) "${stepsFor(border.kmLeft).withCommas()} 步" else "", if (border != null) "約 ${days(stepsFor(border.kmLeft))} 天" else "", Modifier.weight(1f)) {
+            LevelGauge(border?.fraction?.toFloat() ?: 1f, GREEN)
+        }
+        Instrument("環島全程", BLUE, "${(overall * 100).roundToInt()}%", if (next != null) "剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里" else "環島完成", "${collected.size}/$totalCards 景點・約 ${days(toEnd)} 天", Modifier.weight(1f)) {
+            IslandGauge(island, route, walkedKm, BLUE)
+        }
     }
 }
 
-/** One round gauge: a ticked scale over 270 degrees with a filled arc and a marker at [fraction], the reading in the middle, the label and two small lines below. */
+/** One gauge and its caption: the [gauge] picture, the name in the gauge's colour, the reading, and two small lines. */
 @Composable
-private fun Dial(label: String, color: Color, fraction: Float, big: String, small: String, line1: String, line2: String, modifier: Modifier) {
+private fun Instrument(label: String, color: Color, value: String, line1: String, line2: String, modifier: Modifier, gauge: @Composable () -> Unit) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(1.dp)) {
-        Box(Modifier.fillMaxWidth().aspectRatio(1f), contentAlignment = Alignment.Center) {
-            Canvas(Modifier.fillMaxSize()) {
-                val c = Offset(size.width / 2, size.height / 2)
-                val outer = size.minDimension / 2 - 1.dp.toPx()
-                val arc = outer - 11.dp.toPx()
-                val start = 135f
-                val sweep = 270f
-                for (i in 0..27) {
-                    val a = Math.toRadians((start + sweep * i / 27f).toDouble())
-                    val dir = Offset(kotlin.math.cos(a).toFloat(), kotlin.math.sin(a).toFloat())
-                    val major = i % 9 == 0
-                    val len = (if (major) 6 else 3).dp.toPx()
-                    drawLine(Vintage.inkSoft.copy(alpha = if (major) 0.75f else 0.4f), c + dir * (outer - len), c + dir * outer, if (major) 1.6.dp.toPx() else 1.dp.toPx())
-                }
-                val topLeft = Offset(c.x - arc, c.y - arc)
-                val box = Size(arc * 2, arc * 2)
-                drawArc(Vintage.edge.copy(alpha = 0.28f), start, sweep, false, topLeft, box, style = Stroke(6.dp.toPx(), cap = StrokeCap.Round))
-                val f = fraction.coerceIn(0f, 1f)
-                if (f > 0.001f) drawArc(color, start, sweep * f, false, topLeft, box, style = Stroke(6.dp.toPx(), cap = StrokeCap.Round))
-                val end = Math.toRadians((start + sweep * f).toDouble())
-                val tip = c + Offset(kotlin.math.cos(end).toFloat(), kotlin.math.sin(end).toFloat()) * arc
-                drawCircle(Color.White, 4.5.dp.toPx(), tip)
-                drawCircle(color, 3.dp.toPx(), tip)
-            }
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(big, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = if (big.length > 6) 14.sp else 17.sp, maxLines = 1, color = Vintage.ink)
-                if (small.isNotEmpty()) Text(small, fontSize = 9.sp, color = Vintage.inkSoft, maxLines = 1)
-            }
-        }
+        gauge()
         Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = color, maxLines = 1)
-        if (line1.isNotEmpty()) Text(line1, fontSize = 11.sp, fontWeight = FontWeight.Medium, color = Vintage.ink, maxLines = 1)
+        Text(value, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Vintage.ink, maxLines = 1)
+        if (line1.isNotEmpty()) Text(line1, fontSize = 10.sp, fontWeight = FontWeight.Medium, color = Vintage.ink, maxLines = 1)
         if (line2.isNotEmpty()) Text(line2, fontSize = 9.sp, color = Vintage.inkSoft, maxLines = 1)
     }
 }
