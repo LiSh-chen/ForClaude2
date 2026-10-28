@@ -186,13 +186,13 @@ fun RouteMapView(
 /** Small square picture for a card: the painted art inside the album frame once collected, an empty album slot before. */
 @Composable
 fun CardEmblem(card: Landmark, owned: Boolean, modifier: Modifier = Modifier) {
-    val art = rememberArt("card_${card.id}")
+    val art = if (owned) rememberCardThumb(card.id) else null
     val frame = rememberArt("collection_slot_frame")
     val slot = rememberArt("collection_slot_locked")
-    if (owned && art != null) {
+    if (owned && frame != null) {
         Box(modifier) {
-            Image(art, contentDescription = card.name, modifier = Modifier.matchParentSize().padding(4.dp).clip(RoundedCornerShape(2.dp)), contentScale = ContentScale.Crop)
-            if (frame != null) Image(frame, contentDescription = null, modifier = Modifier.matchParentSize(), contentScale = ContentScale.FillBounds)
+            if (art != null) Image(art, contentDescription = card.name, modifier = Modifier.matchParentSize().padding(4.dp).clip(RoundedCornerShape(2.dp)), contentScale = ContentScale.Crop)
+            Image(frame, contentDescription = null, modifier = Modifier.matchParentSize(), contentScale = ContentScale.FillBounds)
         }
     } else if (!owned && slot != null) {
         Image(slot, contentDescription = null, modifier = modifier, contentScale = ContentScale.Fit)
@@ -206,7 +206,7 @@ fun CardEmblem(card: Landmark, owned: Boolean, modifier: Modifier = Modifier) {
     }
 }
 
-/** A collected card, large: picture, the ten-character line, and where on the route it was found. */
+/** A collected card, large: picture, where it is (county and township), its features, and where on the route it was found. */
 @Composable
 fun CardFace(card: Landmark, atKm: Double) {
     // Scrolls: inside a dialog on a small phone the picture and three features can be taller than the room, and the text was cut off.
@@ -217,6 +217,7 @@ fun CardFace(card: Landmark, atKm: Double) {
         } else {
             CardEmblem(card, true, Modifier.size(96.dp))
         }
+        rememberTownAreas().cardPlaces[card.id]?.let { Text("📍 ${it.county} ${it.name}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark, modifier = Modifier.fillMaxWidth()) }
         rememberLandmarkFacts()[card.id].orEmpty().forEach { f ->
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(if (f.icon.isEmpty()) f.tag else "${f.icon} ${f.tag}", fontSize = 17.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif, color = Vintage.ink)
@@ -225,6 +226,17 @@ fun CardFace(card: Landmark, atKm: Double) {
         }
         Text("路線第 ${atKm.roundToInt()} 公里", style = MaterialTheme.typography.labelMedium)
     }
+}
+
+/** A collected card opened over whatever is on screen (a card tapped on the map). */
+@Composable
+fun CardDialog(route: RouteDef, card: Landmark, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(card.name) },
+        text = { CardFace(card, route.cards.first { it.first.id == card.id }.second) },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("關閉") } },
+    )
 }
 
 /** A round station stamp: station name and the year the station opened. */

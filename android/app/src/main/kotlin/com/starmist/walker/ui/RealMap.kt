@@ -31,8 +31,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.starmist.core.route.GeoPoint
-import com.starmist.core.route.POI_RANGE_KM
-import com.starmist.core.route.PoiKind
 import com.starmist.core.route.RouteDef
 import com.starmist.core.route.TaiwanOutline
 import kotlin.math.cos
@@ -465,12 +463,6 @@ internal fun DrawScope.drawRealMap(
         }
     }
 
-    // Small roadside sights, only while the walker is near them (they give no card); fainter the farther away.
-    val nearPois = if (w >= 1700f && !regionMode) route.poisNear(here) else emptyList()
-    nearPois.forEach { (poi, km) ->
-        drawPoiGlyph(poi.kind, poi.at.px(), 7.dp.toPx() * ms, (1f - 0.55f * (km / POI_RANGE_KM).toFloat()).coerceIn(0.3f, 1f))
-    }
-
     // Names are queued with a priority and placed from the most important down; a name that would cover a more important
     // one (or a marker) is simply not drawn, and it comes back by itself once there is room.
     class Label(val priority: Int, val place: () -> Unit)
@@ -490,9 +482,6 @@ internal fun DrawScope.drawRealMap(
         val o = route.stops.first { it.landmark?.id == card.id }.at.px()
         if (card.id != lastCard?.id && (w <= 3000f || o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f)) return@forEach
         queue += Label(if (card.id == lastCard?.id) 90 else 60) { placeName(card.name, o, 12.sp, Vintage.ink, 11.dp.toPx(), force = card.id == lastCard?.id) }
-    }
-    nearPois.forEach { (poi, _) ->
-        queue += Label(30) { placeName(poi.name, poi.at.px(), 11.sp, Vintage.inkSoft, 10.dp.toPx(), plain = true, weight = FontWeight.Normal) }
     }
     queue.sortedByDescending { it.priority }.forEach { it.place() }
 
@@ -636,72 +625,6 @@ internal fun DrawScope.drawWalker(
     if (idle != Idle.NONE && measurer != null) {
         val sign = if (face >= 0f) 1f else -1f
         drawIdleEmote(measurer, idle, idleT, Offset(p.x, p.y - height * 1.02f), height, sign)
-    }
-}
-
-/** A tiny pen sketch for each kind of roadside sight. [u] is about half its size. */
-private fun DrawScope.drawPoiGlyph(kind: PoiKind, at: Offset, u: Float, alpha: Float) {
-    val ink = Vintage.ink.copy(alpha = alpha)
-    val wash = Vintage.parchmentLight.copy(alpha = alpha)
-    val green = Vintage.mossLight.copy(alpha = alpha)
-    val line = 1.1.dp.toPx()
-    drawCircle(Vintage.parchmentLight.copy(alpha = 0.75f * alpha), u * 1.35f, at)
-    when (kind) {
-        PoiKind.HARBOR -> {
-            val hull = Path().apply {
-                moveTo(at.x - u, at.y); lineTo(at.x + u, at.y); lineTo(at.x + u * 0.6f, at.y + u * 0.6f); lineTo(at.x - u * 0.6f, at.y + u * 0.6f); close()
-            }
-            drawPath(hull, wash); drawPath(hull, ink, style = Stroke(line))
-            drawLine(ink, Offset(at.x, at.y), Offset(at.x, at.y - u * 1.1f), line)
-            drawLine(ink, Offset(at.x, at.y - u * 1.1f), Offset(at.x + u * 0.7f, at.y - u * 0.2f), line)
-        }
-        PoiKind.TEMPLE -> {
-            val roof = Path().apply { moveTo(at.x - u, at.y - u * 0.2f); quadraticTo(at.x, at.y - u * 1.3f, at.x + u, at.y - u * 0.2f) }
-            drawPath(roof, ink, style = Stroke(line, cap = StrokeCap.Round))
-            drawLine(ink, Offset(at.x - u * 0.6f, at.y - u * 0.2f), Offset(at.x - u * 0.6f, at.y + u * 0.8f), line)
-            drawLine(ink, Offset(at.x + u * 0.6f, at.y - u * 0.2f), Offset(at.x + u * 0.6f, at.y + u * 0.8f), line)
-        }
-        PoiKind.MUSEUM -> {
-            val top = Path().apply { moveTo(at.x - u, at.y - u * 0.2f); lineTo(at.x, at.y - u); lineTo(at.x + u, at.y - u * 0.2f); close() }
-            drawPath(top, wash); drawPath(top, ink, style = Stroke(line))
-            for (k in -1..1) drawLine(ink, Offset(at.x + k * u * 0.6f, at.y - u * 0.1f), Offset(at.x + k * u * 0.6f, at.y + u * 0.8f), line)
-            drawLine(ink, Offset(at.x - u, at.y + u * 0.8f), Offset(at.x + u, at.y + u * 0.8f), line)
-        }
-        PoiKind.SPRING -> {
-            drawOval(Vintage.sea.copy(alpha = 0.6f * alpha), Offset(at.x - u, at.y + u * 0.1f), Size(u * 2f, u * 0.9f))
-            drawOval(ink, Offset(at.x - u, at.y + u * 0.1f), Size(u * 2f, u * 0.9f), style = Stroke(line))
-            for (k in -1..1) {
-                val steam = Path().apply {
-                    moveTo(at.x + k * u * 0.5f, at.y); quadraticTo(at.x + k * u * 0.5f + u * 0.3f, at.y - u * 0.5f, at.x + k * u * 0.5f, at.y - u)
-                }
-                drawPath(steam, ink, style = Stroke(line * 0.8f, cap = StrokeCap.Round))
-            }
-        }
-        PoiKind.WATERFALL -> {
-            drawRect(green, Offset(at.x - u, at.y - u), Size(u * 2f, u * 0.5f))
-            drawRect(ink, Offset(at.x - u, at.y - u), Size(u * 2f, u * 0.5f), style = Stroke(line))
-            for (k in -1..1) drawLine(Vintage.sea.copy(alpha = alpha), Offset(at.x + k * u * 0.4f, at.y - u * 0.5f), Offset(at.x + k * u * 0.4f, at.y + u * 0.9f), line * 1.4f)
-        }
-        PoiKind.PARK -> {
-            drawLine(ink, Offset(at.x, at.y + u * 0.8f), Offset(at.x, at.y), line * 1.3f)
-            drawCircle(green, u * 0.9f, Offset(at.x, at.y - u * 0.4f))
-            drawCircle(ink, u * 0.9f, Offset(at.x, at.y - u * 0.4f), style = Stroke(line))
-        }
-        PoiKind.THEATER -> {
-            val arch = Path().apply { moveTo(at.x - u, at.y + u * 0.8f); lineTo(at.x - u, at.y - u * 0.1f); quadraticTo(at.x, at.y - u * 1.4f, at.x + u, at.y - u * 0.1f); lineTo(at.x + u, at.y + u * 0.8f) }
-            drawPath(arch, ink, style = Stroke(line, cap = StrokeCap.Round))
-            drawLine(ink, Offset(at.x, at.y - u * 0.5f), Offset(at.x, at.y + u * 0.8f), line)
-        }
-        PoiKind.FORT -> {
-            drawRect(wash, Offset(at.x - u, at.y - u * 0.3f), Size(u * 2f, u * 1.1f))
-            drawRect(ink, Offset(at.x - u, at.y - u * 0.3f), Size(u * 2f, u * 1.1f), style = Stroke(line))
-            for (k in -1..1) drawRect(ink, Offset(at.x + k * u * 0.65f - u * 0.18f, at.y - u * 0.7f), Size(u * 0.36f, u * 0.4f))
-        }
-        PoiKind.LIGHTHOUSE -> {
-            val tower = Path().apply { moveTo(at.x - u * 0.5f, at.y + u * 0.9f); lineTo(at.x - u * 0.3f, at.y - u * 0.6f); lineTo(at.x + u * 0.3f, at.y - u * 0.6f); lineTo(at.x + u * 0.5f, at.y + u * 0.9f); close() }
-            drawPath(tower, wash); drawPath(tower, ink, style = Stroke(line))
-            drawCircle(Vintage.brass.copy(alpha = alpha), u * 0.35f, Offset(at.x, at.y - u * 0.95f))
-        }
     }
 }
 

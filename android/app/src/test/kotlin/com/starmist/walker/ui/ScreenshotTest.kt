@@ -77,9 +77,11 @@ class ScreenshotTest {
 
     @Test fun collection_real() = paparazzi.snapshot {
         Page(tab = 3) { pad ->
-            androidx.compose.foundation.layout.Column(Modifier.padding(pad).padding(16.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
-                androidx.compose.material3.Text("收藏・真實世界")
-                RouteProgressContent(forward, com.starmist.core.route.RouteState(forward.id, 0L, 260.0), onRestart = {}, onSwitch = {})
+            val places = rememberTownAreas().cardPlaces
+            val features = rememberLandmarkFacts()
+            androidx.compose.foundation.lazy.LazyColumn(Modifier.padding(pad), contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
+                item { androidx.compose.material3.Text("收藏・真實世界") }
+                routeProgressItems(forward, com.starmist.core.route.RouteState(forward.id, 0L, 260.0), places, features, emptyList(), onToggle = {}, onOpen = {}, onRestart = {}, onSwitch = {})
             }
         }
     }

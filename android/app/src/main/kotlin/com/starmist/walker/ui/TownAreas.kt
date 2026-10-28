@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalContext
 import com.starmist.core.route.ContentPack
 import com.starmist.core.route.RouteDef
+import com.starmist.core.route.Routes
 import com.starmist.walker.content.ContentStore
 import java.io.DataInputStream
 import java.util.zip.GZIPInputStream
@@ -46,6 +47,30 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
     private var pathsW = -1f
 
     fun find(la: Double, lo: Double): Int = towns.indexOfFirst { it.contains(la, lo) }
+
+    /** The township a point lies in; a point just off the coast or on a border gets the nearest one. */
+    fun townAt(la: Double, lo: Double): TownArea? {
+        val i = find(la, lo)
+        if (i >= 0) return towns[i]
+        fun nearest(t: TownArea): Double {
+            var best = Double.MAX_VALUE
+            for (r in t.rings) { var k = 0; while (k < r.size) { val dy = r[k] - la; val dx = (r[k + 1] - lo) * 0.92; best = minOf(best, dy * dy + dx * dx); k += 2 } }
+            return best
+        }
+        return towns.minByOrNull { nearest(it) }
+    }
+
+    /** Township of every landmark card on any route, by card id. */
+    val cardPlaces: Map<String, TownArea> by lazy {
+        val out = HashMap<String, TownArea>()
+        Routes.all.forEach { route ->
+            route.stops.forEach { stop ->
+                val card = stop.landmark ?: return@forEach
+                if (card.id !in out) townAt(stop.at.lat, stop.at.lng)?.let { out[card.id] = it }
+            }
+        }
+        out
+    }
 
     /** The outline of township [id] for a map drawn [w] by [h]; kept until the size changes. */
     fun path(id: Int, w: Float, h: Float): Path {
@@ -177,8 +202,13 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
         fun load(context: Context): TownAreas {
             val id = context.resources.getIdentifier("town_areas", "raw", context.packageName)
             if (id == 0) return TownAreas(emptyList())
+            return runCatching { context.resources.openRawResource(id).use { parse(it) } }.getOrDefault(TownAreas(emptyList()))
+        }
+
+        /** Reads the townships from the gzip file made by tools/make_town_areas.py. */
+        internal fun parse(input: java.io.InputStream): TownAreas {
             return runCatching {
-                DataInputStream(GZIPInputStream(context.resources.openRawResource(id)).buffered()).use { s ->
+                DataInputStream(GZIPInputStream(input).buffered()).use { s ->
                     val n = s.readUnsignedShort()
                     List(n) {
                         val nameBytes = ByteArray(s.readUnsignedByte()); s.readFully(nameBytes)

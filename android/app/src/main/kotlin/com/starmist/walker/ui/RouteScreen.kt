@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,8 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -27,16 +27,18 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.starmist.core.route.Landmark
@@ -48,22 +50,46 @@ import kotlin.math.roundToInt
 
 /** Walk a real-world route: pick one, watch the distance grow, and collect a card and a station stamp along the way. */
 @Composable
-fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues, openCardId: String? = null, onCardOpened: () -> Unit = {}) {
+fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues) {
     val state by vm.routeState.collectAsStateWithLifecycle()
     val current = state
     val route = current?.let { Routes.byId(it.routeId) }
+    var confirmRestart by remember { mutableStateOf(false) }
+    var detail by remember { mutableStateOf<Landmark?>(null) }
+    // Counties whose open/closed state the player flipped (a county opens by itself once it holds a card).
+    var flipped by rememberSaveable { mutableStateOf(listOf<String>()) }
+    val features = rememberLandmarkFacts()
+    val places = rememberTownAreas().cardPlaces
 
-    Column(
-        Modifier.padding(padding).verticalScroll(rememberScrollState()).padding(16.dp),
+    // Lazy: only the cards on screen are built, instead of all forty-five (and their pictures) when the tab opens.
+    LazyColumn(
+        Modifier.padding(padding),
+        contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text("收藏・真實世界", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        item { Text("收藏・真實世界", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold) }
         if (current == null || route == null) {
-            RoutePicker(onStart = { vm.startRoute(it) })
+            item { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) { RoutePicker(onStart = { vm.startRoute(it) }) } }
         } else {
-            RouteProgressContent(route, current, onRestart = { vm.restartRoute() }, onSwitch = { vm.startRoute(it) }, openCardId = openCardId, onCardOpened = onCardOpened)
+            routeProgressItems(
+                route, current, places, features, flipped,
+                onToggle = { county -> flipped = if (county in flipped) flipped - county else flipped + county },
+                onOpen = { detail = it }, onRestart = { confirmRestart = true }, onSwitch = { vm.startRoute(it) },
+            )
         }
     }
+
+    if (confirmRestart) {
+        AlertDialog(
+            onDismissRequest = { confirmRestart = false },
+            title = { Text("重新出發？") },
+            text = { Text("目前這條路線的進度、景點卡和紀念章會清除，不能復原。") },
+            confirmButton = { TextButton(onClick = { confirmRestart = false; vm.restartRoute() }) { Text("清除並重新選") } },
+            dismissButton = { TextButton(onClick = { confirmRestart = false }) { Text("取消") } },
+        )
+    }
+    val card = detail
+    if (card != null && route != null) CardDialog(route, card) { detail = null }
 }
 
 /** Choose a route and which way round to walk it. */
@@ -90,91 +116,92 @@ internal fun RoutePicker(onStart: (String) -> Unit) {
     }
 }
 
-@Composable
-internal fun ColumnScope.RouteProgressContent(route: RouteDef, state: RouteState, onRestart: () -> Unit, onSwitch: (String) -> Unit, openCardId: String? = null, onCardOpened: () -> Unit = {}) {
+/** The route's progress as list items: summary, cards grouped by county (each group opens and closes), station stamps, restart. */
+internal fun LazyListScope.routeProgressItems(
+    route: RouteDef, state: RouteState, places: Map<String, TownArea>, features: Map<String, List<TownTag>>, flipped: List<String>,
+    onToggle: (String) -> Unit, onOpen: (Landmark) -> Unit, onRestart: () -> Unit, onSwitch: (String) -> Unit,
+) {
     val km = state.walkedKm
     val done = km >= route.totalKm - 1e-9
     val next = route.next(km)
     val here = route.lastPassed(km)
-    var confirmRestart by remember { mutableStateOf(false) }
-    var detail by remember { mutableStateOf<Landmark?>(null) }
-
-    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight)) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text("${route.region}・${route.name}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            LinearProgressIndicator(progress = { (km / route.totalKm).toFloat().coerceIn(0f, 1f) }, modifier = Modifier.fillMaxWidth().height(8.dp))
-            Text("已走約 ${"%.1f".format(km)} / ${route.totalKm.roundToInt()} 公里", fontWeight = FontWeight.SemiBold)
-            if (done) Text("環島完成！", color = Vintage.brassDark, fontWeight = FontWeight.Bold)
-            else {
-                Text("目前在 ${here.name} 附近", style = MaterialTheme.typography.bodyMedium)
-                next?.let { (card, away) -> Text("下一張卡：${card.name}，還有約 ${"%.1f".format(away)} 公里", style = MaterialTheme.typography.bodyMedium) }
-            }
-        }
-    }
-
-    if (km < 0.05) {
-        val others = Routes.all.filter { it.family == route.family && it.id != route.id }
-        others.forEach { other ->
-            OutlinedButton(onClick = { onSwitch(other.id) }, modifier = Modifier.fillMaxWidth()) { Text("改成${other.direction}走（還沒出發才能改）") }
-        }
-    }
-
     val collected = route.collected(km).map { it.id }.toSet()
-    // A card tapped on the home map arrives here: open it (only cards already collected can be).
-    LaunchedEffect(openCardId) {
-        if (openCardId != null) {
-            route.cards.firstOrNull { it.first.id == openCardId && it.first.id in collected }?.let { detail = it.first }
-            onCardOpened()
+
+    item {
+        Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight)) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text("${route.region}・${route.name}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                LinearProgressIndicator(progress = { (km / route.totalKm).toFloat().coerceIn(0f, 1f) }, modifier = Modifier.fillMaxWidth().height(8.dp))
+                Text("已走約 ${"%.1f".format(km)} / ${route.totalKm.roundToInt()} 公里", fontWeight = FontWeight.SemiBold)
+                if (done) Text("環島完成！", color = Vintage.brassDark, fontWeight = FontWeight.Bold)
+                else {
+                    Text("目前在 ${here.name} 附近", style = MaterialTheme.typography.bodyMedium)
+                    next?.let { (card, away) -> Text("下一張卡：${card.name}，還有約 ${"%.1f".format(away)} 公里", style = MaterialTheme.typography.bodyMedium) }
+                }
+            }
         }
     }
-    val features = rememberLandmarkFacts()
-    Text("景點卡 ${collected.size} / ${route.cards.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-    route.cards.forEach { (card, at) ->
-        val owned = card.id in collected
-        Card(
-            Modifier.fillMaxWidth().then(if (owned) Modifier.clickable { detail = card } else Modifier),
-            colors = CardDefaults.cardColors(containerColor = if (owned) Vintage.parchmentLight else Vintage.parchmentDark.copy(alpha = 0.6f)),
-        ) {
-            Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                CardEmblem(card, owned, Modifier.size(64.dp))
-                Column(Modifier.weight(1f)) {
-                    if (owned) {
-                        Text(card.name, fontWeight = FontWeight.Bold)
-                        Text(features[card.id].orEmpty().joinToString(" · ") { it.tag }, style = MaterialTheme.typography.bodyMedium)
-                    } else {
-                        Text("？？？", fontWeight = FontWeight.Bold)
-                        Text("第 ${at.roundToInt()} 公里解鎖", style = MaterialTheme.typography.bodySmall)
-                    }
+    if (km < 0.05) {
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Routes.all.filter { it.family == route.family && it.id != route.id }.forEach { other ->
+                    OutlinedButton(onClick = { onSwitch(other.id) }, modifier = Modifier.fillMaxWidth()) { Text("改成${other.direction}走（還沒出發才能改）") }
                 }
-                if (owned) FilledTonalButton(onClick = { detail = card }, contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)) { Text("查看") }
             }
+        }
+    }
+
+    item { Text("景點卡 ${collected.size} / ${route.cards.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
+    // Counties in the order the route reaches them.
+    route.cards.groupBy { places[it.first.id]?.county ?: "其他" }.forEach { (county, cards) ->
+        val have = cards.count { it.first.id in collected }
+        val open = (have > 0) != (county in flipped)
+        item(key = "county_$county") { CountyHeader(county, have, cards.size, open) { onToggle(county) } }
+        if (open) items(cards, key = { it.first.id }) { (card, at) ->
+            val owned = card.id in collected
+            CardRow(card, at, owned, places[card.id]?.name, features[card.id].orEmpty()) { onOpen(card) }
         }
     }
 
     val stamps = route.suppliesReached(km).map { it.id }.toSet()
-    Spacer(Modifier.height(4.dp))
-    Text("車站紀念章 ${stamps.size} / ${route.supplies.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-    StampGrid(route, stamps)
+    item { Text("車站紀念章 ${stamps.size} / ${route.supplies.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
+    item { StampGrid(route, stamps) }
+    item { OutlinedButton(onClick = onRestart, modifier = Modifier.fillMaxWidth()) { Text("重新選路線／重新出發") } }
+}
 
-    Spacer(Modifier.height(8.dp))
-    OutlinedButton(onClick = { confirmRestart = true }, modifier = Modifier.fillMaxWidth()) { Text("重新選路線／重新出發") }
-
-    if (confirmRestart) {
-        AlertDialog(
-            onDismissRequest = { confirmRestart = false },
-            title = { Text("重新出發？") },
-            text = { Text("目前這條路線的進度、景點卡和紀念章會清除，不能復原。") },
-            confirmButton = { TextButton(onClick = { confirmRestart = false; onRestart() }) { Text("清除並重新選") } },
-            dismissButton = { TextButton(onClick = { confirmRestart = false }) { Text("取消") } },
-        )
+/** A county's name with how many of its cards are collected; tap to open or close its list. */
+@Composable
+private fun CountyHeader(county: String, have: Int, total: Int, open: Boolean, onClick: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).clickable(onClick = onClick).padding(horizontal = 4.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(if (open) "▾" else "▸", color = Vintage.brassDark, fontWeight = FontWeight.Bold)
+        Text(county, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 17.sp, modifier = Modifier.weight(1f))
+        Text("$have / $total", style = MaterialTheme.typography.labelLarge, color = if (have == total) Vintage.brassDark else Vintage.inkSoft)
     }
-    detail?.let { card ->
-        AlertDialog(
-            onDismissRequest = { detail = null },
-            title = { Text(card.name) },
-            text = { CardFace(card, route.cards.first { it.first.id == card.id }.second) },
-            confirmButton = { TextButton(onClick = { detail = null }) { Text("關閉") } },
-        )
+}
+
+@Composable
+private fun CardRow(card: Landmark, at: Double, owned: Boolean, township: String?, features: List<TownTag>, onOpen: () -> Unit) {
+    Card(
+        Modifier.fillMaxWidth().then(if (owned) Modifier.clickable(onClick = onOpen) else Modifier),
+        colors = CardDefaults.cardColors(containerColor = if (owned) Vintage.parchmentLight else Vintage.parchmentDark.copy(alpha = 0.6f)),
+    ) {
+        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            CardEmblem(card, owned, Modifier.size(64.dp))
+            Column(Modifier.weight(1f)) {
+                if (owned) {
+                    Text(card.name, fontWeight = FontWeight.Bold)
+                    if (township != null) Text(township, style = MaterialTheme.typography.labelMedium, color = Vintage.brassDark)
+                    Text(features.joinToString(" · ") { it.tag }, style = MaterialTheme.typography.bodyMedium)
+                } else {
+                    Text("？？？", fontWeight = FontWeight.Bold)
+                    Text("第 ${at.roundToInt()} 公里解鎖", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            if (owned) FilledTonalButton(onClick = onOpen, contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)) { Text("查看") }
+        }
     }
 }
 

@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import com.starmist.core.route.Routes
 import com.starmist.walker.tracking.StepService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -65,7 +66,7 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
     val message by vm.message.collectAsStateWithLifecycle()
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var showDiagnostics by rememberSaveable { mutableStateOf(false) }
-    var openCard by rememberSaveable { mutableStateOf<String?>(null) }   // a card tapped on the map: the collection opens it
+    var openCard by rememberSaveable { mutableStateOf<String?>(null) }   // a card tapped on the map: shown over the map, no tab change
     val snackbar = remember { SnackbarHostState() }
 
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -103,6 +104,9 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
         }
     }
 
+    // Decode the big pictures in the background now, so the first switch to the map does not wait for them.
+    LaunchedEffect(Unit) { ArtCache.preload(context.applicationContext) }
+
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.refresh() }
     LifecycleEventEffect(Lifecycle.Event.ON_START) { vm.startLive() }
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { vm.stopLive() }
@@ -123,6 +127,12 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
     val routeEvents by vm.pendingRouteEvents.collectAsStateWithLifecycle()
     routeEvents.firstOrNull()?.let { RouteEventDialog(it, onDismiss = { vm.dismissRouteEvent() }) }
 
+    openCard?.let { id ->
+        val route = vm.routeState.value?.let { Routes.byId(it.routeId) }
+        val card = route?.cards?.firstOrNull { it.first.id == id }?.first
+        if (route != null && card != null) CardDialog(route, card) { openCard = null } else LaunchedEffect(id) { openCard = null }
+    }
+
     Scaffold(
         modifier = Modifier.parchmentTexture(rememberArt("paper_page") ?: rememberArt("parchment_tile")),
         containerColor = androidx.compose.ui.graphics.Color.Transparent,
@@ -131,9 +141,9 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
     ) { padding ->
         when {
             showDiagnostics -> DiagnosticsScreen(vm, padding, openAppSettings)
-            tab == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings, onOpenCard = { openCard = it; tab = 3 })
+            tab == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings, onOpenCard = { openCard = it })
             tab == 1 -> StatsScreen(vm, current, padding)
-            tab == 3 -> RouteScreen(vm, current, padding, openCardId = openCard, onCardOpened = { openCard = null })
+            tab == 3 -> RouteScreen(vm, current, padding)
             else -> SettingsScreen(vm, current, padding, onOpenDiagnostics = { showDiagnostics = true })
         }
     }
