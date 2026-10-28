@@ -56,7 +56,9 @@ fun StatsScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
             .padding(padding)
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        StatDrawSection(vm, settings)
         TabRow(selectedTabIndex = periods.indexOfFirst { it.first == period }) {
             periods.forEach { (p, label) ->
                 Tab(selected = p == period, onClick = { vm.selectPeriod(p) }, text = { Text(label) })

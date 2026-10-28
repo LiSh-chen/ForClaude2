@@ -78,6 +78,8 @@ fun RouteMapView(
     regionMode: Boolean = false, selectedTown: Int = -1, onTapTown: ((Int) -> Unit)? = null,
     /** Route mode: a collected card's marker was tapped (its id). */
     onTapCard: ((String) -> Unit)? = null,
+    /** Route mode: the name of a roadside sight was tapped (its id). */
+    onTapPoi: ((String) -> Unit)? = null,
     /** True while steps are being counted: the traveller walks. */
     walking: Boolean = false,
 ) {
@@ -165,7 +167,7 @@ fun RouteMapView(
         background = SEA_COLOR,
         onTap = if (regionMode && onTapTown != null) { u, _ ->
             onTapTown(areas.find(MAP_LAT_MAX - u.y.toDouble() * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + u.x.toDouble() * (MAP_LON_MAX - MAP_LON_MIN)))
-        } else if (!regionMode && onTapCard != null) { u, perPx ->
+        } else if (!regionMode && (onTapCard != null || onTapPoi != null)) { u, perPx ->
             // The nearest collected card's marker within about 30 dp of the tap.
             val owned = route.collected(walkedKm).map { it.id }.toSet()
             var best: String? = null
@@ -177,7 +179,19 @@ fun RouteMapView(
                 val d = kotlin.math.hypot((q.x - u.x) / perPx.x, (q.y - u.y) / perPx.y)
                 if (d < bestPx) { bestPx = d; best = id }
             }
-            best?.let(onTapCard)
+            val tappedCard = best
+            if (tappedCard != null) onTapCard?.invoke(tappedCard)
+            else {
+                // Otherwise the nearest roadside sight whose name is showing (those within range of the walker), about 38 dp round it.
+                var poi: String? = null
+                var poiPx = 38f * density
+                route.poisNear(here).forEach { (p, _) ->
+                    val q = p.at.unit()
+                    val d = kotlin.math.hypot((q.x - u.x) / perPx.x, (q.y - u.y) / perPx.y)
+                    if (d < poiPx) { poiPx = d; poi = p.id }
+                }
+                poi?.let { onTapPoi?.invoke(it) }
+            }
         } else null,
         top = { w, h, _, _ -> drawWalker(Offset(here.unit().x * w, here.unit().y * h), w, walker, phase.floatValue, walk.floatValue, face.value, idleAct.intValue, idleT.floatValue, measurer) },
     ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown) }
@@ -226,6 +240,23 @@ fun CardFace(card: Landmark, atKm: Double) {
         }
         Text("路線第 ${atKm.roundToInt()} 公里", style = MaterialTheme.typography.labelMedium)
     }
+}
+
+/** A roadside sight's few lines, opened by tapping its name on the map. */
+@Composable
+fun PoiDialog(poi: com.starmist.core.route.Poi, onDismiss: () -> Unit) {
+    val lines = rememberPoiIntros()[poi.id].orEmpty()
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(poi.name) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                lines.forEach { Text(it, fontSize = 14.sp, color = Vintage.ink) }
+                Text("路邊的小景點，不會收進景點卡。", fontSize = 12.sp, color = Vintage.inkSoft)
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("關閉") } },
+    )
 }
 
 /** A collected card opened over whatever is on screen (a card tapped on the map). */

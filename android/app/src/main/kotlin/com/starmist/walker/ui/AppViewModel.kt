@@ -79,6 +79,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         repository.observeDailyTotals(start, end).map { daily -> Aggregator.summarize(a, p, daily, goal, t) }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
+    /** Every day's steps since the beginning, for the daily statistics draw. */
+    val history: StateFlow<Map<LocalDate, Long>> = _today
+        .flatMapLatest { t -> repository.observeDailyTotals(LocalDate.of(2000, 1, 1), t) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+
     private data class Quad(val period: Period, val anchor: LocalDate, val today: LocalDate, val goal: Int)
 
     fun selectPeriod(period: Period) {

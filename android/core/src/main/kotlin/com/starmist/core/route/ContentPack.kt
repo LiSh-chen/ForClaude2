@@ -15,11 +15,16 @@ object ContentPack {
     const val CARDS = "card_texts.txt"
     const val FACTS = "landmark_facts.txt"
     const val TOWNS = "town_blurbs.txt"
-    val FILES = listOf(CARDS, FACTS, TOWNS)
+    const val POIS = "poi_intros.txt"
+    val FILES = listOf(CARDS, FACTS, TOWNS, POIS)
 
     private val superlatives = Regex("最|唯一|第一|全台|全國|僅存")
 
     private fun data(lines: List<String>) = lines.filter { it.isNotBlank() && !it.startsWith("#") }
+
+    /** `id|sentence|sentence` as id to its sentences. */
+    fun parsePois(lines: List<String>): Map<String, List<String>> =
+        data(lines).mapNotNull { l -> l.split('|').let { f -> if (f.size >= 2) f[0].trim() to f.drop(1).map { it.trim() }.filter { it.isNotEmpty() } else null } }.toMap()
 
     /** `id|name`; lines that do not fit are left out. */
     fun parseCards(lines: List<String>): Map<String, CardText> =
@@ -80,11 +85,30 @@ object ContentPack {
         return errors
     }
 
+    /** `id|sentence|sentence`: one to three sentences of 14 to 70 characters about a roadside sight, one line for each sight in [knownIds]. */
+    fun validatePois(lines: List<String>, knownIds: Set<String>): List<String> {
+        val errors = ArrayList<String>()
+        val seen = HashSet<String>()
+        data(lines).forEach { l ->
+            val f = l.split('|')
+            if (f.size !in 2..4) { errors += "bad line: $l"; return@forEach }
+            if (f[0] !in knownIds) errors += "unknown sight id ${f[0]}"
+            if (!seen.add(f[0])) errors += "duplicate sight id ${f[0]}"
+            f.drop(1).forEach { x ->
+                if (x.trim().length !in 14..70) errors += "${f[0]}: sentence must be 14 to 70 characters: $x"
+                if (superlatives.containsMatchIn(x)) errors += "${f[0]}: no superlatives: $x"
+            }
+        }
+        (knownIds - seen).forEach { errors += "missing sight $it" }
+        return errors
+    }
+
     /** Checks one file by name; an unknown name is an error. */
     fun validate(name: String, lines: List<String>, knownIds: Set<String>): List<String> = when (name) {
         CARDS -> validateCards(lines, knownIds)
         FACTS -> validateFacts(lines, knownIds)
         TOWNS -> validateTowns(lines)
+        POIS -> validatePois(lines, knownIds)
         else -> listOf("unknown file $name")
     }
 }

@@ -284,3 +284,10 @@ fun rememberLandmarkFacts(): Map<String, List<TownTag>> {
     val context = LocalContext.current
     return remember(context) { loadLandmarkFacts(context.applicationContext) }
 }
+
+/** The one-to-three-sentence introductions of the roadside sights (res/raw/poi_intros.txt), by sight id. */
+@Composable
+fun rememberPoiIntros(): Map<String, List<String>> {
+    val context = LocalContext.current
+    return remember(context) { ContentPack.parsePois(ContentStore(context.applicationContext).lines(ContentPack.POIS)) }
+}

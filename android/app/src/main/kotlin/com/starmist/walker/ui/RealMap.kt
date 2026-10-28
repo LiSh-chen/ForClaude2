@@ -415,8 +415,9 @@ internal fun DrawScope.drawRealMap(
     route.stops.forEach { stop -> if (stop.landmark != null || stop.supply != null) reserve(stop.at.px(), 9.dp.toPx()) }
 
     /** Puts [text] beside [anchor] on a parchment tag, on the first side that is free; returns false when none is. */
-    fun placeName(text: String, anchor: Offset, size: androidx.compose.ui.unit.TextUnit, color: Color, gap: Float, force: Boolean = false, plain: Boolean = false, edge: Color? = null, weight: FontWeight = FontWeight.Bold): Boolean {
-        val t = measurer.measure(text, label.copy(fontSize = size, color = color, fontWeight = weight))
+    fun placeName(text: String, anchor: Offset, size: androidx.compose.ui.unit.TextUnit, color: Color, gap: Float, force: Boolean = false, plain: Boolean = false, edge: Color? = null, weight: FontWeight = FontWeight.Bold, underline: Boolean = false): Boolean {
+        val under = if (underline) androidx.compose.ui.text.style.TextDecoration.Underline else null
+        val t = measurer.measure(text, label.copy(fontSize = size, color = color, fontWeight = weight, textDecoration = under))
         val padX = 4.dp.toPx(); val padY = 1.5.dp.toPx()
         val tw = t.size.width.toFloat(); val th = t.size.height.toFloat()
         val tops = listOf(
@@ -482,6 +483,10 @@ internal fun DrawScope.drawRealMap(
         val o = route.stops.first { it.landmark?.id == card.id }.at.px()
         if (card.id != lastCard?.id && (w <= 3000f || o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f)) return@forEach
         queue += Label(if (card.id == lastCard?.id) 90 else 60) { placeName(card.name, o, 12.sp, Vintage.ink, 11.dp.toPx(), force = card.id == lastCard?.id) }
+    }
+    // Small roadside sights near the walker: just the name, underlined to say it can be tapped for a few lines about the place.
+    if (w >= 1700f && !regionMode) route.poisNear(here).forEach { (poi, _) ->
+        queue += Label(30) { placeName(poi.name, poi.at.px(), 11.sp, Vintage.inkSoft, 6.dp.toPx(), plain = true, weight = FontWeight.Normal, underline = true) }
     }
     queue.sortedByDescending { it.priority }.forEach { it.place() }
 

@@ -67,6 +67,7 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var showDiagnostics by rememberSaveable { mutableStateOf(false) }
     var openCard by rememberSaveable { mutableStateOf<String?>(null) }   // a card tapped on the map: shown over the map, no tab change
+    var openPoi by rememberSaveable { mutableStateOf<String?>(null) }    // a roadside sight's name tapped on the map
     val snackbar = remember { SnackbarHostState() }
 
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -133,6 +134,11 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
         if (route != null && card != null) CardDialog(route, card) { openCard = null } else LaunchedEffect(id) { openCard = null }
     }
 
+    openPoi?.let { id ->
+        val poi = vm.routeState.value?.let { Routes.byId(it.routeId) }?.pois?.firstOrNull { it.id == id }
+        if (poi != null) PoiDialog(poi) { openPoi = null } else LaunchedEffect(id) { openPoi = null }
+    }
+
     Scaffold(
         modifier = Modifier.parchmentTexture(rememberArt("paper_page") ?: rememberArt("parchment_tile")),
         containerColor = androidx.compose.ui.graphics.Color.Transparent,
@@ -141,7 +147,7 @@ private fun AppRoot(vm: AppViewModel = viewModel()) {
     ) { padding ->
         when {
             showDiagnostics -> DiagnosticsScreen(vm, padding, openAppSettings)
-            tab == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings, onOpenCard = { openCard = it })
+            tab == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings, onOpenCard = { openCard = it }, onOpenPoi = { openPoi = it })
             tab == 1 -> StatsScreen(vm, current, padding)
             tab == 3 -> RouteScreen(vm, current, padding)
             else -> SettingsScreen(vm, current, padding, onOpenDiagnostics = { showDiagnostics = true })

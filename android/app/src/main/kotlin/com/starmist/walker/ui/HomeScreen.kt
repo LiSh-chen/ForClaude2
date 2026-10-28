@@ -84,6 +84,8 @@ fun HomeScreen(
     onOpenAppSettings: () -> Unit,
     /** A collected card's marker on the route map was tapped: open that card in the collection. */
     onOpenCard: (String) -> Unit = {},
+    /** The name of a roadside sight on the route map was tapped: show its introduction. */
+    onOpenPoi: (String) -> Unit = {},
 ) {
     val steps by vm.todaySteps.collectAsStateWithLifecycle()
     val routeState by vm.routeState.collectAsStateWithLifecycle()
@@ -123,6 +125,7 @@ fun HomeScreen(
         onSync = { vm.refresh(announce = true) },
         onStartRoute = { vm.startRoute(it) },
         onOpenCard = onOpenCard,
+        onOpenPoi = onOpenPoi,
         strideM = BodyMetrics.strideMeters(profile),
         currentTown = currentTown,
         exploredTowns = visited.keys,
@@ -167,6 +170,7 @@ internal fun HomeContent(
     onSync: () -> Unit,
     onStartRoute: (String) -> Unit,
     onOpenCard: (String) -> Unit = {},
+    onOpenPoi: (String) -> Unit = {},
     strideM: Double = 0.7,
     currentTown: Int = -1,
     exploredTowns: Set<Int> = emptySet(),
@@ -194,6 +198,7 @@ internal fun HomeContent(
                         regionMode = regionMode, selectedTown = if (regionMode) shown else -1,
                         onTapTown = { id -> picked = if (id >= 0) id else -1 },
                         onTapCard = onOpenCard,
+                        onTapPoi = onOpenPoi,
                         walking = walking,
                     )
                     ModeSwitch(regionMode, Modifier.align(Alignment.TopEnd).padding(8.dp)) { regionMode = it; if (!it) picked = -1 }

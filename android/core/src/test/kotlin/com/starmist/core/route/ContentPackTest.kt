@@ -10,7 +10,8 @@ class ContentPackTest {
     @Test
     fun `the bundled files obey their rules`() {
         ContentPack.FILES.forEach { name ->
-            val errors = ContentPack.validate(name, TestPack.lines(name), ids)
+            val known = if (name == ContentPack.POIS) TaiwanLoop.route.pois.map { it.id }.toSet() else ids
+            val errors = ContentPack.validate(name, TestPack.lines(name), known)
             assertTrue(errors.isEmpty(), "$name:\n" + errors.joinToString("\n"))
         }
     }

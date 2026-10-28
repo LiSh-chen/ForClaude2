@@ -1,0 +1,126 @@
+package com.starmist.walker.ui
+
+import java.time.LocalDate
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+/** The daily statistics draw: what each card says, which are available, and that a day's pick is steady. */
+class StatDrawTest {
+    private val today = LocalDate.of(2026, 10, 28)             // a Wednesday
+
+    /** Three months of walking: 6,000 steps a day, 9,000 on Saturdays, a rest on the 20th of each month. */
+    private val history: Map<LocalDate, Long> = (0L..100L).associate { back ->
+        val d = today.minusDays(back)
+        d to when { d.dayOfMonth == 20 -> 0L; d.dayOfWeek.value == 6 -> 9000L; else -> 6000L }
+    }
+
+    private val towns = listOf(
+        TownVisit("甲鎮", "測試縣", 6.0, 40.0, 100, true),
+        TownVisit("乙鄉", "測試縣", 1.5, 90.0, 900, true),
+        TownVisit("丙區", "另一市", 3.0, 10.0, 0, false),
+    )
+
+    private val full = StatInputs(
+        today = today, history = history, goal = 8000, strideM = 0.7, routeTotalKm = 1100.0, walkedKm = 275.0,
+        nextCard = "某某卡" to 12.3, towns = towns, townsTotal = 109, tagsFound = 5, cardsOwned = 9, cardsTotal = 45,
+    )
+
+    @Test
+    fun withAFullHistoryEveryKindHasACard() {
+        for (k in StatKind.values()) {
+            val c = buildStat(k, full, dayStatSeed(today))
+            assertNotNull("$k has no card", c)
+            assertTrue("$k headline", c!!.headline.isNotBlank())
+            assertTrue("$k line", c.line.isNotBlank())
+        }
+        assertTrue(StatKind.values().size >= 15)
+    }
+
+    @Test
+    fun withNothingWalkedOnlyTheFortuneIsLeft() {
+        val empty = StatInputs(today, emptyMap(), 8000, 0.7)
+        assertEquals(listOf(StatKind.FORTUNE), availableStats(empty, 1L))
+    }
+
+    @Test
+    fun theRulersDoTheirArithmetic() {
+        val steps = history.values.sum()
+        val km = steps * 0.7 / 1000.0
+        // the same seed gives the same ruler, and the headline is the km divided by that ruler's length
+        val c = buildStat(StatKind.RULER, full, 3L)!!
+        assertTrue(c.line.contains(steps.withCommas()))
+        val n = c.headline.substringBefore(' ').replace(",", "").toDouble()
+        val lengths = listOf(0.4, 42.195, 394.0, 350.0, 1100.0)
+        assertTrue("headline ${c.headline} for $km km", lengths.any { kotlin.math.abs(km / it - n) <= maxOf(0.06, km / it * 0.01) })
+    }
+
+    @Test
+    fun theHeatMapHasADayPerCellAndKnowsTheGoalDays() {
+        val c = buildStat(StatKind.HEATMAP, full, 1L)!!
+        val v = c.visual as StatVisual.Heat
+        assertEquals(31, v.steps.size)
+        assertEquals(27, v.todayIndex)
+        assertEquals(6000L, v.steps[0])                            // 1 October 2026 is a Thursday
+        assertEquals(0L, v.steps[19])                              // the rest day, the 20th
+        assertEquals(0L, v.steps[30])                              // not yet
+    }
+
+    @Test
+    fun streaksCountBackFromTodayOrYesterday() {
+        val h = (0L..5L).associate { today.minusDays(it) to 9000L } + (today.minusDays(6) to 100L) + (today.minusDays(7) to 9000L)
+        assertEquals(6 to 6, streaks(h, 8000, today))
+        val notYet = h + (today to 10L)                            // today not done: the run ends yesterday
+        assertEquals(5 to 5, streaks(notYet, 8000, today))
+        assertEquals(0 to 0, streaks(h, 0, today))
+    }
+
+    @Test
+    fun theWeekAgainstLastWeekComparesTheSameSpan() {
+        val c = buildStat(StatKind.WEEK_VS_LAST, full, 1L)!!
+        val bars = (c.visual as StatVisual.Bars).rows
+        assertEquals(2, bars.size)
+        // Monday to Wednesday this week against Monday to Wednesday last week: both 3 x 6,000
+        assertEquals(18000.0, bars[0].second, 0.1)
+        assertEquals(18000.0, bars[1].second, 0.1)
+    }
+
+    @Test
+    fun townCardsPickTheRightTownship() {
+        assertEquals("甲鎮", buildStat(StatKind.TOWN_LONGEST, full, 1L)!!.headline)
+        assertEquals("乙鄉", buildStat(StatKind.TOWN_SHORTEST, full, 1L)!!.headline)    // the one still being walked is not counted
+        assertEquals("乙鄉", buildStat(StatKind.TOWN_BIGGEST, full, 1L)!!.headline)
+        assertEquals("乙鄉", buildStat(StatKind.TOWN_HIGHEST, full, 1L)!!.headline)
+        assertEquals("3 / 109", buildStat(StatKind.FOOTPRINT, full, 1L)!!.headline)
+    }
+
+    @Test
+    fun cardsNeedingARouteAreLeftOutWithoutOne() {
+        val noRoute = full.copy(routeTotalKm = 0.0, walkedKm = 0.0, towns = emptyList(), cardsTotal = 0)
+        assertNull(buildStat(StatKind.ROUTE_PROGRESS, noRoute, 1L))
+        assertNull(buildStat(StatKind.CARDS, noRoute, 1L))
+        assertNull(buildStat(StatKind.TOWN_LONGEST, noRoute, 1L))
+    }
+
+    @Test
+    fun todaysPickIsSteadyAndChangesFromDayToDay() {
+        val kinds = StatKind.values().toList()
+        assertEquals(drawStat(today, kinds), drawStat(today, kinds))
+        for (back in 0..60) {
+            val d = today.minusDays(back.toLong())
+            assertNotEquals("$d repeats the day before", drawStat(d, kinds), drawStat(d.minusDays(1), kinds))
+        }
+        assertNull(drawStat(today, emptyList()))
+        assertEquals(StatKind.FORTUNE, drawStat(today, listOf(StatKind.FORTUNE)))
+    }
+
+    @Test
+    fun theFortuneIsTheSameAllDay() {
+        val a = buildStat(StatKind.FORTUNE, full, dayStatSeed(today))!!
+        val b = buildStat(StatKind.FORTUNE, full, dayStatSeed(today))!!
+        assertEquals(a.line, b.line); assertEquals(a.note, b.note)
+    }
+}
