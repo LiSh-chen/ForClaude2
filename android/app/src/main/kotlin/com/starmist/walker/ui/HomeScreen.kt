@@ -351,23 +351,11 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
     val next = route.next(walkedKm)
     val collected = route.collected(walkedKm)
     val totalCards = route.stops.count { it.landmark != null }
-    val island = remember(route) { islandShape(route) }
-    val cardFractions = remember(route) { route.cards.map { (it.second / route.totalKm).toFloat() } }
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
-    // The arrow on the first dial points from where the traveller is to the next card, in degrees clockwise from north.
-    val bearing = remember(route, next?.first?.id, (walkedKm * 5).toInt()) {
-        next?.let { n ->
-            val to = route.stops.first { it.landmark?.id == n.first.id }.at
-            val from = route.positionAt(walkedKm)
-            val east = (to.lng - from.lng) * kotlin.math.cos(Math.toRadians(from.lat))
-            val north = to.lat - from.lat
-            ((Math.toDegrees(kotlin.math.atan2(east, north)) + 360.0) % 360.0).toFloat()
-        }
-    }
     var detail by remember { mutableStateOf(false) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         InstrumentCluster(
-            steps, goal, walkedKm, next?.second, bearing, island, cardFractions, overall.toFloat(), border?.fraction?.toFloat(),
+            steps, goal, walkedKm, next?.second, overall.toFloat(), border?.fraction?.toFloat(),
             Modifier.clickable { detail = true },
         )
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)) {
