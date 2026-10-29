@@ -222,10 +222,10 @@ internal fun RouteDial(overall: Float, region: Float?, islandKm: Double, townKm:
             // the two distances walked, as two odometers, the unit printed on the face
             // each reading is named, with its unit, in the colour of its needle: the short blue one round the island, the long red one through the township
             val tag = TextStyle(fontSize = 5.5.sp, fontWeight = FontWeight.Black)
-            label(tm, "環島 km", tag.copy(color = Color(0xFF0B5E96)), p(50f, 62.2f))
-            odometer(tm, 38.3f, 65f, islandT, cw = 4.2f, ch = 6.2f)
-            label(tm, "區域 km", tag.copy(color = INK_RED), p(50f, 75.5f))
-            odometer(tm, 38.3f, 78.3f, if (townKm != null) townT else null, cw = 4.2f, ch = 6.2f)
+            label(tm, "環島 km", tag.copy(color = Color(0xFF0B5E96)), p(50f, 61f))
+            odometer(tm, 38.3f, 65.6f, islandT, cw = 4.2f, ch = 6.2f)
+            label(tm, "區域 km", tag.copy(color = INK_RED), p(50f, 76.5f))
+            odometer(tm, 38.3f, 81f, if (townKm != null) townT else null, cw = 4.2f, ch = 6.2f)
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
