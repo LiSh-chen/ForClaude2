@@ -168,7 +168,7 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
     }
 
     /** Where the walk leaves the township it is in: how far to go, and how far through it the walker already is (0 to 1). */
-    class RegionBorder(val kmLeft: Double, val fraction: Double)
+    class RegionBorder(val kmLeft: Double, val fraction: Double, val kmDone: Double)
 
     /** The next township border ahead on [route], or null when the walk ends inside this township (or nothing lies ahead). Looks at most 120 km ahead and 120 km back. */
     fun nextBorder(route: RouteDef, walkedKm: Double): RegionBorder? {
@@ -191,7 +191,7 @@ class TownAreas internal constructor(val towns: List<TownArea>) {
             start = back
         }
         val span = (exit - start).coerceAtLeast(0.2)
-        return RegionBorder(exit - walkedKm, ((walkedKm - start) / span).coerceIn(0.0, 1.0))
+        return RegionBorder(exit - walkedKm, ((walkedKm - start) / span).coerceIn(0.0, 1.0), (walkedKm - start).coerceAtLeast(0.0))
     }
 
     companion object {

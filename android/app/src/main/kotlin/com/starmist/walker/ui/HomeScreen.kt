@@ -355,7 +355,7 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
     var detail by remember { mutableStateOf(false) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         InstrumentCluster(
-            steps, goal, walkedKm, next?.second, overall.toFloat(), border?.fraction?.toFloat(), route.totalKm - walkedKm, border?.kmLeft,
+            steps, goal, walkedKm, next?.second, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone,
             Modifier.clickable { detail = true },
         )
     }
@@ -373,7 +373,7 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
                     } else Text("景點全部收集完成", fontSize = 13.sp)
                     if (border != null) {
                         val s = stepsFor(border.kmLeft)
-                        Text("離開此區域　還有 ${"%.1f".format(border.kmLeft)} 公里（${s.withCommas()} 步，約 ${days(s)} 天）", fontSize = 13.sp)
+                        Text("此區域　已走 ${"%.1f".format(border.kmDone)} 公里，離開還有 ${"%.1f".format(border.kmLeft)} 公里（${s.withCommas()} 步，約 ${days(s)} 天）", fontSize = 13.sp)
                     }
                     val left = route.totalKm - walkedKm
                     Text("環島全程　${(overall * 100).roundToInt()}%，已走 ${"%.1f".format(walkedKm)} 公里，剩 ${"%.0f".format(left)} 公里（約 ${days(stepsFor(left))} 天）", fontSize = 13.sp)
