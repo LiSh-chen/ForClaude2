@@ -69,8 +69,8 @@ private fun Pen.band(cx: Float, cy: Float, r0: Float, r1: Float, start: Float, s
 private fun Pen.face(cx: Float, cy: Float, r: Float, start: Float, sweep: Float, majors: Int, seed: Int, whole: Boolean) {
     val rim = if (whole) arcPts(cx, cy, r, 0f, 360f, 40) else arcPts(cx, cy, r, start, start + sweep, 40) + listOf(at(cx, cy, r, start))
     wash(rim, PAPER, 1f, 0f, 0f)
-    inked(rim, seed, closed = true, width = line * 1.4f)
-    if (whole) inked(arcPts(cx, cy, r * 0.93f, 0f, 360f, 40), seed + 1, closed = true, width = line * 0.6f)
+    inked(rim, seed, closed = true, width = line * 1.4f, calm = 0.25f)
+    if (whole) inked(arcPts(cx, cy, r * 0.93f, 0f, 360f, 40), seed + 1, closed = true, width = line * 0.6f, calm = 0.25f)
     for (i in 0..majors * 2) {
         val major = i % 2 == 0
         val deg = start + sweep * i / (majors * 2f)
@@ -228,8 +228,8 @@ internal fun GapDisplay(km: Double?, modifier: Modifier = Modifier) {
             // the face, like a dial's
             val face = roundRect(3f, -19f, 97f, 119f, 12f)
             wash(face, PAPER, 1f, 0f, 0f)
-            inked(face, 790, closed = true, width = line * 1.4f)
-            inked(roundRect(6f, -16f, 94f, 116f, 10f), 791, closed = true, width = line * 0.6f)
+            inked(face, 790, closed = true, width = line * 1.4f, calm = 0.25f)
+            inked(roundRect(6f, -16f, 94f, 116f, 10f), 791, closed = true, width = line * 0.6f, calm = 0.25f)
             // the road: two edges running up to the card, shaded, with a dashed middle
             val top = 14f; val bottom = 94f
             fun half(y: Float) = 8f + (y - top) / (bottom - top) * 38f

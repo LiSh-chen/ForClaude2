@@ -44,7 +44,7 @@ internal class Pen(val d: DrawScope, size: Size) {
     fun p(x: Float, y: Float) = Offset(ox + x * u, oy + y * u)
 
     /** [pts] cut into short pieces, each nudged a little sideways, like a line drawn by hand. */
-    private fun wobble(pts: List<Offset>, seed: Int, closed: Boolean): List<Offset> {
+    private fun wobble(pts: List<Offset>, seed: Int, closed: Boolean, calm: Float): List<Offset> {
         val rnd = Random(seed)
         val out = ArrayList<Offset>()
         val n = pts.size
@@ -57,7 +57,7 @@ internal class Pen(val d: DrawScope, size: Size) {
             val ny = if (len > 0f) (b.x - a.x) / len else 0f
             for (k in 0 until steps) {
                 val t = k / steps.toFloat()
-                val j = (rnd.nextFloat() - 0.5f) * 2f * amp
+                val j = (rnd.nextFloat() - 0.5f) * 2f * amp * calm
                 out += Offset(a.x + (b.x - a.x) * t + nx * j, a.y + (b.y - a.y) * t + ny * j)
             }
         }
@@ -71,16 +71,16 @@ internal class Pen(val d: DrawScope, size: Size) {
         if (closed) close()
     }
 
-    fun stroke(pts: List<Offset>, color: Color, seed: Int, width: Float = line, closed: Boolean = false, alpha: Float = 1f, dash: PathEffect? = null) {
+    fun stroke(pts: List<Offset>, color: Color, seed: Int, width: Float = line, closed: Boolean = false, alpha: Float = 1f, dash: PathEffect? = null, calm: Float = 1f) {
         if (pts.size < 2) return
-        val w = wobble(pts, seed, closed)
+        val w = wobble(pts, seed, closed, calm)
         d.drawPath(pathOf(w, closed), color.copy(alpha = color.alpha * alpha), style = Stroke(width, cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = dash))
     }
 
     /** An outline, drawn again a little thinner and paler, the way a pen goes over it twice. */
-    fun inked(pts: List<Offset>, seed: Int, closed: Boolean = false, width: Float = line, dash: PathEffect? = null) {
-        stroke(pts, ink, seed, width, closed, 1f, dash)
-        stroke(pts, ink, seed + 101, width * 0.55f, closed, 0.5f, dash)
+    fun inked(pts: List<Offset>, seed: Int, closed: Boolean = false, width: Float = line, dash: PathEffect? = null, calm: Float = 1f) {
+        stroke(pts, ink, seed, width, closed, 1f, dash, calm)
+        stroke(pts, ink, seed + 101, width * 0.55f, closed, 0.5f, dash, calm)
     }
 
     /** A flat wash of colour, set a little off the outline. */
