@@ -1,6 +1,9 @@
 package com.starmist.walker.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
@@ -9,7 +12,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -28,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.PI
 import kotlin.math.cos
+import kotlin.math.floor
 import kotlin.math.sin
 
 /*
@@ -90,18 +97,48 @@ private fun Pen.label(tm: TextMeasurer, s: String, style: TextStyle, c: Offset) 
     d.drawText(l, topLeft = Offset(c.x - l.size.width / 2f, c.y - l.size.height / 2f))
 }
 
-/** A mechanical odometer: [cells] drums with a digit each, the last one (tenths) on a pale drum, as on a car's dial. [x] is the left edge, [y] the top, in the pen's units. */
-private fun Pen.odometer(tm: TextMeasurer, x: Float, y: Float, value: Double?, cells: Int = 5, cw: Float = 4.8f, ch: Float = 7f) {
-    val digits = value?.let { (it * 10).roundToInt().coerceIn(0, Math.pow(10.0, cells.toDouble()).toInt() - 1).toString().padStart(cells, '0') }
-    val frame = roundRect(x - 0.8f, y - 0.8f, x + cw * cells + 0.8f, y + ch + 0.8f, 1.2f)
+/** A reading in tenths that rolls to its value: from zero when the screen first shows, and from the old reading when it changes. */
+@Composable
+private fun rememberRolling(tenths: Float): Float {
+    val inspect = LocalInspectionMode.current
+    val a = remember { Animatable(if (inspect) tenths else 0f) }
+    LaunchedEffect(tenths) { if (inspect) a.snapTo(tenths) else a.animateTo(tenths, tween(1600, easing = FastOutSlowInEasing)) }
+    return a.value
+}
+
+/**
+ * A mechanical odometer of [cells] drums, the last one (tenths, with its decimal point) on a pale drum, as on a car's dial. [tenths] is the
+ * reading times ten, or null for a dashed, blank one. A drum rolls to the next digit only when the drums below it pass from 9 to 0.
+ * [x] is the left edge, [y] the top, in the pen's units.
+ */
+private fun Pen.odometer(tm: TextMeasurer, x: Float, y: Float, tenths: Float?, cells: Int = 5, cw: Float = 4.8f, ch: Float = 7f) {
+    val lastW = cw * 1.55f
+    val total = cw * (cells - 1) + lastW
+    val frame = roundRect(x - 0.8f, y - 0.8f, x + total + 0.8f, y + ch + 0.8f, 1.2f)
     wash(frame, ink, 0.85f, 0f, 0f); inked(frame, 900, closed = true, width = line * 0.8f)
+    val cream = Color(0xFFF3E9C9)
+    val fontSize = (ch * 0.9f).coerceAtLeast(5f).sp
+    val t = tenths?.coerceIn(0f, Math.pow(10.0, cells.toDouble()).toFloat() - 1f)
+    val whole = t?.let { floor(it).toLong() } ?: 0L
+    val carry = if (t != null) t - whole else 0f
     for (i in 0 until cells) {
+        val k = cells - 1 - i
+        val last = k == 0
         val x0 = x + i * cw
-        val last = i == cells - 1
-        val cell = listOf(p(x0 + 0.25f, y), p(x0 + cw - 0.25f, y), p(x0 + cw - 0.25f, y + ch), p(x0 + 0.25f, y + ch))
-        wash(cell, if (last) Color(0xFFF3E9C9) else Color(0xFF2B2118), 1f, 0f, 0f)
-        val c = digits?.get(i)?.toString() ?: "-"
-        label(tm, c, TextStyle(fontSize = 6.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = if (last) Vintage.ink else Color(0xFFF3E9C9)), p(x0 + cw / 2f, y + ch / 2f))
+        val w = if (last) lastW else cw
+        val cell = listOf(p(x0 + 0.25f, y), p(x0 + w - 0.25f, y), p(x0 + w - 0.25f, y + ch), p(x0 + 0.25f, y + ch))
+        wash(cell, if (last) cream else Color(0xFF2B2118), 1f, 0f, 0f)
+        val style = TextStyle(fontSize = fontSize, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = if (last) Vintage.ink else cream)
+        val cx = x0 + w / 2f
+        if (t == null) { label(tm, "-", style, p(cx, y + ch / 2f)); continue }
+        var m = 1L; repeat(k) { m *= 10 }
+        val roll = if (whole % m == m - 1) carry else 0f
+        val digit = ((whole / m) % 10).toInt()
+        fun text(d: Int) = if (last) ".${d % 10}" else "${d % 10}"
+        clipTo(cell) {
+            label(tm, text(digit), style, p(cx, y + ch / 2f - roll * ch))
+            label(tm, text(digit + 1), style, p(cx, y + ch / 2f + (1f - roll) * ch))
+        }
     }
 }
 
@@ -115,6 +152,7 @@ private fun stepScale(max: Int): Int = listOf(500, 1000, 2000, 2500, 5000, 10000
 internal fun StepsDial(steps: Long, goal: Int, walkedKm: Double, modifier: Modifier = Modifier) {
     val max = (goal * 1.2f).coerceAtLeast(1f)
     val v by animateFloatAsState((steps / max).coerceIn(0f, 1f), needleSpring, label = "steps")
+    val km10 = rememberRolling((walkedKm * 10).toFloat())
     val tm = rememberTextMeasurer()
     Canvas(modifier.aspectRatio(1f)) {
         val pen = Pen(this, size)
@@ -139,7 +177,7 @@ internal fun StepsDial(steps: Long, goal: Int, walkedKm: Double, modifier: Modif
             label(tm, if (thousands) "x1000 步" else "步", TextStyle(fontSize = 7.sp, color = Vintage.inkSoft), p(cx, 30f))
             // the kilometre counter, a recessed window in the face of the dial
             label(tm, "總里程 km", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(50f, 73.5f))
-            odometer(tm, 38f, 78f, walkedKm)
+            odometer(tm, 36.7f, 78f, km10)
             needle(cx, cy, r * 0.72f, start + sweep * v, INK_RED, 240)
         }
     }
@@ -150,6 +188,8 @@ internal fun StepsDial(steps: Long, goal: Int, walkedKm: Double, modifier: Modif
 internal fun RouteDial(overall: Float, region: Float?, islandKm: Double, townKm: Double?, modifier: Modifier = Modifier) {
     val v by animateFloatAsState(overall.coerceIn(0f, 1f), needleSpring, label = "island")
     val w by animateFloatAsState((region ?: 0f).coerceIn(0f, 1f), needleSpring, label = "region")
+    val islandT = rememberRolling((islandKm * 10).toFloat())
+    val townT = rememberRolling(((townKm ?: 0.0) * 10).toFloat())
     val tm = rememberTextMeasurer()
     Canvas(modifier.aspectRatio(1f)) {
         val pen = Pen(this, size)
@@ -160,12 +200,13 @@ internal fun RouteDial(overall: Float, region: Float?, islandKm: Double, townKm:
             val num = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
             for (i in 0..5) label(tm, "${i * 20}", num, at(cx, cy, r * 0.64f, start + sweep * i / 5f))
             label(tm, "進度 %", TextStyle(fontSize = 6.sp, color = Vintage.inkSoft), p(cx, 30f))
-            // the two distances walked, as two odometers
+            // the two distances walked, as two odometers, the unit printed on the face
             val tag = TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold)
-            label(tm, "環島 km", tag.copy(color = Color(0xFF0B5E96)), p(33.5f, 80.5f))
-            odometer(tm, 42f, 77f, islandKm, cw = 4.6f, ch = 6.6f)
-            label(tm, "區域 km", tag.copy(color = INK_RED), p(33.5f, 88.5f))
-            odometer(tm, 42f, 85f, townKm, cw = 4.6f, ch = 6.6f)
+            label(tm, "km", TextStyle(fontSize = 5.sp, color = Vintage.inkSoft), p(50f, 71f))
+            label(tm, "環島", tag.copy(color = Color(0xFF0B5E96)), p(38.5f, 78.2f))
+            odometer(tm, 45.5f, 75.5f, islandT, cw = 3.6f, ch = 5.5f)
+            label(tm, "區域", tag.copy(color = INK_RED), p(38.5f, 86f))
+            odometer(tm, 45.5f, 83f, if (townKm != null) townT else null, cw = 3.6f, ch = 5.5f)
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
