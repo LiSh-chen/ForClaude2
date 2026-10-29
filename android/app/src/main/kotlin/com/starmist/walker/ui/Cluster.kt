@@ -100,7 +100,8 @@ private fun Pen.label(tm: TextMeasurer, s: String, style: TextStyle, c: Offset) 
 /** A reading in tenths that rolls to its value: from zero when the screen first shows, and from the old reading when it changes. */
 @Composable
 private fun rememberRolling(tenths: Float): Float {
-    val inspect = LocalInspectionMode.current
+    // The screenshot tests take their picture at once, so there the reading does not roll.
+    val inspect = LocalInspectionMode.current || decodeThumbsInline
     val a = remember { Animatable(if (inspect) tenths else 0f) }
     LaunchedEffect(tenths) { if (inspect) a.snapTo(tenths) else a.animateTo(tenths, tween(1600, easing = FastOutSlowInEasing)) }
     return a.value
