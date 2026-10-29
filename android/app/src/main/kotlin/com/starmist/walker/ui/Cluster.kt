@@ -221,13 +221,12 @@ internal fun RouteDial(overall: Float, region: Float?, islandKm: Double, townKm:
             label(tm, "進度 %", TextStyle(fontSize = 6.sp, color = Vintage.inkSoft), p(cx, 30f))
             // the two distances walked, as two odometers, the unit printed on the face
             label(tm, "km", TextStyle(fontSize = 5.sp, color = Vintage.inkSoft), p(50f, 61.5f))
-            // a dot in the colour of each needle says whose distance it is
-            for ((y, color) in listOf(67.3f to Color(0xFF0E86D4), 77f to INK_RED)) {
-                val dot = circle(p(39.5f, y), 1.9f * u, 12)
-                wash(dot, color, 1f, 0f, 0f); inked(dot, 330 + y.toInt(), closed = true, width = line * 0.6f, calm = 0.3f)
-            }
-            odometer(tm, 44.5f, 64.5f, islandT, cw = 3.6f, ch = 5.5f)
-            odometer(tm, 44.5f, 74.2f, if (townKm != null) townT else null, cw = 3.6f, ch = 5.5f)
+            // each reading is named in the colour of its needle: the short blue one round the island, the long red one through the township
+            val tag = TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Black)
+            label(tm, "環島", tag.copy(color = Color(0xFF0B5E96)), p(41f, 67.3f))
+            label(tm, "區域", tag.copy(color = INK_RED), p(41f, 77f))
+            odometer(tm, 48f, 64.5f, islandT, cw = 3.0f, ch = 5.5f)
+            odometer(tm, 48f, 74.2f, if (townKm != null) townT else null, cw = 3.0f, ch = 5.5f)
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
