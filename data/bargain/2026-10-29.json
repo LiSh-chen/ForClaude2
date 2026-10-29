@@ -1,0 +1,360 @@
+{
+ "date": "2026-10-29",
+ "params_version": 1,
+ "picks": [
+  {
+   "ticker": "ORCL",
+   "name": "Oracle Corporation",
+   "zh_name": "Oracle",
+   "market": "US",
+   "sector": "cloud_software",
+   "rank": 1,
+   "entry_price": 144.54,
+   "entry_date": "2026-10-28",
+   "composite": 72.53,
+   "scores": {
+    "sector": 75.0,
+    "leader": 75.0,
+    "quality": 55.2,
+    "growth": 99.4,
+    "valuation": 100.0,
+    "momentum": 38.9,
+    "news": 82.9
+   },
+   "target": {
+    "base": 231.26,
+    "bull": 302.33,
+    "bear": 124.66,
+    "ev": 218.83,
+    "confidence": "高",
+    "upside": 0.6,
+    "ev_upside": 0.514,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 280.92,
+      "weight": 0.5,
+      "upside": 0.9435
+     },
+     "peg": {
+      "value": 333.08,
+      "weight": 0.187,
+      "upside": 1.3044
+     },
+     "consensus": {
+      "value": 235.8,
+      "weight": 0.312,
+      "upside": 0.6314
+     }
+    }
+   },
+   "stop": 125.48,
+   "fundamentals": {
+    "market_cap": 438173138944,
+    "pe_ttm": 22.6552,
+    "pe_fwd": 13.15,
+    "peg": 0.73,
+    "roe": 0.4119,
+    "gross_margin": 0.6396,
+    "op_margin": 0.3563,
+    "net_margin": 0.2636,
+    "rev_growth": 0.296,
+    "eps_growth": 0.545,
+    "de": 2.5172,
+    "beta": 1.77,
+    "target_mean": 235.8034,
+    "n_analysts": 41,
+    "fcf_margin": -0.6388
+   },
+   "tech": {
+    "ret_1m": 0.052867255830600035,
+    "ret_3m": 0.1373045938767321,
+    "rel_3m": 0.09611538407695575,
+    "dist200": -0.07659764804906877,
+    "vol_ann": 0.5424109415231179
+   },
+   "book": "bargain",
+   "also_main": true,
+   "bargain_score": 84.0,
+   "facts": {
+    "from_high": -0.4784,
+    "pos52": 0.1844,
+    "bounce20": 0.1513,
+    "ret_1m": 0.0529,
+    "dist200": -0.0766,
+    "pe_discount": 0.6536,
+    "eps_up": 0.7228,
+    "rev_growth": 0.296,
+    "upside": 0.6
+   }
+  },
+  {
+   "ticker": "CRDO",
+   "name": "Credo Technology Group Holding ",
+   "zh_name": "Credo",
+   "market": "US",
+   "sector": "networking_optics",
+   "rank": 2,
+   "entry_price": 173.69,
+   "entry_date": "2026-10-28",
+   "composite": 59.78,
+   "scores": {
+    "sector": 33.1,
+    "leader": 0.0,
+    "quality": 93.6,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 13.0,
+    "news": 40.0
+   },
+   "target": {
+    "base": 248.36,
+    "bull": 347.33,
+    "bear": 99.89,
+    "ev": 231.03,
+    "confidence": "高",
+    "upside": 0.4299,
+    "ev_upside": 0.3302,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 208.82,
+      "weight": 0.5,
+      "upside": 0.2022
+     },
+     "peg": {
+      "value": 294.31,
+      "weight": 0.187,
+      "upside": 0.6944
+     },
+     "consensus": {
+      "value": 284.05,
+      "weight": 0.312,
+      "upside": 0.6354
+     }
+    }
+   },
+   "stop": 142.43,
+   "fundamentals": {
+    "market_cap": 32645369856,
+    "pe_ttm": 61.5922,
+    "pe_fwd": 17.8838,
+    "peg": null,
+    "roe": 0.3067,
+    "gross_margin": 0.6707,
+    "op_margin": 0.252,
+    "net_margin": 0.3383,
+    "rev_growth": 1.147,
+    "eps_growth": 0.971,
+    "de": 0.0096,
+    "beta": 3.249,
+    "target_mean": 284.0454,
+    "n_analysts": 19,
+    "fcf_margin": 0.1561
+   },
+   "tech": {
+    "ret_1m": -0.09701067361582127,
+    "ret_3m": -0.13621443773737996,
+    "rel_3m": -0.17740364753715632,
+    "dist200": -0.04080855986081866,
+    "vol_ann": 0.9424755756843193
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 82.8,
+   "facts": {
+    "from_high": -0.4259,
+    "pos52": 0.4,
+    "bounce20": 0.1792,
+    "ret_1m": -0.097,
+    "dist200": -0.0408,
+    "pe_discount": 0.288,
+    "eps_up": 2.444,
+    "rev_growth": 1.147,
+    "upside": 0.4299
+   }
+  },
+  {
+   "ticker": "ON",
+   "name": "ON Semiconductor Corporation",
+   "zh_name": "onsemi",
+   "market": "US",
+   "sector": "power_semis",
+   "rank": 3,
+   "entry_price": 75.63,
+   "entry_date": "2026-10-28",
+   "composite": 64.29,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 71.9,
+    "growth": 66.9,
+    "valuation": 88.2,
+    "momentum": 20.0,
+    "news": 55.9
+   },
+   "target": {
+    "base": 98.47,
+    "bull": 137.45,
+    "bear": 40.01,
+    "ev": 91.65,
+    "confidence": "中",
+    "upside": 0.302,
+    "ev_upside": 0.2118,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 82.8,
+      "weight": 0.4,
+      "upside": 0.0948
+     },
+     "peg": {
+      "value": 138.27,
+      "weight": 0.15,
+      "upside": 0.8283
+     },
+     "dcf": {
+      "value": 96.02,
+      "weight": 0.2,
+      "upside": 0.2696
+     },
+     "consensus": {
+      "value": 101.63,
+      "weight": 0.25,
+      "upside": 0.3438
+     }
+    }
+   },
+   "stop": 66.73,
+   "fundamentals": {
+    "market_cap": 29444165632,
+    "pe_ttm": 51.1013,
+    "pe_fwd": 16.5746,
+    "peg": 0.18,
+    "roe": 0.0831,
+    "gross_margin": 0.4278,
+    "op_margin": 0.1953,
+    "net_margin": 0.1017,
+    "rev_growth": 0.092,
+    "eps_growth": 0.366,
+    "de": 0.6506,
+    "beta": 2.052,
+    "target_mean": 101.6296,
+    "n_analysts": 27,
+    "fcf_margin": 0.2673
+   },
+   "tech": {
+    "ret_1m": -0.004213294373695442,
+    "ret_3m": -0.0968473945216135,
+    "rel_3m": -0.13803660432138987,
+    "dist200": -0.0805534272881655,
+    "vol_ann": 0.5234232003497382
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 63.2,
+   "facts": {
+    "from_high": -0.4353,
+    "pos52": 0.3452,
+    "bounce20": 0.0501,
+    "ret_1m": -0.0042,
+    "dist200": -0.0806,
+    "pe_discount": 0.1594,
+    "eps_up": 2.0831,
+    "rev_growth": 0.092,
+    "upside": 0.302
+   }
+  },
+  {
+   "ticker": "SYK",
+   "name": "Stryker Corporation",
+   "zh_name": "Stryker",
+   "market": "US",
+   "sector": "aging_care",
+   "rank": 4,
+   "entry_price": 304.0,
+   "entry_date": "2026-10-28",
+   "composite": 68.09,
+   "scores": {
+    "sector": null,
+    "leader": 100.0,
+    "quality": 83.9,
+    "growth": 70.6,
+    "valuation": 70.6,
+    "momentum": 22.1,
+    "news": 40.0
+   },
+   "target": {
+    "base": 379.31,
+    "bull": 494.84,
+    "bear": 206.01,
+    "ev": 359.09,
+    "confidence": "中",
+    "upside": 0.2477,
+    "ev_upside": 0.1812,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 322.93,
+      "weight": 0.4,
+      "upside": 0.0623
+     },
+     "peg": {
+      "value": 504.58,
+      "weight": 0.15,
+      "upside": 0.6598
+     },
+     "dcf": {
+      "value": 418.98,
+      "weight": 0.2,
+      "upside": 0.3782
+     },
+     "consensus": {
+      "value": 362.62,
+      "weight": 0.25,
+      "upside": 0.1928
+     }
+    }
+   },
+   "stop": 283.22,
+   "fundamentals": {
+    "market_cap": 116606205952,
+    "pe_ttm": 31.5026,
+    "pe_fwd": 18.2571,
+    "peg": 1.41,
+    "roe": 0.1651,
+    "gross_margin": 0.6559,
+    "op_margin": 0.2702,
+    "net_margin": 0.1443,
+    "rev_growth": 0.094,
+    "eps_growth": 0.441,
+    "de": 0.6439,
+    "beta": 0.781,
+    "target_mean": 362.6154,
+    "n_analysts": 26,
+    "fcf_margin": 0.159
+   },
+   "tech": {
+    "ret_1m": 0.09395810342284716,
+    "ret_3m": -0.12377119593011399,
+    "rel_3m": -0.16496040572989035,
+    "dist200": -0.05789481683504594,
+    "vol_ann": 0.3152523138069385
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 61.3,
+   "facts": {
+    "from_high": -0.2087,
+    "pos52": 0.3045,
+    "bounce20": 0.1137,
+    "ret_1m": 0.094,
+    "dist200": -0.0579,
+    "pe_discount": 0.0533,
+    "eps_up": 0.7255,
+    "rev_growth": 0.094,
+    "upside": 0.2477
+   }
+  }
+ ]
+}
