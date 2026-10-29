@@ -144,6 +144,23 @@ private fun Pen.odometer(tm: TextMeasurer, x: Float, y: Float, tenths: Float?, c
     }
 }
 
+/** The segments lit for each digit, a to g as bits 0 to 6; 10 is a dash. */
+private val SEGMENTS = intArrayOf(0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x40)
+
+/** One seven-segment digit with [x], [y] its top left in the pen's units; [digit] null leaves it blank, only the ghost of the unlit segments. */
+private fun Pen.digit7(x: Float, y: Float, w: Float, h: Float, digit: Int?) {
+    val t = w * 0.2f
+    val mid = y + h / 2f
+    val mask = if (digit == null) 0 else SEGMENTS[digit]
+    fun hz(yc: Float): List<Offset> { val x0 = x + t * 0.6f; val x1 = x + w - t * 0.6f; return listOf(p(x0, yc), p(x0 + t / 2, yc - t / 2), p(x1 - t / 2, yc - t / 2), p(x1, yc), p(x1 - t / 2, yc + t / 2), p(x0 + t / 2, yc + t / 2)) }
+    fun vt(xc: Float, y0: Float, y1: Float) = listOf(p(xc, y0), p(xc + t / 2, y0 + t / 2), p(xc + t / 2, y1 - t / 2), p(xc, y1), p(xc - t / 2, y1 - t / 2), p(xc - t / 2, y0 + t / 2))
+    val shapes = listOf(
+        hz(y + t / 2), vt(x + w - t / 2, y + t * 0.6f, mid - t * 0.4f), vt(x + w - t / 2, mid + t * 0.4f, y + h - t * 0.6f), hz(y + h - t / 2),
+        vt(x + t / 2, mid + t * 0.4f, y + h - t * 0.6f), vt(x + t / 2, y + t * 0.6f, mid - t * 0.4f), hz(mid),
+    )
+    for ((i, shape) in shapes.withIndex()) wash(shape, ink, if (mask and (1 shl i) != 0) 0.92f else 0.07f, 0f, 0f)
+}
+
 private val needleSpring = spring<Float>(dampingRatio = 0.42f, stiffness = Spring.StiffnessVeryLow)
 
 /** The step scale: a round step between ticks, and the labels in thousands when that reads better. */
@@ -200,15 +217,15 @@ internal fun RouteDial(overall: Float, region: Float?, islandKm: Double, townKm:
             face(cx, cy, r, start, sweep, 10, 300, whole = true)
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 0f, v, COLD_BLUE, 330, alpha = 0.5f)
             val num = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
-            for (i in 0..5) label(tm, "${i * 20}", num, at(cx, cy, r * 0.64f, start + sweep * i / 5f))
+            for (i in 0..5) label(tm, "${i * 20}", num, at(cx, cy, r * 0.72f, start + sweep * i / 5f))
             label(tm, "進度 %", TextStyle(fontSize = 6.sp, color = Vintage.inkSoft), p(cx, 30f))
             // the two distances walked, as two odometers, the unit printed on the face
             val tag = TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold)
-            label(tm, "km", TextStyle(fontSize = 5.sp, color = Vintage.inkSoft), p(50f, 71f))
-            label(tm, "環島", tag.copy(color = Color(0xFF0B5E96)), p(38.5f, 78.2f))
-            odometer(tm, 45.5f, 75.5f, islandT, cw = 3.6f, ch = 5.5f)
-            label(tm, "區域", tag.copy(color = INK_RED), p(38.5f, 86f))
-            odometer(tm, 45.5f, 83f, if (townKm != null) townT else null, cw = 3.6f, ch = 5.5f)
+            label(tm, "km", TextStyle(fontSize = 5.sp, color = Vintage.inkSoft), p(50f, 61.5f))
+            label(tm, "環島", tag.copy(color = Color(0xFF0B5E96)), p(38f, 67.3f))
+            odometer(tm, 45f, 64.5f, islandT, cw = 3.6f, ch = 5.5f)
+            label(tm, "區域", tag.copy(color = INK_RED), p(38f, 77f))
+            odometer(tm, 45f, 74.2f, if (townKm != null) townT else null, cw = 3.6f, ch = 5.5f)
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
@@ -216,12 +233,11 @@ internal fun RouteDial(overall: Float, region: Float?, islandKm: Double, townKm:
     }
 }
 
-/** Between the dials: how far the next card is, as a driving-assist display on a face like the dials'. The card is up the road, the traveller at the bottom, and stripes across the road are the gap: the farther away, the more of them. The distance is an odometer below, like the other readings. */
+/** Between the dials: how far the next card is, as a driving-assist display on a face like the dials'. The card is up the road, the traveller at the bottom, and stripes across the road are the gap: the farther away, the more of them. The distance is a digital readout below. */
 @Composable
 internal fun GapDisplay(km: Double?, modifier: Modifier = Modifier) {
     val tm = rememberTextMeasurer()
     val walker = rememberArt("traveller_back") ?: rememberArt("traveller_walkx_2")
-    val km10 = rememberRolling(((km ?: 0.0) * 10).toFloat())
     val lit = when { km == null -> 0; km <= 2.0 -> 1; km <= 5.0 -> 2; km <= 10.0 -> 3; km <= 20.0 -> 4; else -> 5 }
     Canvas(modifier.aspectRatio(0.7f)) {
         val pen = Pen(this, size)
@@ -232,7 +248,7 @@ internal fun GapDisplay(km: Double?, modifier: Modifier = Modifier) {
             inked(face, 790, closed = true, width = line * 1.4f, calm = 0.25f)
             inked(roundRect(6f, -16f, 94f, 116f, 10f), 791, closed = true, width = line * 0.6f, calm = 0.25f)
             // the road: two edges running up to the card, shaded, with a dashed middle
-            val top = 14f; val bottom = 92f
+            val top = 11f; val bottom = 83f
             fun half(y: Float) = 8f + (y - top) / (bottom - top) * 38f
             val left = listOf(p(50f - half(top), top), p(50f - half(bottom), bottom))
             val right = listOf(p(50f + half(top), top), p(50f + half(bottom), bottom))
@@ -242,7 +258,7 @@ internal fun GapDisplay(km: Double?, modifier: Modifier = Modifier) {
             inked(listOf(p(50f, top), p(50f, bottom)), 802, width = line * 0.7f, dash = dashed(this, 5f, 6f))
             // the stripes across the road, washed and hatched like the dials' bands: the nearest to the traveller first
             for (i in 0 until 5) {
-                val y1 = 56f - i * 8.2f; val y0 = y1 - 5f
+                val y1 = 49f - i * 7.2f; val y0 = y1 - 4.4f
                 val st = listOf(p(50f - half(y0) + 2f, y0), p(50f + half(y0) - 2f, y0), p(50f + half(y1) - 2f, y1), p(50f - half(y1) + 2f, y1))
                 if (i < lit) {
                     wash(st, COLD_BLUE, 0.45f, 0f, 0f)
@@ -251,20 +267,31 @@ internal fun GapDisplay(km: Double?, modifier: Modifier = Modifier) {
                 inked(st, 810 + i, closed = true, width = line * 0.7f)
             }
             // the card at the far end
-            val pin = listOf(p(50f, 12f), p(42f, 1f), p(44f, -6f), p(50f, -9f), p(56f, -6f), p(58f, 1f))
+            val pin = listOf(p(50f, 9f), p(42f, -2f), p(44f, -9f), p(50f, -12f), p(56f, -9f), p(58f, -2f))
             wash(pin, INK_RED, 0.55f, 0f, 0f)
             hatch(pin, INK_RED, 0f, 100f, 0f, 100f, gap = 2.2f, lean = 3f, alpha = 0.7f)
             inked(pin, 820, closed = true, width = line * 0.9f)
-            wash(circle(p(50f, -2.5f), 2.4f * u, 10), PAPER, 1f, 0f, 0f)
+            wash(circle(p(50f, -5.5f), 2.4f * u, 10), PAPER, 1f, 0f, 0f)
             // the traveller of the map
             if (walker != null) {
-                val h = 36f * u; val w = h * walker.width / walker.height
-                val foot = p(50f, 56f)
+                val h = 32f * u; val w = h * walker.width / walker.height
+                val foot = p(50f, 51f)
                 d.drawImage(walker, srcOffset = IntOffset.Zero, srcSize = IntSize(walker.width, walker.height), dstOffset = IntOffset((foot.x - w / 2f).roundToInt(), foot.y.roundToInt()), dstSize = IntSize(w.roundToInt(), h.roundToInt()), filterQuality = FilterQuality.High)
             }
-            // the distance to the next card: printed on the face, read on the drums
-            label(tm, "距下一景點 km", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(50f, 97.5f))
-            odometer(tm, 35.5f, 101.5f, if (km != null) km10 else null, cw = 5.2f, ch = 8f)
+            // the distance to the next card: printed on the face, read on a digital window
+            label(tm, "距下一景點", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(50f, 89f))
+            val window = roundRect(18f, 94f, 82f, 109f, 3f)
+            wash(window, ink, 0.07f, 0f, 0f); inked(window, 304, closed = true, width = line * 0.8f)
+            val tenths = km?.let { (it * 10).roundToInt().coerceIn(0, 9999) }
+            val cells = if (tenths == null) listOf(null, null, 10, 10) else listOf(
+                if (tenths >= 1000) tenths / 1000 else null,
+                if (tenths >= 100) tenths / 100 % 10 else null,
+                tenths / 10 % 10,
+                tenths % 10,
+            )
+            for ((i, digit) in cells.withIndex()) digit7(23f + i * 8.6f + (if (i == 3) 2.4f else 0f), 96.8f, 7.2f, 10f, digit)
+            wash(circle(p(23f + 2 * 8.6f + 7.2f + 1.7f, 105.8f), 0.9f * u, 8), ink, 0.92f, 0f, 0f)
+            label(tm, "km", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(72f, 103f))
         }
     }
 }
