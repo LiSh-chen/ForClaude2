@@ -212,7 +212,7 @@ internal fun HomeContent(
             }
         }
 
-        Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM, regionMode, infoOf(shown), shown == currentTown, walking)
+        Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM, regionMode, infoOf(shown), shown == currentTown)
     }
 }
 
@@ -299,12 +299,12 @@ private fun LockedTag(icon: String = "") {
 
 /** Today's steps as a ring; beside it the region panel (region mode) or, on the route, the day's walk with the way ahead as a table below. */
 @Composable
-private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double, regionMode: Boolean, region: RegionInfo?, isCurrent: Boolean, walking: Boolean) {
+private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double, regionMode: Boolean, region: RegionInfo?, isCurrent: Boolean) {
     val progress = BodyMetrics.goalProgress(steps, goal).toFloat().coerceIn(0f, 1f)
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(3.dp)) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (map != null && !regionMode) {
-                InstrumentPanel(map.route, map.walkedKm, strideM, goal, steps, progress, km, kcal, walking, onSync, Modifier.fillMaxWidth())
+                InstrumentPanel(map.route, map.walkedKm, strideM, goal, steps, progress, km, kcal, Modifier.fillMaxWidth())
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     StepRing(steps, goal, progress, 96.dp)
@@ -342,7 +342,7 @@ private fun StepRing(steps: Long, goal: Int, progress: Float, size: androidx.com
  * (a dialog with the exact readings).
  */
 @Composable
-private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int, steps: Long, progress: Float, todayKm: Double, kcal: Double, walking: Boolean, onSync: () -> Unit, modifier: Modifier) {
+private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int, steps: Long, progress: Float, todayKm: Double, kcal: Double, modifier: Modifier) {
     val stride = strideM.coerceAtLeast(0.3)
     fun stepsFor(km: Double) = (km * 1000.0 / stride).roundToLong().coerceAtLeast(0L)
     fun days(steps: Long) = if (goal <= 0) 0L else (steps + goal - 1) / goal
@@ -355,19 +355,9 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
     var detail by remember { mutableStateOf(false) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         InstrumentCluster(
-            steps, goal, walkedKm, next?.second, overall.toFloat(), border?.fraction?.toFloat(),
+            steps, goal, walkedKm, next?.second, overall.toFloat(), border?.fraction?.toFloat(), route.totalKm - walkedKm, border?.kmLeft,
             Modifier.clickable { detail = true },
         )
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)) {
-            Telltale(0, walking, GREEN, Modifier.width(36.dp))
-            Telltale(1, steps >= goal, Color(0xFFE0A21B), Modifier.width(36.dp))
-            Telltale(2, next != null && next.second <= 2.0, RED, Modifier.width(36.dp))
-            Telltale(3, border != null && border.kmLeft <= 1.5, BLUE, Modifier.width(36.dp))
-            Icon(
-                Icons.Filled.Refresh, contentDescription = "同步", tint = Vintage.inkSoft,
-                modifier = Modifier.size(28.dp).clip(RoundedCornerShape(14.dp)).clickable(onClick = onSync).padding(3.dp),
-            )
-        }
     }
     if (detail) {
         AlertDialog(
@@ -388,7 +378,6 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
                     val left = route.totalKm - walkedKm
                     Text("環島全程　${(overall * 100).roundToInt()}%，已走 ${"%.1f".format(walkedKm)} 公里，剩 ${"%.0f".format(left)} 公里（約 ${days(stepsFor(left))} 天）", fontSize = 13.sp)
                     Text("景點　${collected.size} / $totalCards", fontSize = 13.sp)
-                    Text("燈號：走路中、達成目標、景點在 2 公里內、區域邊界在 1.5 公里內。", fontSize = 11.sp, color = Vintage.inkSoft)
                 }
             },
         )
