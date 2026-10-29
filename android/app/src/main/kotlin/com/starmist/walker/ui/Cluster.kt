@@ -231,7 +231,7 @@ internal fun GapDisplay(km: Double?, modifier: Modifier = Modifier) {
             inked(face, 790, closed = true, width = line * 1.4f, calm = 0.25f)
             inked(roundRect(6f, -16f, 94f, 116f, 10f), 791, closed = true, width = line * 0.6f, calm = 0.25f)
             // the road: two edges running up to the card, shaded, with a dashed middle
-            val top = 14f; val bottom = 94f
+            val top = 14f; val bottom = 92f
             fun half(y: Float) = 8f + (y - top) / (bottom - top) * 38f
             val left = listOf(p(50f - half(top), top), p(50f - half(bottom), bottom))
             val right = listOf(p(50f + half(top), top), p(50f + half(bottom), bottom))
@@ -241,7 +241,7 @@ internal fun GapDisplay(km: Double?, modifier: Modifier = Modifier) {
             inked(listOf(p(50f, top), p(50f, bottom)), 802, width = line * 0.7f, dash = dashed(this, 5f, 6f))
             // the stripes across the road, washed and hatched like the dials' bands: the nearest to the traveller first
             for (i in 0 until 5) {
-                val y1 = 58f - i * 8.5f; val y0 = y1 - 5f
+                val y1 = 56f - i * 8.2f; val y0 = y1 - 5f
                 val st = listOf(p(50f - half(y0) + 2f, y0), p(50f + half(y0) - 2f, y0), p(50f + half(y1) - 2f, y1), p(50f - half(y1) + 2f, y1))
                 if (i < lit) {
                     wash(st, COLD_BLUE, 0.45f, 0f, 0f)
@@ -258,12 +258,12 @@ internal fun GapDisplay(km: Double?, modifier: Modifier = Modifier) {
             // the traveller of the map
             if (walker != null) {
                 val h = 36f * u; val w = h * walker.width / walker.height
-                val foot = p(50f, 58f)
+                val foot = p(50f, 56f)
                 d.drawImage(walker, srcOffset = IntOffset.Zero, srcSize = IntSize(walker.width, walker.height), dstOffset = IntOffset((foot.x - w / 2f).roundToInt(), foot.y.roundToInt()), dstSize = IntSize(w.roundToInt(), h.roundToInt()), filterQuality = FilterQuality.High)
             }
             // the distance to the next card: printed on the face, read on the drums
-            label(tm, "距下一景點 km", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(50f, 100.5f))
-            odometer(tm, 36.7f, 104.5f, if (km != null) km10 else null)
+            label(tm, "距下一景點 km", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(50f, 97.5f))
+            odometer(tm, 35.5f, 101.5f, if (km != null) km10 else null, cw = 5.2f, ch = 8f)
         }
     }
 }
