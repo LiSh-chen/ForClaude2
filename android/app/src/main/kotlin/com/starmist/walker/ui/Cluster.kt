@@ -118,7 +118,8 @@ private fun Pen.odometer(tm: TextMeasurer, x: Float, y: Float, tenths: Float?, c
     val frame = roundRect(x - 0.8f, y - 0.8f, x + total + 0.8f, y + ch + 0.8f, 1.2f)
     wash(frame, ink, 0.85f, 0f, 0f); inked(frame, 900, closed = true, width = line * 0.8f)
     val cream = Color(0xFFF3E9C9)
-    val fontSize = (ch * 0.9f).coerceAtLeast(5f).sp
+    // sized from the drum itself, so that ".9" fits the tenths drum whatever the size of the dial
+    val fontSize = with(d) { minOf(ch * u * 0.75f, lastW * u / 1.35f).toSp() }
     val t = tenths?.coerceIn(0f, Math.pow(10.0, cells.toDouble()).toFloat() - 1f)
     val whole = t?.let { floor(it).toLong() } ?: 0L
     val carry = if (t != null) t - whole else 0f
