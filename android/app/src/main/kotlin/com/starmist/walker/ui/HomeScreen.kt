@@ -22,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -211,7 +212,7 @@ internal fun HomeContent(
             }
         }
 
-        Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM, regionMode, infoOf(shown), shown == currentTown)
+        Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM, regionMode, infoOf(shown), shown == currentTown, walking)
     }
 }
 
@@ -298,20 +299,12 @@ private fun LockedTag(icon: String = "") {
 
 /** Today's steps as a ring; beside it the region panel (region mode) or, on the route, the day's walk with the way ahead as a table below. */
 @Composable
-private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double, regionMode: Boolean, region: RegionInfo?, isCurrent: Boolean) {
+private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double, regionMode: Boolean, region: RegionInfo?, isCurrent: Boolean, walking: Boolean) {
     val progress = BodyMetrics.goalProgress(steps, goal).toFloat().coerceIn(0f, 1f)
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(3.dp)) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (map != null && !regionMode) {
-                Box(Modifier.fillMaxWidth()) {
-                    InstrumentPanel(map.route, map.walkedKm, strideM, goal, steps, progress, km, kcal, Modifier.fillMaxWidth().padding(top = 16.dp))
-                    // Syncing is a small button in the corner of the panel.
-                    Icon(
-                        Icons.Filled.Refresh, contentDescription = "同步",
-                        tint = Vintage.inkSoft,
-                        modifier = Modifier.align(Alignment.TopEnd).size(22.dp).clip(RoundedCornerShape(11.dp)).clickable(onClick = onSync).padding(2.dp),
-                    )
-                }
+                InstrumentPanel(map.route, map.walkedKm, strideM, goal, steps, progress, km, kcal, walking, onSync, Modifier.fillMaxWidth())
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     StepRing(steps, goal, progress, 96.dp)
@@ -345,12 +338,11 @@ private fun StepRing(steps: Long, goal: Int, progress: Float, size: androidx.com
 }
 
 /**
- * The way ahead as an instrument panel, four different gauges that say at a glance what they measure: a fuel tank for today's
- * steps, a compass for the next card, a spirit level for the township boundary and a little map for the whole island. Under each,
- * its name and two lines of numbers.
+ * The way ahead as a car's instrument cluster: the needles and lamps say how things stand, the numbers are one tap away
+ * (a dialog with the exact readings).
  */
 @Composable
-private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int, steps: Long, progress: Float, todayKm: Double, kcal: Double, modifier: Modifier) {
+private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int, steps: Long, progress: Float, todayKm: Double, kcal: Double, walking: Boolean, onSync: () -> Unit, modifier: Modifier) {
     val stride = strideM.coerceAtLeast(0.3)
     fun stepsFor(km: Double) = (km * 1000.0 / stride).roundToLong().coerceAtLeast(0L)
     fun days(steps: Long) = if (goal <= 0) 0L else (steps + goal - 1) / goal
@@ -359,11 +351,12 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
     val next = route.next(walkedKm)
     val collected = route.collected(walkedKm)
     val totalCards = route.stops.count { it.landmark != null }
-    val toNext = next?.let { stepsFor(it.second) } ?: 0L
-    val toEnd = stepsFor(route.totalKm - walkedKm)
-    val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
     val island = remember(route) { islandShape(route) }
-    // The compass needle points from where the traveller is to the next card, in degrees clockwise from north.
+    val cardFractions = remember(route) { route.cards.map { (it.second / route.totalKm).toFloat() } }
+    val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
+    val prevKm = route.cards.lastOrNull { it.second <= walkedKm + 1e-9 }?.second ?: 0.0
+    val nextFraction = next?.let { ((walkedKm - prevKm) / (it.second + walkedKm - prevKm).coerceAtLeast(0.01)).toFloat() } ?: 1f
+    // The arrow on the first dial points from where the traveller is to the next card, in degrees clockwise from north.
     val bearing = remember(route, next?.first?.id, (walkedKm * 5).toInt()) {
         next?.let { n ->
             val to = route.stops.first { it.landmark?.id == n.first.id }.at
@@ -373,31 +366,46 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
             ((Math.toDegrees(kotlin.math.atan2(east, north)) + 360.0) % 360.0).toFloat()
         }
     }
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        Instrument("今日步數", Color(0xFF6B4A24), "${steps.withCommas()} 步", "目標 ${goal.toLong().withCommas()}", "${todayKm.twoDecimals()} 公里\n${kcal.roundToInt()} 大卡", Modifier.weight(1f)) {
-            TankGauge(progress, Color(0xFF6B4A24))
-        }
-        Instrument("下一景點", RED, if (next != null) "%.1f 公里".format(next.second) else "已完成", if (next != null) "${toNext.withCommas()} 步" else "", if (next != null) "約 ${days(toNext)} 天" else "", Modifier.weight(1f)) {
-            CompassGauge(bearing, RED)
-        }
-        Instrument("下個區域", GREEN, if (border != null) "%.1f 公里".format(border.kmLeft) else "終點", if (border != null) "${stepsFor(border.kmLeft).withCommas()} 步" else "", if (border != null) "約 ${days(stepsFor(border.kmLeft))} 天" else "", Modifier.weight(1f)) {
-            LevelGauge(border?.fraction?.toFloat() ?: 1f, GREEN)
-        }
-        Instrument("環島全程", BLUE, "${(overall * 100).roundToInt()}%", if (next != null) "剩 ${"%.0f".format(route.totalKm - walkedKm)} 公里" else "環島完成", "${collected.size}/$totalCards 景點\n約 ${days(toEnd)} 天", Modifier.weight(1f)) {
-            IslandGauge(island, route, walkedKm, BLUE)
+    var detail by remember { mutableStateOf(false) }
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        InstrumentCluster(
+            nextFraction, bearing, island, cardFractions, overall.toFloat(), walkedKm, progress, border?.fraction?.toFloat(),
+            Modifier.clickable { detail = true },
+        )
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)) {
+            Telltale(0, walking, GREEN, Modifier.width(36.dp))
+            Telltale(1, steps >= goal, Color(0xFFE0A21B), Modifier.width(36.dp))
+            Telltale(2, next != null && next.second <= 2.0, RED, Modifier.width(36.dp))
+            Telltale(3, border != null && border.kmLeft <= 1.5, BLUE, Modifier.width(36.dp))
+            Icon(
+                Icons.Filled.Refresh, contentDescription = "同步", tint = Vintage.inkSoft,
+                modifier = Modifier.size(28.dp).clip(RoundedCornerShape(14.dp)).clickable(onClick = onSync).padding(3.dp),
+            )
         }
     }
-}
-
-/** One gauge and its caption: the [gauge] picture, the name in the gauge's colour, the reading, and two small lines. */
-@Composable
-private fun Instrument(label: String, color: Color, value: String, line1: String, line2: String, modifier: Modifier, gauge: @Composable () -> Unit) {
-    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(1.dp)) {
-        gauge()
-        Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = color, maxLines = 1)
-        Text(value, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Vintage.ink, maxLines = 1)
-        if (line1.isNotEmpty()) Text(line1, fontSize = 10.sp, fontWeight = FontWeight.Medium, color = Vintage.ink, maxLines = 1)
-        if (line2.isNotEmpty()) Text(line2, fontSize = 9.sp, lineHeight = 12.sp, color = Vintage.inkSoft, maxLines = 2, textAlign = TextAlign.Center)
+    if (detail) {
+        AlertDialog(
+            onDismissRequest = { detail = false },
+            confirmButton = { TextButton(onClick = { detail = false }) { Text("好") } },
+            title = { Text("儀表讀數", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("今日步數　${steps.withCommas()} / ${goal.toLong().withCommas()} 步（${todayKm.twoDecimals()} 公里，約 ${kcal.roundToInt()} 大卡）", fontSize = 13.sp)
+                    if (next != null) {
+                        val s = stepsFor(next.second)
+                        Text("下一景點　${next.first.name}，還有 ${"%.1f".format(next.second)} 公里（${s.withCommas()} 步，約 ${days(s)} 天）", fontSize = 13.sp)
+                    } else Text("景點全部收集完成", fontSize = 13.sp)
+                    if (border != null) {
+                        val s = stepsFor(border.kmLeft)
+                        Text("離開此區域　還有 ${"%.1f".format(border.kmLeft)} 公里（${s.withCommas()} 步，約 ${days(s)} 天）", fontSize = 13.sp)
+                    }
+                    val left = route.totalKm - walkedKm
+                    Text("環島全程　${(overall * 100).roundToInt()}%，已走 ${"%.1f".format(walkedKm)} 公里，剩 ${"%.0f".format(left)} 公里（約 ${days(stepsFor(left))} 天）", fontSize = 13.sp)
+                    Text("景點　${collected.size} / $totalCards", fontSize = 13.sp)
+                    Text("燈號：走路中、達成目標、景點在 2 公里內、區域邊界在 1.5 公里內。", fontSize = 11.sp, color = Vintage.inkSoft)
+                }
+            },
+        )
     }
 }
 
