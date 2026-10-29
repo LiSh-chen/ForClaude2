@@ -155,7 +155,7 @@ internal fun RouteDial(shape: IslandShape, cardFractions: List<Float>, overall: 
             label(tm, "START", txt, at(cx, cy, r * 0.62f, start + 14f).let { Offset(it.x + 6f * u, it.y + 3f * u) })
             label(tm, "END", txt, at(cx, cy, r * 0.62f, start + sweep - 14f).let { Offset(it.x - 4f * u, it.y + 3f * u) })
             // long needle: through the township; short one: round the island
-            if (region != null) needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
+            needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
         }
     }
