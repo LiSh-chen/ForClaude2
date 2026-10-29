@@ -354,8 +354,6 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
     val island = remember(route) { islandShape(route) }
     val cardFractions = remember(route) { route.cards.map { (it.second / route.totalKm).toFloat() } }
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
-    val prevKm = route.cards.lastOrNull { it.second <= walkedKm + 1e-9 }?.second ?: 0.0
-    val nextFraction = next?.let { ((walkedKm - prevKm) / (it.second + walkedKm - prevKm).coerceAtLeast(0.01)).toFloat() } ?: 1f
     // The arrow on the first dial points from where the traveller is to the next card, in degrees clockwise from north.
     val bearing = remember(route, next?.first?.id, (walkedKm * 5).toInt()) {
         next?.let { n ->
@@ -369,7 +367,7 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
     var detail by remember { mutableStateOf(false) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         InstrumentCluster(
-            nextFraction, bearing, island, cardFractions, overall.toFloat(), walkedKm, progress, border?.fraction?.toFloat(),
+            steps, goal, walkedKm, next?.second, bearing, island, cardFractions, overall.toFloat(), border?.fraction?.toFloat(),
             Modifier.clickable { detail = true },
         )
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)) {

@@ -6,16 +6,15 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
@@ -65,135 +64,135 @@ private fun Pen.face(cx: Float, cy: Float, r: Float, start: Float, sweep: Float,
     for (i in 0..majors * 2) {
         val major = i % 2 == 0
         val deg = start + sweep * i / (majors * 2f)
-        stroke(listOf(at(cx, cy, r * (if (major) 0.80f else 0.88f), deg), at(cx, cy, r * 0.95f, deg)), ink, seed + 10 + i, width = line * (if (major) 1.1f else 0.7f))
+        stroke(listOf(at(cx, cy, r * (if (major) 0.85f else 0.90f), deg), at(cx, cy, r * 0.95f, deg)), ink, seed + 10 + i, width = line * (if (major) 1.1f else 0.7f))
     }
 }
 
-private fun Pen.needle(cx: Float, cy: Float, len: Float, deg: Float, color: Color, seed: Int) {
+private fun Pen.needle(cx: Float, cy: Float, len: Float, deg: Float, color: Color, seed: Int, wide: Float = 0.09f, hub: Boolean = true) {
     val tip = at(cx, cy, len, deg)
-    val l = at(cx, cy, len * 0.09f, deg + 90f); val r = at(cx, cy, len * 0.09f, deg - 90f)
+    val l = at(cx, cy, len * wide, deg + 90f); val r = at(cx, cy, len * wide, deg - 90f)
     val tail = at(cx, cy, len * 0.18f, deg + 180f)
     val body = listOf(l, tip, r, tail)
     wash(body, color, 0.95f, 0.5f, 0.5f)
     inked(body, seed, closed = true, width = line * 0.9f)
-    val hub = circle(p(cx, cy), 4.2f * u, 18)
-    wash(hub, Color.White, 1f, 0f, 0f); inked(hub, seed + 3, closed = true, width = line)
-    wash(circle(p(cx, cy), 1.6f * u, 10), ink, 1f, 0f, 0f)
+    if (hub) {
+        val h = circle(p(cx, cy), 4.2f * u, 18)
+        wash(h, Color.White, 1f, 0f, 0f); inked(h, seed + 3, closed = true, width = line)
+        wash(circle(p(cx, cy), 1.6f * u, 10), ink, 1f, 0f, 0f)
+    }
+}
+
+private fun Pen.label(tm: TextMeasurer, s: String, style: TextStyle, c: Offset) {
+    val l = tm.measure(s, style)
+    d.drawText(l, topLeft = Offset(c.x - l.size.width / 2f, c.y - l.size.height / 2f))
 }
 
 private val needleSpring = spring<Float>(dampingRatio = 0.42f, stiffness = Spring.StiffnessVeryLow)
 
-/** Big dial: the way to the next card. The needle climbs from the last card to the next; the green stretch at the end is "nearly there"; the arrow on the face points the way. */
-@Composable
-internal fun NextCardDial(fraction: Float, bearing: Float?, modifier: Modifier = Modifier) {
-    val v by animateFloatAsState(fraction.coerceIn(0f, 1f), needleSpring, label = "next")
-    val b by animateFloatAsState(bearing ?: 0f, needleSpring, label = "bearing")
-    Canvas(modifier.aspectRatio(1f)) {
-        val pen = Pen(this, size)
-        with(pen) {
-            val cx = 50f; val cy = 52f; val r = 46f; val start = 135f; val sweep = 270f
-            face(cx, cy, r, start, sweep, 5, 200, whole = true)
-            band(cx, cy, r * 0.62f, r * 0.74f, start, sweep, 0.80f, 1f, OK_GREEN, 230)
-            band(cx, cy, r * 0.62f, r * 0.74f, start, sweep, 0f, v.coerceAtMost(0.8f), INK_RED, 231, alpha = 0.3f)
-            // the finishing flag at the end of the scale
-            val fp = at(cx, cy, r * 0.62f, start + sweep)
-            val pole = listOf(fp, Offset(fp.x, fp.y - 11f * u))
-            stroke(pole, ink, 232, width = line)
-            val flag = listOf(pole[1], Offset(pole[1].x + 8f * u, pole[1].y + 2.5f * u), Offset(pole[1].x, pole[1].y + 5f * u))
-            wash(flag, INK_RED, 0.9f, 0f, 0f); inked(flag, 233, closed = true, width = line * 0.7f)
-            // the arrow to the next card, turning with the bearing
-            if (bearing != null) {
-                val c = Offset(cx, cy - 20f)
-                fun rot(dx: Float, dy: Float): Offset {
-                    val t = rad(b)
-                    return p(c.x + dx * cos(t).toFloat() - dy * sin(t).toFloat(), c.y + dx * sin(t).toFloat() + dy * cos(t).toFloat())
-                }
-                val arrow = listOf(rot(0f, -11f), rot(7f, 8f), rot(0f, 4f), rot(-7f, 8f))
-                wash(arrow, INK_RED, 0.8f, 0.5f, 0.5f); inked(arrow, 234, closed = true, width = line * 0.9f)
-            }
-            needle(cx, cy, r * 0.74f, start + sweep * v, INK_RED, 240)
-        }
-    }
-}
+/** The step scale: a round step between ticks, and the labels in thousands when that reads better. */
+private fun stepScale(max: Int): Int = listOf(500, 1000, 2000, 2500, 5000, 10000, 20000).first { max / it <= 6 }
 
-/** Big dial: the whole island. The needle is how far round you are, the little island shows the route, a blue tick marks every card on the scale, and a counter reads the kilometres. */
+/** Big dial: today's steps. The scale is labelled and stretches to 120% of the goal; the red stretch is what lies beyond the goal. A digital window gives the kilometres walked in all. */
 @Composable
-internal fun IslandDial(shape: IslandShape, cardFractions: List<Float>, fraction: Float, walkedKm: Double, modifier: Modifier = Modifier) {
-    val v by animateFloatAsState(fraction.coerceIn(0f, 1f), needleSpring, label = "island")
+internal fun StepsDial(steps: Long, goal: Int, walkedKm: Double, modifier: Modifier = Modifier) {
+    val max = (goal * 1.2f).coerceAtLeast(1f)
+    val v by animateFloatAsState((steps / max).coerceIn(0f, 1f), needleSpring, label = "steps")
     val tm = rememberTextMeasurer()
     Canvas(modifier.aspectRatio(1f)) {
         val pen = Pen(this, size)
         with(pen) {
             val cx = 50f; val cy = 52f; val r = 46f; val start = 135f; val sweep = 270f
-            face(cx, cy, r, start, sweep, 4, 300, whole = true)
-            band(cx, cy, r * 0.84f, r * 0.93f, start, sweep, 0f, v, COLD_BLUE, 330, alpha = 0.45f)
-            // a small dot on the scale for every card; the ones already collected are filled
+            face(cx, cy, r, start, sweep, 0, 200, whole = true)
+            val step = stepScale(max.toInt())
+            val thousands = step >= 1000
+            val small = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
+            var value = 0
+            while (value <= max + 1) {
+                val deg = start + sweep * value / max
+                stroke(listOf(at(cx, cy, r * 0.84f, deg), at(cx, cy, r * 0.95f, deg)), ink, 210 + value / 100, width = line * 1.2f)
+                val half = value + step / 2
+                if (half < max) { val d2 = start + sweep * half / max; stroke(listOf(at(cx, cy, r * 0.89f, d2), at(cx, cy, r * 0.95f, d2)), ink, 260 + value / 100, width = line * 0.7f) }
+                val txt = if (thousands) (value / 1000f).let { if (it % 1f == 0f) "%d".format(it.toInt()) else "%.1f".format(it) } else value.toString()
+                label(tm, txt, small, at(cx, cy, r * 0.66f, deg))
+                value += step
+            }
+            // beyond the goal
+            band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 1f / 1.2f, 1f, INK_RED, 230, alpha = 0.6f)
+            label(tm, if (thousands) "x1000" else "STEPS", TextStyle(fontSize = 7.sp, color = Vintage.inkSoft), p(cx, 30f))
+            // the digital kilometre counter
+            val box = roundRect(25f, 76f, 75f, 90f, 2.5f)
+            wash(box, ink, 0.92f, 0f, 0f); inked(box, 304, closed = true, width = line * 0.7f)
+            label(tm, "%.1f km".format(walkedKm), TextStyle(fontSize = 8.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = Color(0xFFB8E986)), p(50f, 83f))
+            needle(cx, cy, r * 0.72f, start + sweep * v, INK_RED, 240)
+        }
+    }
+}
+
+/** Big dial: the way round. The short blue needle is how far round the island you are, the long red one how far through the township; START and END are written on the scale. */
+@Composable
+internal fun RouteDial(shape: IslandShape, cardFractions: List<Float>, overall: Float, region: Float?, walkedKm: Double, modifier: Modifier = Modifier) {
+    val v by animateFloatAsState(overall.coerceIn(0f, 1f), needleSpring, label = "island")
+    val w by animateFloatAsState((region ?: 0f).coerceIn(0f, 1f), needleSpring, label = "region")
+    val tm = rememberTextMeasurer()
+    Canvas(modifier.aspectRatio(1f)) {
+        val pen = Pen(this, size)
+        with(pen) {
+            val cx = 50f; val cy = 52f; val r = 46f; val start = 135f; val sweep = 270f
+            face(cx, cy, r, start, sweep, 10, 300, whole = true)
+            band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 0f, v, COLD_BLUE, 330, alpha = 0.5f)
             for (f in cardFractions) {
-                val c = at(cx, cy, r * 0.70f, start + sweep * f)
-                val dot = circle(c, 1.6f * u, 8)
+                val dot = circle(at(cx, cy, r * 0.70f, start + sweep * f), 1.3f * u, 8)
                 if (f <= v + 0.001f) wash(dot, COLD_BLUE, 1f, 0f, 0f) else wash(dot, ink, 0.25f, 0f, 0f)
             }
             // the island, with the walked part inked in blue
-            fun map(g: Pair<Float, Float>) = p(31f + g.first * 0.38f, 24f + g.second * 0.30f)
+            fun map(g: Pair<Float, Float>) = p(33f + g.first * 0.34f, 22f + g.second * 0.28f)
             val all = shape.xy.map(::map)
             val split = shape.km.indexOfLast { it <= walkedKm + 1e-9 }.coerceAtLeast(0)
-            if (all.size - split > 1) inked(all.drop(split), 301, width = line * 0.7f, dash = dashed(this, 2.5f, 2.5f))
+            if (all.size - split > 1) inked(all.drop(split), 301, width = line * 0.6f, dash = dashed(this, 2.5f, 2.5f))
             val walked = all.take(split + 1)
-            if (walked.size > 1) { stroke(walked, COLD_BLUE, 302, width = line * 1.8f); inked(walked, 303, width = line * 0.7f) }
-            // the odometer window
-            val label = "%.1f".format(walkedKm)
-            val style = TextStyle(fontSize = 8.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = Color.White)
-            val laid = tm.measure(label, style)
-            val box = roundRect(30f, 78f, 70f, 90f, 2.5f)
-            wash(box, ink, 0.92f, 0f, 0f); inked(box, 304, closed = true, width = line * 0.7f)
-            drawText(laid, topLeft = Offset(p(50f, 84f).x - laid.size.width / 2f, p(50f, 84f).y - laid.size.height / 2f))
-            needle(cx, cy, r * 0.80f, start + sweep * v, INK_RED, 310)
+            if (walked.size > 1) { stroke(walked, COLD_BLUE, 302, width = line * 1.6f); inked(walked, 303, width = line * 0.6f) }
+            val txt = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black, color = Vintage.ink)
+            label(tm, "START", txt, at(cx, cy, r * 0.62f, start + 14f).let { Offset(it.x + 6f * u, it.y + 3f * u) })
+            label(tm, "END", txt, at(cx, cy, r * 0.62f, start + sweep - 14f).let { Offset(it.x - 4f * u, it.y + 3f * u) })
+            // long needle: through the township; short one: round the island
+            if (region != null) needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
+            needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
         }
     }
 }
 
-/** What a half dial measures, so that one drawing routine serves the fuel and the temperature gauge. */
-internal enum class HalfKind { FUEL, BOUNDARY }
-
-/** Half dial: the fuel gauge (today's steps, empty to full) or the temperature gauge (entered the township to about to leave it). */
+/** Between the dials: the distance to the next card as a car's following-distance display: a digital reading, bars that fill as it gets close, an arrow to the way. */
 @Composable
-internal fun HalfDial(kind: HalfKind, fraction: Float, active: Boolean, modifier: Modifier = Modifier) {
-    val v by animateFloatAsState(fraction.coerceIn(0f, 1f), needleSpring, label = "half")
+internal fun GapDisplay(km: Double?, bearing: Float?, modifier: Modifier = Modifier) {
     val tm = rememberTextMeasurer()
-    Canvas(modifier.aspectRatio(1.7f)) {
+    val lit = when { km == null -> 0; km <= 2.0 -> 5; km <= 5.0 -> 4; km <= 10.0 -> 3; km <= 20.0 -> 2; else -> 1 }
+    Canvas(modifier.aspectRatio(1f)) {
         val pen = Pen(this, size)
         with(pen) {
-            val cx = 50f; val cy = 88f; val r = 72f; val start = 180f; val sweep = 180f
-            val seed = if (kind == HalfKind.FUEL) 400 else 500
-            face(cx, cy, r, start, sweep, 4, seed, whole = false)
-            if (kind == HalfKind.FUEL) {
-                band(cx, cy, r * 0.62f, r * 0.74f, start, sweep, 0f, 0.15f, INK_RED, seed + 60)
-                band(cx, cy, r * 0.62f, r * 0.74f, start, sweep, 0.15f, 0.6f, AMBER, seed + 61, alpha = 0.4f)
-                band(cx, cy, r * 0.62f, r * 0.74f, start, sweep, 0.6f, 1f, OK_GREEN, seed + 62)
-                // the pump
-                val body = roundRect(42f, 48f, 58f, 76f, 2f)
-                wash(body, Color(0xFF6B4A24), 0.35f, 0f, 0f); inked(body, seed + 70, closed = true, width = line * 0.9f)
-                val win = roundRect(45f, 51f, 55f, 59f, 1f)
-                wash(win, Color.White, 1f, 0f, 0f); inked(win, seed + 71, closed = true, width = line * 0.6f)
-                inked(listOf(p(58f, 56f), p(64f, 56f), p(64f, 70f), p(68f, 70f)), seed + 72, width = line * 0.8f)
-            } else {
-                band(cx, cy, r * 0.62f, r * 0.74f, start, sweep, 0f, 0.3f, COLD_BLUE, seed + 60, alpha = 0.4f)
-                band(cx, cy, r * 0.62f, r * 0.74f, start, sweep, 0.3f, 0.75f, OK_GREEN, seed + 61, alpha = 0.35f)
-                band(cx, cy, r * 0.62f, r * 0.74f, start, sweep, 0.75f, 1f, INK_RED, seed + 62)
-                // the township fence
-                for ((i, x) in listOf(40f, 50f, 60f).withIndex()) {
-                    val post = listOf(p(x - 2.5f, 76f), p(x - 2.5f, 56f), p(x, 52f), p(x + 2.5f, 56f), p(x + 2.5f, 76f))
-                    wash(post, Color(0xFF6B4A24), 0.4f, 0f, 0f); inked(post, seed + 70 + i, closed = true, width = line * 0.7f)
-                }
-                for ((i, y) in listOf(61f, 69f).withIndex()) inked(listOf(p(36f, y), p(64f, y)), seed + 80 + i, width = line * 0.8f)
+            // the card ahead
+            val pin = listOf(p(50f, 20f), p(40f, 8f), p(43f, -2f), p(50f, -6f), p(57f, -2f), p(60f, 8f))
+            wash(pin, INK_RED, 0.9f, 0f, 0f); inked(pin, 700, closed = true, width = line * 0.8f)
+            wash(circle(p(50f, 4f), 2.6f * u, 10), Color.White, 1f, 0f, 0f)
+            // the window
+            val box = roundRect(4f, 26f, 96f, 70f, 5f)
+            wash(box, ink, 0.93f, 0f, 0f); inked(box, 701, closed = true, width = line)
+            val lcd = Color(0xFFB8E986)
+            label(tm, if (km != null) "%.1f".format(km) else "--.-", TextStyle(fontSize = 18.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = lcd), p(54f, 44f))
+            label(tm, "km", TextStyle(fontSize = 8.sp, fontFamily = FontFamily.Monospace, color = lcd.copy(alpha = 0.8f)), p(54f, 62f))
+            if (bearing != null) {
+                val t = rad(bearing)
+                fun rot(dx: Float, dy: Float) = p(17f + dx * cos(t).toFloat() - dy * sin(t).toFloat(), 46f + dx * sin(t).toFloat() + dy * cos(t).toFloat())
+                val arrow = listOf(rot(0f, -9f), rot(6f, 7f), rot(0f, 3f), rot(-6f, 7f))
+                wash(arrow, lcd, 1f, 0f, 0f)
             }
-            val style = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft)
-            val (l, rr) = if (kind == HalfKind.FUEL) "E" to "F" else "入" to "出"
-            for ((txt, x) in listOf(l to 8f, rr to 92f)) {
-                val laid = tm.measure(txt, style)
-                drawText(laid, topLeft = Offset(p(x, 94f).x - laid.size.width / 2f, p(x, 94f).y - laid.size.height / 2f))
+            // five bars, more of them lit the nearer the card
+            for (i in 0 until 5) {
+                val x = 14f + i * 17f; val top = 92f - i * 4.5f
+                val bar = roundRect(x, top, x + 11f, 98f, 1.5f)
+                val on = i < lit
+                wash(bar, if (on) (if (i >= 3) OK_GREEN else AMBER) else ink, if (on) 0.9f else 0.15f, 0f, 0f)
+                inked(bar, 710 + i, closed = true, width = line * 0.6f)
             }
-            needle(cx, cy, r * 0.76f, start + sweep * (if (active) v else 0f), INK_RED, seed + 90)
         }
     }
 }
@@ -239,18 +238,15 @@ internal fun Telltale(kind: Int, on: Boolean, color: Color, modifier: Modifier =
     }
 }
 
-/** The whole cluster: two big dials with the two half dials stacked between them. */
+/** The whole cluster: the step dial, the following-distance display and the way-round dial. */
 @Composable
 internal fun InstrumentCluster(
-    nextFraction: Float, bearing: Float?, island: IslandShape, cardFractions: List<Float>, overall: Float, walkedKm: Double,
-    fuel: Float, border: Float?, modifier: Modifier = Modifier,
+    steps: Long, goal: Int, walkedKm: Double, nextKm: Double?, bearing: Float?, island: IslandShape, cardFractions: List<Float>, overall: Float, region: Float?,
+    modifier: Modifier = Modifier,
 ) {
     Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.CenterVertically) {
-        NextCardDial(nextFraction, bearing, Modifier.weight(1.25f))
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            HalfDial(HalfKind.FUEL, fuel, true, Modifier.fillMaxWidth())
-            HalfDial(HalfKind.BOUNDARY, border ?: 0f, border != null, Modifier.fillMaxWidth())
-        }
-        IslandDial(island, cardFractions, overall, walkedKm, Modifier.weight(1.25f))
+        StepsDial(steps, goal, walkedKm, Modifier.weight(1.3f))
+        GapDisplay(nextKm, bearing, Modifier.weight(0.9f))
+        RouteDial(island, cardFractions, overall, region, walkedKm, Modifier.weight(1.3f))
     }
 }
