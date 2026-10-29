@@ -226,12 +226,12 @@ internal fun GapDisplay(km: Double?, modifier: Modifier = Modifier) {
         val pen = Pen(this, size)
         with(pen) {
             // the face, like a dial's
-            val face = roundRect(3f, -17f, 97f, 121f, 12f)
+            val face = roundRect(3f, -19f, 97f, 119f, 12f)
             wash(face, PAPER, 1f, 0f, 0f)
             inked(face, 790, closed = true, width = line * 1.4f)
-            inked(roundRect(6f, -14f, 94f, 118f, 10f), 791, closed = true, width = line * 0.6f)
+            inked(roundRect(6f, -16f, 94f, 116f, 10f), 791, closed = true, width = line * 0.6f)
             // the road: two edges running up to the card, shaded, with a dashed middle
-            val top = 14f; val bottom = 98f
+            val top = 14f; val bottom = 94f
             fun half(y: Float) = 8f + (y - top) / (bottom - top) * 38f
             val left = listOf(p(50f - half(top), top), p(50f - half(bottom), bottom))
             val right = listOf(p(50f + half(top), top), p(50f + half(bottom), bottom))
@@ -257,13 +257,13 @@ internal fun GapDisplay(km: Double?, modifier: Modifier = Modifier) {
             wash(circle(p(50f, -2.5f), 2.4f * u, 10), PAPER, 1f, 0f, 0f)
             // the traveller of the map
             if (walker != null) {
-                val h = 40f * u; val w = h * walker.width / walker.height
-                val foot = p(50f, 60f)
+                val h = 36f * u; val w = h * walker.width / walker.height
+                val foot = p(50f, 58f)
                 d.drawImage(walker, srcOffset = IntOffset.Zero, srcSize = IntSize(walker.width, walker.height), dstOffset = IntOffset((foot.x - w / 2f).roundToInt(), foot.y.roundToInt()), dstSize = IntSize(w.roundToInt(), h.roundToInt()), filterQuality = FilterQuality.High)
             }
             // the distance to the next card: printed on the face, read on the drums
-            label(tm, "距下一景點 km", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(50f, 104f))
-            odometer(tm, 36.7f, 108f, if (km != null) km10 else null)
+            label(tm, "距下一景點 km", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(50f, 100.5f))
+            odometer(tm, 36.7f, 104.5f, if (km != null) km10 else null)
         }
     }
 }
