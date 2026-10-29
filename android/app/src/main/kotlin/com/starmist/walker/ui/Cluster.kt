@@ -217,15 +217,17 @@ internal fun RouteDial(overall: Float, region: Float?, islandKm: Double, townKm:
             face(cx, cy, r, start, sweep, 10, 300, whole = true)
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 0f, v, COLD_BLUE, 330, alpha = 0.5f)
             val num = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
-            for (i in 0..5) label(tm, "${i * 20}", num, at(cx, cy, r * 0.72f, start + sweep * i / 5f))
+            for (i in 0..5) label(tm, "${i * 20}", num, at(cx, cy, r * 0.66f, start + sweep * i / 5f))
             label(tm, "進度 %", TextStyle(fontSize = 6.sp, color = Vintage.inkSoft), p(cx, 30f))
             // the two distances walked, as two odometers, the unit printed on the face
-            val tag = TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold)
             label(tm, "km", TextStyle(fontSize = 5.sp, color = Vintage.inkSoft), p(50f, 61.5f))
-            label(tm, "環島", tag.copy(color = Color(0xFF0B5E96)), p(38f, 67.3f))
-            odometer(tm, 45f, 64.5f, islandT, cw = 3.6f, ch = 5.5f)
-            label(tm, "區域", tag.copy(color = INK_RED), p(38f, 77f))
-            odometer(tm, 45f, 74.2f, if (townKm != null) townT else null, cw = 3.6f, ch = 5.5f)
+            // a dot in the colour of each needle says whose distance it is
+            for ((y, color) in listOf(67.3f to Color(0xFF0E86D4), 77f to INK_RED)) {
+                val dot = circle(p(39.5f, y), 1.9f * u, 12)
+                wash(dot, color, 1f, 0f, 0f); inked(dot, 330 + y.toInt(), closed = true, width = line * 0.6f, calm = 0.3f)
+            }
+            odometer(tm, 44.5f, 64.5f, islandT, cw = 3.6f, ch = 5.5f)
+            odometer(tm, 44.5f, 74.2f, if (townKm != null) townT else null, cw = 3.6f, ch = 5.5f)
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
