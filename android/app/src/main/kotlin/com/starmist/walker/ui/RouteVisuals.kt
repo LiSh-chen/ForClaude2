@@ -159,6 +159,13 @@ fun RouteMapView(
     val tiles = rememberMapTiles()
     val areas = rememberTownAreas()
     val explored = remember(areas, route, (walkedKm * 2).toInt()) { areas.visited(route, walkedKm).keys }
+    // A small sight in a township not walked through yet lies in the fog: neither shown nor tapped.
+    val visiblePois = remember(areas, route, explored) {
+        if (explored.isEmpty()) null else route.pois.filter { p ->
+            val id = areas.find(p.at.lat, p.at.lng).let { if (it >= 0) it else areas.townAt(p.at.lat, p.at.lng)?.let { t -> areas.towns.indexOf(t) } ?: -1 }
+            id in explored
+        }.map { it.id }.toSet()
+    }
     val currentTown = remember(areas, route, (walkedKm * 2).toInt()) { route.positionAt(walkedKm).let { areas.find(it.lat, it.lng) } }
     val here = route.positionAt(walkedKm)
     ZoomPanMap(
@@ -201,7 +208,7 @@ fun RouteMapView(
                 // Otherwise the nearest small sight, about 38 dp round it: its name is shown, and its stamp too if it is earned.
                 var poi: com.starmist.core.route.Poi? = null
                 var poiPx = 38f * density
-                route.pois.forEach { p ->
+                route.pois.filter { visiblePois == null || it.id in visiblePois }.forEach { p ->
                     val q = p.at.unit()
                     val d = kotlin.math.hypot((q.x - u.x) / perPx.x, (q.y - u.y) / perPx.y)
                     if (d < poiPx) { poiPx = d; poi = p }
@@ -212,7 +219,7 @@ fun RouteMapView(
             }
         } else null,
         top = { w, h, _, _ -> drawWalker(Offset(here.unit().x * w, here.unit().y * h), w, walker, phase.floatValue, walk.floatValue, face.value, idleAct.intValue, idleT.floatValue, measurer) },
-    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown, selectedPoi) }
+    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown, selectedPoi, visiblePois) }
 }
 
 /** Small square picture for a card: the painted art inside the album frame once collected, an empty album slot before. */

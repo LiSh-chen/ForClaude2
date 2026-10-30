@@ -35,6 +35,14 @@ enum class StatKind(val emoji: String, val title: String) {
     FORTUNE("🎋", "旅人籤詩"),
 }
 
+/** What a draw can give: one of these, and only these. */
+val DRAW_POOL: List<StatKind> = listOf(
+    StatKind.RULER, StatKind.WEEKDAY, StatKind.TOWN_LONGEST, StatKind.TOWN_SHORTEST, StatKind.TOWN_BIGGEST, StatKind.TOWN_HIGHEST, StatKind.BEST_DAY,
+)
+
+/** How many draws a day gives. */
+const val DRAWS_PER_DAY = 2
+
 /** A township the route has gone through: [passed] is false for the one the traveller is in now. */
 data class TownVisit(val name: String, val county: String, val km: Double, val areaKm2: Double, val highElevM: Int, val passed: Boolean)
 

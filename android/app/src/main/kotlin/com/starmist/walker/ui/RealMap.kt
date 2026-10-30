@@ -186,6 +186,8 @@ internal fun DrawScope.drawRealMap(
     selectedTown: Int = -1,
     /** The small sight whose name was asked for by tapping its dot. */
     selectedPoi: String? = null,
+    /** The small sights not hidden in the fog (null: all). */
+    visiblePois: Set<String>? = null,
 ) {
     fun GeoPoint.px() = unit().let { Offset(it.x * w, it.y * h) }
     fun Offset.scaled() = Offset(x * w, y * h)
@@ -415,7 +417,18 @@ internal fun DrawScope.drawRealMap(
     occupied += if (pin != null && !dotMode) Rect(p.x - pinWidth / 2, p.y - pinHeight, p.x + pinWidth / 2, p.y + 4.dp.toPx())
     else Rect(p.x - 9.dp.toPx(), p.y - 9.dp.toPx(), p.x + 9.dp.toPx(), p.y + 9.dp.toPx())
     route.stops.forEach { stop -> if (stop.landmark != null || stop.supply != null) reserve(stop.at.px(), 9.dp.toPx()) }
-    route.pois.forEach { reserve(it.at.px(), 5.dp.toPx()) }
+    val shownPois = route.pois.filter { visiblePois == null || it.id in visiblePois }
+    // A small sight lying on a card or a station is set a little aside, so that its dot is not hidden behind or over theirs.
+    val markerPoints = route.stops.filter { it.landmark != null || it.supply != null }.map { it.at.px() }
+    fun poiSpot(poi: com.starmist.core.route.Poi): Offset {
+        val o = poi.at.px()
+        val near = markerPoints.firstOrNull { (it - o).getDistance() < 14.dp.toPx() } ?: return o
+        val v = o - near
+        val len = v.getDistance()
+        val dir = if (len < 1f) Offset(0.7f, -0.7f) else v / len
+        return near + dir * 16.dp.toPx()
+    }
+    shownPois.forEach { reserve(poiSpot(it), 5.dp.toPx()) }
 
     /** Puts [text] beside [anchor] on a parchment tag, on the first side that is free; returns false when none is. */
     fun placeName(text: String, anchor: Offset, size: androidx.compose.ui.unit.TextUnit, color: Color, gap: Float, force: Boolean = false, plain: Boolean = false, edge: Color? = null, weight: FontWeight = FontWeight.Bold, underline: Boolean = false): Boolean {
@@ -470,8 +483,8 @@ internal fun DrawScope.drawRealMap(
     // Small sights: a plain ring until the stamp is earned, then the teal seal.
     if (!regionMode) {
         val earned = route.poisCollected(walkedKm).map { it.id }.toSet()
-        route.pois.forEach { poi ->
-            val o = poi.at.px()
+        shownPois.forEach { poi ->
+            val o = poiSpot(poi)
             if (poi.id in earned) {
                 drawCircle(Color(0xFF2F7F6E), 6.dp.toPx() * ms, o)
                 drawCircle(Color(0xFFFFF6E0), 6.dp.toPx() * ms, o, style = Stroke(1.4.dp.toPx() * ms))
@@ -510,8 +523,8 @@ internal fun DrawScope.drawRealMap(
         queue += Label(45) { placeName(supply.name, o, 11.sp, Vintage.ink, 9.dp.toPx(), plain = true, weight = FontWeight.Medium) }
     }
     // A small sight's name appears only when its dot has been tapped.
-    if (!regionMode) route.pois.firstOrNull { it.id == selectedPoi }?.let { poi ->
-        queue += Label(120) { placeName(poi.name, poi.at.px(), 12.sp, Color(0xFF16584A), 9.dp.toPx(), force = true, edge = Color(0xFF2F7F6E), weight = FontWeight.Bold) }
+    if (!regionMode) shownPois.firstOrNull { it.id == selectedPoi }?.let { poi ->
+        queue += Label(120) { placeName(poi.name, poiSpot(poi), 12.sp, Color(0xFF16584A), 9.dp.toPx(), force = true, edge = Color(0xFF2F7F6E), weight = FontWeight.Bold) }
     }
     queue.sortedByDescending { it.priority }.forEach { it.place() }
 

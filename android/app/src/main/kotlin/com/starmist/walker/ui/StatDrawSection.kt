@@ -88,75 +88,65 @@ private fun rememberStatInputs(vm: AppViewModel, settings: UserSettings): StatIn
 }
 
 /**
- * The daily draw: shake the stick tube once a day and it picks something familiar (a running track, the Taipei 101, a
- * marathon ...) to measure the walking with; the charts below then count in that unit. The other statistics can be
- * browsed from here any time.
+ * The daily draw: shake the stick tube and it gives one card, always one of [DRAW_POOL]; two draws a day. When the measure
+ * card is drawn, the charts below count in its familiar unit (a running track, the Taipei 101, a marathon ...) for the day.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun StatDrawSection(vm: AppViewModel, settings: UserSettings, onRuler: (Ruler?) -> Unit) {
     val context = LocalContext.current
     val inputs = rememberStatInputs(vm, settings)
     val seed = dayStatSeed(inputs.today)
     val rulers = remember(inputs.routeTotalKm) { rulersFor(inputs.routeTotalKm) }
-    val available = remember(inputs, seed) { availableStats(inputs, seed).filter { it != StatKind.RULER } }
     val todayKey = inputs.today.toString()
-    // What was drawn today is kept (the day and the ruler), so reopening the app shows the same one.
-    val stored = remember(todayKey, rulers) {
-        val p = drawPrefs(context)
-        if (p.getString("day", null) == todayKey) rulers.firstOrNull { it.id == p.getString("ruler", "") } else null
-    }
-    var drawnToday by remember(todayKey, rulers) { mutableStateOf(stored) }
-    var shown by remember(todayKey) { mutableStateOf<StatKind?>(null) }       // null: the measure card itself
     val candidate = remember(rulers, inputs.today) { drawRuler(inputs.today, rulers) }
-    LaunchedEffect(drawnToday) { onRuler(drawnToday) }
+    // What can be drawn now: the cards of the pool that have something to show.
+    val pool = remember(inputs, seed, candidate) { DRAW_POOL.filter { buildStat(it, inputs, seed, candidate) != null } }
+    // The kinds drawn today are kept, so reopening the app shows the same cards.
+    var drawn by remember(todayKey) {
+        val p = drawPrefs(context)
+        mutableStateOf(
+            if (p.getString("day", null) == todayKey) p.getString("kinds", "").orEmpty().split(",").mapNotNull { n -> DRAW_POOL.firstOrNull { it.name == n } } else emptyList(),
+        )
+    }
+    val ruler = if (StatKind.RULER in drawn) candidate else null
+    LaunchedEffect(ruler) { onRuler(ruler) }
     val shake = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
     var shaking by remember { mutableStateOf(false) }
+    val canDraw = drawn.size < DRAWS_PER_DAY && pool.isNotEmpty() && !shaking
 
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            val ruler = drawnToday
-            if (ruler == null) {
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("🎋", fontSize = 56.sp, modifier = Modifier.rotate(shake.value))
-                    Text("今日籤", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    Text("每天抽一樣大家熟悉的東西，拿來量你走了多遠，下面的圖表也跟著換單位。", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Vintage.inkSoft)
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("🎋", fontSize = if (drawn.isEmpty()) 56.sp else 36.sp, modifier = Modifier.rotate(shake.value))
+                Text("今日籤", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                if (drawn.isEmpty()) Text("每天最多抽兩支籤，每支籤是一張統計卡；抽到量尺，下面的圖表就換成那個單位。", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Vintage.inkSoft)
+                if (drawn.size < DRAWS_PER_DAY) {
                     Button(
-                        enabled = candidate != null && !shaking,
+                        enabled = canDraw,
                         onClick = {
                             shaking = true
                             scope.launch {
                                 repeat(4) { shake.animateTo(14f, tween(70)); shake.animateTo(-14f, tween(70)) }
                                 shake.animateTo(0f, tween(70))
-                                drawPrefs(context).edit().putString("day", todayKey).putString("ruler", candidate?.id).apply()
-                                drawnToday = candidate
+                                // never the same card twice in a day, while there is another to give
+                                val next = (pool - drawn.toSet()).ifEmpty { pool }.random()
+                                val now = drawn + next
+                                drawPrefs(context).edit().putString("day", todayKey).putString("kinds", now.joinToString(",") { it.name }).apply()
+                                drawn = now
                                 shaking = false
                             }
                         },
-                    ) { Text("抽一支") }
-                }
+                    ) { Text(if (drawn.isEmpty()) "抽一支" else "再抽一支") }
+                } else Text("今天的兩支籤都抽完了，明天再來。", style = MaterialTheme.typography.bodySmall, color = Vintage.inkSoft)
             }
-            AnimatedVisibility(ruler != null, enter = fadeIn(tween(500)) + expandVertically(tween(500))) {
-                if (ruler != null) {
-                    val kind = shown
-                    val card = remember(kind, inputs, seed, ruler) { buildStat(kind ?: StatKind.RULER, inputs, seed, ruler) }
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text(if (kind == null) "今日籤：${ruler.emoji} ${ruler.what}" else "看看別張", style = MaterialTheme.typography.labelMedium, color = Vintage.brassDark)
-                        if (card != null) StatCardView(card)
-                        Text("也可以翻翻別的：", style = MaterialTheme.typography.labelMedium, color = Vintage.inkSoft)
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            (listOf<StatKind?>(null) + available).forEach { k ->
-                                val on = k == kind
-                                Text(
-                                    if (k == null) "${ruler.emoji} 今日量尺" else "${k.emoji} ${k.title}", fontSize = 12.sp, fontWeight = FontWeight.Bold,
-                                    color = if (on) Color.White else Vintage.brassDark,
-                                    modifier = Modifier.clip(RoundedCornerShape(12.dp))
-                                        .background(if (on) Vintage.brass else Vintage.brass.copy(alpha = 0.16f))
-                                        .clickable { shown = k }
-                                        .padding(horizontal = 10.dp, vertical = 4.dp),
-                                )
-                            }
+            AnimatedVisibility(drawn.isNotEmpty(), enter = fadeIn(tween(500)) + expandVertically(tween(500))) {
+                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    drawn.reversed().forEachIndexed { i, kind ->
+                        val card = remember(kind, inputs, seed, candidate) { buildStat(kind, inputs, seed, candidate) }
+                        if (card != null) Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text("第 ${drawn.size - i} 支籤", style = MaterialTheme.typography.labelMedium, color = Vintage.brassDark)
+                            StatCardView(card)
                         }
                     }
                 }
