@@ -31,6 +31,7 @@ import com.starmist.walker.data.UserSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.starmist.core.time.minusDays
+import com.starmist.core.time.monthValue
 import com.starmist.core.time.now
 import kotlinx.datetime.LocalDate
 import java.util.Locale
