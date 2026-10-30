@@ -1,13 +1,13 @@
 package com.starmist.walker.data
 
-import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import com.starmist.core.metrics.Profile
 import com.starmist.core.metrics.Sex
 import com.starmist.core.steps.StepScaler
@@ -34,11 +34,10 @@ data class UserSettings(
         get() = Profile(heightCm, weightKg, sex, strideOverrideM)
 }
 
-private val Context.settingsDataStore by preferencesDataStore(name = "settings")
 
-class SettingsStore(private val context: Context) {
+class SettingsStore(private val store: DataStore<Preferences>) {
 
-    val flow: Flow<UserSettings> = context.settingsDataStore.data.map { it.toSettings() }
+    val flow: Flow<UserSettings> = store.data.map { it.toSettings() }
 
     suspend fun current(): UserSettings = flow.first()
 
@@ -47,7 +46,7 @@ class SettingsStore(private val context: Context) {
      * (every settings write saves all values), so move those once; anything else is left alone.
      */
     suspend fun migrateDefaults() {
-        context.settingsDataStore.edit { prefs ->
+        store.edit { prefs ->
             if (prefs[GOAL_DEFAULT_MOVED] == true) return@edit
             val stored = prefs[GOAL]
             if (stored != null && stored == OLD_DEFAULT_GOAL) prefs[GOAL] = 9_000
@@ -56,7 +55,7 @@ class SettingsStore(private val context: Context) {
     }
 
     suspend fun update(transform: (UserSettings) -> UserSettings) {
-        context.settingsDataStore.edit { prefs ->
+        store.edit { prefs ->
             val updated = transform(prefs.toSettings())
             prefs[HEIGHT] = updated.heightCm
             prefs[WEIGHT] = updated.weightKg

@@ -1,11 +1,5 @@
 package com.starmist.walker.data
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.PowerManager
-import android.os.SystemClock
-import androidx.core.content.ContextCompat
 import androidx.room.withTransaction
 import com.starmist.core.diagnostics.HealthInput
 import com.starmist.core.diagnostics.Issue
@@ -13,8 +7,6 @@ import com.starmist.core.diagnostics.SnapshotHealth
 import com.starmist.core.steps.CounterSnapshot
 import com.starmist.core.steps.LedgerState
 import com.starmist.core.steps.StepLedger
-import com.starmist.walker.sensor.CounterReading
-import com.starmist.walker.sensor.StepCounterReader
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +14,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import com.starmist.walker.platform.CounterReading
+import com.starmist.walker.platform.PlatformInfo
+import com.starmist.walker.platform.StepSensor
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 
@@ -41,19 +36,17 @@ data class DiagnosticsInfo(
 )
 
 class StepRepository(
-    private val context: Context,
+    private val platform: PlatformInfo,
     private val database: AppDatabase,
     private val settings: SettingsStore,
-    val reader: StepCounterReader,
+    val reader: StepSensor,
 ) {
     private val dao = database.stepDao()
 
     /** The worker and the UI can both ask for a reading; only one may update the ledger at a time. */
     private val snapshotLock = Mutex()
 
-    fun hasPermission(): Boolean =
-        ContextCompat.checkSelfPermission(context, Manifest.permission.ACTIVITY_RECOGNITION) ==
-            PackageManager.PERMISSION_GRANTED
+    fun hasPermission(): Boolean = platform.hasStepPermission()
 
     private val _lastRead = MutableStateFlow<CounterReading?>(null)
 
@@ -76,11 +69,11 @@ class StepRepository(
     }
 
     private suspend fun ingest(counter: Long): SnapshotResult = snapshotLock.withLock {
-        val now = System.currentTimeMillis()
+        val now = platform.nowMillis()
         val snapshot = CounterSnapshot(
             counter = counter,
             takenAtMillis = now,
-            bootTimeMillis = now - SystemClock.elapsedRealtime(),
+            bootTimeMillis = now - platform.elapsedSinceBootMillis(),
         )
         val multiplier = settings.current().multiplier
         val ledger = StepLedger(TimeZone.currentSystemDefault())
@@ -151,14 +144,13 @@ class StepRepository(
         val state = dao.getState()
         val permission = hasPermission()
         val hasCounter = reader.hasHardwareCounter
-        val power = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-        val restricted = !power.isIgnoringBatteryOptimizations(context.packageName)
+        val restricted = platform.batteryRestricted()
         val issues = SnapshotHealth.evaluate(
             HealthInput(
                 permissionGranted = permission,
                 hasHardwareCounter = hasCounter,
                 lastSnapshotAtMillis = state?.takenAtMillis,
-                nowMillis = System.currentTimeMillis(),
+                nowMillis = platform.nowMillis(),
                 batteryRestricted = restricted,
                 serviceExpected = serviceExpected,
                 serviceRunning = serviceRunning,

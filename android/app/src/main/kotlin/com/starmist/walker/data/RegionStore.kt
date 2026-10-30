@@ -1,15 +1,14 @@
 package com.starmist.walker.data
 
-import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import com.starmist.core.route.TagDiscovery
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-private val Context.regionDataStore by preferencesDataStore(name = "regions")
 
 /** One township's collection: which of its three tags have been found, and in which lap the last one was found. */
 data class RegionLog(val mask: Int, val lap: Int, val count: Int = 1)
@@ -18,15 +17,15 @@ data class RegionLog(val mask: Int, val lap: Int, val count: Int = 1)
  * The tags found in each township. In one lap a township gives one tag when it is entered and, if the walk
  * through it is long, a second one about halfway; the third has to wait for the next lap.
  */
-class RegionStore(private val context: Context) {
+class RegionStore(private val store: DataStore<Preferences>) {
     private val logKey = stringPreferencesKey("log")
     private val lapKey = intPreferencesKey("lap")
 
-    val logs: Flow<Map<String, RegionLog>> = context.regionDataStore.data.map { decode(it[logKey]) }
+    val logs: Flow<Map<String, RegionLog>> = store.data.map { decode(it[logKey]) }
 
     /** Starts a new lap: every township can give a new tag again. */
     suspend fun newLap() {
-        context.regionDataStore.edit { it[lapKey] = (it[lapKey] ?: 0) + 1 }
+        store.edit { it[lapKey] = (it[lapKey] ?: 0) + 1 }
     }
 
     /**
@@ -36,7 +35,7 @@ class RegionStore(private val context: Context) {
      */
     suspend fun visit(key: String, tagCount: Int, stage: Int = 1): Int? {
         var found: Int? = null
-        context.regionDataStore.edit { prefs ->
+        store.edit { prefs ->
             val lap = prefs[lapKey] ?: 0
             val map = decode(prefs[logKey]).toMutableMap()
             val cur = map[key]

@@ -1,7 +1,6 @@
 package com.starmist.walker.ui
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.starmist.core.metrics.BodyMetrics
 import com.starmist.core.route.RouteEvent
@@ -11,14 +10,14 @@ import com.starmist.core.stats.Aggregator
 import com.starmist.core.stats.Period
 import com.starmist.core.stats.PeriodSummary
 import com.starmist.core.steps.StepScaler
-import com.starmist.walker.container
 import com.starmist.walker.data.ExploreState
 import com.starmist.walker.data.RegionLog
 import com.starmist.walker.data.DailyStepsEntity
 import com.starmist.walker.data.DiagnosticsInfo
 import com.starmist.walker.data.SnapshotResult
 import com.starmist.walker.data.UserSettings
-import com.starmist.walker.tracking.StepService
+import com.starmist.walker.platform.AppServices
+import com.starmist.walker.platform.DetectorInfo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -38,8 +37,7 @@ import com.starmist.core.time.of
 import kotlinx.datetime.LocalDate
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class AppViewModel(application: Application) : AndroidViewModel(application) {
-    private val container = application.container
+class AppViewModel(private val container: AppServices) : ViewModel() {
     private val repository = container.repository
 
     /** Null until DataStore has loaded, so screens never edit placeholder defaults. */
@@ -211,8 +209,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     /** The tags found in each township (key "county|name"). */
     val regionLogs: StateFlow<Map<String, RegionLog>> = container.regions.logs.stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
-    private val townAreas by lazy { TownAreas.load(getApplication()) }
-    private val townTags by lazy { loadTownBlurbs(getApplication()) }
+    private val townAreas get() = container.townAreas
+    private val townTags get() = container.townBlurbs
     private var lastRegionCheckKm = -1.0
 
     /** Kilometres of each route through each township, worked out once per route (it decides which townships count as long). */
@@ -358,13 +356,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     sealed interface BatchTestState {
         data object Idle : BatchTestState
         data object Running : BatchTestState
-        data class Done(val result: com.starmist.walker.sensor.BatchTestResult?) : BatchTestState
+        data class Done(val result: com.starmist.walker.platform.BatchTestResult?) : BatchTestState
     }
 
     private val _batchTest = MutableStateFlow<BatchTestState>(BatchTestState.Idle)
     val batchTest: StateFlow<BatchTestState> = _batchTest
 
-    val detectorInfo get() = repository.reader.detectorInfo
+    val detectorInfo: DetectorInfo get() = repository.reader.detectorInfo ?: DetectorInfo(false, 0, 0, false)
 
     /** Two and a half minutes with events held back for up to a minute; keeps running if the screen is turned off. */
     fun startBatchTest() {
@@ -403,7 +401,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     suspend fun loadDiagnostics(): DiagnosticsInfo =
         repository.diagnostics(
             serviceExpected = settings.value?.stableMode == true,
-            serviceRunning = StepService.running.value,
+            serviceRunning = container.platform.stepServiceRunning,
         )
 
     fun setStableMode(on: Boolean) = updateSettings { it.copy(stableMode = on) }

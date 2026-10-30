@@ -1,6 +1,10 @@
 package com.starmist.walker.sensor
 
 import android.content.Context
+import com.starmist.walker.platform.BatchTestResult
+import com.starmist.walker.platform.CounterReading
+import com.starmist.walker.platform.DetectorInfo
+import com.starmist.walker.platform.StepSensor
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -15,33 +19,6 @@ import kotlinx.coroutines.withTimeoutOrNull
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
-/** What one read of the hardware counter produced; kept for the diagnostics screen. */
-data class CounterReading(
-    /** Cumulative steps since boot (the highest value seen during the read). */
-    val value: Long,
-    /** How many sensor events arrived while listening. */
-    val events: Int,
-    /** True when the sensor confirmed it had pushed out everything it was holding. */
-    val flushCompleted: Boolean,
-    val atMillis: Long,
-)
-
-/** What the step detector (one event per step) says about its own buffering; for the diagnostics screen. */
-data class DetectorInfo(val present: Boolean, val fifoMax: Int, val fifoReserved: Int, val wakeUp: Boolean)
-
-/** Outcome of a batching trial: did per-step events arrive late but with their original times? */
-data class BatchTestResult(
-    val detectorEvents: Int,
-    /** Steps the cumulative counter gained over the same period, for comparison. */
-    val counterSteps: Long,
-    /** How many separate bursts the events arrived in. */
-    val bursts: Int,
-    val largestBurst: Int,
-    /** Longest gap between a step happening and its event arriving. */
-    val maxDelayMs: Long,
-    val accepted: Boolean,
-)
-
 /**
  * Reads the hardware step counter.
  *
@@ -52,13 +29,13 @@ data class BatchTestResult(
  * (which delivers the current count), keeps listening briefly, and uses the highest value seen -
  * the counter only ever goes up between reboots, so the highest value is the freshest.
  */
-class StepCounterReader(context: Context) {
+class StepCounterReader(context: Context) : StepSensor {
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
 
-    val hasHardwareCounter: Boolean get() = sensor != null
+    override val hasHardwareCounter: Boolean get() = sensor != null
 
-    val detectorInfo: DetectorInfo
+    override val detectorInfo: DetectorInfo
         get() {
             val detector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) ?: return DetectorInfo(false, 0, 0, false)
             return DetectorInfo(true, detector.fifoMaxEventCount, detector.fifoReservedEventCount, detector.isWakeUpSensor)
@@ -69,7 +46,7 @@ class StepCounterReader(context: Context) {
      * [latencyMs]. If events arrive in bursts, long after the steps happened, per-step timing can be
      * recovered in the background. Compares the event count with the counter's gain to spot dropped events.
      */
-    suspend fun batchTest(durationMs: Long, latencyMs: Int): BatchTestResult? {
+    override suspend fun batchTest(durationMs: Long, latencyMs: Int): BatchTestResult? {
         val detector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) ?: return null
         val events = AtomicInteger(0)
         val bursts = AtomicInteger(0)
@@ -126,9 +103,9 @@ class StepCounterReader(context: Context) {
     }
 
     /** Cumulative steps since boot, or null if unavailable (no sensor, no permission, no events). */
-    suspend fun readOnce(timeoutMs: Long = DEFAULT_TIMEOUT_MS): Long? = read(timeoutMs)?.value
+    override suspend fun readOnce(timeoutMs: Long): Long? = read(timeoutMs)?.value
 
-    suspend fun read(timeoutMs: Long = DEFAULT_TIMEOUT_MS): CounterReading? {
+    override suspend fun read(timeoutMs: Long): CounterReading? {
         val sensor = sensor ?: return null
         val flushDone = CompletableDeferred<Unit>()
         val best = AtomicLong(-1)
@@ -179,7 +156,7 @@ class StepCounterReader(context: Context) {
      * @param maxReportLatencyUs how long the sensor hub may hold events before waking the CPU to
      *   deliver them; a long value keeps the CPU asleep while walking. 0 delivers immediately.
      */
-    fun liveCounter(maxReportLatencyUs: Int = 0): Flow<Long> = callbackFlow {
+    override fun liveCounter(maxReportLatencyUs: Int): Flow<Long> = callbackFlow {
         val sensor = sensor
         if (sensor == null) {
             close()
@@ -205,7 +182,7 @@ class StepCounterReader(context: Context) {
      * One "tick" per step, as soon as the step detector reports it. Used only to make the number on
      * screen move with every step; the cumulative counter stays the source of truth.
      */
-    fun stepTicks(): Flow<Unit> = callbackFlow {
+    override fun stepTicks(): Flow<Unit> = callbackFlow {
         val detector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
         if (detector == null) {
             close()

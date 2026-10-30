@@ -45,7 +45,11 @@ import com.starmist.walker.tracking.StepService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.starmist.walker.container
+import com.starmist.walker.platform.AppServices
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,8 +63,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/** Makes the view model out of what the app was started with, so it never has to reach for the Android context. */
+private fun appViewModelFactory(services: AppServices) = object : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = AppViewModel(services) as T
+}
+
 @Composable
-private fun AppRoot(vm: AppViewModel = viewModel()) {
+private fun AppRoot(vm: AppViewModel = viewModel(factory = appViewModelFactory(LocalContext.current.container))) {
     val context = LocalContext.current
     val settings by vm.settings.collectAsStateWithLifecycle()
     val message by vm.message.collectAsStateWithLifecycle()

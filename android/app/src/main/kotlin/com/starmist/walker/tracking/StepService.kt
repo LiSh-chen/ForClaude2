@@ -99,7 +99,7 @@ class StepService : Service() {
             },
             ContextCompat.RECEIVER_NOT_EXPORTED,
         )
-        session = repository.reader.openSession { values.trySend(it) }
+        session = container.reader.openSession { values.trySend(it) }
         val power = getSystemService(PowerManager::class.java)
         applyBatching(screenOn = power.isInteractive)
 

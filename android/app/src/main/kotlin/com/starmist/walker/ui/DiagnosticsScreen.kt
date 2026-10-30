@@ -179,7 +179,7 @@ private fun BatchTestCard(vm: AppViewModel) {
     }
 }
 
-private fun verdict(r: com.starmist.walker.sensor.BatchTestResult): String = when {
+private fun verdict(r: com.starmist.walker.platform.BatchTestResult): String = when {
     !r.accepted -> "結論：系統沒有接受批次設定，只能用粗略的做法。"
     r.detectorEvents < 20 -> "結論：走的步數太少，無法判斷，請再試一次並持續走路。"
     r.maxDelayMs < 10_000 -> "結論：事件幾乎即時送達，沒有批次；可能不支援，只能用粗略的做法。"

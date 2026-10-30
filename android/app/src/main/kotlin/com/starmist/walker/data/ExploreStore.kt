@@ -1,14 +1,13 @@
 package com.starmist.walker.data
 
-import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-private val Context.exploreDataStore by preferencesDataStore(name = "explore")
 
 /**
  * Free exploration: the walker goes from township to township. [current] is the township last reached, [target] the one being
@@ -55,17 +54,17 @@ object ExploreCodec {
 }
 
 /** Keeps the free exploration as one small text value, apart from the route. */
-class ExploreStore(private val context: Context) {
+class ExploreStore(private val store: DataStore<Preferences>) {
     private val key = stringPreferencesKey("state")
 
-    val flow: Flow<ExploreState?> = context.exploreDataStore.data.map { ExploreCodec.decode(it[key]) }
+    val flow: Flow<ExploreState?> = store.data.map { ExploreCodec.decode(it[key]) }
 
     suspend fun read(): ExploreState? = flow.first()
 
     /** Changes the state with [change] (given the stored one, or null) and returns the new one. */
     suspend fun update(change: (ExploreState?) -> ExploreState?): ExploreState? {
         var result: ExploreState? = null
-        context.exploreDataStore.edit { prefs ->
+        store.edit { prefs ->
             val next = change(ExploreCodec.decode(prefs[key]))
             if (next == null) prefs.remove(key) else prefs[key] = ExploreCodec.encode(next)
             result = next
