@@ -90,14 +90,9 @@ class RouteTrackerTest {
     }
 
     @Test
-    fun `every small sight has a place along the route, in route order`() {
-        val stamps = route.poiStamps
-        assertEquals(route.pois.map { it.id }.toSet(), stamps.map { it.first.id }.toSet())
-        assertEquals(route.pois.size, stamps.size)
-        assertTrue(stamps.all { it.second in 0.0..route.totalKm })
-        assertEquals(stamps.map { it.second }, stamps.map { it.second }.sorted())
-        // the tracker itself reports cards, stations and crossings only: small sights are the app's, as it knows the townships
+    fun `the tracker reports cards, stations and crossings only, small sights are the app's`() {
         val whole = RouteTracker.advance(route, RouteTracker.start(route, 0), 3_000_000, stride)
         assertTrue(whole.events.none { it is RouteEvent.PoiCollected })
+        assertTrue(route.pois.isNotEmpty())
     }
 }

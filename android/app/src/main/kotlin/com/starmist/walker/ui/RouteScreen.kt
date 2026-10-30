@@ -129,7 +129,7 @@ internal fun LazyListScope.routeProgressItems(
     /** True shows every card as a square picture in an album grid instead of the list by county. */
     album: Boolean = false, onAlbum: (Boolean) -> Unit = {},
     /** Each small sight with the kilometre its stamp is earned at (null: never on this route). */
-    sightStamps: List<Pair<com.starmist.core.route.Poi, Double?>> = route.poiStamps.map { it.first to (it.second as Double?) },
+    sightStamps: List<Pair<com.starmist.core.route.Poi, Double?>> = route.pois.map { it to null },
 ) {
     val km = state.walkedKm
     val done = km >= route.totalKm - 1e-9

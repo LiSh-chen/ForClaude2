@@ -5,12 +5,13 @@ import com.starmist.core.route.RouteDef
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * When a small sight's stamp is earned: once the walker has gone into the township the sight lies in, and has reached the point of the
- * route nearest to it, whichever comes later. A sight whose township the route never goes through is never stamped (null).
+ * When a small sight's stamp is earned: once the walker is past the middle of the walk through the township the sight lies in (half
+ * of the stretch of route inside it). A sight whose township the route never goes through is never stamped (null).
  */
 internal object PoiStamps {
     private val cache = ConcurrentHashMap<String, List<Pair<Poi, Double?>>>()
 
+    /** Every small sight of [route] with the kilometre of its stamp, in the order they are earned (those never earned last). */
     fun of(route: RouteDef, areas: TownAreas): List<Pair<Poi, Double?>> = cache.getOrPut(route.id) { compute(route, areas) }
 
     private fun townOf(poi: Poi, areas: TownAreas): Int {
@@ -23,11 +24,15 @@ internal object PoiStamps {
         val step = 0.25
         val total = route.totalKm
         val along = IntArray((total / step).toInt() + 2) { k -> route.positionAt((k * step).coerceAtMost(total)).let { areas.find(it.lat, it.lng) } }
-        return route.poiStamps.map { (poi, nearest) ->
+        return route.pois.map { poi ->
             val own = townOf(poi, areas)
             val entry = if (own < 0) -1 else along.indexOfFirst { it == own }
-            poi to if (entry < 0) null else maxOf(entry * step, nearest)
-        }
+            if (entry < 0) poi to null else {
+                var exit = entry
+                while (exit + 1 < along.size && along[exit + 1] == own) exit++
+                poi to (entry + (exit - entry) / 2.0) * step
+            }
+        }.sortedBy { it.second ?: Double.MAX_VALUE }
     }
 
     /** The sights whose stamp is earned after walking [walkedKm]. */
