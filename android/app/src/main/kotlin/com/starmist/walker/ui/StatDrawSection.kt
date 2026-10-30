@@ -104,9 +104,9 @@ fun StatDrawSection(vm: AppViewModel, settings: UserSettings, onRuler: (Ruler?) 
     // The kinds drawn today are kept, so reopening the app shows the same cards.
     var drawn by remember(todayKey) {
         val p = drawPrefs(context)
-        mutableStateOf(
-            if (p.getString("day", null) == todayKey) p.getString("kinds", "").orEmpty().split(",").mapNotNull { n -> DRAW_POOL.firstOrNull { it.name == n } } else emptyList(),
-        )
+        val kept: List<StatKind> =
+            if (p.getString("day", null) == todayKey) p.getString("kinds", "").orEmpty().split(",").mapNotNull { n -> DRAW_POOL.firstOrNull { it.name == n } } else emptyList()
+        mutableStateOf(kept)
     }
     val ruler = if (StatKind.RULER in drawn) candidate else null
     LaunchedEffect(ruler) { onRuler(ruler) }
