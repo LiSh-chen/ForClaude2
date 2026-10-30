@@ -69,6 +69,7 @@ class ScreenshotTest {
 
     @Test fun home_poi_nanfangao() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, kmNear("nanfangao")), 6200) }
     @Test fun home_poi_kaohsiung() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, kmNear("cijin")), 9800) }
+    @Test fun home_poi_ahead() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, kmNear("luodong") - 14.0), 5400) }
     @Test fun home_poi_tainan() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, kmNear("chihkan")), 3100) }
 
     @Test fun home_real_start() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 0.0), 120) }
