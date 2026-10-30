@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -154,10 +156,11 @@ private fun stepScale(max: Int): Int = listOf(500, 1000, 2000, 2500, 5000, 10000
 
 /** Big dial: today's steps. The scale is labelled and stretches to 120% of the goal; the red stretch is what lies beyond the goal. */
 @Composable
-internal fun StepsDial(steps: Long, goal: Int, modifier: Modifier = Modifier) {
+internal fun StepsDial(steps: Long, goal: Int, walkedKm: Double, modifier: Modifier = Modifier) {
     val max = (goal * 1.2f).coerceAtLeast(1f)
     val v by animateFloatAsState((steps / max).coerceIn(0f, 1f), needleSpring, label = "steps")
     val tm = rememberTextMeasurer()
+    val km10 = rememberRolling((walkedKm * 10).toFloat())
     Canvas(modifier.aspectRatio(1f)) {
         val pen = Pen(this, size)
         with(pen) {
@@ -180,7 +183,10 @@ internal fun StepsDial(steps: Long, goal: Int, modifier: Modifier = Modifier) {
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 1f / 1.2f, 1f, INK_RED, 230, alpha = 0.6f)
             label(tm, if (thousands) "x1000" else "步", TextStyle(fontSize = 7.sp, color = Vintage.inkSoft), p(cx, 31f))
             // whose reading this is, printed on the face in the colour of the needle
-            label(tm, "今日步數", TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 76f))
+            label(tm, "今日步數", TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 64f))
+            // the kilometres walked in all, on a drum counter set into the face
+            label(tm, "總里程 km", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = BRONZE), p(cx, 75f))
+            odometer(tm, 36f, 79.5f, km10, cw = 5f, ch = 7.5f)
             needle(cx, cy, r * 0.72f, start + sweep * v, STEP_GREEN, 240)
         }
     }
@@ -188,9 +194,10 @@ internal fun StepsDial(steps: Long, goal: Int, modifier: Modifier = Modifier) {
 
 /** Big dial: the way round, scaled in percent. The short blue needle is how far round the island you are, the long red one how far through the township; their distances are in the middle panel, in the same colours. */
 @Composable
-internal fun RouteDial(overall: Float, region: Float?, modifier: Modifier = Modifier) {
+internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, modifier: Modifier = Modifier) {
     val v by animateFloatAsState(overall.coerceIn(0f, 1f), needleSpring, label = "island")
     val w by animateFloatAsState((region ?: 0f).coerceIn(0f, 1f), needleSpring, label = "region")
+    val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat())
     val tm = rememberTextMeasurer()
     Canvas(modifier.aspectRatio(1f)) {
         val pen = Pen(this, size)
@@ -202,6 +209,9 @@ internal fun RouteDial(overall: Float, region: Float?, modifier: Modifier = Modi
             for (i in 0..5) label(tm, "${i * 20}", num, at(cx, cy, r * 0.66f, start + sweep * i / 5f))
             label(tm, "進度 %", TextStyle(fontSize = 6.sp, color = Vintage.inkSoft), p(cx, 30f))
             // the two distances walked, as two odometers, the unit printed on the face
+            // the kilometres walked in the township, named in the colour of the long needle
+            label(tm, "區域 km", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = INK_RED), p(50f, 70f))
+            odometer(tm, 36f, 75f, if (townKm != null) town else null, cw = 5f, ch = 7.5f)
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
@@ -209,47 +219,14 @@ internal fun RouteDial(overall: Float, region: Float?, modifier: Modifier = Modi
     }
 }
 
-/**
- * Between the dials: the three distances as odometers, each named in the colour of its needle on the dials (the island and the township),
- * the last, the kilometres actually walked on foot, in bronze since it has no needle.
- */
-@Composable
-internal fun TripPanel(islandKm: Double, townKm: Double?, footKm: Double, modifier: Modifier = Modifier) {
-    val tm = rememberTextMeasurer()
-    val island = rememberRolling((islandKm * 10).toFloat())
-    val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat())
-    val foot = rememberRolling((footKm * 10).toFloat())
-    Canvas(modifier.aspectRatio(0.52f)) {
-        val pen = Pen(this, size)
-        with(pen) {
-            val face = roundRect(3f, -44f, 97f, 144f, 12f)
-            wash(face, PAPER, 1f, 0f, 0f)
-            inked(face, 790, closed = true, width = line * 1.4f, calm = 0.25f)
-            inked(roundRect(6f, -41f, 94f, 141f, 10f), 791, closed = true, width = line * 0.6f, calm = 0.25f)
-            val title = TextStyle(fontSize = 7.sp, fontWeight = FontWeight.Black)
-            val rows = listOf(
-                Triple("環島 km", ISLAND_BLUE, island),
-                Triple("區域 km", INK_RED, if (townKm != null) town else null),
-                Triple("總里程 km", BRONZE, foot),
-            )
-            for ((i, row) in rows.withIndex()) {
-                val base = -19.5f + i * 51f
-                label(tm, row.first, title.copy(color = row.second), p(50f, base + 6f))
-                odometer(tm, 9.5f, base + 15f, row.third, cw = 14.5f, ch = 22f)
-            }
-        }
-    }
-}
-
-/** The whole cluster: the step dial, the three distances and the way-round dial. */
+/** The whole cluster: two big dials side by side, the steps of today and the way round, each with its own drum counter. */
 @Composable
 internal fun InstrumentCluster(
-    steps: Long, goal: Int, overall: Float, region: Float?, islandKm: Double, townKm: Double?, footKm: Double,
+    steps: Long, goal: Int, overall: Float, region: Float?, walkedKm: Double, townKm: Double?,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.CenterVertically) {
-        StepsDial(steps, goal, Modifier.weight(1.55f))
-        TripPanel(islandKm, townKm, footKm, Modifier.weight(0.8f))
-        RouteDial(overall, region, Modifier.weight(1.55f))
+    Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
+        StepsDial(steps, goal, walkedKm, Modifier.weight(1f, fill = false).widthIn(max = 168.dp).padding(horizontal = 3.dp))
+        RouteDial(overall, region, townKm, Modifier.weight(1f, fill = false).widthIn(max = 168.dp).padding(horizontal = 3.dp))
     }
 }
