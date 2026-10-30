@@ -357,10 +357,18 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
     val collected = route.collected(walkedKm)
     val totalCards = route.stops.count { it.landmark != null }
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
+    // The way the traveller is walking: from here to a little further along the route, degrees clockwise from north.
+    val heading = remember(route, (walkedKm * 5).toInt()) {
+        val a = route.positionAt((walkedKm - 0.4).coerceAtLeast(0.0))
+        val b = route.positionAt((walkedKm + 0.4).coerceAtMost(route.totalKm))
+        val east = (b.lng - a.lng) * kotlin.math.cos(Math.toRadians(a.lat))
+        val north = b.lat - a.lat
+        if (east == 0.0 && north == 0.0) 0f else ((Math.toDegrees(kotlin.math.atan2(east, north)) + 360.0) % 360.0).toFloat()
+    }
     var detail by remember { mutableStateOf(false) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         InstrumentCluster(
-            steps, goal, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone, todayKm, kcal, onSync,
+            steps, goal, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone, todayKm, kcal, heading, onSync,
             Modifier.clickable { detail = true },
         )
     }

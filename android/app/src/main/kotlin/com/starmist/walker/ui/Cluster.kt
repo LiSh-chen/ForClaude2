@@ -18,6 +18,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -37,6 +39,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.Alignment
@@ -204,15 +208,20 @@ internal fun StepsDial(steps: Long, goal: Int, todayKm: Double, kcal: Double, mo
                 val half = value + step / 2
                 if (half < max) { val d2 = start + sweep * half / max; stroke(listOf(at(cx, cy, r * 0.89f, d2), at(cx, cy, r * 0.95f, d2)), ink, 260 + value / 100, width = line * 0.7f) }
                 val txt = if (thousands) (value / 1000f).let { if (it % 1f == 0f) "%d".format(it.toInt()) else "%.1f".format(it) } else value.toString()
-                label(tm, txt, small, at(cx, cy, r * 0.66f, deg))
+                // a number too close to the goal's own would only crowd it
+                if (kotlin.math.abs(value - goal) > step * 0.35f) label(tm, txt, small, at(cx, cy, r * 0.66f, deg))
                 value += step
             }
+            // the goal itself: a long red tick and its number, where the red stretch begins
+            val goalDeg = start + sweep / 1.2f
+            stroke(listOf(at(cx, cy, r * 0.76f, goalDeg), at(cx, cy, r * 0.97f, goalDeg)), INK_RED, 220, width = line * 1.8f)
+            label(tm, if (thousands) (goal / 1000f).let { if (it % 1f == 0f) "%d".format(it.toInt()) else "%.1f".format(it) } else goal.toString(), small.copy(color = INK_RED, fontWeight = FontWeight.Black), at(cx, cy, r * 0.66f, goalDeg))
             // beyond the goal
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 1f / 1.2f, 1f, INK_RED, 230, alpha = 0.6f)
             label(tm, if (thousands) "x1000" else "步", TextStyle(fontSize = 7.sp, color = Vintage.inkSoft), p(cx, 31f))
             // today's count in full, on green drums like the needle, with the distance and energy under it
             label(tm, "今日步數", TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 66f))
-            odometer(tm, 38f, 70.5f, stepsRoll, cells = 5, cw = 4.8f, ch = 7.5f, decimal = false, drum = Color(0xFF1F4D33))
+            odometer(tm, 38.5f, 70.5f, stepsRoll, cells = 5, cw = 4.6f, ch = 7.5f, decimal = false)
             label(tm, "%.2f 公里・%d 大卡".format(todayKm, kcal.roundToInt()), TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(cx, 83.5f))
             needle(cx, cy, r * 0.72f, start + sweep * v, STEP_GREEN, 240)
         }
@@ -252,22 +261,25 @@ internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm:
 
 /**
  * The whole cluster, mounted on a stitched leather strip with brass rivets: the step dial and the way-round dial side by side, and between
- * them a little compass and the brass knob that syncs.
+ * them the compass, which turns to the walker's heading, at the top and the brass knob that syncs at the bottom.
  */
 @Composable
 internal fun InstrumentCluster(
-    steps: Long, goal: Int, overall: Float, region: Float?, walkedKm: Double, townKm: Double?, todayKm: Double, kcal: Double, onSync: () -> Unit,
+    steps: Long, goal: Int, overall: Float, region: Float?, walkedKm: Double, townKm: Double?, todayKm: Double, kcal: Double, heading: Float, onSync: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier.fillMaxWidth()) {
-        Canvas(Modifier.matchParentSize()) { drawStrip() }
-        Row(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.CenterVertically) {
-            StepsDial(steps, goal, todayKm, kcal, Modifier.weight(1f))
-            Column(Modifier.width(48.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Compass(Modifier.size(44.dp))
-                SyncKnob(onSync)
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        val dial = (maxWidth - 6.dp * 2 - 38.dp - 4.dp) / 2
+        Box(Modifier.fillMaxWidth().height(dial + 12.dp)) {
+            Canvas(Modifier.matchParentSize()) { drawStrip() }
+            Row(Modifier.fillMaxWidth().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.CenterVertically) {
+                StepsDial(steps, goal, todayKm, kcal, Modifier.size(dial))
+                Column(Modifier.width(38.dp).height(dial), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
+                    Compass(heading, Modifier.size(36.dp))
+                    SyncKnob(onSync)
+                }
+                RouteDial(overall, region, townKm, walkedKm, Modifier.size(dial))
             }
-            RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f))
         }
     }
 }
@@ -304,10 +316,19 @@ private fun DrawScope.drawStrip() {
     sprig(size.width - 26.dp.toPx(), -1f)
 }
 
-/** A little compass rose, pen sketched, for company between the dials. */
+/** A little compass rose; the red pointer turns to the way the traveller is walking (degrees clockwise from north). */
 @Composable
-private fun Compass(modifier: Modifier = Modifier) {
+private fun Compass(heading: Float, modifier: Modifier = Modifier) {
     val tm = rememberTextMeasurer()
+    // The pointer always turns the short way round, never the long way past north.
+    var angle by remember { mutableFloatStateOf(heading) }
+    LaunchedEffect(heading) {
+        var d = (heading - angle) % 360f
+        if (d > 180f) d -= 360f
+        if (d < -180f) d += 360f
+        angle += d
+    }
+    val turn by animateFloatAsState(angle, spring(dampingRatio = 0.5f, stiffness = Spring.StiffnessVeryLow), label = "heading")
     Canvas(modifier) {
         val pen = Pen(this, size)
         with(pen) {
@@ -315,12 +336,21 @@ private fun Compass(modifier: Modifier = Modifier) {
             wash(ring, PAPER, 1f, 0f, 0f)
             inked(ring, 960, closed = true, width = line * 1.2f, calm = 0.25f)
             inked(circle(p(50f, 52f), 34f * u, 40), 961, closed = true, width = line * 0.6f, calm = 0.25f)
-            val north = listOf(p(50f, 14f), p(58f, 52f), p(42f, 52f))
-            val south = listOf(p(50f, 90f), p(58f, 52f), p(42f, 52f))
-            val east = listOf(p(88f, 52f), p(50f, 44f), p(50f, 60f))
-            val west = listOf(p(12f, 52f), p(50f, 44f), p(50f, 60f))
-            for (pts in listOf(south, east, west)) { wash(pts, Vintage.brass, 0.7f, 0f, 0f); inked(pts, 962 + pts.size, closed = true, width = line * 0.6f, calm = 0f) }
-            wash(north, INK_RED, 0.9f, 0f, 0f); inked(north, 970, closed = true, width = line * 0.7f, calm = 0f)
+            // the four points of the rose, fixed, north up
+            val south = listOf(p(50f, 88f), p(56f, 52f), p(44f, 52f))
+            val north = listOf(p(50f, 16f), p(56f, 52f), p(44f, 52f))
+            val east = listOf(p(86f, 52f), p(50f, 46f), p(50f, 58f))
+            val west = listOf(p(14f, 52f), p(50f, 46f), p(50f, 58f))
+            for ((i, pts) in listOf(north, south, east, west).withIndex()) { wash(pts, Vintage.brass, 0.55f, 0f, 0f); inked(pts, 962 + i, closed = true, width = line * 0.6f, calm = 0f) }
+            // the heading pointer
+            val c = Offset(50f, 52f)
+            fun rot(dx: Float, dy: Float): Offset {
+                val t = rad(turn)
+                return p(c.x + dx * cos(t).toFloat() - dy * sin(t).toFloat(), c.y + dx * sin(t).toFloat() + dy * cos(t).toFloat())
+            }
+            val pointer = listOf(rot(0f, -36f), rot(7f, 4f), rot(0f, 0f), rot(-7f, 4f))
+            wash(pointer, INK_RED, 0.95f, 0f, 0f); inked(pointer, 970, closed = true, width = line * 0.8f, calm = 0f)
+            wash(circle(p(50f, 52f), 2.2f * u, 8), Vintage.ink, 1f, 0f, 0f)
             label(tm, "N", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Black, color = Vintage.ink), p(50f, 6f))
         }
     }
@@ -331,12 +361,12 @@ private fun Compass(modifier: Modifier = Modifier) {
 private fun SyncKnob(onSync: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
-            Modifier.size(40.dp).clip(CircleShape).background(Brush.radialGradient(listOf(Vintage.brassLight, Vintage.brass, Vintage.brassDark)))
+            Modifier.size(34.dp).clip(CircleShape).background(Brush.radialGradient(listOf(Vintage.brassLight, Vintage.brass, Vintage.brassDark)))
                 .border(1.6.dp, Vintage.ink, CircleShape).clickable(onClick = onSync),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(Icons.Filled.Refresh, contentDescription = "同步", tint = Vintage.ink, modifier = Modifier.size(24.dp))
+            Icon(Icons.Filled.Refresh, contentDescription = "同步", tint = Vintage.ink, modifier = Modifier.size(21.dp))
         }
-        Text("同步", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
+        Text("同步", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
     }
 }

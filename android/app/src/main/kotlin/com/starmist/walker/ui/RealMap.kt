@@ -494,7 +494,7 @@ internal fun DrawScope.drawRealMap(
     }
     // Small roadside sights near the walker: just the name, underlined to say it can be tapped for a few lines about the place.
     if (w >= 1700f && !regionMode) route.poisNear(here).forEach { (poi, _) ->
-        queue += Label(30) { placeName(poi.name, poi.at.px(), 11.sp, Vintage.inkSoft, 6.dp.toPx(), plain = true, weight = FontWeight.Normal, underline = true) }
+        queue += Label(30) { placeName(poi.name, poi.at.px(), 11.sp, Color(0xFF16584A), 6.dp.toPx(), edge = Color(0xFF2F7F6E), weight = FontWeight.Bold, underline = true) }
     }
     queue.sortedByDescending { it.priority }.forEach { it.place() }
 
