@@ -116,7 +116,7 @@ private fun Pen.odometer(tm: TextMeasurer, x: Float, y: Float, tenths: Float?, c
     val lastW = cw * 1.55f
     val total = cw * (cells - 1) + lastW
     val frame = roundRect(x - 0.8f, y - 0.8f, x + total + 0.8f, y + ch + 0.8f, 1.2f)
-    wash(frame, ink, 0.85f, 0f, 0f); inked(frame, 900, closed = true, width = line * 0.8f)
+    wash(frame, ink, 0.85f, 0f, 0f); inked(frame, 900, closed = true, width = line * 0.8f, calm = 0f)
     val cream = Color(0xFFF3E9C9)
     // sized from the drum itself, so that ".9" fits the tenths drum whatever the size of the dial
     val fontSize = with(d) { minOf(ch * u * 0.75f, lastW * u / 1.35f).toSp() }
@@ -222,10 +222,10 @@ internal fun RouteDial(overall: Float, region: Float?, islandKm: Double, townKm:
             // the two distances walked, as two odometers, the unit printed on the face
             // each reading is named, with its unit, in the colour of its needle: the short blue one round the island, the long red one through the township
             val tag = TextStyle(fontSize = 5.5.sp, fontWeight = FontWeight.Black)
-            label(tm, "環島 km", tag.copy(color = Color(0xFF0B5E96)), p(50f, 61f))
-            odometer(tm, 38.3f, 65.6f, islandT, cw = 4.2f, ch = 6.2f)
-            label(tm, "區域 km", tag.copy(color = INK_RED), p(50f, 76.5f))
-            odometer(tm, 38.3f, 81f, if (townKm != null) townT else null, cw = 4.2f, ch = 6.2f)
+            label(tm, "環島 km", tag.copy(color = Color(0xFF0B5E96)), p(50f, 63.5f))
+            odometer(tm, 38.3f, 68.1f, islandT, cw = 4.2f, ch = 6.2f)
+            label(tm, "區域 km", tag.copy(color = INK_RED), p(50f, 79f))
+            odometer(tm, 38.3f, 83.5f, if (townKm != null) townT else null, cw = 4.2f, ch = 6.2f)
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
@@ -281,7 +281,7 @@ internal fun GapDisplay(km: Double?, modifier: Modifier = Modifier) {
             // the distance to the next card: printed on the face, read on a digital window
             label(tm, "距下一景點", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(50f, 89f))
             val window = roundRect(18f, 94f, 82f, 109f, 3f)
-            wash(window, ink, 0.07f, 0f, 0f); inked(window, 304, closed = true, width = line * 0.8f)
+            wash(window, ink, 0.07f, 0f, 0f); inked(window, 304, closed = true, width = line * 0.8f, calm = 0f)
             val tenths = km?.let { (it * 10).roundToInt().coerceIn(0, 9999) }
             val cells = if (tenths == null) listOf(null, null, 10, 10) else listOf(
                 if (tenths >= 1000) tenths / 1000 else null,
