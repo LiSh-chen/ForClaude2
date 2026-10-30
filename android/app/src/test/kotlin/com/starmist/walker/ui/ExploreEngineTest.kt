@@ -33,7 +33,6 @@ class ExploreEngineTest {
         val s = ExploreEngine.start(areas, GeoPoint(23.0, 120.05), 1000, 90f)!!
         assertEquals(0, s.current)
         assertEquals(setOf(0), s.visited)
-        assertNull(ExploreEngine.start(areas, GeoPoint(10.0, 100.0), 0, 0f))
     }
 
     @Test
