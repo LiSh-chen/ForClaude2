@@ -136,7 +136,7 @@ fun HomeScreen(
         onOpenAppSettings = onOpenAppSettings,
         onSync = { vm.refresh(announce = true) },
         onStartRoute = { vm.startRoute(it) },
-        onToggleExplore = { vm.toggleExplore() },
+        onToggleExplore = if (Features.EXPLORE) ({ vm.toggleExplore() }) else null,
         onExploreGo = { vm.exploreGo(it) },
         onOpenCard = onOpenCard,
         onOpenPoi = onOpenPoi,

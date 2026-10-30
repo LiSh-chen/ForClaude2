@@ -83,7 +83,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
                 onOpen = { detail = it }, onRestart = { confirmRestart = true }, onSwitch = { vm.startRoute(it) },
                 album = album, onAlbum = { album = it }, sightStamps = sightStamps,
             )
-            item { ExploreProgress(areasForStamps.towns.size, remember(areasForStamps, route, current.walkedKm, explore) { areasForStamps.visited(route, current.walkedKm).keys + explore?.visited.orEmpty() }.size) }
+            if (Features.EXPLORE) item { ExploreProgress(areasForStamps.towns.size, remember(areasForStamps, route, current.walkedKm, explore) { areasForStamps.visited(route, current.walkedKm).keys + explore?.visited.orEmpty() }.size) }
         }
     }
 
