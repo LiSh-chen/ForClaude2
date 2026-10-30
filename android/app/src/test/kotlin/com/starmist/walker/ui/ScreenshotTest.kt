@@ -60,6 +60,7 @@ class ScreenshotTest {
     }
 
     /** Free exploration, a third of the way from the township at [km] on the loop to the next one east/south of it. */
+    @Composable
     private fun Explore(regionMode: Boolean, picked: Boolean = true) {
         val context = androidx.compose.ui.platform.LocalContext.current
         val areas = remember { TownAreas.load(context) }
