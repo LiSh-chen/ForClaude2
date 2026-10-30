@@ -59,6 +59,35 @@ class ScreenshotTest {
         }
     }
 
+    /** Free exploration, a third of the way from the township at [km] on the loop to the next one east/south of it. */
+    private fun Explore(regionMode: Boolean, picked: Boolean = true) {
+        val context = androidx.compose.ui.platform.LocalContext.current
+        val areas = remember { TownAreas.load(context) }
+        val blurbs = remember { loadTownBlurbs(context) }
+        val nb = remember { areas.neighborLists() }
+        val loop = remember { areas.visited(forward, 85.0) }
+        val at = forward.positionAt(85.0)
+        val st0 = ExploreEngine.start(areas, at, 0, 90f)!!
+        val target = nb[st0.current].filter { it !in loop }.firstOrNull() ?: nb[st0.current].first()
+        val st = if (picked) ExploreEngine.go(st0, areas, target).let { it.copy(progressKm = ExploreEngine.legKm(it, areas) / 3) } else st0
+        val view = ExploreEngine.view(st, areas, nb[st.current])
+        val explored = loop.keys + st.visited
+        val map = HomeMap.Real(forward, 85.0, explore = view, exploredCount = explored.size)
+        Page { pad ->
+            HomeContent(
+                padding = pad, steps = 4321, goal = 9000, km = 3.0, kcal = 170.0,
+                lastSnapshot = null, granted = true, hasCounter = true, map = map,
+                onRequestPermission = {}, onOpenAppSettings = {}, onSync = {}, onStartRoute = {}, onToggleExplore = {},
+                currentTown = st.current, exploredTowns = explored,
+                infoOf = { id -> if (id !in areas.towns.indices) null else areas.towns[id].let { t -> RegionInfo(t, blurbs["${t.county}|${t.name}"], 1, 0.0, 1, id in explored) } },
+                initialRegionMode = regionMode,
+            )
+        }
+    }
+
+    @Test fun explore_route_mode() = paparazzi.snapshot { Explore(false) }
+    @Test fun explore_region_mode() = paparazzi.snapshot { Explore(true, picked = false) }
+
     /** Where on the loop the walker is closest to a small sight, so the screen shows how such sights look. */
     private fun kmNear(poiId: String): Double {
         val p = forward.pois.first { it.id == poiId }
