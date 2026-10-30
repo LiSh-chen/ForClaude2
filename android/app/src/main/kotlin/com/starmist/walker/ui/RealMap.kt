@@ -473,11 +473,10 @@ internal fun DrawScope.drawRealMap(
         route.pois.forEach { poi ->
             val o = poi.at.px()
             if (poi.id in earned) {
-                drawCircle(Color(0xFF2F7F6E), 5.5.dp.toPx() * ms, o)
-                drawCircle(Color.White, 5.5.dp.toPx() * ms, o, style = Stroke(1.6.dp.toPx() * ms))
-                drawCircle(Color.White, 1.8.dp.toPx() * ms, o)
+                drawCircle(Color(0xFF2F7F6E), 6.dp.toPx() * ms, o)
+                drawCircle(Color(0xFFFFF6E0), 6.dp.toPx() * ms, o, style = Stroke(1.4.dp.toPx() * ms))
             } else {
-                drawCircle(Color(0xFF2F7F6E), 4.5.dp.toPx() * ms, o, style = Stroke(2.dp.toPx() * ms))
+                drawCircle(Color(0xFF2F7F6E), 4.dp.toPx() * ms, o, style = Stroke(1.6.dp.toPx() * ms))
             }
         }
     }
