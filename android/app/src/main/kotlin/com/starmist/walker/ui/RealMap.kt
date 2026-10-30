@@ -490,7 +490,7 @@ internal fun DrawScope.drawRealMap(
         if (route.cumulativeKm[i] > walkedKm + 1e-9) return@forEachIndexed
         val o = stop.at.px()
         if (w <= 3000f || o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f) return@forEachIndexed
-        queue += Label(45) { placeName("${supply.name}站", o, 11.sp, Vintage.ink, 9.dp.toPx(), plain = true, weight = FontWeight.Medium) }
+        queue += Label(45) { placeName(supply.name, o, 11.sp, Vintage.ink, 9.dp.toPx(), plain = true, weight = FontWeight.Medium) }
     }
     // Small roadside sights near the walker: just the name, underlined to say it can be tapped for a few lines about the place.
     if (w >= 1700f && !regionMode) route.poisNear(here).forEach { (poi, _) ->

@@ -81,6 +81,8 @@ fun RouteMapView(
     onTapCard: ((String) -> Unit)? = null,
     /** Route mode: the name of a roadside sight was tapped (its id). */
     onTapPoi: ((String) -> Unit)? = null,
+    /** Route mode: a reached station's square was tapped (its id). */
+    onTapStation: ((String) -> Unit)? = null,
     /** True while steps are being counted: the traveller walks. */
     walking: Boolean = false,
 ) {
@@ -168,7 +170,7 @@ fun RouteMapView(
         background = SEA_COLOR,
         onTap = if (regionMode && onTapTown != null) { u, _ ->
             onTapTown(areas.find(MAP_LAT_MAX - u.y.toDouble() * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + u.x.toDouble() * (MAP_LON_MAX - MAP_LON_MIN)))
-        } else if (!regionMode && (onTapCard != null || onTapPoi != null)) { u, perPx ->
+        } else if (!regionMode && (onTapCard != null || onTapPoi != null || onTapStation != null)) { u, perPx ->
             // The nearest collected card's marker within about 30 dp of the tap.
             val owned = route.collected(walkedKm).map { it.id }.toSet()
             var best: String? = null
@@ -181,7 +183,19 @@ fun RouteMapView(
                 if (d < bestPx) { bestPx = d; best = id }
             }
             val tappedCard = best
+            // A reached station's square, about 30 dp round it.
+            var station: String? = null
+            var stationPx = 30f * density
+            route.stops.forEachIndexed { i, stop ->
+                val sup = stop.supply ?: return@forEachIndexed
+                if (route.cumulativeKm[i] > walkedKm + 1e-9) return@forEachIndexed
+                val q = stop.at.unit()
+                val d = kotlin.math.hypot((q.x - u.x) / perPx.x, (q.y - u.y) / perPx.y)
+                if (d < stationPx) { stationPx = d; station = sup.id }
+            }
+            val tappedStation = station
             if (tappedCard != null) onTapCard?.invoke(tappedCard)
+            else if (tappedStation != null) onTapStation?.invoke(tappedStation)
             else {
                 // Otherwise the nearest roadside sight whose name is showing (those within range of the walker), about 38 dp round it.
                 var poi: String? = null
@@ -265,6 +279,22 @@ fun PoiDialog(poi: com.starmist.core.route.Poi, onDismiss: () -> Unit) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 lines.forEach { Text(it, fontSize = 14.sp, color = Vintage.ink) }
                 Text("路邊的小景點，不會收進景點卡。", fontSize = 12.sp, color = Vintage.inkSoft)
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("關閉") } },
+    )
+}
+
+/** A station's stamp tapped on the map: its name and when it opened. */
+@Composable
+fun StationDialog(supply: com.starmist.core.route.Supply, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(supply.name) },
+        text = {
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                StationStamp(supply.name, supply.opened, Modifier.size(170.dp))
+                Text("${supply.opened} 年開站。走到這裡就蓋上這枚紀念章，橘色的小方塊就是它。", fontSize = 13.sp, color = Vintage.inkSoft)
             }
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text("關閉") } },

@@ -67,7 +67,7 @@ import kotlin.math.roundToLong
 internal sealed interface HomeMap {
     data object Preparing : HomeMap
     data object ChooseRoute : HomeMap
-    data class Real(val route: RouteDef, val walkedKm: Double, val zoom: Float? = null) : HomeMap
+    data class Real(val route: RouteDef, val walkedKm: Double, val zoom: Float? = null, val footKm: Double = walkedKm) : HomeMap
 }
 
 /** The township being walked through, for the card above the map. */
@@ -92,6 +92,8 @@ fun HomeScreen(
     onOpenCard: (String) -> Unit = {},
     /** The name of a roadside sight on the route map was tapped: show its introduction. */
     onOpenPoi: (String) -> Unit = {},
+    /** A reached station's square on the route map was tapped: show its stamp. */
+    onOpenStation: (String) -> Unit = {},
 ) {
     val steps by vm.todaySteps.collectAsStateWithLifecycle()
     val routeState by vm.routeState.collectAsStateWithLifecycle()
@@ -105,7 +107,8 @@ fun HomeScreen(
     val profile = settings.profile
     val route = routeState?.let { Routes.byId(it.routeId) }
     val walkedKm = routeState?.walkedKm ?: 0.0
-    val map: HomeMap = if (route == null) HomeMap.ChooseRoute else HomeMap.Real(route, walkedKm)
+    val footKm = (routeState?.consumedSteps ?: 0L) * BodyMetrics.strideMeters(profile) / 1000.0
+    val map: HomeMap = if (route == null) HomeMap.ChooseRoute else HomeMap.Real(route, walkedKm, footKm = footKm)
     val visited = remember(areas, route, (walkedKm * 2).toInt()) { if (route == null) emptyMap() else areas.visited(route, walkedKm) }
     val currentTown = remember(areas, route, (walkedKm * 2).toInt()) { route?.positionAt(walkedKm)?.let { areas.find(it.lat, it.lng) } ?: -1 }
     val infoOf: (Int) -> RegionInfo? = { id ->
@@ -132,6 +135,7 @@ fun HomeScreen(
         onStartRoute = { vm.startRoute(it) },
         onOpenCard = onOpenCard,
         onOpenPoi = onOpenPoi,
+        onOpenStation = onOpenStation,
         strideM = BodyMetrics.strideMeters(profile),
         currentTown = currentTown,
         exploredTowns = visited.keys,
@@ -177,6 +181,7 @@ internal fun HomeContent(
     onStartRoute: (String) -> Unit,
     onOpenCard: (String) -> Unit = {},
     onOpenPoi: (String) -> Unit = {},
+    onOpenStation: (String) -> Unit = {},
     strideM: Double = 0.7,
     currentTown: Int = -1,
     exploredTowns: Set<Int> = emptySet(),
@@ -205,6 +210,7 @@ internal fun HomeContent(
                         onTapTown = { id -> picked = if (id >= 0) id else -1 },
                         onTapCard = onOpenCard,
                         onTapPoi = onOpenPoi,
+                        onTapStation = onOpenStation,
                         walking = walking,
                     )
                     ModeSwitch(regionMode, Modifier.align(Alignment.TopEnd).padding(8.dp)) { regionMode = it; if (!it) picked = -1 }
@@ -301,10 +307,10 @@ private fun LockedTag(icon: String = "") {
 @Composable
 private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double, regionMode: Boolean, region: RegionInfo?, isCurrent: Boolean) {
     val progress = BodyMetrics.goalProgress(steps, goal).toFloat().coerceIn(0f, 1f)
-    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight), elevation = CardDefaults.cardElevation(3.dp)) {
-        Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(0.dp)) {
+        Column(Modifier.padding(horizontal = if (map != null && !regionMode) 0.dp else 8.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (map != null && !regionMode) {
-                InstrumentPanel(map.route, map.walkedKm, strideM, goal, steps, progress, km, kcal, Modifier.fillMaxWidth())
+                InstrumentPanel(map.route, map.walkedKm, map.footKm, strideM, goal, steps, km, kcal, Modifier.fillMaxWidth())
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     StepRing(steps, goal, progress, 96.dp)
@@ -342,7 +348,7 @@ private fun StepRing(steps: Long, goal: Int, progress: Float, size: androidx.com
  * (a dialog with the exact readings).
  */
 @Composable
-private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int, steps: Long, progress: Float, todayKm: Double, kcal: Double, modifier: Modifier) {
+private fun InstrumentPanel(route: RouteDef, walkedKm: Double, footKm: Double, strideM: Double, goal: Int, steps: Long, todayKm: Double, kcal: Double, modifier: Modifier) {
     val stride = strideM.coerceAtLeast(0.3)
     fun stepsFor(km: Double) = (km * 1000.0 / stride).roundToLong().coerceAtLeast(0L)
     fun days(steps: Long) = if (goal <= 0) 0L else (steps + goal - 1) / goal
@@ -355,7 +361,7 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
     var detail by remember { mutableStateOf(false) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         InstrumentCluster(
-            steps, goal, walkedKm, next?.second, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone,
+            steps, goal, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone, footKm,
             Modifier.clickable { detail = true },
         )
     }
