@@ -411,14 +411,14 @@ internal fun DrawScope.drawRealMap(
     val casing = Color.White.copy(alpha = 0.92f)
     val rideDots = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx() * k.coerceAtLeast(0.5f), 3.dp.toPx() * k.coerceAtLeast(0.5f)))
     val aheadDash = PathEffect.dashPathEffect(floatArrayOf(9.dp.toPx(), 6.dp.toPx()))
-    if (!regionMode) drawPath(aheadPath, casing, style = Stroke(6.5.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round))
-    if (!regionMode) drawPath(walkedPath, casing, style = Stroke(9.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
-    if (!regionMode) drawPath(ridePath, casing, style = Stroke(7.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, join = StrokeJoin.Round))
-    if (!regionMode) drawPath(rideAhead, Color(0xFF7B3FB5).copy(alpha = 0.6f), style = Stroke(3.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
-    if (!regionMode) drawPath(ridePath, Color(0xFF7B3FB5), style = Stroke(3.5.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
-    if (!regionMode) drawPath(aheadPath, Color(0xFFB3202A), style = Stroke(2.8.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
-    if (!regionMode) drawPath(walkedPath, Color(0xFF0E86D4), style = Stroke(5.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
-    if (!regionMode) drawPath(walkedPath, Color(0xFF9AD8FF).copy(alpha = 0.8f), style = Stroke(1.6.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+    if (!regionMode && explore == null) drawPath(aheadPath, casing, style = Stroke(6.5.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round))
+    if (!regionMode && explore == null) drawPath(walkedPath, casing, style = Stroke(9.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+    if (!regionMode && explore == null) drawPath(ridePath, casing, style = Stroke(7.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, join = StrokeJoin.Round))
+    if (!regionMode && explore == null) drawPath(rideAhead, Color(0xFF7B3FB5).copy(alpha = 0.6f), style = Stroke(3.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
+    if (!regionMode && explore == null) drawPath(ridePath, Color(0xFF7B3FB5), style = Stroke(3.5.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
+    if (!regionMode && explore == null) drawPath(aheadPath, Color(0xFFB3202A), style = Stroke(2.8.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
+    if (!regionMode && explore == null) drawPath(walkedPath, Color(0xFF0E86D4), style = Stroke(5.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+    if (!regionMode && explore == null) drawPath(walkedPath, Color(0xFF9AD8FF).copy(alpha = 0.8f), style = Stroke(1.6.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
 
     // Free exploration: the way to the picked township, dashed, and a ring on it.
     explore?.target?.let { t ->
@@ -484,7 +484,7 @@ internal fun DrawScope.drawRealMap(
     }
 
     // Cards and stamps: collected ones are solid blue, the next card is a big red target; nothing further on is shown.
-    val nextCardId = route.next(walkedKm)?.first?.id
+    val nextCardId = if (explore != null) null else route.next(walkedKm)?.first?.id
     if (!regionMode) route.stops.forEachIndexed { i, stop ->
         val o = stop.at.px()
         val reached = route.cumulativeKm[i] <= walkedKm + 1e-9
