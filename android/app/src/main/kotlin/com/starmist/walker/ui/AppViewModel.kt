@@ -267,7 +267,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             val stride = BodyMetrics.strideMeters(container.settings.current().profile)
             val advance = container.routes.settle(route, repository.allTimeTotal(), stride) ?: return@launch
             collectRegionTags(route, advance.state.walkedKm)
-            val shown = advance.events.filter {
+            // small sights earn their stamps here: the township and the nearest point both have to be reached
+            val before = advance.state.walkedKm - advance.addedKm
+            val sights = PoiStamps.of(route, townAreas).mapNotNull { (poi, km) ->
+                if (km != null && km > before + 1e-9 && km <= advance.state.walkedKm + 1e-9) RouteEvent.PoiCollected(poi, km) else null
+            }
+            val shown = (advance.events + sights).filter {
                 it is RouteEvent.CardCollected || it is RouteEvent.StampCollected || it is RouteEvent.PoiCollected || it is RouteEvent.Transit || it is RouteEvent.Finished
             }
             if (shown.isNotEmpty()) _pendingRouteEvents.update { it + shown }

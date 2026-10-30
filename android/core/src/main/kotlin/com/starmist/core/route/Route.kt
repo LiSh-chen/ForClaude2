@@ -117,7 +117,7 @@ data class RouteDef(
         return stops.last().at
     }
 
-    /** Where along the route each small sight is nearest (every quarter kilometre looked at), in route order: walking past it earns its stamp. */
+    /** Where along the route each small sight is nearest (every quarter kilometre looked at), in route order. Its stamp is earned there, but only once the walker is in the sight's township (see the app's PoiStamps). */
     val poiStamps: List<Pair<Poi, Double>> by lazy {
         if (pois.isEmpty()) emptyList() else {
             val step = 0.25
@@ -128,9 +128,6 @@ data class RouteDef(
             }.sortedBy { it.second }
         }
     }
-
-    /** Small sights whose stamp has been earned after walking [walkedKm]. */
-    fun poisCollected(walkedKm: Double): List<Poi> = poiStamps.filter { it.second <= walkedKm + 1e-9 }.map { it.first }
 
     /** Small sights within [POI_RANGE_KM] of [at], nearest first. */
     fun poisNear(at: GeoPoint, rangeKm: Double = POI_RANGE_KM): List<Pair<Poi, Double>> =

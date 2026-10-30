@@ -62,7 +62,9 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     var flipped by rememberSaveable { mutableStateOf(listOf<String>()) }
     var album by rememberSaveable { mutableStateOf(false) }
     val features = rememberLandmarkFacts()
-    val places = rememberTownAreas().cardPlaces
+    val areasForStamps = rememberTownAreas()
+    val places = areasForStamps.cardPlaces
+    val sightStamps = remember(route, areasForStamps) { route?.let { PoiStamps.of(it, areasForStamps) } ?: emptyList() }
 
     // Lazy: only the cards on screen are built, instead of all forty-five (and their pictures) when the tab opens.
     LazyColumn(
@@ -78,7 +80,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
                 route, current, places, features, flipped,
                 onToggle = { county -> flipped = if (county in flipped) flipped - county else flipped + county },
                 onOpen = { detail = it }, onRestart = { confirmRestart = true }, onSwitch = { vm.startRoute(it) },
-                album = album, onAlbum = { album = it },
+                album = album, onAlbum = { album = it }, sightStamps = sightStamps,
             )
         }
     }
@@ -126,6 +128,8 @@ internal fun LazyListScope.routeProgressItems(
     onToggle: (String) -> Unit, onOpen: (Landmark) -> Unit, onRestart: () -> Unit, onSwitch: (String) -> Unit,
     /** True shows every card as a square picture in an album grid instead of the list by county. */
     album: Boolean = false, onAlbum: (Boolean) -> Unit = {},
+    /** Each small sight with the kilometre its stamp is earned at (null: never on this route). */
+    sightStamps: List<Pair<com.starmist.core.route.Poi, Double?>> = route.poiStamps.map { it.first to (it.second as Double?) },
 ) {
     val km = state.walkedKm
     val done = km >= route.totalKm - 1e-9
@@ -196,9 +200,9 @@ internal fun LazyListScope.routeProgressItems(
     val stamps = route.suppliesReached(km).map { it.id }.toSet()
     item { Text("車站紀念章 ${stamps.size} / ${route.supplies.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
     item { StampGrid(route, stamps) }
-    val sights = route.poisCollected(km).map { it.id }.toSet()
+    val sights = PoiStamps.earned(sightStamps, km).map { it.id }.toSet()
     item { Text("小景點章 ${sights.size} / ${route.pois.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
-    item { PoiStampGrid(route, sights) }
+    item { PoiStampGrid(sightStamps, sights) }
     item { OutlinedButton(onClick = onRestart, modifier = Modifier.fillMaxWidth()) { Text("重新選路線／重新出發") } }
 }
 
@@ -271,15 +275,15 @@ private fun StampGrid(route: RouteDef, owned: Set<String>) {
 }
 
 @Composable
-private fun PoiStampGrid(route: RouteDef, owned: Set<String>) {
-    val rows = route.poiStamps.chunked(3)
+private fun PoiStampGrid(stamps: List<Pair<com.starmist.core.route.Poi, Double?>>, owned: Set<String>) {
+    val rows = stamps.sortedBy { it.second ?: Double.MAX_VALUE }.chunked(3)
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         rows.forEach { row ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 row.forEach { (poi, at) ->
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                         if (poi.id in owned) PoiStamp(poi, Modifier.size(104.dp))
-                        else Text("？？？\n第 ${at.roundToInt()} 公里", style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(vertical = 36.dp))
+                        else Text(if (at != null) "？？？\n第 ${at.roundToInt()} 公里" else "？？？", style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(vertical = 36.dp))
                     }
                 }
                 repeat(3 - row.size) { Box(Modifier.weight(1f)) {} }

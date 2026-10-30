@@ -166,6 +166,8 @@ fun RouteMapView(
             id in explored
         }.map { it.id }.toSet()
     }
+    val poiStamps = remember(areas, route) { PoiStamps.of(route, areas) }
+    val earnedPois = remember(poiStamps, (walkedKm * 4).toInt()) { PoiStamps.earned(poiStamps, walkedKm).map { it.id }.toSet() }
     val currentTown = remember(areas, route, (walkedKm * 2).toInt()) { route.positionAt(walkedKm).let { areas.find(it.lat, it.lng) } }
     val here = route.positionAt(walkedKm)
     ZoomPanMap(
@@ -215,11 +217,11 @@ fun RouteMapView(
                 }
                 val hit = poi
                 selectedPoi = hit?.id
-                if (hit != null && route.poisCollected(walkedKm).any { it.id == hit.id }) onTapPoi?.invoke(hit.id)
+                if (hit != null && hit.id in earnedPois) onTapPoi?.invoke(hit.id)
             }
         } else null,
         top = { w, h, _, _ -> drawWalker(Offset(here.unit().x * w, here.unit().y * h), w, walker, phase.floatValue, walk.floatValue, face.value, idleAct.intValue, idleT.floatValue, measurer) },
-    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown, selectedPoi, visiblePois) }
+    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown, selectedPoi, visiblePois, earnedPois) }
 }
 
 /** Small square picture for a card: the painted art inside the album frame once collected, an empty album slot before. */

@@ -90,15 +90,14 @@ class RouteTrackerTest {
     }
 
     @Test
-    fun `every small sight gives its stamp once, in the order it is passed`() {
+    fun `every small sight has a place along the route, in route order`() {
+        val stamps = route.poiStamps
+        assertEquals(route.pois.map { it.id }.toSet(), stamps.map { it.first.id }.toSet())
+        assertEquals(route.pois.size, stamps.size)
+        assertTrue(stamps.all { it.second in 0.0..route.totalKm })
+        assertEquals(stamps.map { it.second }, stamps.map { it.second }.sorted())
+        // the tracker itself reports cards, stations and crossings only: small sights are the app's, as it knows the townships
         val whole = RouteTracker.advance(route, RouteTracker.start(route, 0), 3_000_000, stride)
-        val ids = whole.events.filterIsInstance<RouteEvent.PoiCollected>().map { it.poi.id }
-        assertEquals(route.pois.map { it.id }.toSet(), ids.toSet())
-        assertEquals(route.pois.size, ids.size)
-        // walking only part of the way earns only the sights passed so far
-        val part = RouteTracker.advance(route, RouteTracker.start(route, 0), 100_000, stride)
-        val got = part.events.filterIsInstance<RouteEvent.PoiCollected>().map { it.poi.id }.toSet()
-        assertEquals(route.poisCollected(part.state.walkedKm).map { it.id }.toSet(), got)
-        assertTrue(got.size < route.pois.size)
+        assertTrue(whole.events.none { it is RouteEvent.PoiCollected })
     }
 }

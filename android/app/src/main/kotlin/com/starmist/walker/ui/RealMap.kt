@@ -188,6 +188,8 @@ internal fun DrawScope.drawRealMap(
     selectedPoi: String? = null,
     /** The small sights not hidden in the fog (null: all). */
     visiblePois: Set<String>? = null,
+    /** The small sights whose stamp is earned. */
+    earnedPois: Set<String> = emptySet(),
 ) {
     fun GeoPoint.px() = unit().let { Offset(it.x * w, it.y * h) }
     fun Offset.scaled() = Offset(x * w, y * h)
@@ -482,7 +484,7 @@ internal fun DrawScope.drawRealMap(
 
     // Small sights: a plain ring until the stamp is earned, then the teal seal.
     if (!regionMode) {
-        val earned = route.poisCollected(walkedKm).map { it.id }.toSet()
+        val earned = earnedPois
         shownPois.forEach { poi ->
             val o = poiSpot(poi)
             if (poi.id in earned) {
