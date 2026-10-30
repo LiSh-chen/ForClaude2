@@ -413,7 +413,7 @@ internal fun DrawScope.drawRealMap(
     occupied += if (pin != null && !dotMode) Rect(p.x - pinWidth / 2, p.y - pinHeight, p.x + pinWidth / 2, p.y + 4.dp.toPx())
     else Rect(p.x - 9.dp.toPx(), p.y - 9.dp.toPx(), p.x + 9.dp.toPx(), p.y + 9.dp.toPx())
     route.stops.forEach { stop -> if (stop.landmark != null || stop.supply != null) reserve(stop.at.px(), 9.dp.toPx()) }
-    route.poisCollected(walkedKm).forEach { reserve(it.at.px(), 8.dp.toPx()) }
+    route.poisCollected(walkedKm).forEach { reserve(it.at.px(), 5.dp.toPx()) }
 
     /** Puts [text] beside [anchor] on a parchment tag, on the first side that is free; returns false when none is. */
     fun placeName(text: String, anchor: Offset, size: androidx.compose.ui.unit.TextUnit, color: Color, gap: Float, force: Boolean = false, plain: Boolean = false, edge: Color? = null, weight: FontWeight = FontWeight.Bold, underline: Boolean = false): Boolean {
@@ -503,7 +503,7 @@ internal fun DrawScope.drawRealMap(
     }
     // Small roadside sights near the walker: just the name, underlined to say it can be tapped for a few lines about the place.
     if (w >= 1700f && !regionMode) route.poisCollected(walkedKm).forEach { poi ->
-        queue += Label(30) { placeName(poi.name, poi.at.px(), 11.sp, Color(0xFF16584A), 6.dp.toPx(), edge = Color(0xFF2F7F6E), weight = FontWeight.Bold, underline = true) }
+        queue += Label(30) { placeName(poi.name, poi.at.px(), 11.sp, Color(0xFF16584A), 9.dp.toPx(), edge = Color(0xFF2F7F6E), weight = FontWeight.Bold, underline = true) }
     }
     queue.sortedByDescending { it.priority }.forEach { it.place() }
 
