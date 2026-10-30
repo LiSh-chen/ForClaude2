@@ -87,6 +87,7 @@ fun RouteMapView(
     walking: Boolean = false,
 ) {
     val measurer = rememberMapMeasurer()
+    var selectedPoi by remember { mutableStateOf<String?>(null) }   // a small sight's dot tapped on the map: its name is shown
     val density = androidx.compose.ui.platform.LocalDensity.current.density
     val data = rememberRealMapData(route)
     val walker = rememberWalkerArt()
@@ -194,22 +195,24 @@ fun RouteMapView(
                 if (d < stationPx) { stationPx = d; station = sup.id }
             }
             val tappedStation = station
-            if (tappedCard != null) onTapCard?.invoke(tappedCard)
-            else if (tappedStation != null) onTapStation?.invoke(tappedStation)
+            if (tappedCard != null) { selectedPoi = null; onTapCard?.invoke(tappedCard) }
+            else if (tappedStation != null) { selectedPoi = null; onTapStation?.invoke(tappedStation) }
             else {
-                // Otherwise the nearest small sight whose stamp is earned, about 38 dp round it.
-                var poi: String? = null
+                // Otherwise the nearest small sight, about 38 dp round it: its name is shown, and its stamp too if it is earned.
+                var poi: com.starmist.core.route.Poi? = null
                 var poiPx = 38f * density
-                route.poisCollected(walkedKm).forEach { p ->
+                route.pois.forEach { p ->
                     val q = p.at.unit()
                     val d = kotlin.math.hypot((q.x - u.x) / perPx.x, (q.y - u.y) / perPx.y)
-                    if (d < poiPx) { poiPx = d; poi = p.id }
+                    if (d < poiPx) { poiPx = d; poi = p }
                 }
-                poi?.let { onTapPoi?.invoke(it) }
+                val hit = poi
+                selectedPoi = hit?.id
+                if (hit != null && route.poisCollected(walkedKm).any { it.id == hit.id }) onTapPoi?.invoke(hit.id)
             }
         } else null,
         top = { w, h, _, _ -> drawWalker(Offset(here.unit().x * w, here.unit().y * h), w, walker, phase.floatValue, walk.floatValue, face.value, idleAct.intValue, idleT.floatValue, measurer) },
-    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown) }
+    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown, selectedPoi) }
 }
 
 /** Small square picture for a card: the painted art inside the album frame once collected, an empty album slot before. */
