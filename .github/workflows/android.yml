@@ -77,3 +77,21 @@ jobs:
         with:
           name: app-debug-apk
           path: android/app/build/outputs/apk/debug/*.apk
+
+  # The shared code has to compile for iOS too; that only works on a Mac.
+  ios-compile:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Compile core and shared for the iOS simulator
+        run: ./gradlew :shared:compileKotlinIosSimulatorArm64 :core:compileKotlinIosSimulatorArm64
+      - name: Run the shared tests on the iOS simulator
+        run: ./gradlew :core:iosSimulatorArm64Test :shared:iosSimulatorArm64Test
