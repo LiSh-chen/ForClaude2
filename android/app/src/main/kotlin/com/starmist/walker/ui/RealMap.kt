@@ -190,11 +190,14 @@ internal fun DrawScope.drawRealMap(
     visiblePois: Set<String>? = null,
     /** The small sights whose stamp is earned. */
     earnedPois: Set<String> = emptySet(),
+    /** Free exploration: where the walker is and where it is going (null on the loop). */
+    explore: ExploreView? = null,
 ) {
     fun GeoPoint.px() = unit().let { Offset(it.x * w, it.y * h) }
     fun Offset.scaled() = Offset(x * w, y * h)
     val label = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Vintage.ink)
-    val here = route.positionAt(walkedKm)
+    val routeHere = route.positionAt(walkedKm)
+    val here = explore?.here ?: routeHere
 
     // Sea: ink hatching like an old atlas, thicker near the coast.
     val island = Path().apply {
@@ -361,6 +364,15 @@ internal fun DrawScope.drawRealMap(
         }
     }
 
+    // Free exploration, region mode: the townships next to the one the walker is in are the ones it can go to next.
+    if (regionMode && areas != null && explore != null && w >= 1700f) {
+        val dashes = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx(), 5.dp.toPx()))
+        explore.neighbors.forEach { id ->
+            if (id == selectedTown || id !in areas.towns.indices) return@forEach
+            drawPath(areas.path(id, w, h), Color(0xFF1B8A6B).copy(alpha = 0.85f), style = Stroke(2.2.dp.toPx(), join = StrokeJoin.Round, pathEffect = dashes))
+        }
+    }
+
     // Region mode, a township not walked through yet that has been picked: no name, but its border in a dashed line so the player can see how far it reaches.
     if (regionMode && areas != null && w >= 1700f && selectedTown in areas.towns.indices && selectedTown !in explored) {
         val edge = areas.path(selectedTown, w, h)
@@ -387,7 +399,7 @@ internal fun DrawScope.drawRealMap(
             walkedKm >= endKm -> walkedEnd = extend(walkedPath, walkedEnd, a, b)
             walkedKm <= startKm -> aheadEnd = extend(aheadPath, aheadEnd, a, b)
             else -> {
-                val mid = here.px()
+                val mid = routeHere.px()
                 walkedEnd = extend(walkedPath, walkedEnd, a, mid)
                 aheadEnd = extend(aheadPath, aheadEnd, mid, b)
             }
@@ -407,6 +419,17 @@ internal fun DrawScope.drawRealMap(
     if (!regionMode) drawPath(aheadPath, Color(0xFFB3202A), style = Stroke(2.8.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
     if (!regionMode) drawPath(walkedPath, Color(0xFF0E86D4), style = Stroke(5.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
     if (!regionMode) drawPath(walkedPath, Color(0xFF9AD8FF).copy(alpha = 0.8f), style = Stroke(1.6.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+
+    // Free exploration: the way to the picked township, dashed, and a ring on it.
+    explore?.target?.let { t ->
+        if (!regionMode) {
+            val a = here.px(); val b = t.px()
+            drawLine(casing, a, b, 6.5.dp.toPx() * k, StrokeCap.Round)
+            drawLine(Color(0xFF1B8A6B), a, b, 3.dp.toPx() * k.coerceAtLeast(0.5f), StrokeCap.Round, pathEffect = aheadDash)
+            drawCircle(Color(0xFF1B8A6B), 9.dp.toPx() * ms, b, style = Stroke(2.5.dp.toPx() * ms))
+            drawCircle(Color(0xFF1B8A6B), 3.dp.toPx() * ms, b)
+        }
+    }
 
     // Everything that takes room is recorded, so a name is only put where it covers neither a marker nor another name.
     val occupied = ArrayList<Rect>()
@@ -500,7 +523,7 @@ internal fun DrawScope.drawRealMap(
     // one (or a marker) is simply not drawn, and it comes back by itself once there is room.
     class Label(val priority: Int, val place: () -> Unit)
     val queue = ArrayList<Label>()
-    val next = route.next(walkedKm)?.first
+    val next = if (explore != null) null else route.next(walkedKm)?.first
     val lastCard = route.collected(walkedKm).lastOrNull()
     // How far to the next card (its name stays hidden until it is reached).
     if (w >= 1700f && !regionMode) next?.let { n ->
@@ -509,6 +532,10 @@ internal fun DrawScope.drawRealMap(
             val o = route.stops.first { it.landmark?.id == n.id }.at.px()
             placeName("還有 ${"%.1f".format(toNext)} 公里", o, 13.sp, Color(0xFFB3202A), 16.dp.toPx(), force = true, edge = Color(0xFFB3202A))
         }
+    }
+    // Free exploration: how far to the township being walked to.
+    if (w >= 1700f && !regionMode && explore?.target != null && explore.targetName != null) {
+        queue += Label(100) { placeName("前往${explore.targetName} ${"%.1f".format(explore.targetKmLeft)} 公里", explore.target.px(), 13.sp, Color(0xFF1B8A6B), 16.dp.toPx(), force = true, edge = Color(0xFF1B8A6B)) }
     }
     // Names of the cards already collected.
     if (w >= 1700f && !regionMode) route.collected(walkedKm).forEach { card ->

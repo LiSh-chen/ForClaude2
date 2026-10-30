@@ -12,6 +12,7 @@ import com.starmist.core.stats.Period
 import com.starmist.core.stats.PeriodSummary
 import com.starmist.core.steps.StepScaler
 import com.starmist.walker.container
+import com.starmist.walker.data.ExploreState
 import com.starmist.walker.data.RegionLog
 import com.starmist.walker.data.DailyStepsEntity
 import com.starmist.walker.data.DiagnosticsInfo
@@ -265,6 +266,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             val state = container.routes.flow.first() ?: return@launch
             val route = Routes.byId(state.routeId) ?: return@launch
             val stride = BodyMetrics.strideMeters(container.settings.current().profile)
+            if (container.explore.read()?.active == true) {
+                container.routes.skipTo(repository.allTimeTotal())
+                settleExplore(stride)
+                return@launch
+            }
             val advance = container.routes.settle(route, repository.allTimeTotal(), stride) ?: return@launch
             collectRegionTags(route, advance.state.walkedKm)
             // small sights earn their stamps here: the township and the nearest point both have to be reached
@@ -277,6 +283,72 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             }
             if (shown.isNotEmpty()) _pendingRouteEvents.update { it + shown }
         }
+    }
+
+    // ---- free exploration ------------------------------------------------------------------
+
+    val exploreState: StateFlow<ExploreState?> = container.explore.flow.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    private val neighborLists by lazy { townAreas.neighborLists() }
+
+    /** Which townships are next to which, for the map to offer only those next to the walker. */
+    fun neighborsOf(id: Int): Set<Int> = neighborLists.getOrNull(id).orEmpty()
+
+    /** Works as the switch between the loop and free exploration (for development; later it opens after the loop is finished). */
+    fun toggleExplore() {
+        viewModelScope.launch {
+            val steps = repository.allTimeTotal()
+            val now = container.explore.read()
+            if (now?.active == true) {
+                settleExplore(BodyMetrics.strideMeters(container.settings.current().profile))
+                container.explore.update { it?.copy(active = false) }
+                container.routes.skipTo(steps)
+                return@launch
+            }
+            val route = container.routes.flow.first()?.let { Routes.byId(it.routeId) }
+            if (now != null) {
+                container.explore.update { it?.copy(active = true, consumedSteps = steps) }
+            } else if (route != null) {
+                val walked = container.routes.flow.first()?.walkedKm ?: 0.0
+                val begun = ExploreEngine.start(townAreas, route.positionAt(walked), steps, 0f)
+                if (begun != null) container.explore.update { begun } else _message.value = "找不到目前所在的鄉鎮"
+            }
+            container.routes.skipTo(steps)
+        }
+    }
+
+    /** Picks the township to walk to; only one next to the township the walker is in. */
+    fun exploreGo(id: Int) {
+        viewModelScope.launch {
+            val s = container.explore.read() ?: return@launch
+            if (!s.active || id !in neighborsOf(s.current)) return@launch
+            container.explore.update { it?.let { st -> ExploreEngine.go(st, townAreas, id) } }
+        }
+    }
+
+    private suspend fun exploreExplored(s: ExploreState): Set<Int> {
+        val state = container.routes.flow.first()
+        val loop = state?.let { Routes.byId(it.routeId)?.let { r -> townAreas.visited(r, state.walkedKm).keys } }.orEmpty()
+        return loop + s.visited
+    }
+
+    /** Turns new steps into distance along the way to the picked township, collecting what each township reached holds. */
+    private suspend fun settleExplore(stride: Double) {
+        val s = container.explore.read()?.takeIf { it.active } ?: return
+        val advance = ExploreEngine.advance(s, townAreas, neighborLists, exploreExplored(s), repository.allTimeTotal(), stride)
+        container.explore.update { advance.state.copy(active = it?.active ?: false) }
+        for (id in advance.reached) {
+            val t = townAreas.towns[id]
+            val key = "${t.county}|${t.name}"
+            val tags = townTags[key] ?: continue
+            val found = container.regions.visit(key, tags.size, stage = 1)
+            if (found != null) _message.value = "${t.name}：發現新特色「${tags[found].tag}」"
+        }
+        val route = container.routes.flow.first()?.let { Routes.byId(it.routeId) } ?: return
+        val reachedSet = advance.reached.toSet()
+        val sights = route.pois.filter { poi -> townAreas.find(poi.at.lat, poi.at.lng) in reachedSet }
+            .map { RouteEvent.PoiCollected(it, 0.0) }
+        if (sights.isNotEmpty()) _pendingRouteEvents.update { it + sights }
     }
 
     // ---- step-detector batching trial -----------------------------------------------------

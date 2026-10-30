@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
@@ -231,11 +232,11 @@ internal fun StepsDial(steps: Long, goal: Int, todayKm: Double, kcal: Double, mo
 
 /** Big dial: the way round, scaled in percent. The short blue needle is how far round the island you are, the long red one how far through the township; their distances are in the middle panel, in the same colours. */
 @Composable
-internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm: Double, modifier: Modifier = Modifier) {
+internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm: Double, modifier: Modifier = Modifier, exploredCount: Int? = null) {
     val v by animateFloatAsState(overall.coerceIn(0f, 1f), needleSpring, label = "island")
     val w by animateFloatAsState((region ?: 0f).coerceIn(0f, 1f), needleSpring, label = "region")
     val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat())
-    val total = rememberRolling((totalKm * 10).toFloat())
+    val total = rememberRolling(if (exploredCount != null) exploredCount.toFloat() else (totalKm * 10).toFloat())
     val tm = rememberTextMeasurer()
     Canvas(modifier.aspectRatio(1f)) {
         val pen = Pen(this, size)
@@ -251,8 +252,13 @@ internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm:
             val tag = TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold)
             label(tm, "區域 km", tag.copy(color = INK_RED), p(50f, 61.2f))
             odometer(tm, 37f, 65.8f, if (townKm != null) town else null, cw = 4.6f, ch = 6.6f)
-            label(tm, "總里程 km", tag.copy(color = BRONZE), p(50f, 77.2f))
-            odometer(tm, 37f, 81.2f, total, cw = 4.6f, ch = 6.6f)
+            if (exploredCount != null) {
+                label(tm, "已探索 區", tag.copy(color = COLD_BLUE), p(50f, 77.2f))
+                odometer(tm, 37f, 81.2f, total, cw = 4.6f, ch = 6.6f, decimal = false, cells = 4)
+            } else {
+                label(tm, "總里程 km", tag.copy(color = BRONZE), p(50f, 77.2f))
+                odometer(tm, 37f, 81.2f, total, cw = 4.6f, ch = 6.6f)
+            }
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
@@ -268,6 +274,9 @@ internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm:
 internal fun InstrumentCluster(
     steps: Long, goal: Int, overall: Float, region: Float?, walkedKm: Double, townKm: Double?, todayKm: Double, kcal: Double, heading: Float, onSync: () -> Unit,
     modifier: Modifier = Modifier,
+    /** Free exploration: townships explored (the dial then counts them), and the switch back and forth. */
+    exploredCount: Int? = null,
+    onToggle: (() -> Unit)? = null,
 ) {
     Box(modifier.fillMaxWidth()) {
         Canvas(Modifier.matchParentSize()) { drawStrip() }
@@ -276,8 +285,12 @@ internal fun InstrumentCluster(
             Column(Modifier.width(48.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Compass(heading, Modifier.size(44.dp))
                 SyncKnob(onSync)
+                if (onToggle != null) Text(
+                    if (exploredCount != null) "環島" else "探索", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark,
+                    modifier = Modifier.clip(RoundedCornerShape(8.dp)).background(Vintage.brass.copy(alpha = 0.35f)).clickable(onClick = onToggle).padding(horizontal = 6.dp, vertical = 2.dp),
+                )
             }
-            RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f))
+            RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f), exploredCount)
         }
     }
 }

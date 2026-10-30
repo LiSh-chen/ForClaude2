@@ -85,6 +85,8 @@ fun RouteMapView(
     onTapStation: ((String) -> Unit)? = null,
     /** True while steps are being counted: the traveller walks. */
     walking: Boolean = false,
+    /** Free exploration: the walker is off the route, going from township to township. */
+    explore: ExploreView? = null,
 ) {
     val measurer = rememberMapMeasurer()
     var selectedPoi by remember { mutableStateOf<String?>(null) }   // a small sight's dot tapped on the map: its name is shown
@@ -151,14 +153,16 @@ fun RouteMapView(
         }
     }
     // Which way the traveller faces: the way the route runs on the screen a little ahead (kept when it runs straight up or down).
-    val heading = remember(route, walkedKm.toInt()) { walkerHeading(route, walkedKm) }
+    val heading = remember(route, walkedKm.toInt(), explore?.heading) {
+        explore?.let { if (it.here.lng - (it.target?.lng ?: it.here.lng) < -1e-6) 1f else if (it.here.lng - (it.target?.lng ?: it.here.lng) > 1e-6) -1f else 0f } ?: walkerHeading(route, walkedKm)
+    }
     var faceTarget by remember { mutableFloatStateOf(if (heading == 0f) 1f else heading) }
     LaunchedEffect(heading) { if (heading != 0f) faceTarget = heading }
     val face = animateFloatAsState(faceTarget, tween(260, easing = FastOutSlowInEasing), label = "face")
     val base = rememberArt("real_map_base")
     val tiles = rememberMapTiles()
     val areas = rememberTownAreas()
-    val explored = remember(areas, route, (walkedKm * 2).toInt()) { areas.visited(route, walkedKm).keys }
+    val explored = remember(areas, route, (walkedKm * 2).toInt(), explore?.visited) { areas.visited(route, walkedKm).keys + explore?.visited.orEmpty() }
     // A small sight in a township not walked through yet lies in the fog: neither shown nor tapped.
     val visiblePois = remember(areas, route, explored) {
         if (explored.isEmpty()) null else route.pois.filter { p ->
@@ -167,13 +171,17 @@ fun RouteMapView(
         }.map { it.id }.toSet()
     }
     val poiStamps = remember(areas, route) { PoiStamps.of(route, areas) }
-    val earnedPois = remember(poiStamps, (walkedKm * 4).toInt()) { PoiStamps.earned(poiStamps, walkedKm).map { it.id }.toSet() }
-    val currentTown = remember(areas, route, (walkedKm * 2).toInt()) { route.positionAt(walkedKm).let { areas.find(it.lat, it.lng) } }
-    val here = route.positionAt(walkedKm)
+    val earnedPois = remember(poiStamps, areas, route, (walkedKm * 4).toInt(), explore?.visited) {
+        val byWalk = PoiStamps.earned(poiStamps, walkedKm).map { it.id }.toSet()
+        val byExplore = explore?.visited.orEmpty().let { seen -> route.pois.filter { p -> areas.find(p.at.lat, p.at.lng) in seen }.map { it.id } }
+        byWalk + byExplore
+    }
+    val currentTown = remember(areas, route, (walkedKm * 2).toInt(), explore?.current) { explore?.current ?: route.positionAt(walkedKm).let { areas.find(it.lat, it.lng) } }
+    val here = explore?.here ?: route.positionAt(walkedKm)
     ZoomPanMap(
         aspect = REAL_MAP_ASPECT,
         focus = here.unit(),
-        followKey = (walkedKm * 20).toInt(),
+        followKey = explore?.followKey ?: (walkedKm * 20).toInt(),
         modifier = modifier,
         initialZoom = initialZoom ?: if (base != null) 5.5f else 12f,
         maxZoom = 12f,
@@ -221,7 +229,7 @@ fun RouteMapView(
             }
         } else null,
         top = { w, h, _, _ -> drawWalker(Offset(here.unit().x * w, here.unit().y * h), w, walker, phase.floatValue, walk.floatValue, face.value, idleAct.intValue, idleT.floatValue, measurer) },
-    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown, selectedPoi, visiblePois, earnedPois) }
+    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown, selectedPoi, visiblePois, earnedPois, explore) }
 }
 
 /** Small square picture for a card: the painted art inside the album frame once collected, an empty album slot before. */
