@@ -24,7 +24,7 @@ class TagDiscoveryTest {
         assertNull(TagDiscovery.next(0b1, 1, 1, 2))
     }
 
-    @Test fun `only long townships reach the second stage, at half the way`() {
+    @Test fun `only long townships reach the second stage at half the way`() {
         assertFalse(TagDiscovery.reachedHalfway(5.0, 4.0))
         assertFalse(TagDiscovery.reachedHalfway(12.0, 5.5))
         assertTrue(TagDiscovery.reachedHalfway(12.0, 6.0))

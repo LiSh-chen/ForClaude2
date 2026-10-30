@@ -55,7 +55,7 @@ class StepLedgerTest {
     }
 
     @Test
-    fun `lower counter on the same boot is a stale reading, not a reboot`() {
+    fun `lower counter on the same boot is a stale reading not a reboot`() {
         val prev = snap(5_000, millis(2026, 10, 7, 9))
         val stale = snap(4_200, millis(2026, 10, 7, 10)) // same boot: an old value replayed by the system
         val delta = StepDeltaCalculator.compute(prev, stale)

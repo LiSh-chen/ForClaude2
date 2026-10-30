@@ -64,7 +64,7 @@ class RouteTest {
     }
 
     @Test
-    fun `the counter-clockwise loop has the same cards, stamps and two crossings`() {
+    fun `the counter-clockwise loop has the same cards stamps and two crossings`() {
         val ccw = Routes.byId("taiwan_loop_ccw")!!
         assertEquals(route.cards.map { it.first.id }.toSet(), ccw.cards.map { it.first.id }.toSet())
         assertEquals(route.supplies.map { it.first.id }.toSet(), ccw.supplies.map { it.first.id }.toSet())

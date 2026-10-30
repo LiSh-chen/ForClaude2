@@ -22,7 +22,7 @@ class CalibrationAndMetricsTest {
     }
 
     @Test
-    fun `several trials are combined by total, longer walks weigh more`() {
+    fun `several trials are combined by total longer walks weigh more`() {
         val m = Calibration.multiplierFrom(
             listOf(CalibrationTrial(20, 22), CalibrationTrial(100, 100)),
         )

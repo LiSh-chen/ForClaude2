@@ -90,7 +90,7 @@ class RouteTrackerTest {
     }
 
     @Test
-    fun `the tracker reports cards, stations and crossings only, small sights are the app's`() {
+    fun `the tracker reports cards stations and crossings only small sights are the app's`() {
         val whole = RouteTracker.advance(route, RouteTracker.start(route, 0), 3_000_000, stride)
         assertTrue(whole.events.none { it is RouteEvent.PoiCollected })
         assertTrue(route.pois.isNotEmpty())
