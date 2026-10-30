@@ -204,20 +204,18 @@ internal fun StepsDial(steps: Long, goal: Int, todayKm: Double, kcal: Double, mo
             var value = 0
             while (value <= max + 1) {
                 val deg = start + sweep * value / max
-                stroke(listOf(at(cx, cy, r * 0.84f, deg), at(cx, cy, r * 0.95f, deg)), ink, 210 + value / 100, width = line * 1.2f)
+                if (value != goal) stroke(listOf(at(cx, cy, r * 0.84f, deg), at(cx, cy, r * 0.95f, deg)), ink, 210 + value / 100, width = line * 1.2f)
                 val half = value + step / 2
-                if (half < max) { val d2 = start + sweep * half / max; stroke(listOf(at(cx, cy, r * 0.89f, d2), at(cx, cy, r * 0.95f, d2)), ink, 260 + value / 100, width = line * 0.7f) }
+                if (half < max && half != goal) { val d2 = start + sweep * half / max; stroke(listOf(at(cx, cy, r * 0.89f, d2), at(cx, cy, r * 0.95f, d2)), ink, 260 + value / 100, width = line * 0.7f) }
                 val txt = if (thousands) (value / 1000f).let { if (it % 1f == 0f) "%d".format(it.toInt()) else "%.1f".format(it) } else value.toString()
                 label(tm, txt, small, at(cx, cy, r * 0.66f, deg))
                 value += step
             }
-            // the goal: a small red triangle on the scale, pointing at it, and its name
+            // the goal: a small red triangle in the rim, where its tick would be, pointing in at the scale, and its name inside the numbers
             val goalDeg = start + sweep / 1.2f
-            val tip = at(cx, cy, r * 0.84f, goalDeg)
-            val back1 = at(cx, cy, r * 0.70f, goalDeg - 4.5f); val back2 = at(cx, cy, r * 0.70f, goalDeg + 4.5f)
-            val tri = listOf(tip, back1, back2)
+            val tri = listOf(at(cx, cy, r * 0.86f, goalDeg), at(cx, cy, r * 0.95f, goalDeg - 3.4f), at(cx, cy, r * 0.95f, goalDeg + 3.4f))
             wash(tri, INK_RED, 1f, 0f, 0f); inked(tri, 220, closed = true, width = line * 0.7f, calm = 0f)
-            label(tm, "GOAL", TextStyle(fontSize = 5.sp, fontWeight = FontWeight.Black, color = INK_RED), at(cx, cy, r * 0.50f, goalDeg))
+            label(tm, "GOAL", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Black, color = INK_RED), at(cx, cy, r * 0.58f, goalDeg))
             // beyond the goal
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 1f / 1.2f, 1f, INK_RED, 230, alpha = 0.6f)
             label(tm, if (thousands) "x1000" else "步", TextStyle(fontSize = 7.sp, color = Vintage.inkSoft), p(cx, 31f))

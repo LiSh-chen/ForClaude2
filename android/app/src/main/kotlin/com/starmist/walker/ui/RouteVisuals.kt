@@ -197,10 +197,10 @@ fun RouteMapView(
             if (tappedCard != null) onTapCard?.invoke(tappedCard)
             else if (tappedStation != null) onTapStation?.invoke(tappedStation)
             else {
-                // Otherwise the nearest roadside sight whose name is showing (those within range of the walker), about 38 dp round it.
+                // Otherwise the nearest small sight whose stamp is earned, about 38 dp round it.
                 var poi: String? = null
                 var poiPx = 38f * density
-                route.poisNear(here).forEach { (p, _) ->
+                route.poisCollected(walkedKm).forEach { p ->
                     val q = p.at.unit()
                     val d = kotlin.math.hypot((q.x - u.x) / perPx.x, (q.y - u.y) / perPx.y)
                     if (d < poiPx) { poiPx = d; poi = p.id }
@@ -276,13 +276,55 @@ fun PoiDialog(poi: com.starmist.core.route.Poi, onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
         title = { Text(poi.name) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                lines.forEach { Text(it, fontSize = 14.sp, color = Vintage.ink) }
-                Text("路邊的小景點，不會收進景點卡。", fontSize = 12.sp, color = Vintage.inkSoft)
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                PoiStamp(poi, Modifier.size(150.dp))
+                lines.forEach { Text(it, fontSize = 14.sp, color = Vintage.ink, modifier = Modifier.fillMaxWidth()) }
+                Text("走過這裡就蓋上的小章，不算景點卡。", fontSize = 12.sp, color = Vintage.inkSoft, modifier = Modifier.fillMaxWidth())
             }
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text("關閉") } },
     )
+}
+
+private val POI_INK = Color(0xFF2F7F6E)
+
+/** What a small sight is, for the foot of its stamp. */
+private fun com.starmist.core.route.Poi.kindName() = when (kind) {
+    com.starmist.core.route.PoiKind.HARBOR -> "漁港"
+    com.starmist.core.route.PoiKind.TEMPLE -> "古剎"
+    com.starmist.core.route.PoiKind.MUSEUM -> "博物館"
+    com.starmist.core.route.PoiKind.SPRING -> "溫泉"
+    com.starmist.core.route.PoiKind.WATERFALL -> "瀑布"
+    com.starmist.core.route.PoiKind.PARK -> "公園"
+    com.starmist.core.route.PoiKind.THEATER -> "表演場館"
+    com.starmist.core.route.PoiKind.FORT -> "古蹟"
+    com.starmist.core.route.PoiKind.LIGHTHOUSE -> "燈塔"
+}
+
+/** A round teal stamp for a small sight: its name, and what it is. */
+@Composable
+fun PoiStamp(poi: com.starmist.core.route.Poi, modifier: Modifier = Modifier) {
+    val measurer = rememberTextMeasurer()
+    val name = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = POI_INK)
+    val small = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 10.sp, color = POI_INK)
+    Canvas(modifier.aspectRatio(1f)) {
+        val c = Offset(size.width / 2, size.height / 2)
+        val r = size.minDimension / 2 - 2.dp.toPx()
+        val k = size.minDimension / 150.dp.toPx()
+        rotate(6f, c) {
+            drawCircle(POI_INK.copy(alpha = 0.9f), r, c, style = Stroke(3.dp.toPx() * k))
+            drawCircle(POI_INK.copy(alpha = 0.7f), r - 6.dp.toPx() * k, c, style = Stroke(1.dp.toPx() * k))
+            val top = measurer.measure("小景點", small.copy(fontSize = small.fontSize * k))
+            drawText(top, topLeft = Offset(c.x - top.size.width / 2f, c.y - r * 0.66f))
+            val lines = if (poi.name.length > 5) poi.name.chunked((poi.name.length + 1) / 2) else listOf(poi.name)
+            val laid = lines.map { measurer.measure(it, name.copy(fontSize = name.fontSize * k)) }
+            val total = laid.sumOf { it.size.height }
+            var y = c.y - total / 2f
+            laid.forEach { drawText(it, topLeft = Offset(c.x - it.size.width / 2f, y)); y += it.size.height }
+            val kind = measurer.measure(poi.kindName(), small.copy(fontSize = small.fontSize * k))
+            drawText(kind, topLeft = Offset(c.x - kind.size.width / 2f, c.y + r * 0.46f))
+        }
+    }
 }
 
 /** A station's stamp tapped on the map: its name and when it opened. */
@@ -355,6 +397,20 @@ fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit) {
             },
             confirmButton = { TextButton(onClick = onDismiss) { Text("收下") } },
         )
+        is RouteEvent.PoiCollected -> {
+            val lines = rememberPoiIntros()[event.poi.id].orEmpty()
+            AlertDialog(
+                onDismissRequest = onDismiss,
+                title = { Text("蓋上小章：${event.poi.name}") },
+                text = {
+                    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        PoiStamp(event.poi, Modifier.size(150.dp))
+                        lines.forEach { Text(it, fontSize = 14.sp, color = Vintage.ink, modifier = Modifier.fillMaxWidth()) }
+                    }
+                },
+                confirmButton = { TextButton(onClick = onDismiss) { Text("收下") } },
+            )
+        }
         is RouteEvent.Transit -> AlertDialog(
             onDismissRequest = onDismiss,
             title = { Text("${event.by}前往${event.into}") },

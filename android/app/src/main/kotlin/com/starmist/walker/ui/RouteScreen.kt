@@ -196,6 +196,9 @@ internal fun LazyListScope.routeProgressItems(
     val stamps = route.suppliesReached(km).map { it.id }.toSet()
     item { Text("車站紀念章 ${stamps.size} / ${route.supplies.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
     item { StampGrid(route, stamps) }
+    val sights = route.poisCollected(km).map { it.id }.toSet()
+    item { Text("小景點章 ${sights.size} / ${route.pois.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
+    item { PoiStampGrid(route, sights) }
     item { OutlinedButton(onClick = onRestart, modifier = Modifier.fillMaxWidth()) { Text("重新選路線／重新出發") } }
 }
 
@@ -259,6 +262,24 @@ private fun StampGrid(route: RouteDef, owned: Set<String>) {
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                         if (supply.id in owned) StationStamp(supply.name, supply.opened, Modifier.size(104.dp))
                         else Text("${supply.name}\n第 ${at.roundToInt()} 公里", style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(vertical = 36.dp))
+                    }
+                }
+                repeat(3 - row.size) { Box(Modifier.weight(1f)) {} }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PoiStampGrid(route: RouteDef, owned: Set<String>) {
+    val rows = route.poiStamps.chunked(3)
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        rows.forEach { row ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                row.forEach { (poi, at) ->
+                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                        if (poi.id in owned) PoiStamp(poi, Modifier.size(104.dp))
+                        else Text("？？？\n第 ${at.roundToInt()} 公里", style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(vertical = 36.dp))
                     }
                 }
                 repeat(3 - row.size) { Box(Modifier.weight(1f)) {} }

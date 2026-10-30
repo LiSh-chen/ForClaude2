@@ -413,6 +413,7 @@ internal fun DrawScope.drawRealMap(
     occupied += if (pin != null && !dotMode) Rect(p.x - pinWidth / 2, p.y - pinHeight, p.x + pinWidth / 2, p.y + 4.dp.toPx())
     else Rect(p.x - 9.dp.toPx(), p.y - 9.dp.toPx(), p.x + 9.dp.toPx(), p.y + 9.dp.toPx())
     route.stops.forEach { stop -> if (stop.landmark != null || stop.supply != null) reserve(stop.at.px(), 9.dp.toPx()) }
+    route.poisCollected(walkedKm).forEach { reserve(it.at.px(), 8.dp.toPx()) }
 
     /** Puts [text] beside [anchor] on a parchment tag, on the first side that is free; returns false when none is. */
     fun placeName(text: String, anchor: Offset, size: androidx.compose.ui.unit.TextUnit, color: Color, gap: Float, force: Boolean = false, plain: Boolean = false, edge: Color? = null, weight: FontWeight = FontWeight.Bold, underline: Boolean = false): Boolean {
@@ -464,6 +465,14 @@ internal fun DrawScope.drawRealMap(
         }
     }
 
+    // Small sights whose stamp has been earned: a small teal seal on the map.
+    if (!regionMode) route.poisCollected(walkedKm).forEach { poi ->
+        val o = poi.at.px()
+        drawCircle(Color(0xFF2F7F6E), 5.5.dp.toPx() * ms, o)
+        drawCircle(Color.White, 5.5.dp.toPx() * ms, o, style = Stroke(1.6.dp.toPx() * ms))
+        drawCircle(Color.White, 1.8.dp.toPx() * ms, o)
+    }
+
     // Names are queued with a priority and placed from the most important down; a name that would cover a more important
     // one (or a marker) is simply not drawn, and it comes back by itself once there is room.
     class Label(val priority: Int, val place: () -> Unit)
@@ -493,7 +502,7 @@ internal fun DrawScope.drawRealMap(
         queue += Label(45) { placeName(supply.name, o, 11.sp, Vintage.ink, 9.dp.toPx(), plain = true, weight = FontWeight.Medium) }
     }
     // Small roadside sights near the walker: just the name, underlined to say it can be tapped for a few lines about the place.
-    if (w >= 1700f && !regionMode) route.poisNear(here).forEach { (poi, _) ->
+    if (w >= 1700f && !regionMode) route.poisCollected(walkedKm).forEach { poi ->
         queue += Label(30) { placeName(poi.name, poi.at.px(), 11.sp, Color(0xFF16584A), 6.dp.toPx(), edge = Color(0xFF2F7F6E), weight = FontWeight.Bold, underline = true) }
     }
     queue.sortedByDescending { it.priority }.forEach { it.place() }

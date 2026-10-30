@@ -268,7 +268,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             val advance = container.routes.settle(route, repository.allTimeTotal(), stride) ?: return@launch
             collectRegionTags(route, advance.state.walkedKm)
             val shown = advance.events.filter {
-                it is RouteEvent.CardCollected || it is RouteEvent.StampCollected || it is RouteEvent.Transit || it is RouteEvent.Finished
+                it is RouteEvent.CardCollected || it is RouteEvent.StampCollected || it is RouteEvent.PoiCollected || it is RouteEvent.Transit || it is RouteEvent.Finished
             }
             if (shown.isNotEmpty()) _pendingRouteEvents.update { it + shown }
         }

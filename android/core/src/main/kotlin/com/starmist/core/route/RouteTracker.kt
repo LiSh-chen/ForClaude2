@@ -14,6 +14,8 @@ data class RouteState(
 sealed interface RouteEvent {
     data class CardCollected(val landmark: Landmark, val atKm: Double) : RouteEvent
     data class StampCollected(val supply: Supply, val atKm: Double) : RouteEvent
+    /** The walker passed a small sight and earns its stamp. */
+    data class PoiCollected(val poi: Poi, val atKm: Double) : RouteEvent
     /** The walker went over a leg crossed by train or ferry. */
     data class Transit(val by: String, val into: String) : RouteEvent
     data object Finished : RouteEvent
@@ -43,6 +45,10 @@ object RouteTracker {
             if (!stop.via) stop.transit?.let { events += RouteEvent.Transit(it, stop.name) }
             stop.landmark?.let { events += RouteEvent.CardCollected(it, at) }
             stop.supply?.let { events += RouteEvent.StampCollected(it, at) }
+        }
+        for ((poi, at) in route.poiStamps) {
+            val first = at == 0.0 && before == 0.0 && steps > 0
+            if ((at > before + 1e-9 || first) && at <= after + 1e-9) events += RouteEvent.PoiCollected(poi, at)
         }
         if (before < route.totalKm - 1e-9 && after >= route.totalKm - 1e-9) events += RouteEvent.Finished
         return RouteAdvance(RouteState(state.routeId, allTimeSteps, after), events, after - before)

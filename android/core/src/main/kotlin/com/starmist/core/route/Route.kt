@@ -60,7 +60,7 @@ data class RouteDef(
     val description: String,
     val stops: List<Stop>,
     val roadFactor: Double = 1.02,
-    /** Small sights near the way; shown on the map when the walker is within [POI_RANGE_KM]. */
+    /** Small sights near the way; each gives a small stamp when the walker passes it. */
     val pois: List<Poi> = emptyList(),
     /** Routes that are the same way walked in the other direction share a family. */
     val family: String = id,
@@ -116,6 +116,21 @@ data class RouteDef(
         }
         return stops.last().at
     }
+
+    /** Where along the route each small sight is nearest (every quarter kilometre looked at), in route order: walking past it earns its stamp. */
+    val poiStamps: List<Pair<Poi, Double>> by lazy {
+        if (pois.isEmpty()) emptyList() else {
+            val step = 0.25
+            val points = List((totalKm / step).toInt() + 2) { positionAt((it * step).coerceAtMost(totalKm)) }
+            pois.map { poi ->
+                val best = points.indices.minByOrNull { points[it].distanceKm(poi.at) } ?: 0
+                poi to (best * step).coerceAtMost(totalKm)
+            }.sortedBy { it.second }
+        }
+    }
+
+    /** Small sights whose stamp has been earned after walking [walkedKm]. */
+    fun poisCollected(walkedKm: Double): List<Poi> = poiStamps.filter { it.second <= walkedKm + 1e-9 }.map { it.first }
 
     /** Small sights within [POI_RANGE_KM] of [at], nearest first. */
     fun poisNear(at: GeoPoint, rangeKm: Double = POI_RANGE_KM): List<Pair<Poi, Double>> =
