@@ -208,14 +208,16 @@ internal fun StepsDial(steps: Long, goal: Int, todayKm: Double, kcal: Double, mo
                 val half = value + step / 2
                 if (half < max) { val d2 = start + sweep * half / max; stroke(listOf(at(cx, cy, r * 0.89f, d2), at(cx, cy, r * 0.95f, d2)), ink, 260 + value / 100, width = line * 0.7f) }
                 val txt = if (thousands) (value / 1000f).let { if (it % 1f == 0f) "%d".format(it.toInt()) else "%.1f".format(it) } else value.toString()
-                // a number too close to the goal's own would only crowd it
-                if (kotlin.math.abs(value - goal) > step * 0.35f) label(tm, txt, small, at(cx, cy, r * 0.66f, deg))
+                label(tm, txt, small, at(cx, cy, r * 0.66f, deg))
                 value += step
             }
-            // the goal itself: a long red tick and its number, where the red stretch begins
+            // the goal: a small red triangle on the scale, pointing at it, and its name
             val goalDeg = start + sweep / 1.2f
-            stroke(listOf(at(cx, cy, r * 0.76f, goalDeg), at(cx, cy, r * 0.97f, goalDeg)), INK_RED, 220, width = line * 1.8f)
-            label(tm, if (thousands) (goal / 1000f).let { if (it % 1f == 0f) "%d".format(it.toInt()) else "%.1f".format(it) } else goal.toString(), small.copy(color = INK_RED, fontWeight = FontWeight.Black), at(cx, cy, r * 0.66f, goalDeg))
+            val tip = at(cx, cy, r * 0.84f, goalDeg)
+            val back1 = at(cx, cy, r * 0.70f, goalDeg - 4.5f); val back2 = at(cx, cy, r * 0.70f, goalDeg + 4.5f)
+            val tri = listOf(tip, back1, back2)
+            wash(tri, INK_RED, 1f, 0f, 0f); inked(tri, 220, closed = true, width = line * 0.7f, calm = 0f)
+            label(tm, "GOAL", TextStyle(fontSize = 5.sp, fontWeight = FontWeight.Black, color = INK_RED), at(cx, cy, r * 0.50f, goalDeg))
             // beyond the goal
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 1f / 1.2f, 1f, INK_RED, 230, alpha = 0.6f)
             label(tm, if (thousands) "x1000" else "步", TextStyle(fontSize = 7.sp, color = Vintage.inkSoft), p(cx, 31f))
@@ -261,25 +263,22 @@ internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm:
 
 /**
  * The whole cluster, mounted on a stitched leather strip with brass rivets: the step dial and the way-round dial side by side, and between
- * them the compass, which turns to the walker's heading, at the top and the brass knob that syncs at the bottom.
+ * them the compass, which turns to the walker's heading, with the brass knob that syncs under it.
  */
 @Composable
 internal fun InstrumentCluster(
     steps: Long, goal: Int, overall: Float, region: Float?, walkedKm: Double, townKm: Double?, todayKm: Double, kcal: Double, heading: Float, onSync: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BoxWithConstraints(modifier.fillMaxWidth()) {
-        val dial = (maxWidth - 6.dp * 2 - 38.dp - 4.dp) / 2
-        Box(Modifier.fillMaxWidth().height(dial + 12.dp)) {
-            Canvas(Modifier.matchParentSize()) { drawStrip() }
-            Row(Modifier.fillMaxWidth().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.CenterVertically) {
-                StepsDial(steps, goal, todayKm, kcal, Modifier.size(dial))
-                Column(Modifier.width(38.dp).height(dial), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
-                    Compass(heading, Modifier.size(36.dp))
-                    SyncKnob(onSync)
-                }
-                RouteDial(overall, region, townKm, walkedKm, Modifier.size(dial))
+    Box(modifier.fillMaxWidth()) {
+        Canvas(Modifier.matchParentSize()) { drawStrip() }
+        Row(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.CenterVertically) {
+            StepsDial(steps, goal, todayKm, kcal, Modifier.weight(1f))
+            Column(Modifier.width(48.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Compass(heading, Modifier.size(44.dp))
+                SyncKnob(onSync)
             }
+            RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f))
         }
     }
 }
@@ -361,12 +360,12 @@ private fun Compass(heading: Float, modifier: Modifier = Modifier) {
 private fun SyncKnob(onSync: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
-            Modifier.size(34.dp).clip(CircleShape).background(Brush.radialGradient(listOf(Vintage.brassLight, Vintage.brass, Vintage.brassDark)))
+            Modifier.size(40.dp).clip(CircleShape).background(Brush.radialGradient(listOf(Vintage.brassLight, Vintage.brass, Vintage.brassDark)))
                 .border(1.6.dp, Vintage.ink, CircleShape).clickable(onClick = onSync),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(Icons.Filled.Refresh, contentDescription = "同步", tint = Vintage.ink, modifier = Modifier.size(21.dp))
+            Icon(Icons.Filled.Refresh, contentDescription = "同步", tint = Vintage.ink, modifier = Modifier.size(24.dp))
         }
-        Text("同步", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
+        Text("同步", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
     }
 }
