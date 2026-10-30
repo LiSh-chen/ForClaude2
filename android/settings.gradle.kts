@@ -26,4 +26,5 @@ rootProject.name = "StarMistWalker"
 //   ./gradlew -p core test
 includeBuild("core")
 
+include(":shared")
 include(":app")

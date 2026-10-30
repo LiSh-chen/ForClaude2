@@ -53,6 +53,8 @@ android {
 dependencies {
     // Step maths, stats and the fallback detector live in the pure-Kotlin :core build.
     implementation("com.starmist:core")
+    // The code both the Android and the iOS app run (data, rules, screens); grows as it moves out of this module.
+    implementation(project(":shared"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
