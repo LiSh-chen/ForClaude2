@@ -1,0 +1,590 @@
+{
+ "date": "2026-10-30",
+ "params_version": 1,
+ "provider": "live",
+ "llm": false,
+ "picks": [
+  {
+   "ticker": "6505.TW",
+   "name": "FORMOSA PETROCHEMICAL CORPORATI",
+   "zh_name": "台塑化",
+   "market": "TW",
+   "sector": "energy_materials",
+   "rank": 1,
+   "entry_price": 98.3,
+   "entry_date": "2026-10-30",
+   "composite": 64.19,
+   "scores": {
+    "sector": 80.0,
+    "leader": 100.0,
+    "quality": 51.0,
+    "growth": 87.7,
+    "valuation": 26.3,
+    "momentum": 79.2,
+    "news": 40.0
+   },
+   "target": {
+    "base": 110.04,
+    "bull": 130.51,
+    "bear": 79.32,
+    "ev": 106.45,
+    "confidence": "中",
+    "upside": 0.1194,
+    "ev_upside": 0.0829,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 107.56,
+      "weight": 0.615,
+      "upside": 0.0942
+     },
+     "consensus": {
+      "value": 114.0,
+      "weight": 0.385,
+      "upside": 0.1597
+     }
+    }
+   },
+   "stop": 80.61,
+   "fundamentals": {
+    "market_cap": 936401895424,
+    "pe_ttm": 17.0957,
+    "pe_fwd": 16.4324,
+    "peg": 5.22,
+    "roe": 0.1399,
+    "gross_margin": 0.1115,
+    "op_margin": 0.1251,
+    "net_margin": 0.0841,
+    "rev_growth": 0.257,
+    "eps_growth": null,
+    "de": 0.0464,
+    "beta": 0.084,
+    "target_mean": 114.0,
+    "n_analysts": 6,
+    "fcf_margin": 0.0173
+   },
+   "tech": {
+    "ret_1m": 0.04241781410976775,
+    "ret_3m": 0.3141711101768163,
+    "rel_3m": 0.22743607713599,
+    "dist200": 0.5181129016362263,
+    "vol_ann": 0.6280295669396394
+   }
+  },
+  {
+   "ticker": "2454.TW",
+   "name": "MEDIATEK INC",
+   "zh_name": "聯發科",
+   "market": "TW",
+   "sector": "ai_chips",
+   "rank": 2,
+   "entry_price": 3915.0,
+   "entry_date": "2026-10-30",
+   "composite": 62.85,
+   "scores": {
+    "sector": 65.7,
+    "leader": 83.3,
+    "quality": 66.5,
+    "growth": 8.9,
+    "valuation": 69.2,
+    "momentum": 62.7,
+    "news": 74.6
+   },
+   "target": {
+    "base": 4476.84,
+    "bull": 6267.58,
+    "bear": 1790.74,
+    "ev": 4163.46,
+    "confidence": "中",
+    "upside": 0.1435,
+    "ev_upside": 0.0635,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 3422.1,
+      "weight": 0.5,
+      "upside": -0.1259
+     },
+     "peg": {
+      "value": 4708.97,
+      "weight": 0.187,
+      "upside": 0.2028
+     },
+     "consensus": {
+      "value": 6025.15,
+      "weight": 0.312,
+      "upside": 0.539
+     }
+    }
+   },
+   "stop": 3450.71,
+   "fundamentals": {
+    "market_cap": 6252875743232,
+    "pe_ttm": 64.6466,
+    "pe_fwd": 26.1675,
+    "peg": 0.73,
+    "roe": 0.2386,
+    "gross_margin": 0.4628,
+    "op_margin": 0.1503,
+    "net_margin": 0.1628,
+    "rev_growth": 0.012,
+    "eps_growth": -0.127,
+    "de": 0.0624,
+    "beta": 1.959,
+    "target_mean": 6025.154,
+    "n_analysts": 26,
+    "fcf_margin": 0.0943
+   },
+   "tech": {
+    "ret_1m": -0.20264765784114058,
+    "ret_3m": 0.24285714285714288,
+    "rel_3m": 0.15612210981631658,
+    "dist200": 0.2198262992236557,
+    "vol_ann": 0.5403037203963614
+   }
+  },
+  {
+   "ticker": "2618.TW",
+   "name": "EVA AIRWAYS",
+   "zh_name": "長榮航",
+   "market": "TW",
+   "sector": "shipping",
+   "rank": 3,
+   "entry_price": 42.7,
+   "entry_date": "2026-10-30",
+   "composite": 49.56,
+   "scores": {
+    "sector": 70.0,
+    "leader": 50.0,
+    "quality": 47.6,
+    "growth": 39.3,
+    "valuation": 27.5,
+    "momentum": 61.6,
+    "news": 40.0
+   },
+   "target": {
+    "base": 45.25,
+    "bull": 50.68,
+    "bear": 37.1,
+    "ev": 44.3,
+    "confidence": "中",
+    "upside": 0.0596,
+    "ev_upside": 0.0374,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 44.0,
+      "weight": 0.615,
+      "upside": 0.0305
+     },
+     "consensus": {
+      "value": 47.24,
+      "weight": 0.385,
+      "upside": 0.1063
+     }
+    }
+   },
+   "stop": 40.14,
+   "fundamentals": {
+    "market_cap": 230598983680,
+    "pe_ttm": 9.0658,
+    "pe_fwd": 8.7621,
+    "peg": 2.54,
+    "roe": 0.1936,
+    "gross_margin": 0.2119,
+    "op_margin": 0.0844,
+    "net_margin": 0.1076,
+    "rev_growth": 0.225,
+    "eps_growth": -0.427,
+    "de": 0.7846,
+    "beta": 0.425,
+    "target_mean": 47.2375,
+    "n_analysts": 8,
+    "fcf_margin": 0.1354
+   },
+   "tech": {
+    "ret_1m": 0.02891568103468556,
+    "ret_3m": 0.030156814885215377,
+    "rel_3m": -0.056578218155610926,
+    "dist200": 0.12765305554460604,
+    "vol_ann": 0.24999494635497999
+   }
+  },
+  {
+   "ticker": "NVDA",
+   "name": "NVIDIA Corporation",
+   "zh_name": "NVIDIA",
+   "market": "US",
+   "sector": "ai_chips",
+   "rank": 1,
+   "entry_price": 213.66,
+   "entry_date": "2026-10-29",
+   "composite": 83.65,
+   "scores": {
+    "sector": 73.1,
+    "leader": 100.0,
+    "quality": 93.4,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 34.9,
+    "news": 81.0
+   },
+   "target": {
+    "base": 341.86,
+    "bull": 456.82,
+    "bear": 169.41,
+    "ev": 321.74,
+    "confidence": "中",
+    "upside": 0.6,
+    "ev_upside": 0.5058,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 298.83,
+      "weight": 0.5,
+      "upside": 0.3986
+     },
+     "peg": {
+      "value": 484.58,
+      "weight": 0.187,
+      "upside": 1.268
+     },
+     "consensus": {
+      "value": 328.95,
+      "weight": 0.312,
+      "upside": 0.5396
+     }
+    }
+   },
+   "stop": 198.8,
+   "fundamentals": {
+    "market_cap": 5159248199680,
+    "pe_ttm": 27.0114,
+    "pe_fwd": 13.4254,
+    "peg": 0.26,
+    "roe": 1.1721,
+    "gross_margin": 0.7467,
+    "op_margin": 0.6624,
+    "net_margin": 0.6366,
+    "rev_growth": 1.059,
+    "eps_growth": 1.278,
+    "de": 0.1697,
+    "beta": 2.216,
+    "target_mean": 328.9535,
+    "n_analysts": 58,
+    "fcf_margin": 0.138
+   },
+   "tech": {
+    "ret_1m": -0.06445398417543746,
+    "ret_3m": 0.0654997809635276,
+    "rel_3m": 0.03470157819250286,
+    "dist200": 0.04744265188304886,
+    "vol_ann": 0.34333377992882963
+   }
+  },
+  {
+   "ticker": "TSM",
+   "name": "Taiwan Semiconductor Manufactur",
+   "zh_name": "台積電 ADR",
+   "market": "US",
+   "sector": "ai_chips",
+   "rank": 2,
+   "entry_price": 431.81,
+   "entry_date": "2026-10-29",
+   "composite": 77.73,
+   "scores": {
+    "sector": 73.1,
+    "leader": 75.0,
+    "quality": 99.0,
+    "growth": 100.0,
+    "valuation": 88.5,
+    "momentum": 36.5,
+    "news": 40.0
+   },
+   "target": {
+    "base": 562.99,
+    "bull": 706.99,
+    "bear": 346.98,
+    "ev": 537.79,
+    "confidence": "中",
+    "upside": 0.3038,
+    "ev_upside": 0.2454,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 493.71,
+      "weight": 0.5,
+      "upside": 0.1433
+     },
+     "peg": {
+      "value": 712.05,
+      "weight": 0.187,
+      "upside": 0.649
+     },
+     "consensus": {
+      "value": 584.39,
+      "weight": 0.312,
+      "upside": 0.3534
+     }
+    }
+   },
+   "stop": 399.64,
+   "fundamentals": {
+    "market_cap": 2239571427328,
+    "pe_ttm": 27.9851,
+    "pe_fwd": 18.465,
+    "peg": 0.8,
+    "roe": 0.4185,
+    "gross_margin": 0.6585,
+    "op_margin": 0.5866,
+    "net_margin": 0.5112,
+    "rev_growth": 0.509,
+    "eps_growth": 0.687,
+    "de": 0.1162,
+    "beta": 1.239,
+    "target_mean": 584.3929,
+    "n_analysts": 20,
+    "fcf_margin": 0.2433
+   },
+   "tech": {
+    "ret_1m": -0.05344265492960665,
+    "ret_3m": 0.0710412055145162,
+    "rel_3m": 0.04024300274349146,
+    "dist200": 0.08429257304680915,
+    "vol_ann": 0.2913307105790234
+   }
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft Corporation",
+   "zh_name": "Microsoft",
+   "market": "US",
+   "sector": "cloud_software",
+   "rank": 3,
+   "entry_price": 530.14,
+   "entry_date": "2026-10-29",
+   "composite": 76.07,
+   "scores": {
+    "sector": 78.8,
+    "leader": 100.0,
+    "quality": 74.4,
+    "growth": 74.1,
+    "valuation": 56.4,
+    "momentum": 76.7,
+    "news": 83.0
+   },
+   "target": {
+    "base": 623.63,
+    "bull": 725.71,
+    "bear": 470.52,
+    "ev": 605.77,
+    "confidence": "高",
+    "upside": 0.1764,
+    "ev_upside": 0.1427,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 593.41,
+      "weight": 0.5,
+      "upside": 0.1194
+     },
+     "peg": {
+      "value": 735.07,
+      "weight": 0.187,
+      "upside": 0.3866
+     },
+     "consensus": {
+      "value": 605.12,
+      "weight": 0.312,
+      "upside": 0.1414
+     }
+    }
+   },
+   "stop": 498.33,
+   "fundamentals": {
+    "market_cap": 3936578961408,
+    "pe_ttm": 27.6691,
+    "pe_fwd": 21.9598,
+    "peg": 1.72,
+    "roe": 0.3404,
+    "gross_margin": 0.6794,
+    "op_margin": 0.4511,
+    "net_margin": 0.4031,
+    "rev_growth": 0.177,
+    "eps_growth": 0.317,
+    "de": 0.2912,
+    "beta": 1.099,
+    "target_mean": 605.1243,
+    "n_analysts": 53,
+    "fcf_margin": 0.0499
+   },
+   "tech": {
+    "ret_1m": 0.033612769377560525,
+    "ret_3m": 0.14292049150581088,
+    "rel_3m": 0.11212228873478614,
+    "dist200": 0.2144500476398541,
+    "vol_ann": 0.21515672098404168
+   }
+  },
+  {
+   "ticker": "ORCL",
+   "name": "Oracle Corporation",
+   "zh_name": "Oracle",
+   "market": "US",
+   "sector": "cloud_software",
+   "rank": 4,
+   "entry_price": 139.56,
+   "entry_date": "2026-10-29",
+   "composite": 71.5,
+   "scores": {
+    "sector": 78.8,
+    "leader": 75.0,
+    "quality": 55.2,
+    "growth": 99.4,
+    "valuation": 99.8,
+    "momentum": 25.8,
+    "news": 80.6
+   },
+   "target": {
+    "base": 223.3,
+    "bull": 297.54,
+    "bear": 111.93,
+    "ev": 210.3,
+    "confidence": "中",
+    "upside": 0.6,
+    "ev_upside": 0.5069,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 231.13,
+      "weight": 0.5,
+      "upside": 0.6561
+     },
+     "peg": {
+      "value": 335.93,
+      "weight": 0.187,
+      "upside": 1.407
+     },
+     "consensus": {
+      "value": 235.8,
+      "weight": 0.312,
+      "upside": 0.6896
+     }
+    }
+   },
+   "stop": 120.44,
+   "fundamentals": {
+    "market_cap": 423076265984,
+    "pe_ttm": 21.8746,
+    "pe_fwd": 12.6498,
+    "peg": 0.81,
+    "roe": 0.4119,
+    "gross_margin": 0.6396,
+    "op_margin": 0.3563,
+    "net_margin": 0.2636,
+    "rev_growth": 0.296,
+    "eps_growth": 0.545,
+    "de": 2.5172,
+    "beta": 1.77,
+    "target_mean": 235.8034,
+    "n_analysts": 41,
+    "fcf_margin": -0.6388
+   },
+   "tech": {
+    "ret_1m": 0.020219664702570084,
+    "ret_3m": 0.07858761241572165,
+    "rel_3m": 0.04778940964469691,
+    "dist200": -0.10668380155620871,
+    "vol_ann": 0.5467859877548665
+   }
+  },
+  {
+   "ticker": "META",
+   "name": "Meta Platforms, Inc.",
+   "zh_name": "Meta Platforms",
+   "market": "US",
+   "sector": "internet_platforms",
+   "rank": 5,
+   "entry_price": 624.52,
+   "entry_date": "2026-10-29",
+   "composite": 69.75,
+   "scores": {
+    "sector": 64.4,
+    "leader": 25.0,
+    "quality": 84.3,
+    "growth": 94.4,
+    "valuation": 86.3,
+    "momentum": 36.9,
+    "news": 81.1
+   },
+   "target": {
+    "base": 803.01,
+    "bull": 988.49,
+    "bear": 524.8,
+    "ev": 770.55,
+    "confidence": "高",
+    "upside": 0.2858,
+    "ev_upside": 0.2338,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 727.65,
+      "weight": 0.5,
+      "upside": 0.1651
+     },
+     "peg": {
+      "value": 928.38,
+      "weight": 0.187,
+      "upside": 0.4865
+     },
+     "consensus": {
+      "value": 848.38,
+      "weight": 0.312,
+      "upside": 0.3584
+     }
+    }
+   },
+   "stop": 558.8,
+   "fundamentals": {
+    "market_cap": 1596793421824,
+    "pe_ttm": 21.3074,
+    "pe_fwd": 17.5487,
+    "peg": 0.8,
+    "roe": 0.3226,
+    "gross_margin": 0.8103,
+    "op_margin": 0.3541,
+    "net_margin": 0.3115,
+    "rev_growth": 0.261,
+    "eps_growth": 2.648,
+    "de": 0.4216,
+    "beta": 1.185,
+    "target_mean": 848.3765,
+    "n_analysts": 58,
+    "fcf_margin": 0.0697
+   },
+   "tech": {
+    "ret_1m": -0.13880688127248852,
+    "ret_3m": 0.1226902425558023,
+    "rel_3m": 0.09189203978477756,
+    "dist200": -0.010692826805485445,
+    "vol_ann": 0.4429946462612009
+   }
+  }
+ ],
+ "focus_sectors": {
+  "US": [
+   "ai_servers",
+   "cloud_software",
+   "ai_chips",
+   "energy_materials",
+   "internet_platforms"
+  ],
+  "TW": [
+   "financials",
+   "internet_platforms",
+   "energy_materials",
+   "shipping",
+   "ai_chips"
+  ]
+ }
+}
