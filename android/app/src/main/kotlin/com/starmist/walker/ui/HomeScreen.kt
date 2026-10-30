@@ -309,7 +309,7 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(0.dp)) {
         Column(Modifier.padding(horizontal = if (map != null && !regionMode) 0.dp else 8.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (map != null && !regionMode) {
-                InstrumentPanel(map.route, map.walkedKm, strideM, goal, steps, km, kcal, onSync, Modifier.fillMaxWidth())
+                InstrumentPanel(map.route, map.walkedKm, goal, steps, km, kcal, onSync, Modifier.fillMaxWidth())
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     StepRing(steps, goal, progress, 96.dp)
@@ -347,15 +347,9 @@ private fun StepRing(steps: Long, goal: Int, progress: Float, size: androidx.com
  * (a dialog with the exact readings).
  */
 @Composable
-private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int, steps: Long, todayKm: Double, kcal: Double, onSync: () -> Unit, modifier: Modifier) {
-    val stride = strideM.coerceAtLeast(0.3)
-    fun stepsFor(km: Double) = (km * 1000.0 / stride).roundToLong().coerceAtLeast(0L)
-    fun days(steps: Long) = if (goal <= 0) 0L else (steps + goal - 1) / goal
+private fun InstrumentPanel(route: RouteDef, walkedKm: Double, goal: Int, steps: Long, todayKm: Double, kcal: Double, onSync: () -> Unit, modifier: Modifier) {
     val areas = rememberTownAreas()
     val border = remember(areas, route, (walkedKm * 10).toInt()) { areas.nextBorder(route, walkedKm) }
-    val next = route.next(walkedKm)
-    val collected = route.collected(walkedKm)
-    val totalCards = route.stops.count { it.landmark != null }
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
     // The way the traveller is walking: from here to a little further along the route, degrees clockwise from north.
     val heading = remember(route, (walkedKm * 5).toInt()) {
@@ -365,36 +359,10 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
         val north = b.lat - a.lat
         if (east == 0.0 && north == 0.0) 0f else ((Math.toDegrees(kotlin.math.atan2(east, north)) + 360.0) % 360.0).toFloat()
     }
-    var detail by remember { mutableStateOf(false) }
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        InstrumentCluster(
-            steps, goal, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone, todayKm, kcal, heading, onSync,
-            Modifier.clickable { detail = true },
-        )
-    }
-    if (detail) {
-        AlertDialog(
-            onDismissRequest = { detail = false },
-            confirmButton = { TextButton(onClick = { detail = false }) { Text("好") } },
-            title = { Text("儀表讀數", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text("今日步數　${steps.withCommas()} / ${goal.toLong().withCommas()} 步（${todayKm.twoDecimals()} 公里，約 ${kcal.roundToInt()} 大卡）", fontSize = 13.sp)
-                    if (next != null) {
-                        val s = stepsFor(next.second)
-                        Text("下一景點　${next.first.name}，還有 ${"%.1f".format(next.second)} 公里（${s.withCommas()} 步，約 ${days(s)} 天）", fontSize = 13.sp)
-                    } else Text("景點全部收集完成", fontSize = 13.sp)
-                    if (border != null) {
-                        val s = stepsFor(border.kmLeft)
-                        Text("此區域　已走 ${"%.1f".format(border.kmDone)} 公里，離開還有 ${"%.1f".format(border.kmLeft)} 公里（${s.withCommas()} 步，約 ${days(s)} 天）", fontSize = 13.sp)
-                    }
-                    val left = route.totalKm - walkedKm
-                    Text("環島全程　${(overall * 100).roundToInt()}%，已走 ${"%.1f".format(walkedKm)} 公里，剩 ${"%.0f".format(left)} 公里（約 ${days(stepsFor(left))} 天）", fontSize = 13.sp)
-                    Text("景點　${collected.size} / $totalCards", fontSize = 13.sp)
-                }
-            },
-        )
-    }
+    InstrumentCluster(
+        steps, goal, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone, todayKm, kcal, heading, onSync,
+        modifier,
+    )
 }
 
 @Composable
