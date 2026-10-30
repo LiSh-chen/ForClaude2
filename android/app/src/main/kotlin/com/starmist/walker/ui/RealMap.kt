@@ -467,14 +467,18 @@ internal fun DrawScope.drawRealMap(
         }
     }
 
-    // Small sights: always a small hollow dot; once its stamp is earned, a teal disc sits in the dot.
+    // Small sights: a plain ring until the stamp is earned, then the teal seal.
     if (!regionMode) {
         val earned = route.poisCollected(walkedKm).map { it.id }.toSet()
         route.pois.forEach { poi ->
             val o = poi.at.px()
-            drawCircle(Color(0xFFFFF6E0).copy(alpha = 0.55f), 4.5.dp.toPx() * ms, o)
-            drawCircle(Color(0xFF2F7F6E), 4.5.dp.toPx() * ms, o, style = Stroke(1.7.dp.toPx() * ms))
-            if (poi.id in earned) drawCircle(Color(0xFF2F7F6E), 2.3.dp.toPx() * ms, o)
+            if (poi.id in earned) {
+                drawCircle(Color(0xFF2F7F6E), 5.5.dp.toPx() * ms, o)
+                drawCircle(Color.White, 5.5.dp.toPx() * ms, o, style = Stroke(1.6.dp.toPx() * ms))
+                drawCircle(Color.White, 1.8.dp.toPx() * ms, o)
+            } else {
+                drawCircle(Color(0xFF2F7F6E), 4.5.dp.toPx() * ms, o, style = Stroke(2.dp.toPx() * ms))
+            }
         }
     }
 
