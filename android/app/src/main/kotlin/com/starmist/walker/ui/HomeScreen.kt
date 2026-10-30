@@ -309,7 +309,7 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(0.dp)) {
         Column(Modifier.padding(horizontal = if (map != null && !regionMode) 0.dp else 8.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (map != null && !regionMode) {
-                InstrumentPanel(map.route, map.walkedKm, strideM, goal, steps, km, kcal, Modifier.fillMaxWidth())
+                InstrumentPanel(map.route, map.walkedKm, strideM, goal, steps, km, kcal, onSync, Modifier.fillMaxWidth())
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     StepRing(steps, goal, progress, 96.dp)
@@ -347,7 +347,7 @@ private fun StepRing(steps: Long, goal: Int, progress: Float, size: androidx.com
  * (a dialog with the exact readings).
  */
 @Composable
-private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int, steps: Long, todayKm: Double, kcal: Double, modifier: Modifier) {
+private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, goal: Int, steps: Long, todayKm: Double, kcal: Double, onSync: () -> Unit, modifier: Modifier) {
     val stride = strideM.coerceAtLeast(0.3)
     fun stepsFor(km: Double) = (km * 1000.0 / stride).roundToLong().coerceAtLeast(0L)
     fun days(steps: Long) = if (goal <= 0) 0L else (steps + goal - 1) / goal
@@ -360,7 +360,7 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, strideM: Double, 
     var detail by remember { mutableStateOf(false) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         InstrumentCluster(
-            steps, goal, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone,
+            steps, goal, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone, todayKm, kcal, onSync,
             Modifier.clickable { detail = true },
         )
     }

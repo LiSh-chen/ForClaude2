@@ -59,6 +59,18 @@ class ScreenshotTest {
         }
     }
 
+    /** Where on the loop the walker is closest to a small sight, so the screen shows how such sights look. */
+    private fun kmNear(poiId: String): Double {
+        val p = forward.pois.first { it.id == poiId }
+        var best = 0.0; var bestD = Double.MAX_VALUE; var k = 0.0
+        while (k <= forward.totalKm) { val d = forward.positionAt(k).distanceKm(p.at); if (d < bestD) { bestD = d; best = k }; k += 0.5 }
+        return best
+    }
+
+    @Test fun home_poi_nanfangao() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, kmNear("nanfangao")), 6200) }
+    @Test fun home_poi_kaohsiung() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, kmNear("cijin")), 9800) }
+    @Test fun home_poi_tainan() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, kmNear("chihkan")), 3100) }
+
     @Test fun home_real_start() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 0.0), 120) }
     @Test fun home_real_mid() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0)) }
     @Test fun home_real_east() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 260.0)) }

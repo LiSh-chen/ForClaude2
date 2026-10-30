@@ -13,6 +13,26 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,6 +93,13 @@ private fun Pen.band(cx: Float, cy: Float, r0: Float, r1: Float, start: Float, s
 /** The rim, ticks and paper of a dial. */
 private fun Pen.face(cx: Float, cy: Float, r: Float, start: Float, sweep: Float, majors: Int, seed: Int, whole: Boolean) {
     val rim = if (whole) arcPts(cx, cy, r, 0f, 360f, 40) else arcPts(cx, cy, r, start, start + sweep, 40) + listOf(at(cx, cy, r, start))
+    if (whole) {
+        // a brass bezel round the dial
+        val bezel = arcPts(cx, cy, r + 1.9f, 0f, 360f, 48)
+        wash(bezel, Vintage.brass, 1f, 0f, 0f)
+        hatch(bezel, Vintage.brassDark, 0f, 100f, 0f, 100f, gap = 2.4f, lean = 4f, alpha = 0.35f)
+        inked(bezel, seed + 2, closed = true, width = line * 1.2f, calm = 0.25f)
+    }
     wash(rim, PAPER, 1f, 0f, 0f)
     inked(rim, seed, closed = true, width = line * 1.4f, calm = 0.25f)
     if (whole) inked(arcPts(cx, cy, r * 0.93f, 0f, 360f, 40), seed + 1, closed = true, width = line * 0.6f, calm = 0.25f)
@@ -113,12 +140,12 @@ private fun rememberRolling(tenths: Float): Float {
 }
 
 /**
- * A mechanical odometer of [cells] drums, the last one (tenths, with its decimal point) on a pale drum, as on a car's dial. [tenths] is the
+ * A mechanical odometer of [cells] drums, the last one (tenths, with its decimal point, unless [decimal] is off) on a pale drum, as on a car's dial. [tenths] is the
  * reading times ten, or null for a dashed, blank one. A drum rolls to the next digit only when the drums below it pass from 9 to 0.
  * [x] is the left edge, [y] the top, in the pen's units.
  */
-private fun Pen.odometer(tm: TextMeasurer, x: Float, y: Float, tenths: Float?, cells: Int = 5, cw: Float = 4.8f, ch: Float = 7f) {
-    val lastW = cw * 1.55f
+private fun Pen.odometer(tm: TextMeasurer, x: Float, y: Float, tenths: Float?, cells: Int = 5, cw: Float = 4.8f, ch: Float = 7f, decimal: Boolean = true, drum: Color = Color(0xFF2B2118)) {
+    val lastW = if (decimal) cw * 1.55f else cw
     val total = cw * (cells - 1) + lastW
     val frame = roundRect(x - 0.8f, y - 0.8f, x + total + 0.8f, y + ch + 0.8f, 1.2f)
     wash(frame, ink, 0.85f, 0f, 0f); inked(frame, 900, closed = true, width = line * 0.8f, calm = 0f)
@@ -130,11 +157,11 @@ private fun Pen.odometer(tm: TextMeasurer, x: Float, y: Float, tenths: Float?, c
     val carry = if (t != null) t - whole else 0f
     for (i in 0 until cells) {
         val k = cells - 1 - i
-        val last = k == 0
+        val last = k == 0 && decimal
         val x0 = x + i * cw
         val w = if (last) lastW else cw
         val cell = listOf(p(x0 + 0.25f, y), p(x0 + w - 0.25f, y), p(x0 + w - 0.25f, y + ch), p(x0 + 0.25f, y + ch))
-        wash(cell, if (last) cream else Color(0xFF2B2118), 1f, 0f, 0f)
+        wash(cell, if (last) cream else drum, 1f, 0f, 0f)
         val style = TextStyle(fontSize = fontSize, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = if (last) Vintage.ink else cream)
         val cx = x0 + w / 2f
         if (t == null) { label(tm, "-", style, p(cx, y + ch / 2f)); continue }
@@ -156,11 +183,11 @@ private fun stepScale(max: Int): Int = listOf(500, 1000, 2000, 2500, 5000, 10000
 
 /** Big dial: today's steps. The scale is labelled and stretches to 120% of the goal; the red stretch is what lies beyond the goal. */
 @Composable
-internal fun StepsDial(steps: Long, goal: Int, walkedKm: Double, modifier: Modifier = Modifier) {
+internal fun StepsDial(steps: Long, goal: Int, todayKm: Double, kcal: Double, modifier: Modifier = Modifier) {
     val max = (goal * 1.2f).coerceAtLeast(1f)
     val v by animateFloatAsState((steps / max).coerceIn(0f, 1f), needleSpring, label = "steps")
     val tm = rememberTextMeasurer()
-    val km10 = rememberRolling((walkedKm * 10).toFloat())
+    val stepsRoll = rememberRolling(steps.toFloat())
     Canvas(modifier.aspectRatio(1f)) {
         val pen = Pen(this, size)
         with(pen) {
@@ -182,11 +209,10 @@ internal fun StepsDial(steps: Long, goal: Int, walkedKm: Double, modifier: Modif
             // beyond the goal
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 1f / 1.2f, 1f, INK_RED, 230, alpha = 0.6f)
             label(tm, if (thousands) "x1000" else "步", TextStyle(fontSize = 7.sp, color = Vintage.inkSoft), p(cx, 31f))
-            // whose reading this is, printed on the face in the colour of the needle
-            label(tm, "今日步數", TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 64f))
-            // the kilometres walked in all, on a drum counter set into the face
-            label(tm, "總里程 km", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = BRONZE), p(cx, 75f))
-            odometer(tm, 36f, 79.5f, km10, cw = 5f, ch = 7.5f)
+            // today's count in full, on green drums like the needle, with the distance and energy under it
+            label(tm, "今日步數", TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 66f))
+            odometer(tm, 38f, 70.5f, stepsRoll, cells = 5, cw = 4.8f, ch = 7.5f, decimal = false, drum = Color(0xFF1F4D33))
+            label(tm, "%.2f 公里・%d 大卡".format(todayKm, kcal.roundToInt()), TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(cx, 83.5f))
             needle(cx, cy, r * 0.72f, start + sweep * v, STEP_GREEN, 240)
         }
     }
@@ -194,10 +220,11 @@ internal fun StepsDial(steps: Long, goal: Int, walkedKm: Double, modifier: Modif
 
 /** Big dial: the way round, scaled in percent. The short blue needle is how far round the island you are, the long red one how far through the township; their distances are in the middle panel, in the same colours. */
 @Composable
-internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, modifier: Modifier = Modifier) {
+internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm: Double, modifier: Modifier = Modifier) {
     val v by animateFloatAsState(overall.coerceIn(0f, 1f), needleSpring, label = "island")
     val w by animateFloatAsState((region ?: 0f).coerceIn(0f, 1f), needleSpring, label = "region")
     val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat())
+    val total = rememberRolling((totalKm * 10).toFloat())
     val tm = rememberTextMeasurer()
     Canvas(modifier.aspectRatio(1f)) {
         val pen = Pen(this, size)
@@ -209,9 +236,12 @@ internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, modifier
             for (i in 0..5) label(tm, "${i * 20}", num, at(cx, cy, r * 0.66f, start + sweep * i / 5f))
             label(tm, "進度 %", TextStyle(fontSize = 6.sp, color = Vintage.inkSoft), p(cx, 30f))
             // the two distances walked, as two odometers, the unit printed on the face
-            // the kilometres walked in the township, named in the colour of the long needle
-            label(tm, "區域 km", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = INK_RED), p(50f, 70f))
-            odometer(tm, 36f, 75f, if (townKm != null) town else null, cw = 5f, ch = 7.5f)
+            // the kilometres walked in the township (the colour of the long needle) and in all, as two drum counters
+            val tag = TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold)
+            label(tm, "區域 km", tag.copy(color = INK_RED), p(50f, 63.5f))
+            odometer(tm, 37f, 66.5f, if (townKm != null) town else null, cw = 4.6f, ch = 6.6f)
+            label(tm, "總里程 km", tag.copy(color = BRONZE), p(50f, 77.5f))
+            odometer(tm, 37f, 80.5f, total, cw = 4.6f, ch = 6.6f)
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
@@ -219,14 +249,93 @@ internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, modifier
     }
 }
 
-/** The whole cluster: two big dials side by side, the steps of today and the way round, each with its own drum counter. */
+/**
+ * The whole cluster, mounted on a stitched leather strip with brass rivets: the step dial and the way-round dial side by side, and between
+ * them a little compass and the brass knob that syncs.
+ */
 @Composable
 internal fun InstrumentCluster(
-    steps: Long, goal: Int, overall: Float, region: Float?, walkedKm: Double, townKm: Double?,
+    steps: Long, goal: Int, overall: Float, region: Float?, walkedKm: Double, townKm: Double?, todayKm: Double, kcal: Double, onSync: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
-        StepsDial(steps, goal, walkedKm, Modifier.weight(1f, fill = false).widthIn(max = 168.dp).padding(horizontal = 3.dp))
-        RouteDial(overall, region, townKm, Modifier.weight(1f, fill = false).widthIn(max = 168.dp).padding(horizontal = 3.dp))
+    Box(modifier.fillMaxWidth()) {
+        Canvas(Modifier.matchParentSize()) { drawStrip() }
+        Row(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.CenterVertically) {
+            StepsDial(steps, goal, todayKm, kcal, Modifier.weight(1f))
+            Column(Modifier.width(48.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Compass(Modifier.size(44.dp))
+                SyncKnob(onSync)
+            }
+            RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f))
+        }
+    }
+}
+
+/** The strip the dials are mounted on: darker paper with a stitched edge and a brass rivet in each corner, and a sprig of leaves. */
+private fun DrawScope.drawStrip() {
+    val corner = 20.dp.toPx()
+    drawRoundRect(Vintage.parchmentDark.copy(alpha = 0.85f), cornerRadius = CornerRadius(corner))
+    drawRoundRect(Vintage.edge, topLeft = Offset(1.dp.toPx(), 1.dp.toPx()), size = Size(size.width - 2.dp.toPx(), size.height - 2.dp.toPx()), cornerRadius = CornerRadius(corner), style = Stroke(1.6.dp.toPx()))
+    val inset = 6.dp.toPx()
+    drawRoundRect(
+        Vintage.brassDark, topLeft = Offset(inset, inset), size = Size(size.width - 2 * inset, size.height - 2 * inset), cornerRadius = CornerRadius(corner - 4.dp.toPx()),
+        style = Stroke(1.1.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 3.dp.toPx()))),
+    )
+    val rivet = 3.2.dp.toPx()
+    val off = 13.dp.toPx()
+    for (c in listOf(Offset(off, off), Offset(size.width - off, off), Offset(off, size.height - off), Offset(size.width - off, size.height - off))) {
+        drawCircle(Vintage.brass, rivet, c)
+        drawCircle(Vintage.ink, rivet, c, style = Stroke(0.9.dp.toPx()))
+        drawLine(Vintage.ink, Offset(c.x - rivet * 0.6f, c.y - rivet * 0.6f), Offset(c.x + rivet * 0.6f, c.y + rivet * 0.6f), 0.9.dp.toPx())
+    }
+    // a sprig of three leaves at each end of the strip's top edge, peeping out from behind the dials
+    fun sprig(x: Float, dir: Float) {
+        val y = 4.dp.toPx()
+        val stem = Path().apply { moveTo(x, y); quadraticTo(x + dir * 16.dp.toPx(), y - 1.dp.toPx(), x + dir * 30.dp.toPx(), y + 3.dp.toPx()) }
+        drawPath(stem, Vintage.inkSoft, style = Stroke(1.dp.toPx(), cap = StrokeCap.Round))
+        for (i in 0..2) {
+            val lx = x + dir * (8 + i * 9).dp.toPx()
+            val ly = y + (if (i % 2 == 0) -3 else 3).dp.toPx()
+            drawOval(Color(0xFF6E8B4A).copy(alpha = 0.85f), Offset(lx - 4.dp.toPx(), ly - 1.6.dp.toPx()), Size(8.dp.toPx(), 3.2.dp.toPx()))
+        }
+    }
+    sprig(26.dp.toPx(), 1f)
+    sprig(size.width - 26.dp.toPx(), -1f)
+}
+
+/** A little compass rose, pen sketched, for company between the dials. */
+@Composable
+private fun Compass(modifier: Modifier = Modifier) {
+    val tm = rememberTextMeasurer()
+    Canvas(modifier) {
+        val pen = Pen(this, size)
+        with(pen) {
+            val ring = circle(p(50f, 52f), 40f * u, 40)
+            wash(ring, PAPER, 1f, 0f, 0f)
+            inked(ring, 960, closed = true, width = line * 1.2f, calm = 0.25f)
+            inked(circle(p(50f, 52f), 34f * u, 40), 961, closed = true, width = line * 0.6f, calm = 0.25f)
+            val north = listOf(p(50f, 14f), p(58f, 52f), p(42f, 52f))
+            val south = listOf(p(50f, 90f), p(58f, 52f), p(42f, 52f))
+            val east = listOf(p(88f, 52f), p(50f, 44f), p(50f, 60f))
+            val west = listOf(p(12f, 52f), p(50f, 44f), p(50f, 60f))
+            for (pts in listOf(south, east, west)) { wash(pts, Vintage.brass, 0.7f, 0f, 0f); inked(pts, 962 + pts.size, closed = true, width = line * 0.6f, calm = 0f) }
+            wash(north, INK_RED, 0.9f, 0f, 0f); inked(north, 970, closed = true, width = line * 0.7f, calm = 0f)
+            label(tm, "N", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Black, color = Vintage.ink), p(50f, 6f))
+        }
+    }
+}
+
+/** The brass knob that syncs the step count, with its name under it. */
+@Composable
+private fun SyncKnob(onSync: () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            Modifier.size(40.dp).clip(CircleShape).background(Brush.radialGradient(listOf(Vintage.brassLight, Vintage.brass, Vintage.brassDark)))
+                .border(1.6.dp, Vintage.ink, CircleShape).clickable(onClick = onSync),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(Icons.Filled.Refresh, contentDescription = "同步", tint = Vintage.ink, modifier = Modifier.size(24.dp))
+        }
+        Text("同步", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
     }
 }
