@@ -71,7 +71,7 @@ object RouteStateCodec {
 object Routes {
     private val base: List<RouteDef> get() = listOf(TaiwanLoop.route, TaiwanLoop.counterClockwise)
 
-    @Volatile private var shown: List<RouteDef>? = null
+    @kotlin.concurrent.Volatile private var shown: List<RouteDef>? = null
 
     /**
      * Puts the card names and lines from the content pack onto every route. Called when the app

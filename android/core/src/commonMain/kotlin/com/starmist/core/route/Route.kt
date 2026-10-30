@@ -8,14 +8,16 @@ import kotlin.math.sqrt
 /** How close the walker must be to see a small sight. */
 const val POI_RANGE_KM = 12.0
 
+private const val DEG = 3.141592653589793 / 180.0
+
 data class GeoPoint(val lat: Double, val lng: Double) {
     /** Great-circle distance in kilometres. */
     fun distanceKm(other: GeoPoint): Double {
         val r = 6371.0088
-        val p1 = Math.toRadians(lat)
-        val p2 = Math.toRadians(other.lat)
+        val p1 = lat * DEG
+        val p2 = other.lat * DEG
         val dp = p2 - p1
-        val dl = Math.toRadians(other.lng - lng)
+        val dl = (other.lng - lng) * DEG
         val a = sin(dp / 2) * sin(dp / 2) + cos(p1) * cos(p2) * sin(dl / 2) * sin(dl / 2)
         return 2 * r * asin(sqrt(a))
     }

@@ -1,6 +1,9 @@
 package com.starmist.walker.ui
 
-import java.time.LocalDate
+import com.starmist.core.time.minusDays
+import com.starmist.core.time.of
+import com.starmist.core.time.value
+import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull

@@ -1,8 +1,13 @@
 package com.starmist.core.steps
 
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
+import com.starmist.core.time.isAfter
+import com.starmist.core.time.plusDays
+import com.starmist.core.time.toEpochDay
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 
 object DaySplitter {
     /** A span longer than this is not spread out; everything lands on the last day. */
@@ -13,13 +18,13 @@ object DaySplitter {
      * touches, proportionally to the time spent in each day. The parts always add up to [steps]
      * (largest-remainder rounding). Zero-length or reversed spans go entirely to the end day.
      */
-    fun split(steps: Long, fromMillis: Long, toMillis: Long, zone: ZoneId): Map<LocalDate, Long> {
+    fun split(steps: Long, fromMillis: Long, toMillis: Long, zone: TimeZone): Map<LocalDate, Long> {
         require(steps >= 0) { "steps must not be negative" }
-        val endDay = Instant.ofEpochMilli(toMillis).atZone(zone).toLocalDate()
+        val endDay = Instant.fromEpochMilliseconds(toMillis).toLocalDateTime(zone).date
         if (steps == 0L) return emptyMap()
         if (toMillis <= fromMillis) return mapOf(endDay to steps)
 
-        val startDay = Instant.ofEpochMilli(fromMillis).atZone(zone).toLocalDate()
+        val startDay = Instant.fromEpochMilliseconds(fromMillis).toLocalDateTime(zone).date
         if (startDay == endDay) return mapOf(endDay to steps)
         if (endDay.toEpochDay() - startDay.toEpochDay() > MAX_SPREAD_DAYS) return mapOf(endDay to steps)
 
@@ -28,8 +33,8 @@ object DaySplitter {
         val overlaps = ArrayList<Long>()
         var day = startDay
         while (!day.isAfter(endDay)) {
-            val dayStart = day.atStartOfDay(zone).toInstant().toEpochMilli()
-            val dayEnd = day.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli()
+            val dayStart = day.atStartOfDayIn(zone).toEpochMilliseconds()
+            val dayEnd = day.plusDays(1).atStartOfDayIn(zone).toEpochMilliseconds()
             val overlap = minOf(dayEnd, toMillis) - maxOf(dayStart, fromMillis)
             if (overlap > 0) {
                 days += day

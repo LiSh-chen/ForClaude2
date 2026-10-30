@@ -5,19 +5,21 @@ import com.starmist.core.steps.DaySplitter
 import com.starmist.core.steps.LedgerState
 import com.starmist.core.steps.StepDeltaCalculator
 import com.starmist.core.steps.StepLedger
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
+import com.starmist.core.time.of
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class StepLedgerTest {
-    private val zone = ZoneId.of("Asia/Taipei")
+    private val zone = TimeZone.of("Asia/Taipei")
 
     private fun millis(y: Int, m: Int, d: Int, h: Int, min: Int = 0): Long =
-        LocalDateTime.of(y, m, d, h, min).atZone(zone).toInstant().toEpochMilli()
+        LocalDateTime(y, m, d, h, min).toInstant(zone).toEpochMilliseconds()
 
     private val boot = millis(2026, 10, 1, 6)
 

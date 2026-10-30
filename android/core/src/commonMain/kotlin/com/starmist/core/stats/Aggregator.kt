@@ -1,9 +1,16 @@
 package com.starmist.core.stats
 
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.temporal.TemporalAdjusters
+import com.starmist.core.time.YearMonth
+import com.starmist.core.time.isAfter
+import com.starmist.core.time.isBefore
+import com.starmist.core.time.of
+import com.starmist.core.time.plusDays
+import com.starmist.core.time.plusMonths
+import com.starmist.core.time.plusWeeks
+import com.starmist.core.time.plusYears
+import com.starmist.core.time.startOfWeek
+import com.starmist.core.time.toEpochDay
+import kotlinx.datetime.LocalDate
 
 enum class Period { WEEK, MONTH, YEAR }
 
@@ -25,7 +32,7 @@ object Aggregator {
 
     fun rangeOf(anchor: LocalDate, period: Period): Pair<LocalDate, LocalDate> = when (period) {
         Period.WEEK -> {
-            val start = anchor.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+            val start = anchor.startOfWeek()
             start to start.plusDays(6)
         }
         Period.MONTH -> {

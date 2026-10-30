@@ -41,7 +41,6 @@ import com.starmist.core.stats.Bucket
 import com.starmist.core.stats.Period
 import com.starmist.core.stats.PeriodSummary
 import com.starmist.walker.data.UserSettings
-import java.time.format.DateTimeFormatter
 
 private val periods = listOf(Period.WEEK to "週", Period.MONTH to "月", Period.YEAR to "年")
 private val weekdayLabels = listOf("一", "二", "三", "四", "五", "六", "日")
@@ -117,10 +116,10 @@ fun StatsScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
 
 private fun rangeLabel(period: Period, s: PeriodSummary): String = when (period) {
     Period.WEEK -> {
-        val f = DateTimeFormatter.ofPattern("M/d")
-        "${f.format(s.rangeStart)} – ${f.format(s.rangeEnd)}"
+        fun md(d: kotlinx.datetime.LocalDate) = "${d.monthNumber}/${d.dayOfMonth}"
+        "${md(s.rangeStart)} – ${md(s.rangeEnd)}"
     }
-    Period.MONTH -> "${s.rangeStart.year} 年 ${s.rangeStart.monthValue} 月"
+    Period.MONTH -> "${s.rangeStart.year} 年 ${s.rangeStart.monthNumber} 月"
     Period.YEAR -> "${s.rangeStart.year} 年"
 }
 

@@ -1,5 +1,7 @@
 package com.starmist.walker.ui
 
+import com.starmist.core.time.value
+import com.starmist.core.time.minusDays
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -144,7 +146,7 @@ class ScreenshotTest {
 
     /** A few of the daily statistics cards, one under the other. */
     @Test fun stats_cards() = paparazzi.snapshot {
-        val today = java.time.LocalDate.of(2026, 10, 28)
+        val today = kotlinx.datetime.LocalDate(2026, 10, 28)
         val history = (0L..100L).associate { back ->
             val d = today.minusDays(back)
             d to when { d.dayOfMonth == 20 -> 0L; d.dayOfWeek.value == 6 -> 11000L; d.dayOfWeek.value == 7 -> 9000L; else -> 4000L + (d.dayOfMonth * 137L) % 5000 }

@@ -1,7 +1,7 @@
 package com.starmist.core.steps
 
-import java.time.LocalDate
-import java.time.ZoneId
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
 
 /** What must survive between two readings. */
 data class LedgerState(
@@ -26,7 +26,7 @@ data class LedgerUpdate(
  * Turns a new counter reading into per-day step increments. Pure: it only maps (state, reading) to
  * (state, increments), so the Android layer just persists what comes back.
  */
-class StepLedger(private val zone: ZoneId) {
+class StepLedger(private val zone: TimeZone) {
 
     fun process(state: LedgerState, reading: CounterSnapshot, multiplier: Double): LedgerUpdate {
         val delta = StepDeltaCalculator.compute(state.lastSnapshot, reading)
@@ -38,7 +38,7 @@ class StepLedger(private val zone: ZoneId) {
         var carry = state.carry
         val scaledByDay = LinkedHashMap<LocalDate, Long>()
         // Oldest day first so the carry flows forward in time.
-        for ((day, raw) in rawByDay.toSortedMap()) {
+        for ((day, raw) in rawByDay.entries.sortedBy { it.key }) {
             val scaled = StepScaler.scale(raw, multiplier, carry)
             carry = scaled.carry
             if (scaled.steps > 0) scaledByDay[day] = scaled.steps

@@ -24,7 +24,7 @@ jobs:
           java-version: "17"
       - uses: gradle/actions/setup-gradle@v4
       - name: Unit tests (pure Kotlin core)
-        run: ./gradlew -p core test
+        run: ./gradlew -p core jvmTest
 
   ui-previews:
     runs-on: ubuntu-latest

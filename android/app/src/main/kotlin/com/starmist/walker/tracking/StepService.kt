@@ -33,7 +33,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import com.starmist.core.time.now
+import kotlinx.datetime.LocalDate
 
 /**
  * Keeps the step sensor registered so the phone keeps counting with the screen off.

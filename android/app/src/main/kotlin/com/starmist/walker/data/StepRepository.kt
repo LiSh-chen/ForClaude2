@@ -22,8 +22,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.time.LocalDate
-import java.time.ZoneId
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
 
 sealed interface SnapshotResult {
     data class Success(val addedSteps: Long, val rebooted: Boolean, val baseline: Boolean) : SnapshotResult
@@ -83,7 +83,7 @@ class StepRepository(
             bootTimeMillis = now - SystemClock.elapsedRealtime(),
         )
         val multiplier = settings.current().multiplier
-        val ledger = StepLedger(ZoneId.systemDefault())
+        val ledger = StepLedger(TimeZone.currentSystemDefault())
 
         database.withTransaction {
             val stored = dao.getState()

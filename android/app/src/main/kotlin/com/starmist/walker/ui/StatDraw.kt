@@ -1,9 +1,17 @@
 package com.starmist.walker.ui
 
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.temporal.TemporalAdjusters
+import com.starmist.core.time.YearMonth
+import com.starmist.core.time.lengthOfMonth
+import com.starmist.core.time.minusDays
+import com.starmist.core.time.minusMonths
+import com.starmist.core.time.monthValue
+import com.starmist.core.time.plusDays
+import com.starmist.core.time.startOfWeek
+import com.starmist.core.time.toEpochDay
+import com.starmist.core.time.value
+import com.starmist.core.time.withDayOfMonth
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 import kotlin.random.Random
@@ -157,7 +165,7 @@ fun buildStat(kind: StatKind, i: StatInputs, seed: Long, ruler: Ruler? = null): 
         StatKind.WEEKDAY -> {
             if (daysWithSteps < 14) return null
             val window = span(i.today.minusDays(83), i.today).toList()
-            val avg = DayOfWeek.values().map { dow -> window.filter { it.dayOfWeek == dow }.let { ds -> if (ds.isEmpty()) 0.0 else ds.sumOf { i.history[it] ?: 0L }.toDouble() / ds.size } }
+            val avg = DayOfWeek.entries.map { dow -> window.filter { it.dayOfWeek == dow }.let { ds -> if (ds.isEmpty()) 0.0 else ds.sumOf { i.history[it] ?: 0L }.toDouble() / ds.size } }
             val best = avg.indices.maxByOrNull { avg[it] }!!
             if (avg[best] <= 0) return null
             StatCard(kind, "${weekdayNames[best]}的你走得最勤", "近 12 週的${weekdayNames[best]}，平均每天 ${steps(avg[best].roundToLong())} 步。", null, StatVisual.Bars(avg.indices.map { weekdayNames[it] to avg[it] }, "步", best))
@@ -190,7 +198,7 @@ fun buildStat(kind: StatKind, i: StatInputs, seed: Long, ruler: Ruler? = null): 
             StatCard(kind, "${i.towns.size} / ${i.townsTotal}", "走過 ${counties.size} 個縣市，${i.towns.size} 個鄉鎮市區。", null, StatVisual.Bars(counties.entries.sortedByDescending { it.value }.take(5).map { it.key to it.value.toDouble() }, "個", 0))
         }
         StatKind.WEEK_VS_LAST -> {
-            val monday = i.today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+            val monday = i.today.startOfWeek()
             val now = i.sum(monday, i.today)
             val before = i.sum(monday.minusDays(7), i.today.minusDays(7))
             if (before <= 0 || now <= 0) return null

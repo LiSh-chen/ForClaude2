@@ -5,7 +5,8 @@ import com.starmist.core.diagnostics.Issue
 import com.starmist.core.diagnostics.SnapshotHealth
 import com.starmist.core.stats.Aggregator
 import com.starmist.core.stats.Period
-import java.time.LocalDate
+import com.starmist.core.time.of
+import kotlinx.datetime.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

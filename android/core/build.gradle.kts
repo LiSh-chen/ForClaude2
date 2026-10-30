@@ -1,26 +1,30 @@
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("multiplatform") version "2.0.21"
 }
 
 group = "com.starmist"
 version = "1.0"
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-
 kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    // The Android app uses the jvm target; the iOS app the native ones (these only build on a Mac).
+    jvm {
+        compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }
+    }
+    iosArm64()
+    iosSimulatorArm64()
+    iosX64()
+
+    sourceSets {
+        commonMain.dependencies {
+            api("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
     }
 }
 
-dependencies {
-    testImplementation(kotlin("test-junit5"))
-}
-
-tasks.test {
+tasks.withType<Test> {
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")

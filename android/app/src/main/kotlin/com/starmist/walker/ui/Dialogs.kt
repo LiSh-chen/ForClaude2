@@ -30,7 +30,9 @@ import com.starmist.walker.data.DailyStepsEntity
 import com.starmist.walker.data.UserSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import com.starmist.core.time.minusDays
+import com.starmist.core.time.now
+import kotlinx.datetime.LocalDate
 import java.util.Locale
 
 /**
