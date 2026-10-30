@@ -74,7 +74,7 @@ internal fun walkerHeading(route: RouteDef, walkedKm: Double): Float {
 
 /** The island walk as a map the player can pinch and drag; it opens on the walker and cannot zoom out past the whole island. */
 @Composable
-fun RouteMapView(
+internal fun RouteMapView(
     route: RouteDef, walkedKm: Double, modifier: Modifier = Modifier, initialZoom: Float? = null,
     regionMode: Boolean = false, selectedTown: Int = -1, onTapTown: ((Int) -> Unit)? = null,
     /** Route mode: a collected card's marker was tapped (its id). */
