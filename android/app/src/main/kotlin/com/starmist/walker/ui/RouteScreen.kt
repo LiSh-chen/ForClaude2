@@ -64,6 +64,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     val features = rememberLandmarkFacts()
     val areasForStamps = rememberTownAreas()
     val places = areasForStamps.cardPlaces
+    val explore by vm.exploreState.collectAsStateWithLifecycle()
     val sightStamps = remember(route, areasForStamps) { route?.let { PoiStamps.of(it, areasForStamps) } ?: emptyList() }
 
     // Lazy: only the cards on screen are built, instead of all forty-five (and their pictures) when the tab opens.
@@ -82,6 +83,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
                 onOpen = { detail = it }, onRestart = { confirmRestart = true }, onSwitch = { vm.startRoute(it) },
                 album = album, onAlbum = { album = it }, sightStamps = sightStamps,
             )
+            item { ExploreProgress(areasForStamps.towns.size, remember(areasForStamps, route, current.walkedKm, explore) { areasForStamps.visited(route, current.walkedKm).keys + explore?.visited.orEmpty() }.size) }
         }
     }
 
@@ -96,6 +98,18 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     }
     val card = detail
     if (card != null && route != null) CardDialog(route, card) { detail = null }
+}
+
+/** How many of all the townships have been walked through, by the loop or by exploring. */
+@Composable
+private fun ExploreProgress(total: Int, explored: Int) {
+    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text("探索・鄉鎮 $explored / $total", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            androidx.compose.material3.LinearProgressIndicator(progress = { if (total == 0) 0f else explored.toFloat() / total }, modifier = Modifier.fillMaxWidth())
+            Text("環島和自由探索走過的鄉鎮都算。", style = MaterialTheme.typography.labelMedium)
+        }
+    }
 }
 
 /** Choose a route and which way round to walk it. */
