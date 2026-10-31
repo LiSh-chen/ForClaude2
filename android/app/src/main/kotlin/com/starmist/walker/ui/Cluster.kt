@@ -273,57 +273,23 @@ internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm:
     }
 }
 
-/**
- * The whole cluster, mounted on a stitched leather strip with brass rivets: the step dial and the way-round dial side by side, and under them,
- * still on the strip, the compass (it turns to the walker's heading), the three brass buttons that switch what the map shows, and the knob that syncs.
- */
+/** The two dials side by side, mounted on a stitched leather strip with brass rivets. */
 @Composable
 internal fun InstrumentCluster(
-    steps: Long, goal: Int, overall: Float, region: Float?, walkedKm: Double, townKm: Double?, todayKm: Double, kcal: Double, heading: Float, onSync: () -> Unit,
-    layers: MapLayers, onLayers: (MapLayers) -> Unit,
+    steps: Long, goal: Int, overall: Float, region: Float?, walkedKm: Double, townKm: Double?, todayKm: Double, kcal: Double,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier.fillMaxWidth()) {
         Canvas(Modifier.matchParentSize()) { drawStrip() }
-        Column(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 10.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                StepsDial(steps, goal, todayKm, kcal, Modifier.weight(1f))
-                RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f))
-            }
-            Row(Modifier.fillMaxWidth().padding(horizontal = 2.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Compass(heading, Modifier.size(46.dp))
-                LampSwitch("地名", layers.names, Color(0xFFF2A93B)) { onLayers(layers.copy(names = !layers.names)) }
-                LampSwitch("路線", layers.route, Color(0xFFE04B3F)) { onLayers(layers.copy(route = !layers.route)) }
-                LampSwitch("區域", layers.regions, Color(0xFF3B9BFF)) { onLayers(layers.copy(regions = !layers.regions)) }
-                SyncKnob(onSync)
-            }
+        Row(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+            StepsDial(steps, goal, todayKm, kcal, Modifier.weight(1f))
+            RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f))
         }
     }
 }
 
-/** A brass push button with a lamp above its name, like the others on the panel: the lamp is lit while what the button switches is shown on the map. */
-@Composable
-private fun LampSwitch(text: String, on: Boolean, lit: Color, onClick: () -> Unit) {
-    val shape = RoundedCornerShape(10.dp)
-    Column(
-        Modifier.size(width = 54.dp, height = 40.dp).clip(shape)
-            .background(Brush.verticalGradient(if (on) listOf(Vintage.brassLight, Vintage.brass) else listOf(Vintage.brass, Vintage.brassDark)))
-            .border(1.6.dp, Vintage.ink, shape)
-            .clickable(role = Role.Switch, onClick = onClick),
-        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center,
-    ) {
-        Box(
-            Modifier.size(9.dp).clip(CircleShape)
-                .background(if (on) Brush.radialGradient(listOf(Color.White, lit, lit.copy(alpha = 0.75f))) else Brush.radialGradient(listOf(Vintage.ink.copy(alpha = 0.55f), Vintage.ink.copy(alpha = 0.8f))))
-                .border(0.9.dp, Vintage.ink, CircleShape),
-        )
-        Spacer(Modifier.height(2.dp))
-        Text(text, fontSize = 13.sp, fontWeight = FontWeight.Black, color = if (on) Vintage.ink else Vintage.ink.copy(alpha = 0.55f))
-    }
-}
-
 /** The strip the dials are mounted on: darker paper with a stitched edge and a brass rivet in each corner, and a sprig of leaves. */
-private fun DrawScope.drawStrip() {
+internal fun DrawScope.drawStrip() {
     val corner = 20.dp.toPx()
     drawRoundRect(Vintage.parchmentDark.copy(alpha = 0.85f), cornerRadius = CornerRadius(corner))
     drawRoundRect(Vintage.edge, topLeft = Offset(1.dp.toPx(), 1.dp.toPx()), size = Size(size.width - 2.dp.toPx(), size.height - 2.dp.toPx()), cornerRadius = CornerRadius(corner), style = Stroke(1.6.dp.toPx()))
@@ -356,7 +322,7 @@ private fun DrawScope.drawStrip() {
 
 /** A little compass rose; the red pointer turns to the way the traveller is walking (degrees clockwise from north). */
 @Composable
-private fun Compass(heading: Float, modifier: Modifier = Modifier) {
+internal fun Compass(heading: Float, modifier: Modifier = Modifier) {
     val tm = rememberTextMeasurer()
     // The pointer always turns the short way round, never the long way past north.
     var angle by remember { mutableFloatStateOf(heading) }
@@ -391,20 +357,5 @@ private fun Compass(heading: Float, modifier: Modifier = Modifier) {
             wash(circle(p(50f, 52f), 2.2f * u, 8), Vintage.ink, 1f, 0f, 0f)
             label(tm, "N", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Black, color = Vintage.ink), p(50f, 6f))
         }
-    }
-}
-
-/** The brass knob that syncs the step count, with its name under it. */
-@Composable
-private fun SyncKnob(onSync: () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            Modifier.size(40.dp).clip(CircleShape).background(Brush.radialGradient(listOf(Vintage.brassLight, Vintage.brass, Vintage.brassDark)))
-                .border(1.6.dp, Vintage.ink, CircleShape).clickable(onClick = onSync),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(Icons.Filled.Refresh, contentDescription = "同步", tint = Vintage.ink, modifier = Modifier.size(24.dp))
-        }
-        Text("同步", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
     }
 }

@@ -42,7 +42,7 @@ class ScreenshotTest {
     }
 
     @Composable
-    private fun Home(real: Boolean, map: HomeMap, steps: Long = 4321, regionMode: Boolean = false, layers: MapLayers? = null) {
+    private fun Home(real: Boolean, map: HomeMap, steps: Long = 4321, regionMode: Boolean = false, layers: MapLayers? = null, controlsOpen: Boolean = false) {
         val context = androidx.compose.ui.platform.LocalContext.current
         val areas = remember { TownAreas.load(context) }
         val blurbs = remember { loadTownBlurbs(context) }
@@ -57,6 +57,7 @@ class ScreenshotTest {
                 currentTown = cur, exploredTowns = visited.keys,
                 infoOf = { id -> if (id !in areas.towns.indices) null else areas.towns[id].let { t -> RegionInfo(t, blurbs["${t.county}|${t.name}"], 1, visited[id] ?: 0.0, visited.keys.indexOf(id) + 1, id in visited) } },
                 initialLayers = layers ?: if (regionMode) MapLayers(names = true, route = false, regions = true) else MapLayers(),
+                initialControlsOpen = controlsOpen,
             )
         }
     }
@@ -93,6 +94,9 @@ class ScreenshotTest {
     @Test fun home_layers_all() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), layers = MapLayers(names = true, route = true, regions = true)) }
     @Test fun home_layers_no_names() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(names = false, route = true, regions = false)) }
     @Test fun home_layers_none() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(names = false, route = false, regions = false)) }
+    @Test fun home_console() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), controlsOpen = true) }
+    @Test fun home_console_layers_off() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(names = false, route = true, regions = false), controlsOpen = true) }
+    @Test fun home_console_over_region() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), layers = MapLayers(names = true, route = true, regions = true), controlsOpen = true) }
     @Test fun home_choose_route() = paparazzi.snapshot { Home(true, HomeMap.ChooseRoute, 0) }
 
     @Test fun collection_real() = paparazzi.snapshot {

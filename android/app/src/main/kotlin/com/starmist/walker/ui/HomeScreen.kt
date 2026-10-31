@@ -4,6 +4,9 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -188,12 +191,14 @@ internal fun HomeContent(
     exploredTowns: Set<Int> = emptySet(),
     infoOf: (Int) -> RegionInfo? = { null },
     initialLayers: MapLayers = MapLayers(),
+    initialControlsOpen: Boolean = false,
 ) {
     var showNames by rememberSaveable { mutableStateOf(initialLayers.names) }
     var showRoute by rememberSaveable { mutableStateOf(initialLayers.route) }
     var showRegions by rememberSaveable { mutableStateOf(initialLayers.regions) }
     val layers = MapLayers(showNames, showRoute, showRegions)
-    val regionMode = showRegions                       // while the regions are shown, a card over the map tells about the township picked
+    val regionMode = showRegions                       // while the regions are shown, the panel under the map tells about the township picked
+    var controlsOpen by rememberSaveable { mutableStateOf(initialControlsOpen) }   // the console, pulled up over the dials
     var picked by rememberSaveable { mutableStateOf(-1) }
     val walking = rememberWalking(steps)
     val shown = if (picked >= 0) picked else currentTown
@@ -219,19 +224,25 @@ internal fun HomeContent(
                         onTapStation = onOpenStation,
                         walking = walking,
                     )
-                    // The township picked tells its features on a card over the foot of the map, so that the dashboard (and its buttons) stay where they are.
-                    if (regionMode) RegionPanel(
-                        infoOf(shown), shown == currentTown,
-                        Modifier.align(Alignment.BottomCenter).padding(8.dp).clip(RoundedCornerShape(14.dp))
-                            .background(Vintage.parchmentLight.copy(alpha = 0.96f)).pointerInput(Unit) { detectTapGestures { } }.padding(12.dp),
-                    )
                 }
             }
         }
 
-        Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM, layers) {
-            showNames = it.names; showRoute = it.route; showRegions = it.regions
-            if (!it.regions) picked = -1
+        if (map is HomeMap.Real) {
+            val heading = remember(map.route, (map.walkedKm * 5).toInt()) { routeHeading(map.route, map.walkedKm) }
+            BottomDeck(
+                controlsOpen = controlsOpen, onControlsOpen = { controlsOpen = it }, regionMode = regionMode,
+                instruments = { InstrumentPanel(map.route, map.walkedKm, goal, steps, km, kcal, Modifier.fillMaxWidth()) },
+                regionInfo = { RegionDeck(infoOf(shown), shown == currentTown, it) },
+                controls = {
+                    ControlPanel(layers, { new ->
+                        showNames = new.names; showRoute = new.route
+                        if (new.regions != showRegions) { showRegions = new.regions; controlsOpen = false; if (!new.regions) picked = -1 }   // the regions replace the dials, so the console steps aside
+                    }, heading, lastSnapshot, onSync, it)
+                },
+            )
+        } else {
+            Dashboard(steps, goal, km, kcal, lastSnapshot, onSync)
         }
     }
 }
@@ -301,27 +312,80 @@ private fun LockedTag(icon: String = "") {
 
 // ---- the dashboard ---------------------------------------------------------------------------
 
-/** On the route: the instrument cluster, with the compass and the buttons on it. Before a route is chosen: today's steps as a ring. */
+/** Before a route is chosen: today's steps as a ring. */
 @Composable
-private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double, layers: MapLayers, onLayers: (MapLayers) -> Unit) {
+private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit) {
     val progress = BodyMetrics.goalProgress(steps, goal).toFloat().coerceIn(0f, 1f)
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(0.dp)) {
-        Column(Modifier.padding(horizontal = if (map != null) 0.dp else 14.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (map != null) {
-                InstrumentPanel(map.route, map.walkedKm, goal, steps, km, kcal, onSync, layers, onLayers, Modifier.fillMaxWidth())
-            } else {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    StepRing(steps, goal, progress, 96.dp)
-                    Spacer(Modifier.weight(1f))
-                }
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text("今日走了 ${km.twoDecimals()} 公里，消耗約 ${kcal.roundToInt()} 大卡", fontSize = 12.sp, color = Vintage.inkSoft)
-                    Spacer(Modifier.weight(1f))
-                    TextButton(onClick = onSync) { Text("同步", fontSize = 12.sp) }
-                }
+        Column(Modifier.padding(horizontal = 14.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                StepRing(steps, goal, progress, 96.dp)
+                Spacer(Modifier.weight(1f))
+            }
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text("今日走了 ${km.twoDecimals()} 公里，消耗約 ${kcal.roundToInt()} 大卡", fontSize = 12.sp, color = Vintage.inkSoft)
+                Spacer(Modifier.weight(1f))
+                TextButton(onClick = onSync) { Text("同步", fontSize = 12.sp) }
             }
         }
     }
+}
+
+/**
+ * The panel under the map: the dials; or, while the regions are shown, what the township picked holds; and over either of them, pulled up from the bottom
+ * edge (or by the tab there), the control console. The three are the same height, so that the map does not jump when they change.
+ */
+@Composable
+private fun BottomDeck(
+    controlsOpen: Boolean, onControlsOpen: (Boolean) -> Unit, regionMode: Boolean,
+    instruments: @Composable () -> Unit, regionInfo: @Composable (Modifier) -> Unit, controls: @Composable (Modifier) -> Unit,
+) {
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    var height by remember { mutableStateOf(210.dp) }       // the height the dials take; the other two panels are made as tall
+    val pull = with(density) { 36.dp.toPx() }
+    Box(
+        Modifier.fillMaxWidth().height(height).pointerInput(controlsOpen) {
+            var total = 0f
+            detectVerticalDragGestures(
+                onDragStart = { total = 0f },
+                onDragEnd = { if (total < -pull) onControlsOpen(true) else if (total > pull) onControlsOpen(false) },
+                onDragCancel = { total = 0f },
+                onVerticalDrag = { _, dy -> total += dy },
+            )
+        },
+    ) {
+        if (regionMode) regionInfo(Modifier.fillMaxSize())
+        else Box(
+            Modifier.fillMaxWidth().wrapContentHeight(align = Alignment.Top, unbounded = true)
+                .onSizeChanged { height = with(density) { it.height.toDp() }.coerceAtLeast(196.dp) },
+        ) { instruments() }
+        androidx.compose.animation.AnimatedVisibility(
+            visible = controlsOpen, modifier = Modifier.fillMaxSize(),
+            enter = androidx.compose.animation.slideInVertically(androidx.compose.animation.core.tween(300)) { it } + androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(200)),
+            exit = androidx.compose.animation.slideOutVertically(androidx.compose.animation.core.tween(260)) { it } + androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(200)),
+        ) { controls(Modifier.fillMaxSize()) }
+        GripTab(controlsOpen, { onControlsOpen(!controlsOpen) }, Modifier.align(Alignment.BottomCenter))
+    }
+}
+
+/** What the township picked holds, on a paper plate set into the same stitched strip as the dials. */
+@Composable
+private fun RegionDeck(region: RegionInfo?, isCurrent: Boolean, modifier: Modifier) {
+    Box(modifier.fillMaxWidth()) {
+        Canvas(Modifier.matchParentSize()) { drawStrip() }
+        Box(Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 22.dp).clip(RoundedCornerShape(12.dp)).background(Vintage.parchmentLight.copy(alpha = 0.92f)).padding(12.dp)) {
+            RegionPanel(region, isCurrent, Modifier.fillMaxWidth())
+        }
+    }
+}
+
+/** The way the traveller is walking: from a little behind to a little ahead on the route, degrees clockwise from north. */
+private fun routeHeading(route: RouteDef, walkedKm: Double): Float {
+    val a = route.positionAt((walkedKm - 0.4).coerceAtLeast(0.0))
+    val b = route.positionAt((walkedKm + 0.4).coerceAtMost(route.totalKm))
+    val east = (b.lng - a.lng) * kotlin.math.cos(Math.toRadians(a.lat))
+    val north = b.lat - a.lat
+    return if (east == 0.0 && north == 0.0) 0f else ((Math.toDegrees(kotlin.math.atan2(east, north)) + 360.0) % 360.0).toFloat()
 }
 
 /** Today's steps against the goal: a ring with the count inside. */
@@ -346,22 +410,11 @@ private fun StepRing(steps: Long, goal: Int, progress: Float, size: androidx.com
  * (a dialog with the exact readings).
  */
 @Composable
-private fun InstrumentPanel(route: RouteDef, walkedKm: Double, goal: Int, steps: Long, todayKm: Double, kcal: Double, onSync: () -> Unit, layers: MapLayers, onLayers: (MapLayers) -> Unit, modifier: Modifier) {
+private fun InstrumentPanel(route: RouteDef, walkedKm: Double, goal: Int, steps: Long, todayKm: Double, kcal: Double, modifier: Modifier) {
     val areas = rememberTownAreas()
     val border = remember(areas, route, (walkedKm * 10).toInt()) { areas.nextBorder(route, walkedKm) }
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
-    // The way the traveller is walking: from here to a little further along the route, degrees clockwise from north.
-    val heading = remember(route, (walkedKm * 5).toInt()) {
-        val a = route.positionAt((walkedKm - 0.4).coerceAtLeast(0.0))
-        val b = route.positionAt((walkedKm + 0.4).coerceAtMost(route.totalKm))
-        val east = (b.lng - a.lng) * kotlin.math.cos(Math.toRadians(a.lat))
-        val north = b.lat - a.lat
-        if (east == 0.0 && north == 0.0) 0f else ((Math.toDegrees(kotlin.math.atan2(east, north)) + 360.0) % 360.0).toFloat()
-    }
-    InstrumentCluster(
-        steps, goal, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone, todayKm, kcal, heading, onSync,
-        layers, onLayers, modifier,
-    )
+    InstrumentCluster(steps, goal, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone, todayKm, kcal, modifier)
 }
 
 @Composable
