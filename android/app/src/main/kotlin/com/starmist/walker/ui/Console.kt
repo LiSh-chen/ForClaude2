@@ -82,133 +82,84 @@ internal fun ConsoleDeck(
     }
 }
 
-private val NOTE_SIZE = 10.sp
+private val QUILL = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(com.starmist.walker.R.font.ma_shan_zheng_subset))
+private val NOTE_ROW = 24.dp
+private val SEPIA = Color(0xFF3A2A1B)
+private val TODAY_GREEN = Color(0xFF2E7D4F)
+
+private enum class NoteKind { TODAY, REGION, ISLAND, STEPS, ROAD, FLAME }
 
 /**
- * Today in a frame of its own with drums (steps, distance, energy); under it a notebook page with what has been walked in this township and round the island.
+ * One page of parchment with everything written on it in a brush-pen hand (Ma Shan Zheng, a subset of it): today's steps, distance and energy, then what has been
+ * walked in this township and round the island. Each part has a title in the colour of its needle on the dials and a little drawing in the margin.
  */
 @Composable
 private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier) {
-    val tm = rememberTextMeasurer()
-    val stepsRoll = rememberRolling(steps.toFloat(), "steps")
-    Column(modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly) {
-        Counter(NoteKind.TODAY, "今日已走 步", Color(0xFF2E7D4F), tm, stepsRoll, decimal = false, framed = true) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                MiniDrums(tm, rememberRolling((todayKm * 10).roundToInt().toFloat(), "todayKm"), cells = 3, decimal = true, Modifier.size(38.dp, 18.dp))
-                Text("公里", Modifier.padding(horizontal = 2.dp), softWrap = false, fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
-                MiniDrums(tm, rememberRolling(kcal.roundToInt().toFloat(), "kcal"), cells = 4, decimal = false, Modifier.size(42.dp, 18.dp))
-                Text("大卡", Modifier.padding(start = 2.dp), softWrap = false, fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
-            }
-        }
-        NotebookPage(townKm, walkedKm)
-    }
-}
-
-private enum class NoteKind { TODAY, REGION, ISLAND }
-
-/** One counter: drawing and title, the drums, and the line under them. */
-@Composable
-private fun Counter(kind: NoteKind, title: String, color: Color, tm: TextMeasurer, reading: Float?, decimal: Boolean, framed: Boolean = false, under: @Composable () -> Unit) {
-    Box(Modifier.fillMaxWidth()) {
-    if (framed) Canvas(Modifier.matchParentSize()) {
-        val pen = Pen(this, size)
-        with(pen) {
-            val wu = size.width / u; val l = (100f - wu) / 2f
-            val box = roundRect(l + 1f, 2f, l + wu - 1f, 98f, 9f)
-            wash(box, color, 0.10f, 0f, 0f)
-            inked(box, 700 + kind.ordinal, closed = true, width = line * 1.2f, calm = 0.4f)
-        }
-    }
-    Column(if (framed) Modifier.padding(horizontal = 5.dp, vertical = 3.dp) else Modifier) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Canvas(Modifier.size(14.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
-            Text(title, Modifier.padding(start = 3.dp), fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = color)
-        }
-        Canvas(Modifier.fillMaxWidth().height(24.dp)) {
-            val pen = Pen(this, size)
-            // the pen's unit is the height of this strip, so the width is a few hundred units: its left edge is this far out
-            val left = -(size.width - size.height) / 2f / (size.height / 100f)
-            with(pen) { odometer(tm, left + 1f, 5f, reading, cells = 5, cw = 74f, ch = 90f, decimal = decimal) }
-        }
-        under()
-    }
-    }
-}
-
-/** A small set of drums (a smaller reading under the big one). */
-@Composable
-private fun MiniDrums(tm: TextMeasurer, reading: Float?, cells: Int, decimal: Boolean, modifier: Modifier) {
-    Canvas(modifier) {
-        val left = -(size.width - size.height) / 2f / (size.height / 100f)
-        with(Pen(this, size)) { odometer(tm, left + 1f, 5f, reading, cells = cells, cw = 60f, ch = 90f, decimal = decimal) }
-    }
-}
-
-private val NOTE_INK = Color(0xFF23407A)   // fountain-pen blue-black
-private val NOTE_ROW = 22.dp
-
-/**
- * A page of a notebook: ruled lines, a red margin and binder holes, and in blue-black ink what has been walked in this township and round the island,
- * each written under a title in the colour of its needle on the dials.
- */
-@Composable
-private fun NotebookPage(townKm: Double?, walkedKm: Double) {
-    val style = androidx.compose.ui.text.TextStyle(
-        fontFamily = androidx.compose.ui.text.font.FontFamily.Cursive, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, fontSize = 13.sp, lineHeight = 16.sp,
-    )
-    Box(Modifier.fillMaxWidth().height(NOTE_ROW * 4 + 8.dp)) {
-        Canvas(Modifier.matchParentSize()) {
-            val pen = Pen(this, size)
-            with(pen) {
-                val wu = size.width / u; val l = (100f - wu) / 2f
-                val page = roundRect(l + 1f, 1f, l + wu - 1f, 99f, 5f)
-                wash(page, Color(0xFFFFFBEA), 1f, 0f, 0f)
-                inked(page, 710, closed = true, width = line, calm = 0.4f)
-                val top = 4.dp.toPx()
-                for (k in 1..4) {
-                    val y = top + NOTE_ROW.toPx() * k
-                    stroke(listOf(Offset(10.dp.toPx(), y), Offset(size.width - 6.dp.toPx(), y)), Color(0xFF6C8EBF), 720 + k, 0.8.dp.toPx(), alpha = 0.55f, calm = 0.5f)
-                }
-                val mx = 22.dp.toPx()
-                stroke(listOf(Offset(mx, 3.dp.toPx()), Offset(mx, size.height - 3.dp.toPx())), Color(0xFFD24A4A), 730, 0.9.dp.toPx(), alpha = 0.6f, calm = 0.3f)
-                for (k in 0..2) wash(circle(Offset(9.dp.toPx(), size.height * (0.2f + 0.3f * k)), 2.4.dp.toPx(), 10), Vintage.parchmentDark, 1f, 0f, 0f)
-            }
-        }
-        Column(Modifier.padding(start = 26.dp, end = 6.dp, top = 4.dp)) {
-            NoteLine(NoteKind.REGION, "本區域", INK_RED, style)
-            NoteValue("已走 ${townKm?.fixed(1) ?: "-"} 公里", style)
-            NoteLine(NoteKind.ISLAND, "環島全程", COLD_BLUE, style)
-            NoteValue("已走 ${walkedKm.fixed(1)} 公里", style)
+    val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 19.sp, lineHeight = 22.sp)
+    val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 17.sp, lineHeight = 20.sp, color = SEPIA)
+    Box(modifier.fillMaxWidth().height(NOTE_ROW * 8 + 10.dp)) {
+        Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(NOTE_ROW.toPx(), 5.dp.toPx()) }
+        Column(Modifier.padding(start = 6.dp, end = 6.dp, top = 5.dp)) {
+            PageLine(NoteKind.TODAY, "今日", title.copy(color = TODAY_GREEN))
+            PageLine(NoteKind.STEPS, "走了 ${steps.withCommas()} 步", value)
+            PageLine(NoteKind.ROAD, "${todayKm.fixed(1)} 公里", value)
+            PageLine(NoteKind.FLAME, "${kcal.roundToInt()} 大卡", value)
+            PageLine(NoteKind.REGION, "本區域", title.copy(color = INK_RED))
+            PageLine(null, "已走 ${townKm?.fixed(1) ?: "-"} 公里", value)
+            PageLine(NoteKind.ISLAND, "環島全程", title.copy(color = COLD_BLUE))
+            PageLine(null, "已走 ${walkedKm.fixed(1)} 公里", value)
         }
     }
 }
 
+/** One ruled line of the page: a drawing in the margin (or none) and the writing. */
 @Composable
-private fun NoteLine(kind: NoteKind, title: String, color: Color, style: androidx.compose.ui.text.TextStyle) {
+private fun PageLine(kind: NoteKind?, text: String, style: androidx.compose.ui.text.TextStyle) {
     Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
-        Canvas(Modifier.size(14.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
-        Text(title, Modifier.padding(start = 3.dp), style = style, fontWeight = FontWeight.Black, color = color)
+        Box(Modifier.width(22.dp), contentAlignment = Alignment.Center) {
+            if (kind != null) Canvas(Modifier.size(19.dp)) { Pen(this, size).noteIcon(kind, style.color.takeIf { it != Color.Unspecified && kind in setOf(NoteKind.TODAY, NoteKind.REGION, NoteKind.ISLAND) } ?: SEPIA, 500 + kind.ordinal) }
+        }
+        Text(text, Modifier.padding(start = 8.dp), style = style, softWrap = false)
     }
 }
 
-@Composable
-private fun NoteValue(text: String, style: androidx.compose.ui.text.TextStyle) {
-    Box(Modifier.height(NOTE_ROW).padding(start = 17.dp), contentAlignment = Alignment.CenterStart) {
-        Text(text, style = style, fontWeight = FontWeight.Bold, color = NOTE_INK, softWrap = false)
+/** The page itself: uneven parchment with stains, a dark edge, faint brown rules, a faded red margin and two holes for the cord. */
+private fun Pen.parchmentPage(row: Float, top: Float) {
+    val dp = with(d) { 1.dp.toPx() }
+    val wu = d.size.width / u; val l = (100f - wu) / 2f
+    val page = roundRect(l + 1f, 1f, l + wu - 1f, 99f, 4f)
+    wash(page, Color(0xFFEBD7A4), 1f, 0f, 0f)
+    // stains: soft brown blotches near the corners and edges, clipped to the page
+    clipTo(page) {
+        val blots = listOf(Triple(0.08f, 0.1f, 22f), Triple(0.93f, 0.2f, 16f), Triple(0.85f, 0.92f, 26f), Triple(0.12f, 0.88f, 18f), Triple(0.55f, 0.5f, 12f))
+        for ((k, bl) in blots.withIndex()) {
+            val c = Offset(d.size.width * bl.first, d.size.height * bl.second)
+            d.drawCircle(Color(0xFFB07F3A).copy(alpha = 0.10f), bl.third * u, c)
+            d.drawCircle(Color(0xFFB07F3A).copy(alpha = 0.07f), bl.third * u * 0.6f, Offset(c.x + 3f * k, c.y - 2f * k))
+        }
     }
+    stroke(page, Vintage.edge, 710, line * 1.8f, closed = true, alpha = 0.9f, calm = 2.2f)
+    stroke(page, Vintage.brassDark, 711, line * 0.6f, closed = true, alpha = 0.6f, calm = 1.4f)
+    for (k in 1..8) {
+        val y = top + row * k
+        stroke(listOf(Offset(6f * dp, y), Offset(d.size.width * 0.97f, y)), Color(0xFF8A6B3F), 720 + k, 0.7f * line, alpha = 0.35f, calm = 0.8f)
+    }
+    val mx = 27f * dp
+    stroke(listOf(Offset(mx, 4f * dp), Offset(mx, d.size.height - 4f * dp)), Color(0xFFB3463C), 730, 0.9f * line, alpha = 0.45f, calm = 0.4f)
 }
 
-/** The note's little drawing, in the pen's 100 x 100 square. */
+/** The little drawings in the margin, in the pen's 100 x 100 square. */
 private fun Pen.noteIcon(kind: NoteKind, color: Color, seed: Int) {
     val w = line * 1.5f
     when (kind) {
         NoteKind.TODAY -> {
-            // two footprints
-            for ((i, c) in listOf(p(36f, 62f), p(64f, 40f)).withIndex()) {
-                val sole = circle(c, 15f * u, 18)
-                wash(sole, color, 0.35f, 0f, 0f)
-                stroke(sole, ink, seed + i, w, closed = true, calm = 0.4f)
-                for (t in 0..2) wash(circle(Offset(c.x + (t - 1) * 8f * u, c.y - 21f * u), 3.4f * u, 8), color, 0.8f, 0f, 0f)
+            // a sun: a disc with rays
+            val c = p(50f, 50f)
+            wash(circle(c, 18f * u, 16), Color(0xFFE8A93A), 0.55f, 0f, 0f)
+            stroke(circle(c, 18f * u, 16), ink, seed, w, closed = true, calm = 0.4f)
+            for (i in 0 until 8) {
+                val a = PI / 4 * i
+                stroke(listOf(Offset(c.x + (26f * u * cos(a)).toFloat(), c.y + (26f * u * sin(a)).toFloat()), Offset(c.x + (42f * u * cos(a)).toFloat(), c.y + (42f * u * sin(a)).toFloat())), color, seed + i + 1, w, calm = 0.3f)
             }
         }
         NoteKind.REGION -> {
@@ -221,6 +172,24 @@ private fun Pen.noteIcon(kind: NoteKind, color: Color, seed: Int) {
             val isle = listOf(p(52f, 8f), p(64f, 22f), p(68f, 45f), p(60f, 70f), p(50f, 94f), p(40f, 76f), p(33f, 52f), p(38f, 26f))
             wash(isle, color, 0.3f, 0f, 0f)
             stroke(isle, ink, seed, w, closed = true, calm = 0.4f)
+        }
+        NoteKind.STEPS -> for ((i, c) in listOf(p(36f, 64f), p(64f, 38f)).withIndex()) {
+            val sole = circle(c, 14f * u, 16)
+            wash(sole, SEPIA, 0.35f, 0f, 0f)
+            stroke(sole, ink, seed + i, w, closed = true, calm = 0.4f)
+            for (t in 0..2) wash(circle(Offset(c.x + (t - 1) * 8f * u, c.y - 20f * u), 3.2f * u, 8), SEPIA, 0.8f, 0f, 0f)
+        }
+        NoteKind.ROAD -> {
+            val road = listOf(p(14f, 82f), p(34f, 82f), p(48f, 72f), p(52f, 56f), p(44f, 44f), p(52f, 30f), p(68f, 22f), p(86f, 20f))
+            stroke(road, ink, seed, w, calm = 0.3f)
+            wash(circle(p(14f, 82f), 5f * u, 10), SEPIA, 0.9f, 0f, 0f)
+            wash(circle(p(86f, 20f), 5f * u, 10), INK_RED, 0.9f, 0f, 0f)
+        }
+        NoteKind.FLAME -> {
+            val flame = listOf(p(50f, 8f), p(66f, 34f), p(76f, 56f), p(70f, 80f), p(50f, 92f), p(30f, 80f), p(24f, 58f), p(36f, 40f), p(44f, 26f))
+            wash(flame, Color(0xFFE2572B), 0.7f, 0f, 0f)
+            stroke(flame, ink, seed, w, closed = true, calm = 0.4f)
+            wash(listOf(p(50f, 46f), p(60f, 64f), p(54f, 82f), p(42f, 82f), p(40f, 64f)), Color(0xFFF3C14B), 0.9f, 0f, 0f)
         }
     }
 }
