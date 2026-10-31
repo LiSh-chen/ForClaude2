@@ -6,6 +6,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -94,7 +95,7 @@ private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, t
     val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat(), "town")
     val total = rememberRolling((walkedKm * 10).toFloat(), "total")
     Column(modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly) {
-        Counter(NoteKind.TODAY, "今日已走 步", Color(0xFF2E7D4F), tm, stepsRoll, decimal = false) {
+        Counter(NoteKind.TODAY, "今日已走 步", Color(0xFF2E7D4F), tm, stepsRoll, decimal = false, framed = true) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 MiniDrums(tm, rememberRolling((todayKm * 10).toFloat(), "todayKm"), cells = 3, decimal = true, Modifier.size(44.dp, 18.dp))
                 Text(" 公里 ", fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
@@ -111,8 +112,18 @@ private enum class NoteKind { TODAY, REGION, ISLAND }
 
 /** One counter: drawing and title, the drums, and the line under them. */
 @Composable
-private fun Counter(kind: NoteKind, title: String, color: Color, tm: TextMeasurer, reading: Float?, decimal: Boolean, under: @Composable () -> Unit) {
-    Column {
+private fun Counter(kind: NoteKind, title: String, color: Color, tm: TextMeasurer, reading: Float?, decimal: Boolean, framed: Boolean = false, under: @Composable () -> Unit) {
+    Box(Modifier.fillMaxWidth()) {
+    if (framed) Canvas(Modifier.matchParentSize()) {
+        val pen = Pen(this, size)
+        with(pen) {
+            val wu = size.width / u; val l = (100f - wu) / 2f
+            val box = roundRect(l + 1f, 2f, l + wu - 1f, 98f, 9f)
+            wash(box, color, 0.10f, 0f, 0f)
+            inked(box, 700 + kind.ordinal, closed = true, width = line * 1.2f, calm = 0.4f)
+        }
+    }
+    Column(if (framed) Modifier.padding(horizontal = 5.dp, vertical = 3.dp) else Modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Canvas(Modifier.size(14.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
             Text(title, Modifier.padding(start = 3.dp), fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = color)
@@ -124,6 +135,7 @@ private fun Counter(kind: NoteKind, title: String, color: Color, tm: TextMeasure
             with(pen) { odometer(tm, left + 1f, 5f, reading, cells = 5, cw = 74f, ch = 90f, decimal = decimal) }
         }
         under()
+    }
     }
 }
 
