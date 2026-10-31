@@ -59,7 +59,7 @@ internal fun ConsoleDeck(
     steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier = Modifier,
 ) {
     Row(modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Notes(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.12f))
+        Notes(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.3f))
         Column(Modifier.width(78.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Compass(heading, Modifier.size(72.dp))
             Text("${compassName(heading)} ${heading.toInt()}°", fontSize = 12.sp, fontWeight = FontWeight.Black, color = Vintage.ink)
@@ -95,8 +95,8 @@ private enum class NoteKind { TODAY, REGION, ISLAND, STEPS, ROAD, FLAME }
  */
 @Composable
 private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier) {
-    val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 19.sp, lineHeight = 22.sp)
-    val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 17.sp, lineHeight = 20.sp, color = SEPIA)
+    val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 17.sp, lineHeight = 22.sp)
+    val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 15.sp, lineHeight = 20.sp, color = SEPIA)
     Box(modifier.fillMaxWidth().height(NOTE_ROW * 8 + 10.dp)) {
         Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(NOTE_ROW.toPx(), 5.dp.toPx()) }
         Column(Modifier.padding(start = 6.dp, end = 6.dp, top = 5.dp)) {
