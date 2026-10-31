@@ -42,3 +42,13 @@ internal fun AppFontScale(step: Int, content: @Composable () -> Unit) {
     val d = LocalDensity.current
     CompositionLocalProvider(LocalDensity provides Density(d.density, fontScale = fontScaleOf(step))) { content() }
 }
+
+/**
+ * [content] with the app's font size followed only half way: the writing on the dials sits on a drawn scale, and at the largest size it would run into the numbers
+ * round it, so the dials get a smaller step between small, medium and large than the text of the rest of the app.
+ */
+@Composable
+internal fun HalfFontScale(content: @Composable () -> Unit) {
+    val d = LocalDensity.current
+    CompositionLocalProvider(LocalDensity provides Density(d.density, fontScale = 1f + (d.fontScale - 1f) * 0.5f)) { content() }
+}

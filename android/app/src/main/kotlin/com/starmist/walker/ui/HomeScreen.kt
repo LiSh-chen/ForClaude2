@@ -249,7 +249,7 @@ internal fun HomeContent(
                 regionMode = regionMode,
                 face = {
                     if (panelStyle == 1) NotebookPanel(data)
-                    else Box(Modifier.fillMaxWidth().heightIn(min = 186.dp), contentAlignment = Alignment.Center) { InstrumentPanel(map.route, map.walkedKm, goal, steps, border, Modifier.fillMaxWidth()) }
+                    else Box(Modifier.fillMaxWidth().heightIn(min = 186.dp), contentAlignment = Alignment.Center) { HalfFontScale { InstrumentPanel(map.route, map.walkedKm, goal, steps, border, Modifier.fillMaxWidth()) } }
                 },
                 regionInfo = { RegionPlate(infoOf(picked), picked == currentTown, it) },
                 keys = {
