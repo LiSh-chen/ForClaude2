@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -134,13 +135,20 @@ private fun Pen.label(tm: TextMeasurer, s: String, style: TextStyle, c: Offset) 
     d.drawText(l, topLeft = Offset(c.x - l.size.width / 2f, c.y - l.size.height / 2f))
 }
 
-/** A reading in tenths that rolls to its value: from zero when the screen first shows, and from the old reading when it changes. */
+/** What each counter showed last, kept while the app lives, so that coming back to the map it goes on from there instead of rolling up from zero again. */
+private val lastShown = HashMap<String, Float>()
+
+/**
+ * A reading in tenths that rolls to its value: from zero when the app first shows it, and from the old reading when it changes or the screen is
+ * shown again. [key] says which counter it is.
+ */
 @Composable
-private fun rememberRolling(tenths: Float): Float {
+private fun rememberRolling(tenths: Float, key: String): Float {
     // The screenshot tests take their picture at once, so there the reading does not roll.
     val inspect = LocalInspectionMode.current || decodeThumbsInline
-    val a = remember { Animatable(if (inspect) tenths else 0f) }
+    val a = remember { Animatable(if (inspect) tenths else lastShown[key] ?: 0f) }
     LaunchedEffect(tenths) { if (inspect) a.snapTo(tenths) else a.animateTo(tenths, tween(1600, easing = FastOutSlowInEasing)) }
+    DisposableEffect(key) { onDispose { lastShown[key] = a.value } }
     return a.value
 }
 
@@ -192,7 +200,7 @@ internal fun StepsDial(steps: Long, goal: Int, todayKm: Double, kcal: Double, mo
     val max = (goal * 1.2f).coerceAtLeast(1f)
     val v by animateFloatAsState((steps / max).coerceIn(0f, 1f), needleSpring, label = "steps")
     val tm = rememberTextMeasurer()
-    val stepsRoll = rememberRolling(steps.toFloat())
+    val stepsRoll = rememberRolling(steps.toFloat(), "steps")
     Canvas(modifier.aspectRatio(1f)) {
         val pen = Pen(this, size)
         with(pen) {
@@ -221,9 +229,9 @@ internal fun StepsDial(steps: Long, goal: Int, todayKm: Double, kcal: Double, mo
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 1f / 1.2f, 1f, INK_RED, 230, alpha = 0.6f)
             label(tm, if (thousands) "x1000" else "步", TextStyle(fontSize = 7.sp, color = Vintage.inkSoft), p(cx, 31f))
             // today's count in full, on green drums like the needle, with the distance and energy under it
-            label(tm, "今日步數", TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 66f))
-            odometer(tm, 38.5f, 70.5f, stepsRoll, cells = 5, cw = 4.6f, ch = 7.5f, decimal = false)
-            label(tm, "%.2f 公里・%d 大卡".format(todayKm, kcal.roundToInt()), TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(cx, 83.5f))
+            label(tm, "今日步數", TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 63.5f))
+            odometer(tm, 34f, 68f, stepsRoll, cells = 5, cw = 6.4f, ch = 10.5f, decimal = false)
+            label(tm, "%.2f 公里・%d 大卡".format(todayKm, kcal.roundToInt()), TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft), p(cx, 86.5f))
             needle(cx, cy, r * 0.72f, start + sweep * v, STEP_GREEN, 240)
         }
     }
@@ -234,8 +242,8 @@ internal fun StepsDial(steps: Long, goal: Int, todayKm: Double, kcal: Double, mo
 internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm: Double, modifier: Modifier = Modifier) {
     val v by animateFloatAsState(overall.coerceIn(0f, 1f), needleSpring, label = "island")
     val w by animateFloatAsState((region ?: 0f).coerceIn(0f, 1f), needleSpring, label = "region")
-    val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat())
-    val total = rememberRolling((totalKm * 10).toFloat())
+    val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat(), "town")
+    val total = rememberRolling((totalKm * 10).toFloat(), "total")
     val tm = rememberTextMeasurer()
     Canvas(modifier.aspectRatio(1f)) {
         val pen = Pen(this, size)
@@ -249,10 +257,10 @@ internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm:
             // the two distances walked, as two odometers, the unit printed on the face
             // the kilometres walked in the township (the colour of the long needle) and in all, as two drum counters
             val tag = TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold)
-            label(tm, "區域 km", tag.copy(color = INK_RED), p(50f, 61.2f))
-            odometer(tm, 37f, 65.8f, if (townKm != null) town else null, cw = 4.6f, ch = 6.6f)
-            label(tm, "總里程 km", tag.copy(color = BRONZE), p(50f, 77.2f))
-            odometer(tm, 37f, 81.2f, total, cw = 4.6f, ch = 6.6f)
+            label(tm, "區域 km", tag.copy(color = INK_RED), p(50f, 58.5f))
+            odometer(tm, 32.8f, 62f, if (townKm != null) town else null, cw = 6.2f, ch = 9f)
+            label(tm, "總里程 km", tag.copy(color = BRONZE), p(50f, 75.5f))
+            odometer(tm, 32.8f, 79f, total, cw = 6.2f, ch = 9f)
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
