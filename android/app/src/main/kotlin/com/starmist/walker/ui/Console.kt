@@ -94,9 +94,16 @@ private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, t
     val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat(), "town")
     val total = rememberRolling((walkedKm * 10).toFloat(), "total")
     Column(modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly) {
-        Counter(NoteKind.TODAY, "今日已走 步", Color(0xFF2E7D4F), tm, stepsRoll, decimal = false, "${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡")
-        Counter(NoteKind.REGION, "本區域已走 公里", INK_RED, tm, if (townKm != null) town else null, decimal = true, if (townLeft != null) "未走 ${townLeft.fixed(1)} 公里" else "未走 -")
-        Counter(NoteKind.ISLAND, "環島全程已走 公里", COLD_BLUE, tm, total, decimal = true, "未走 ${(totalKm - walkedKm).coerceAtLeast(0.0).fixed(1)} 公里")
+        Counter(NoteKind.TODAY, "今日已走 步", Color(0xFF2E7D4F), tm, stepsRoll, decimal = false) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                MiniDrums(tm, rememberRolling((todayKm * 10).toFloat(), "todayKm"), cells = 3, decimal = true, Modifier.size(44.dp, 18.dp))
+                Text(" 公里 ", fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
+                MiniDrums(tm, rememberRolling(kcal.toFloat(), "kcal"), cells = 4, decimal = false, Modifier.size(48.dp, 18.dp))
+                Text(" 大卡", fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
+            }
+        }
+        Counter(NoteKind.REGION, "本區域已走 公里", INK_RED, tm, if (townKm != null) town else null, decimal = true) { Left("未走", townLeft, tm, "townLeft") }
+        Counter(NoteKind.ISLAND, "環島全程已走 公里", COLD_BLUE, tm, total, decimal = true) { Left("未走", (totalKm - walkedKm).coerceAtLeast(0.0), tm, "totalLeft") }
     }
 }
 
@@ -104,19 +111,39 @@ private enum class NoteKind { TODAY, REGION, ISLAND }
 
 /** One counter: drawing and title, the drums, and the line under them. */
 @Composable
-private fun Counter(kind: NoteKind, title: String, color: Color, tm: TextMeasurer, reading: Float?, decimal: Boolean, under: String) {
+private fun Counter(kind: NoteKind, title: String, color: Color, tm: TextMeasurer, reading: Float?, decimal: Boolean, under: @Composable () -> Unit) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Canvas(Modifier.size(14.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
             Text(title, Modifier.padding(start = 3.dp), fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = color)
         }
-        Canvas(Modifier.fillMaxWidth().height(27.dp)) {
+        Canvas(Modifier.fillMaxWidth().height(24.dp)) {
             val pen = Pen(this, size)
             // the pen's unit is the height of this strip, so the width is a few hundred units: its left edge is this far out
             val left = -(size.width - size.height) / 2f / (size.height / 100f)
             with(pen) { odometer(tm, left + 1f, 5f, reading, cells = 5, cw = 74f, ch = 90f, decimal = decimal) }
         }
-        Text(under, fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
+        under()
+    }
+}
+
+/** A small set of drums (a smaller reading under the big one). */
+@Composable
+private fun MiniDrums(tm: TextMeasurer, reading: Float?, cells: Int, decimal: Boolean, modifier: Modifier) {
+    Canvas(modifier) {
+        val left = -(size.width - size.height) / 2f / (size.height / 100f)
+        with(Pen(this, size)) { odometer(tm, left + 1f, 5f, reading, cells = cells, cw = 60f, ch = 90f, decimal = decimal) }
+    }
+}
+
+/** What is left, as drums with the word "未走" before and the unit after. */
+@Composable
+private fun Left(word: String, km: Double?, tm: TextMeasurer, key: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text("$word ", fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
+        val roll = rememberRolling(((km ?: 0.0) * 10).toFloat(), key)
+        MiniDrums(tm, if (km != null) roll else null, cells = 5, decimal = true, Modifier.size(70.dp, 18.dp))
+        Text(" 公里", fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
     }
 }
 
