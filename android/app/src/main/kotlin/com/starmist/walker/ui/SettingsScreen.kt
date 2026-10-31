@@ -84,6 +84,15 @@ fun SettingsScreen(
             Text("只改本 App 的字，不跟手機系統的字體設定走。", style = MaterialTheme.typography.labelSmall)
         }
 
+        Section("底部資訊面板") {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf("儀表", "筆記頁").forEachIndexed { i, label ->
+                    FilterChip(selected = settings.panelStyle == i, onClick = { vm.setPanelStyle(i) }, label = { Text(label) })
+                }
+            }
+            Text("地圖下方顯示儀表（兩個錶盤），或一整頁手寫筆記加進度長條圖，二選一。", style = MaterialTheme.typography.labelSmall)
+        }
+
         Section("穩定計步模式") {
             Row(
                 Modifier.fillMaxWidth(),

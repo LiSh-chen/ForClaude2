@@ -54,9 +54,9 @@ class ScreenshotTest : ShotsBase(DeviceConfig.PIXEL_5) {
     @Test fun home_layers_all() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), layers = MapLayers(spots = true, route = true, regions = true)) }
     @Test fun home_layers_no_names() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(spots = false, route = true, regions = false)) }
     @Test fun home_layers_none() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(spots = false, route = false, regions = false)) }
-    @Test fun home_console() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), controlsOpen = true) }
-    @Test fun home_console_layers_off() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(spots = false, route = true, regions = false), controlsOpen = true) }
-    @Test fun home_console_over_region() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), layers = MapLayers(spots = true, route = true, regions = true), controlsOpen = true) }
+    @Test fun home_console() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), notebook = true) }
+    @Test fun home_console_layers_off() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(spots = false, route = true, regions = false), notebook = true) }
+    @Test fun home_console_over_region() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), layers = MapLayers(spots = true, route = true, regions = true), notebook = true) }
     @Test fun home_choose_route() = paparazzi.snapshot { Home(true, HomeMap.ChooseRoute, 0) }
 
     @Test fun collection_real() = paparazzi.snapshot {

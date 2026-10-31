@@ -44,7 +44,7 @@ abstract class ShotsBase(device: DeviceConfig, private val fontStep: Int = 1) {
     }
 
     @Composable
-    internal fun Home(real: Boolean, map: HomeMap, steps: Long = 4321, regionMode: Boolean = false, layers: MapLayers? = null, controlsOpen: Boolean = false) {
+    internal fun Home(real: Boolean, map: HomeMap, steps: Long = 4321, regionMode: Boolean = false, layers: MapLayers? = null, notebook: Boolean = false) {
         val context = androidx.compose.ui.platform.LocalContext.current
         val areas = remember { TownAreas.load(context) }
         val blurbs = remember { loadTownBlurbs(context) }
@@ -59,7 +59,7 @@ abstract class ShotsBase(device: DeviceConfig, private val fontStep: Int = 1) {
                 currentTown = cur, exploredTowns = visited.keys,
                 infoOf = { id -> if (id !in areas.towns.indices) null else areas.towns[id].let { t -> RegionInfo(t, blurbs["${t.county}|${t.name}"], 1, visited[id] ?: 0.0, visited.keys.indexOf(id) + 1, id in visited) } },
                 initialLayers = layers ?: if (regionMode) MapLayers(spots = true, route = false, regions = true) else MapLayers(),
-                initialControlsOpen = controlsOpen,
+                panelStyle = if (notebook) 1 else 0,
                 initialPicked = if (regionMode) cur else -1,
             )
         }

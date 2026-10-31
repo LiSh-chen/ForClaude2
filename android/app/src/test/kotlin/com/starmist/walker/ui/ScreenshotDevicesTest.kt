@@ -14,7 +14,7 @@ import org.junit.Test
  */
 abstract class PanelShots(device: DeviceConfig, step: Int) : ShotsBase(device, step) {
     @Test fun dials() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0)) }
-    @Test fun console() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), controlsOpen = true) }
+    @Test fun notebook() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), notebook = true) }
     @Test fun township() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), regionMode = true) }
 }
 

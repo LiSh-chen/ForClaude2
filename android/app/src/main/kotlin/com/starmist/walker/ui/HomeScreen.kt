@@ -148,6 +148,7 @@ fun HomeScreen(
         currentTown = currentTown,
         exploredTowns = visited.keys,
         infoOf = infoOf,
+        panelStyle = settings.panelStyle,
     )
 }
 
@@ -195,7 +196,7 @@ internal fun HomeContent(
     exploredTowns: Set<Int> = emptySet(),
     infoOf: (Int) -> RegionInfo? = { null },
     initialLayers: MapLayers = MapLayers(),
-    initialControlsOpen: Boolean = false,
+    panelStyle: Int = 0,
     initialPicked: Int = -1,
 ) {
     var showSpots by rememberSaveable { mutableStateOf(initialLayers.spots) }
@@ -204,7 +205,6 @@ internal fun HomeContent(
     var picked by rememberSaveable { mutableStateOf(initialPicked) }
     val layers = MapLayers(showSpots, showRoute, showRegions)
     val regionMode = showRegions && picked >= 0       // the panel under the map tells about the township picked, and only then
-    var controlsOpen by rememberSaveable { mutableStateOf(initialControlsOpen) }   // the console, pulled up over the dials
     val walking = rememberWalking(steps)
     // The dashboard runs nearly edge to edge so that the dials can be big; the rest keeps a margin.
     Column(Modifier.padding(padding).padding(horizontal = 4.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -236,18 +236,30 @@ internal fun HomeContent(
             val heading = remember(map.route, (map.walkedKm * 5).toInt()) { routeHeading(map.route, map.walkedKm) }
             val areas = rememberTownAreas()
             val border = remember(areas, map.route, (map.walkedKm * 10).toInt()) { areas.nextBorder(map.route, map.walkedKm) }
+            val toNext = map.route.next(map.walkedKm)?.second
+            val prevKm = map.route.cards.lastOrNull { it.second <= map.walkedKm + 1e-9 }?.second ?: 0.0
+            val data = NotebookData(
+                steps = steps, goal = goal, todayKm = km, kcal = kcal,
+                townKm = border?.kmDone, townTotalKm = border?.let { it.kmDone + it.kmLeft },
+                walkedKm = map.walkedKm, totalKm = map.route.totalKm,
+                toNextKm = toNext, nextFraction = if (toNext == null) 1f else ((map.walkedKm - prevKm) / (map.walkedKm + toNext - prevKm)).toFloat().coerceIn(0f, 1f),
+                cardsDone = map.route.collected(map.walkedKm).size, cardsTotal = map.route.cards.size,
+            )
             BottomDeck(
-                controlsOpen = controlsOpen, onControlsOpen = { controlsOpen = it }, regionMode = regionMode,
-                instruments = { InstrumentPanel(map.route, map.walkedKm, goal, steps, border, Modifier.fillMaxWidth()) },
+                regionMode = regionMode,
+                face = {
+                    if (panelStyle == 1) NotebookPanel(data)
+                    else Box(Modifier.fillMaxWidth().heightIn(min = 186.dp), contentAlignment = Alignment.Center) { InstrumentPanel(map.route, map.walkedKm, goal, steps, border, Modifier.fillMaxWidth()) }
+                },
                 regionInfo = { RegionPlate(infoOf(picked), picked == currentTown, it) },
-                console = {
-                    ConsoleDeck(
+                keys = {
+                    KeyRow(
                         layers, { new ->
                             // the keys only say what is shown on the map; the panel stays as it is
                             showSpots = new.spots; showRoute = new.route; showRegions = new.regions
                             if (!new.regions) picked = -1
                         },
-                        heading, lastSnapshot, onSync, steps, km, kcal, border?.kmDone, map.walkedKm,
+                        heading, lastSnapshot, onSync,
                     )
                 },
             )
@@ -342,46 +354,20 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
 }
 
 /**
- * The panel under the map: one strip with the dials on it (or, while a township is picked on the map, what it holds) and, below them on the same
- * strip, the control console, as tall as they are. The panel shows the top part; pulled up from the bottom edge (or by the tab there) it slides up with the
- * finger by its whole height, so that at rest only one of the two is in view. The window is the same height whichever is shown, so that the map does not jump.
+ * The panel under the map: one strip with, above, either the dials or the notebook page (the user picks in the settings) or, while a township is picked on the
+ * map, what it holds, and under it on the same strip the row of buttons. The township card is as tall as what it replaces, so that the map does not jump.
  */
 @Composable
-private fun BottomDeck(
-    controlsOpen: Boolean, onControlsOpen: (Boolean) -> Unit, regionMode: Boolean,
-    instruments: @Composable () -> Unit, regionInfo: @Composable (Modifier) -> Unit, console: @Composable () -> Unit,
-) {
+private fun BottomDeck(regionMode: Boolean, face: @Composable () -> Unit, regionInfo: @Composable (Modifier) -> Unit, keys: @Composable () -> Unit) {
     val density = androidx.compose.ui.platform.LocalDensity.current
-    var faceHeight by remember { mutableStateOf(204.dp) }       // the height the dials take; the township card is made as tall
-    val slidePx = with(density) { faceHeight.toPx() }        // the whole height: at the end of the slide only the console is in view
-    val slide = remember { androidx.compose.animation.core.Animatable(if (controlsOpen) 1f else 0f) }     // 0: the dials, 1: the console
-    val scope = androidx.compose.runtime.rememberCoroutineScope()
-    val settle = androidx.compose.animation.core.spring<Float>(dampingRatio = 0.85f, stiffness = androidx.compose.animation.core.Spring.StiffnessMediumLow)
-    androidx.compose.runtime.LaunchedEffect(controlsOpen) { slide.animateTo(if (controlsOpen) 1f else 0f, settle) }
-    Box(
-        Modifier.fillMaxWidth().height(faceHeight + 12.dp).clip(RoundedCornerShape(20.dp)).draggable(
-            orientation = androidx.compose.foundation.gestures.Orientation.Vertical,
-            state = androidx.compose.foundation.gestures.rememberDraggableState { delta -> scope.launch { slide.snapTo((slide.value - delta / slidePx).coerceIn(0f, 1f)) } },
-            onDragStopped = { velocity ->
-                val open = if (kotlin.math.abs(velocity) > 500f) velocity < 0f else slide.value > 0.5f
-                onControlsOpen(open)
-                scope.launch { slide.animateTo(if (open) 1f else 0f, settle) }
-            },
-        ),
-    ) {
+    var faceHeight by remember { mutableStateOf(204.dp) }
+    Box(Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp))) {
         Canvas(Modifier.matchParentSize()) { drawStrip() }
-        // the part inside the stitching: the dials above, the console below, the whole of it slid up by the finger
-        Box(Modifier.fillMaxSize().padding(6.dp).clip(RoundedCornerShape(15.dp))) {
-            Column(
-                Modifier.fillMaxWidth().wrapContentHeight(align = Alignment.Top, unbounded = true)
-                    .offset { androidx.compose.ui.unit.IntOffset(0, -(slide.value * slidePx).roundToInt()) },
-            ) {
-                if (regionMode) regionInfo(Modifier.fillMaxWidth().height(faceHeight))
-                else Box(Modifier.fillMaxWidth().heightIn(min = 186.dp).onSizeChanged { faceHeight = with(density) { it.height.toDp() }.coerceAtLeast(186.dp) }, contentAlignment = Alignment.Center) { instruments() }
-                Box(Modifier.fillMaxWidth().height(faceHeight)) { console() }
-            }
+        Column(Modifier.fillMaxWidth().padding(6.dp)) {
+            if (regionMode) regionInfo(Modifier.fillMaxWidth().height(faceHeight))
+            else Box(Modifier.fillMaxWidth().onSizeChanged { faceHeight = with(density) { it.height.toDp() } }) { face() }
+            keys()
         }
-        GripTab(controlsOpen, { onControlsOpen(!controlsOpen) }, Modifier.align(Alignment.BottomCenter))
     }
 }
 

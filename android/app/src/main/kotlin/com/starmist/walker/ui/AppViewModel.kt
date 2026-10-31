@@ -334,6 +334,8 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
 
     fun setStableMode(on: Boolean) = updateSettings { it.copy(stableMode = on) }
 
+    fun setPanelStyle(style: Int) = updateSettings { it.copy(panelStyle = style.coerceIn(0, 1)) }
+
     fun setFontSize(step: Int) = updateSettings { it.copy(fontSize = step.coerceIn(0, 2)) }
 
     private companion object {

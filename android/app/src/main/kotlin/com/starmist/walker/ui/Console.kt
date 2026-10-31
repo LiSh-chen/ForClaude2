@@ -21,6 +21,7 @@ import kotlin.math.roundToInt
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +34,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.em
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -47,121 +49,149 @@ private val LAMP_SPOTS = Color(0xFFF2A93B)
 private val LAMP_ROUTE = Color(0xFFE04B3F)
 private val LAMP_REGIONS = Color(0xFF3B9BFF)
 
-/** The north / north-east / ... name of a heading in degrees clockwise from north. */
-internal fun compassName(deg: Float): String = listOf("北", "東北", "東", "東南", "南", "西南", "西", "西北")[(((deg % 360f + 360f) % 360f + 22.5f) / 45f).toInt() % 8]
-
-/**
- * The console, as tall as the dials: on the left the three counters (steps today, kilometres in this township, kilometres in all), in the middle the compass,
- * on the right the buttons.
- */
-@Composable
-internal fun ConsoleDeck(
-    layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: Float, lastSync: Long?, onSync: () -> Unit,
-    steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier = Modifier,
-) {
-    // laid out on one design size and scaled to the room, so that it is the same on every phone (see FitDesign)
-    FitDesign(CONSOLE_DESIGN_WIDTH, PAGE_HEIGHT + 12.dp, modifier.fillMaxSize()) {
-    Row(Modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Notes(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.6f))
-        Column(Modifier.width(58.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Compass(heading, Modifier.size(56.dp))
-        }
-        // the keys only say what is shown on the map; the four cells are all the same size
-        Column(Modifier.weight(1f).height(PAGE_HEIGHT), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                KeyCell(KeyKind.SPOTS, "景點", layers.spots, LAMP_SPOTS, 100, Modifier.weight(1f)) { onLayers(layers.copy(spots = !layers.spots)) }
-                KeyCell(KeyKind.ROUTE, "路線", layers.route, LAMP_ROUTE, 200, Modifier.weight(1f)) { onLayers(layers.copy(route = !layers.route)) }
-            }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                KeyCell(KeyKind.REGIONS, "區域", layers.regions, LAMP_REGIONS, 300, Modifier.weight(1f)) { onLayers(layers.copy(regions = !layers.regions)) }
-                // the sync knob: its lamp is green once the steps have been synced and red until then
-                Column(Modifier.weight(1f).clickable(role = Role.Button, onClickLabel = "同步", onClick = onSync), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Canvas(Modifier.fillMaxWidth().aspectRatio(1f)) { Pen(this, size).knob(400, if (lastSync != null) Color(0xFF4FBF6A) else Color(0xFFE04B3F)) }
-                    Text("同步", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
-                }
-            }
-        }
-    }
-    }
-}
-
-private val CONSOLE_DESIGN_WIDTH = 380.dp
-
 private val QUILL = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(com.starmist.walker.R.font.lxgw_wenkai_tc_subset))
-private val NOTE_ROW = 26.dp
+private val NOTE_ROW = 22.dp
 private val SEPIA = Color(0xFF3A2A1B)
 private val TODAY_GREEN = Color(0xFF2E7D4F)
+private val NEXT_ORANGE = Color(0xFFD9822B)
+private val CARD_TEAL = Color(0xFF2F7F6E)
+private val KEY_MAX = 60.dp
 
-private enum class NoteKind { TODAY, REGION, ISLAND, STEPS, ROAD, FLAME }
-private const val PAGE_LINES = 6
-private val PAGE_HEIGHT = NOTE_ROW * PAGE_LINES + 10.dp
+private enum class NoteKind { TODAY, REGION, ISLAND, STEPS, ROAD, FLAME, NEXT, CARD }
 
-/**
- * One page of parchment with everything written on it in a scribe's kai hand (LXGW WenKai TC, a subset of it), six lines: today (a title and a line each for steps, distance and energy), then
- * what has been walked in this township and round the island. Each part has a title in the colour of its needle on the dials and a little drawing in the margin.
- */
+/** The row of buttons along the foot of the panel: the compass, the three things the map can show, and the sync knob with its lamp. */
 @Composable
-private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier) {
-    val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 16.sp, lineHeight = 20.sp)
-    val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 14.sp, lineHeight = 20.sp, color = SEPIA)
-    val head = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 11.sp, lineHeight = 14.sp, color = Vintage.inkSoft)
-    val small = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 12.sp, lineHeight = 18.sp, fontWeight = FontWeight.Bold)
-    Box(modifier.fillMaxWidth().height(PAGE_HEIGHT)) {
-        Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(NOTE_ROW.toPx(), 5.dp.toPx(), PAGE_LINES) }
-        Column(Modifier.padding(start = 6.dp, end = 6.dp, top = 5.dp)) {
-            // today: a title and one line each for the steps, the distance and the energy
-            PageLine(NoteKind.TODAY, "今日", title.copy(color = TODAY_GREEN), TODAY_GREEN)
-            PageLine(NoteKind.STEPS, "${steps.withCommas()} 步", value, SEPIA)
-            PageLine(NoteKind.ROAD, "${todayKm.fixed(1)} km", value, SEPIA)
-            PageLine(NoteKind.FLAME, "${kcal.roundToInt()} 大卡", value, SEPIA)
-            // township and island side by side, the reading under its title
-            Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
-                Spacer(Modifier.width(24.dp))
-                for ((kind, name, color) in listOf(Triple(NoteKind.REGION, "本區域", INK_RED), Triple(NoteKind.ISLAND, "環島全程", COLD_BLUE))) {
-                    Row(if (kind == NoteKind.REGION) Modifier.width(66.dp) else Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
-                        Canvas(Modifier.size(12.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
-                        Text(name, Modifier.padding(start = 2.dp), style = small.copy(color = color), softWrap = false)
-                    }
-                }
+internal fun KeyRow(layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: Float, lastSync: Long?, onSync: () -> Unit, modifier: Modifier = Modifier) {
+    Row(modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Box(Modifier.weight(1f), contentAlignment = Alignment.TopCenter) {
+            Column(Modifier.widthIn(max = KEY_MAX), horizontalAlignment = Alignment.CenterHorizontally) {
+                Compass(heading, Modifier.fillMaxWidth().aspectRatio(1f))
+                Text("景", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.Transparent)   // the height of the names under the keys
             }
-            Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.width(24.dp), contentAlignment = Alignment.CenterStart) { Text("達成", style = head, softWrap = false) }
-                Text("${townKm?.fixed(1) ?: "-"} km", Modifier.width(66.dp).padding(start = 14.dp), style = value, softWrap = false)
-                Text("${walkedKm.fixed(1)} km", Modifier.weight(1f).padding(start = 14.dp), style = value, softWrap = false)
+        }
+        KeyCell(KeyKind.SPOTS, "景點", layers.spots, LAMP_SPOTS, 100, Modifier.weight(1f)) { onLayers(layers.copy(spots = !layers.spots)) }
+        KeyCell(KeyKind.ROUTE, "路線", layers.route, LAMP_ROUTE, 200, Modifier.weight(1f)) { onLayers(layers.copy(route = !layers.route)) }
+        KeyCell(KeyKind.REGIONS, "區域", layers.regions, LAMP_REGIONS, 300, Modifier.weight(1f)) { onLayers(layers.copy(regions = !layers.regions)) }
+        // the sync knob: its lamp is green once the steps have been synced and red until then
+        Box(Modifier.weight(1f), contentAlignment = Alignment.TopCenter) {
+            Column(Modifier.widthIn(max = KEY_MAX).clickable(role = Role.Button, onClickLabel = "同步", onClick = onSync), horizontalAlignment = Alignment.CenterHorizontally) {
+                Canvas(Modifier.fillMaxWidth().aspectRatio(1f)) { Pen(this, size).knob(400, if (lastSync != null) Color(0xFF4FBF6A) else Color(0xFFE04B3F)) }
+                Text("同步", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
             }
         }
     }
 }
 
-/** The margin of the page: a drawing (or none) in a column of its own. */
+/** What the notebook page shows. */
+internal class NotebookData(
+    val steps: Long, val goal: Int, val todayKm: Double, val kcal: Double,
+    val townKm: Double?, val townTotalKm: Double?, val walkedKm: Double, val totalKm: Double,
+    val toNextKm: Double?, val nextFraction: Float, val cardsDone: Int, val cardsTotal: Int,
+)
+
+private val NOTEBOOK_WIDTH = 372.dp
+private const val NOTEBOOK_LINES = 11
+private val NOTEBOOK_HEIGHT = NOTE_ROW * NOTEBOOK_LINES + 12.dp
+
+/**
+ * The notebook page, the other way (besides the dials) to see how the walk is going: a whole page of parchment, written in a scribe's kai hand (LXGW WenKai TC,
+ * a subset of it), with each thing that can be measured on a line of its own and, under it, a crayon-hatched bar of how far it has got. It is laid out on one
+ * design size and scaled to the room (see [FitDesign]), so it is the same on every phone.
+ */
+@Composable
+internal fun NotebookPanel(data: NotebookData, modifier: Modifier = Modifier) {
+    FitDesign(NOTEBOOK_WIDTH, NOTEBOOK_HEIGHT, modifier.fillMaxWidth().aspectRatio(NOTEBOOK_WIDTH.value / NOTEBOOK_HEIGHT.value)) {
+        val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 14.sp, lineHeight = 1.15.em, fontWeight = FontWeight.Bold)
+        val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 13.sp, lineHeight = 1.15.em, color = SEPIA)
+        fun km(x: Double) = x.fixed(1)
+        Box(Modifier.fillMaxSize()) {
+            Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(NOTE_ROW.toPx(), 6.dp.toPx(), NOTEBOOK_LINES) }
+            Column(Modifier.padding(start = 6.dp, end = 10.dp, top = 6.dp)) {
+                Entry(NoteKind.STEPS, "今日步數", TODAY_GREEN, "${data.steps.withCommas()} / ${data.goal.toLong().withCommas()} 步", data.steps.toFloat() / data.goal.coerceAtLeast(1), title, value)
+                // the distance and the energy of today: only numbers, no bar
+                Row(Modifier.height(NOTE_ROW).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Margin(NoteKind.ROAD, SEPIA)
+                    Text("今日距離", Modifier.padding(start = 6.dp), style = title.copy(color = SEPIA), softWrap = false)
+                    Text("${km(data.todayKm)} km", Modifier.padding(start = 8.dp), style = value, softWrap = false)
+                    Spacer(Modifier.weight(1f))
+                    Canvas(Modifier.size(15.dp)) { Pen(this, size).noteIcon(NoteKind.FLAME, SEPIA, 505) }
+                    Text("熱量", Modifier.padding(start = 4.dp), style = title.copy(color = SEPIA), softWrap = false)
+                    Text("${data.kcal.roundToInt()} 大卡", Modifier.padding(start = 8.dp), style = value, softWrap = false)
+                }
+                Entry(
+                    NoteKind.REGION, "本區域", INK_RED,
+                    if (data.townKm == null) "—" else if (data.townTotalKm == null) "達成 ${km(data.townKm)} km" else "達成 ${km(data.townKm)} / ${km(data.townTotalKm)} km",
+                    if (data.townKm != null && data.townTotalKm != null && data.townTotalKm > 0) (data.townKm / data.townTotalKm).toFloat() else null, title, value,
+                )
+                Entry(NoteKind.ISLAND, "環島全程", COLD_BLUE, "達成 ${km(data.walkedKm)} / ${data.totalKm.toLong().withCommas()} km", (data.walkedKm / data.totalKm.coerceAtLeast(1.0)).toFloat(), title, value)
+                Entry(NoteKind.NEXT, "下一張卡片", NEXT_ORANGE, if (data.toNextKm == null) "已到終點" else "還有 ${km(data.toNextKm)} km", if (data.toNextKm == null) 1f else data.nextFraction, title, value)
+                Entry(NoteKind.CARD, "卡片收集", CARD_TEAL, "${data.cardsDone} / ${data.cardsTotal} 張", data.cardsDone.toFloat() / data.cardsTotal.coerceAtLeast(1), title, value)
+            }
+        }
+    }
+}
+
+/** A drawing in a column of its own at the start of a line. */
 @Composable
 private fun Margin(kind: NoteKind?, color: Color) {
     Box(Modifier.width(22.dp), contentAlignment = Alignment.Center) {
-        if (kind != null) Canvas(Modifier.size(18.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
+        if (kind != null) Canvas(Modifier.size(17.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
     }
 }
 
-/** One ruled line of the page: a drawing in the margin (or none) and the writing. */
+/** What is measured: its drawing, its name and the figure on one line, and under it the bar of how far it has got (when there is one). */
 @Composable
-private fun PageLine(kind: NoteKind?, text: String, style: androidx.compose.ui.text.TextStyle, color: Color) {
-    Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
+private fun Entry(kind: NoteKind, name: String, color: Color, text: String, fraction: Float?, title: androidx.compose.ui.text.TextStyle, value: androidx.compose.ui.text.TextStyle) {
+    Row(Modifier.height(NOTE_ROW).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Margin(kind, color)
-        Text(text, Modifier.padding(start = 6.dp), style = style, softWrap = false)
+        Text(name, Modifier.padding(start = 6.dp), style = title.copy(color = color), softWrap = false)
+        Spacer(Modifier.weight(1f))
+        Text(text, style = value, softWrap = false)
+    }
+    Row(Modifier.height(NOTE_ROW).fillMaxWidth()) {
+        Spacer(Modifier.width(28.dp))
+        if (fraction != null) Canvas(Modifier.fillMaxSize()) { Pen(this, size).hatchedBar(fraction, color, 800 + kind.ordinal) }
+    }
+}
+
+/** A rounded rectangle in pixels, as a list of points (the pen's own rectangles are in its square units, which does not suit a long thin shape). */
+private fun pxRound(l: Float, t: Float, r: Float, b: Float, rad: Float): List<Offset> {
+    val out = ArrayList<Offset>()
+    fun arc(cx: Float, cy: Float, from: Int) { for (i in 0..4) { val a = Math.toRadians(from + i * 22.5); out += Offset(cx + (rad * cos(a)).toFloat(), cy + (rad * sin(a)).toFloat()) } }
+    arc(r - rad, t + rad, 270); arc(r - rad, b - rad, 0); arc(l + rad, b - rad, 90); arc(l + rad, t + rad, 180)
+    return out
+}
+
+/** A bar drawn with a crayon: a pale track with a pen outline, and the part that is done filled with slanting strokes of the colour. */
+private fun Pen.hatchedBar(fraction: Float, color: Color, seed: Int) {
+    val dp = with(d) { 1.dp.toPx() }
+    val w = d.size.width; val h = d.size.height
+    val top = 4f * dp; val bottom = h - 4f * dp
+    val track = pxRound(0f, top, w, bottom, 3f * dp)
+    wash(track, color, 0.10f, 0f, 0f)
+    stroke(track, ink, seed, line * 0.8f, closed = true, alpha = 0.5f, calm = 1f)
+    val f = fraction.coerceIn(0f, 1f)
+    if (f > 0f) {
+        val right = maxOf(f * w, 6f * dp)
+        val fill = pxRound(0f, top, right, bottom, 3f * dp)
+        clipTo(fill) {
+            var x = -(bottom - top); var k = 0
+            while (x < right + (bottom - top)) {
+                val jitter = ((k * 7919) % 5 - 2) * 0.25f * dp
+                d.drawLine(color.copy(alpha = 0.9f), Offset(x + jitter, bottom), Offset(x + jitter + (bottom - top), top), strokeWidth = 1.2f * dp, cap = androidx.compose.ui.graphics.StrokeCap.Round)
+                x += 3.4f * dp; k++
+            }
+        }
+        stroke(fill, ink, seed + 7, line * 1.4f, closed = true, calm = 1.2f)
     }
 }
 
 /** The page itself: uneven parchment with stains, a dark edge, faint brown rules, a faded red margin and two holes for the cord. */
 private fun Pen.parchmentPage(row: Float, top: Float, lines: Int) {
-    // the page is tall and narrow, so it is drawn in pixels and not in the pen's square units
+    // the page is drawn in pixels and not in the pen's square units
     val dp = with(d) { 1.dp.toPx() }
     val w = d.size.width; val h = d.size.height
-    fun rounded(l: Float, t: Float, r: Float, b: Float, rad: Float): List<Offset> {
-        val out = ArrayList<Offset>()
-        fun arc(cx: Float, cy: Float, from: Int) { for (i in 0..4) { val a = Math.toRadians((from + i * 22.5)); out += Offset(cx + (rad * cos(a)).toFloat(), cy + (rad * sin(a)).toFloat()) } }
-        arc(r - rad, t + rad, 270); arc(r - rad, b - rad, 0); arc(l + rad, b - rad, 90); arc(l + rad, t + rad, 180)
-        return out
-    }
-    val page = rounded(1.5f * dp, 1.5f * dp, w - 1.5f * dp, h - 1.5f * dp, 5f * dp)
+    val page = pxRound(1.5f * dp, 1.5f * dp, w - 1.5f * dp, h - 1.5f * dp, 5f * dp)
     wash(page, Color(0xFFEBD7A4), 1f, 0f, 0f)
     // stains: soft brown blotches near the corners and edges, clipped to the page
     clipTo(page) {
@@ -178,7 +208,7 @@ private fun Pen.parchmentPage(row: Float, top: Float, lines: Int) {
         val y = top + row * k
         stroke(listOf(Offset(6f * dp, y), Offset(w - 6f * dp, y)), Color(0xFF8A6B3F), 720 + k, 0.7f * line, alpha = 0.35f, calm = 0.8f)
     }
-    val mx = 27f * dp
+    val mx = 26f * dp
     stroke(listOf(Offset(mx, 4f * dp), Offset(mx, h - 4f * dp)), Color(0xFFB3463C), 730, 0.9f * line, alpha = 0.45f, calm = 0.4f)
 }
 
@@ -206,6 +236,22 @@ private fun Pen.noteIcon(kind: NoteKind, color: Color, seed: Int) {
             val isle = listOf(p(52f, 8f), p(64f, 22f), p(68f, 45f), p(60f, 70f), p(50f, 94f), p(40f, 76f), p(33f, 52f), p(38f, 26f))
             wash(isle, color, 0.3f, 0f, 0f)
             stroke(isle, ink, seed, w, closed = true, calm = 0.4f)
+        }
+        NoteKind.NEXT -> {
+            // a flag on a pole
+            stroke(listOf(p(30f, 10f), p(30f, 92f)), ink, seed, w, calm = 0.3f)
+            val flag = listOf(p(30f, 14f), p(80f, 30f), p(30f, 48f))
+            wash(flag, color, 0.7f, 0f, 0f)
+            stroke(flag, ink, seed + 1, w, closed = true, calm = 0.3f)
+        }
+        NoteKind.CARD -> {
+            // a card: a frame with a picture and two lines of writing
+            val card = listOf(p(22f, 12f), p(78f, 12f), p(78f, 90f), p(22f, 90f))
+            wash(card, color, 0.25f, 0f, 0f)
+            stroke(card, ink, seed, w, closed = true, calm = 0.3f)
+            wash(circle(p(50f, 38f), 11f * u, 10), color, 0.9f, 0f, 0f)
+            stroke(listOf(p(33f, 64f), p(67f, 64f)), ink, seed + 1, w * 0.8f, calm = 0.2f)
+            stroke(listOf(p(33f, 76f), p(57f, 76f)), ink, seed + 2, w * 0.8f, calm = 0.2f)
         }
         NoteKind.STEPS -> {
             // a bare foot: the ball and the heel, and five toes
@@ -237,9 +283,11 @@ private enum class KeyKind { SPOTS, ROUTE, REGIONS }
 @Composable
 private fun KeyCell(kind: KeyKind, label: String, on: Boolean, lamp: Color, seed: Int, modifier: Modifier = Modifier, onClick: () -> Unit) {
     val glow by animateFloatAsState(if (on) 1f else 0f, spring(stiffness = Spring.StiffnessMediumLow), label = "lamp")
-    Column(modifier.clickable(role = Role.Switch, onClick = onClick), horizontalAlignment = Alignment.CenterHorizontally) {
-        Canvas(Modifier.fillMaxWidth().aspectRatio(1f)) { Pen(this, size).key(kind, glow, lamp, seed) }
-        Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink.copy(alpha = 0.6f + 0.4f * glow))
+    Box(modifier, contentAlignment = Alignment.TopCenter) {
+        Column(Modifier.widthIn(max = KEY_MAX).clickable(role = Role.Switch, onClick = onClick), horizontalAlignment = Alignment.CenterHorizontally) {
+            Canvas(Modifier.fillMaxWidth().aspectRatio(1f)) { Pen(this, size).key(kind, glow, lamp, seed) }
+            Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink.copy(alpha = 0.6f + 0.4f * glow))
+        }
     }
 }
 
@@ -315,21 +363,4 @@ private fun Pen.knob(seed: Int, lamp: Color) {
     wash(jewel, lamp, 1f, 0f, 0f)
     stroke(jewel, ink, seed + 60, line, closed = true, calm = 0.2f)
     wash(circle(Offset(lc.x - 1.8f * u, lc.y - 1.8f * u), 1.8f * u, 8), Color.White, 0.8f, 0f, 0f)
-}
-
-/** The tab on the bottom edge of the panel, drawn like everything else on it: pull the panel up by it, or tap it; down for the dials again. */
-@Composable
-internal fun GripTab(open: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Canvas(modifier.size(width = 76.dp, height = 22.dp).clickable(role = Role.Button, onClickLabel = if (open) "收起操控台" else "打開操控台", onClick = onClick)) {
-        val pen = Pen(this, size)
-        with(pen) {
-            // the unit is the tab's height, so the width is about 345 units: from -123 to 222
-            val tab = roundRect(-123f, 0f, 222f, 150f, 48f)
-            wash(tab, Vintage.brass, 1f, 0f, 0f)
-            wash(roundRect(-100f, 6f, 200f, 60f, 30f), Vintage.brassLight, 0.55f, 0f, 0f)
-            inked(tab, 31, closed = true, width = line * 1.4f, calm = 0.25f)
-            val chevron = if (open) listOf(p(40f, 36f), p(50f, 58f), p(60f, 36f)) else listOf(p(40f, 58f), p(50f, 36f), p(60f, 58f))
-            stroke(chevron, ink, 32, line * 1.9f, calm = 0.1f)
-        }
-    }
 }

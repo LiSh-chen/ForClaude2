@@ -34,7 +34,7 @@ internal fun FitDesign(designWidth: Dp, designHeight: Dp, modifier: Modifier = M
 }
 
 /** How much bigger or smaller the app's writing is than the design for each of the three sizes the user can pick (small, medium, large). */
-internal fun fontScaleOf(step: Int): Float = when (step) { 0 -> 0.9f; 2 -> 1.15f; else -> 1f }
+internal fun fontScaleOf(step: Int): Float = when (step) { 0 -> 0.85f; 2 -> 1.25f; else -> 1f }
 
 /** The app's writing at the size the user picked, whatever the system's font-size setting is: the layouts are made and checked for these three sizes only. */
 @Composable

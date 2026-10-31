@@ -30,6 +30,8 @@ data class UserSettings(
     val stableMode: Boolean = true,
     /** The size of the writing in the app, whatever the system's font-size setting says: 0 small, 1 medium, 2 large. */
     val fontSize: Int = 1,
+    /** What the panel under the map shows: 0 the dials, 1 the notebook page. */
+    val panelStyle: Int = 0,
 ) {
     val profile: Profile
         get() = Profile(heightCm, weightKg, sex, strideOverrideM)
@@ -67,6 +69,7 @@ class SettingsStore(private val store: DataStore<Preferences>) {
             if (stride == null) prefs.remove(STRIDE) else prefs[STRIDE] = stride
             prefs[STABLE] = updated.stableMode
             prefs[FONT_SIZE] = updated.fontSize.coerceIn(0, 2)
+            prefs[PANEL_STYLE] = updated.panelStyle.coerceIn(0, 1)
         }
     }
 
@@ -81,6 +84,7 @@ class SettingsStore(private val store: DataStore<Preferences>) {
             strideOverrideM = this[STRIDE],
             stableMode = this[STABLE] ?: d.stableMode,
             fontSize = (this[FONT_SIZE] ?: d.fontSize).coerceIn(0, 2),
+            panelStyle = (this[PANEL_STYLE] ?: d.panelStyle).coerceIn(0, 1),
         )
     }
 
@@ -93,6 +97,7 @@ class SettingsStore(private val store: DataStore<Preferences>) {
         val STRIDE = doublePreferencesKey("stride_override_m")
         val STABLE = booleanPreferencesKey("stable_mode")
         val FONT_SIZE = intPreferencesKey("font_size")
+        val PANEL_STYLE = intPreferencesKey("panel_style")
         val GOAL_DEFAULT_MOVED = booleanPreferencesKey("goal_default_moved_to_9000")
         const val OLD_DEFAULT_GOAL = 8_000
     }
