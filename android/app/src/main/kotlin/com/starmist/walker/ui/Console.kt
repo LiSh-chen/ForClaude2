@@ -62,7 +62,8 @@ internal fun compassName(deg: Float): String = listOf("北", "東北", "東", "�
 
 @Composable
 internal fun ControlPanel(layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: Float, lastSync: Long?, onSync: () -> Unit, modifier: Modifier = Modifier) {
-    Box(modifier.fillMaxWidth()) {
+    // solid paper under the strip, so that the dials below do not show through it
+    Box(modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).background(Vintage.parchment)) {
         Canvas(Modifier.matchParentSize()) { drawStrip() }
         Column(
             Modifier.fillMaxSize().padding(start = 18.dp, end = 18.dp, top = 12.dp, bottom = 22.dp),
