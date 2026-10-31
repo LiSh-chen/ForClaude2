@@ -88,30 +88,34 @@ private val SEPIA = Color(0xFF3A2A1B)
 private val TODAY_GREEN = Color(0xFF2E7D4F)
 
 private enum class NoteKind { TODAY, REGION, ISLAND, STEPS, ROAD, FLAME }
-private const val PAGE_LINES = 6
+private const val PAGE_LINES = 7
 
 /**
- * One page of parchment with everything written on it in a scribe's kai hand (LXGW WenKai TC, a subset of it), six lines: today (steps; distance and energy), then
+ * One page of parchment with everything written on it in a scribe's kai hand (LXGW WenKai TC, a subset of it), seven lines: today (a title and a table without rules: steps, distance, energy), then
  * what has been walked in this township and round the island. Each part has a title in the colour of its needle on the dials and a little drawing in the margin.
  */
 @Composable
 private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier) {
     val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 16.sp, lineHeight = 20.sp)
     val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 14.sp, lineHeight = 20.sp, color = SEPIA)
+    val head = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 12.sp, lineHeight = 16.sp, color = Vintage.inkSoft)
     Box(modifier.fillMaxWidth().height(NOTE_ROW * PAGE_LINES + 10.dp)) {
         Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(NOTE_ROW.toPx(), 5.dp.toPx(), PAGE_LINES) }
         Column(Modifier.padding(start = 6.dp, end = 6.dp, top = 5.dp)) {
-            // today: the title and the steps on one line, the distance and the energy on the next
-            Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
-                Margin(NoteKind.TODAY, TODAY_GREEN)
-                Text("今日", Modifier.padding(start = 6.dp), style = title.copy(color = TODAY_GREEN), softWrap = false)
-                Text("${steps.withCommas()} 步", Modifier.padding(start = 8.dp), style = value, softWrap = false)
+            // today: the title, then a table without lines: what each column is (a drawing and its unit), and under it the reading
+            PageLine(NoteKind.TODAY, "今日", title.copy(color = TODAY_GREEN), TODAY_GREEN)
+            Row(Modifier.height(NOTE_ROW).padding(start = 26.dp), verticalAlignment = Alignment.CenterVertically) {
+                for ((kind, unit) in listOf(NoteKind.STEPS to "步", NoteKind.ROAD to "公里", NoteKind.FLAME to "大卡")) {
+                    Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                        Canvas(Modifier.size(14.dp)) { Pen(this, size).noteIcon(kind, SEPIA, 500 + kind.ordinal) }
+                        Text(unit, Modifier.padding(start = 2.dp), style = head, softWrap = false)
+                    }
+                }
             }
-            Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
-                Margin(NoteKind.ROAD, SEPIA)
-                Text("${todayKm.fixed(1)} 公里", Modifier.padding(start = 6.dp), style = value, softWrap = false)
-                Canvas(Modifier.padding(start = 7.dp).size(12.dp)) { Pen(this, size).noteIcon(NoteKind.FLAME, SEPIA, 505) }
-                Text("${kcal.roundToInt()} 大卡", Modifier.padding(start = 2.dp), style = value, softWrap = false)
+            Row(Modifier.height(NOTE_ROW).padding(start = 26.dp), verticalAlignment = Alignment.CenterVertically) {
+                for (reading in listOf(steps.withCommas(), todayKm.fixed(1), "${kcal.roundToInt()}")) {
+                    Text(reading, Modifier.weight(1f), style = value, softWrap = false)
+                }
             }
             PageLine(NoteKind.REGION, "本區域", title.copy(color = INK_RED), INK_RED)
             PageLine(null, "已走 ${townKm?.fixed(1) ?: "-"} 公里", value, SEPIA)
