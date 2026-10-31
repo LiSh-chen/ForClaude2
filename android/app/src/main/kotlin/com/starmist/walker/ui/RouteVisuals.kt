@@ -76,7 +76,7 @@ internal fun walkerHeading(route: RouteDef, walkedKm: Double): Float {
 @Composable
 fun RouteMapView(
     route: RouteDef, walkedKm: Double, modifier: Modifier = Modifier, initialZoom: Float? = null,
-    regionMode: Boolean = false, selectedTown: Int = -1, onTapTown: ((Int) -> Unit)? = null,
+    layers: MapLayers = MapLayers(), selectedTown: Int = -1, onTapTown: ((Int) -> Unit)? = null,
     /** Route mode: a collected card's marker was tapped (its id). */
     onTapCard: ((String) -> Unit)? = null,
     /** Route mode: the name of a roadside sight was tapped (its id). */
@@ -178,9 +178,10 @@ fun RouteMapView(
         initialZoom = initialZoom ?: if (base != null) 5.5f else 12f,
         maxZoom = 12f,
         background = SEA_COLOR,
-        onTap = if (regionMode && onTapTown != null) { u, _ ->
-            onTapTown(areas.find(MAP_LAT_MAX - u.y.toDouble() * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + u.x.toDouble() * (MAP_LON_MAX - MAP_LON_MIN)))
-        } else if (!regionMode && (onTapCard != null || onTapPoi != null || onTapStation != null)) { u, perPx ->
+        onTap = if ((layers.regions && onTapTown != null) || (layers.route && (onTapCard != null || onTapPoi != null || onTapStation != null))) { u, perPx ->
+            // A township is picked by a tap that hits no card, station or small sight (or anywhere, when the route is not shown).
+            fun pickTown() { onTapTown?.invoke(areas.find(MAP_LAT_MAX - u.y.toDouble() * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + u.x.toDouble() * (MAP_LON_MAX - MAP_LON_MIN))) }
+            if (!layers.route) { selectedPoi = null; pickTown() } else {
             // The nearest collected card's marker within about 30 dp of the tap.
             val owned = route.collected(walkedKm).map { it.id }.toSet()
             var best: String? = null
@@ -218,10 +219,12 @@ fun RouteMapView(
                 val hit = poi
                 selectedPoi = hit?.id
                 if (hit != null && hit.id in earnedPois) onTapPoi?.invoke(hit.id)
+                else if (hit == null && layers.regions) pickTown()
+            }
             }
         } else null,
         top = { w, h, _, _ -> drawWalker(Offset(here.unit().x * w, here.unit().y * h), w, walker, phase.floatValue, walk.floatValue, face.value, idleAct.intValue, idleT.floatValue, measurer) },
-    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, regionMode, selectedTown, selectedPoi, visiblePois, earnedPois) }
+    ) { w, h, _, view -> drawRealMap(w, h, route, data, walkedKm, measurer, walker?.body, base, tiles, view, areas, explored, currentTown, layers, selectedTown, selectedPoi, visiblePois, earnedPois) }
 }
 
 /** Small square picture for a card: the painted art inside the album frame once collected, an empty album slot before. */

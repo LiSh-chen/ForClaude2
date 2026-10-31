@@ -165,6 +165,12 @@ private fun inside(p: Offset, poly: List<Offset>): Boolean {
 }
 
 /**
+ * What the map shows: the names of places (of the cards and stations while the route is shown, of the townships while the regions are), the route (its line,
+ * cards, stations and small sights), and the outlines of the townships walked through.
+ */
+data class MapLayers(val names: Boolean = true, val route: Boolean = true, val regions: Boolean = false)
+
+/**
  * Draws the island walk in a [w] by [h] box: coastline, a few decorations, the route (walked part
  * solid), cards and stamps, small sights while the walker is near them, and the walker.
  */
@@ -182,7 +188,7 @@ internal fun DrawScope.drawRealMap(
     areas: TownAreas? = null,
     explored: Set<Int> = emptySet(),
     currentTown: Int = -1,
-    regionMode: Boolean = false,
+    layers: MapLayers = MapLayers(),
     selectedTown: Int = -1,
     /** The small sight whose name was asked for by tapping its dot. */
     selectedPoi: String? = null,
@@ -191,6 +197,7 @@ internal fun DrawScope.drawRealMap(
     /** The small sights whose stamp is earned. */
     earnedPois: Set<String> = emptySet(),
 ) {
+    val regionMode = layers.regions
     fun GeoPoint.px() = unit().let { Offset(it.x * w, it.y * h) }
     fun Offset.scaled() = Offset(x * w, y * h)
     val label = TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Vintage.ink)
@@ -335,7 +342,7 @@ internal fun DrawScope.drawRealMap(
             }
         }
         if (selectedTown in explored) { drawPath(areas.path(selectedTown, w, h), Color.White.copy(alpha = 0.9f), style = Stroke(5.dp.toPx(), join = StrokeJoin.Round)); drawPath(areas.path(selectedTown, w, h), grey, style = Stroke(2.2.dp.toPx(), join = StrokeJoin.Round)) }
-        if (w > 3000f) {
+        if (w > 3000f && layers.names) {
             val placedNames = ArrayList<Rect>()
             val pxPerKm = w / 222.5f
             val ids = explored.toList()   // a township not walked through keeps its name hidden
@@ -394,19 +401,19 @@ internal fun DrawScope.drawRealMap(
         }
     }
     val round = StrokeCap.Round
-    val k = (w / 3000f).coerceIn(0.28f, 1f) * (if (regionMode) 0.6f else 1f)
+    val k = (w / 3000f).coerceIn(0.28f, 1f) * (if (regionMode && !layers.route) 0.6f else 1f)
     val ms = (w / 2400f).coerceIn(0.4f, 1f)      // markers shrink with the map
     val casing = Color.White.copy(alpha = 0.92f)
     val rideDots = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx() * k.coerceAtLeast(0.5f), 3.dp.toPx() * k.coerceAtLeast(0.5f)))
     val aheadDash = PathEffect.dashPathEffect(floatArrayOf(9.dp.toPx(), 6.dp.toPx()))
-    if (!regionMode) drawPath(aheadPath, casing, style = Stroke(6.5.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round))
-    if (!regionMode) drawPath(walkedPath, casing, style = Stroke(9.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
-    if (!regionMode) drawPath(ridePath, casing, style = Stroke(7.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, join = StrokeJoin.Round))
-    if (!regionMode) drawPath(rideAhead, Color(0xFF7B3FB5).copy(alpha = 0.6f), style = Stroke(3.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
-    if (!regionMode) drawPath(ridePath, Color(0xFF7B3FB5), style = Stroke(3.5.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
-    if (!regionMode) drawPath(aheadPath, Color(0xFFB3202A), style = Stroke(2.8.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
-    if (!regionMode) drawPath(walkedPath, Color(0xFF0E86D4), style = Stroke(5.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
-    if (!regionMode) drawPath(walkedPath, Color(0xFF9AD8FF).copy(alpha = 0.8f), style = Stroke(1.6.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+    if (layers.route) drawPath(aheadPath, casing, style = Stroke(6.5.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round))
+    if (layers.route) drawPath(walkedPath, casing, style = Stroke(9.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+    if (layers.route) drawPath(ridePath, casing, style = Stroke(7.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, join = StrokeJoin.Round))
+    if (layers.route) drawPath(rideAhead, Color(0xFF7B3FB5).copy(alpha = 0.6f), style = Stroke(3.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
+    if (layers.route) drawPath(ridePath, Color(0xFF7B3FB5), style = Stroke(3.5.dp.toPx() * k.coerceAtLeast(0.5f), cap = round, pathEffect = rideDots))
+    if (layers.route) drawPath(aheadPath, Color(0xFFB3202A), style = Stroke(2.8.dp.toPx() * k, cap = StrokeCap.Butt, join = StrokeJoin.Round, pathEffect = aheadDash))
+    if (layers.route) drawPath(walkedPath, Color(0xFF0E86D4), style = Stroke(5.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
+    if (layers.route) drawPath(walkedPath, Color(0xFF9AD8FF).copy(alpha = 0.8f), style = Stroke(1.6.dp.toPx() * k, cap = round, join = StrokeJoin.Round))
 
     // Everything that takes room is recorded, so a name is only put where it covers neither a marker nor another name.
     val occupied = ArrayList<Rect>()
@@ -462,7 +469,7 @@ internal fun DrawScope.drawRealMap(
 
     // Cards and stamps: collected ones are solid blue, the next card is a big red target; nothing further on is shown.
     val nextCardId = route.next(walkedKm)?.first?.id
-    if (!regionMode) route.stops.forEachIndexed { i, stop ->
+    if (layers.route) route.stops.forEachIndexed { i, stop ->
         val o = stop.at.px()
         val reached = route.cumulativeKm[i] <= walkedKm + 1e-9
         if (stop.landmark != null) {
@@ -483,7 +490,7 @@ internal fun DrawScope.drawRealMap(
     }
 
     // Small sights: a plain ring until the stamp is earned, then the teal seal.
-    if (!regionMode) {
+    if (layers.route) {
         val earned = earnedPois
         shownPois.forEach { poi ->
             val o = poiSpot(poi)
@@ -503,7 +510,7 @@ internal fun DrawScope.drawRealMap(
     val next = route.next(walkedKm)?.first
     val lastCard = route.collected(walkedKm).lastOrNull()
     // How far to the next card (its name stays hidden until it is reached).
-    if (w >= 1700f && !regionMode) next?.let { n ->
+    if (w >= 1700f && layers.route) next?.let { n ->
         val toNext = route.next(walkedKm)!!.second
         queue += Label(100) {
             val o = route.stops.first { it.landmark?.id == n.id }.at.px()
@@ -511,13 +518,13 @@ internal fun DrawScope.drawRealMap(
         }
     }
     // Names of the cards already collected.
-    if (w >= 1700f && !regionMode) route.collected(walkedKm).forEach { card ->
+    if (w >= 1700f && layers.names && layers.route) route.collected(walkedKm).forEach { card ->
         val o = route.stops.first { it.landmark?.id == card.id }.at.px()
         if (card.id != lastCard?.id && (w <= 3000f || o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f)) return@forEach
         queue += Label(if (card.id == lastCard?.id) 90 else 60) { placeName(card.name, o, 12.sp, Vintage.ink, 11.dp.toPx(), force = card.id == lastCard?.id) }
     }
     // Stations whose stamp has been collected: the square on the map gets its name.
-    if (w >= 1700f && !regionMode) route.stops.forEachIndexed { i, stop ->
+    if (w >= 1700f && layers.names && layers.route) route.stops.forEachIndexed { i, stop ->
         val supply = stop.supply ?: return@forEachIndexed
         if (route.cumulativeKm[i] > walkedKm + 1e-9) return@forEachIndexed
         val o = stop.at.px()
@@ -525,7 +532,7 @@ internal fun DrawScope.drawRealMap(
         queue += Label(45) { placeName(supply.name, o, 11.sp, Vintage.ink, 9.dp.toPx(), plain = true, weight = FontWeight.Medium) }
     }
     // A small sight's name appears only when its dot has been tapped.
-    if (!regionMode) shownPois.firstOrNull { it.id == selectedPoi }?.let { poi ->
+    if (layers.route) shownPois.firstOrNull { it.id == selectedPoi }?.let { poi ->
         queue += Label(120) { placeName(poi.name, poiSpot(poi), 12.sp, Color(0xFF16584A), 9.dp.toPx(), force = true, edge = Color(0xFF2F7F6E), weight = FontWeight.Bold) }
     }
     queue.sortedByDescending { it.priority }.forEach { it.place() }

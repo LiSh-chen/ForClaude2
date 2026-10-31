@@ -185,9 +185,13 @@ internal fun HomeContent(
     currentTown: Int = -1,
     exploredTowns: Set<Int> = emptySet(),
     infoOf: (Int) -> RegionInfo? = { null },
-    initialRegionMode: Boolean = false,
+    initialLayers: MapLayers = MapLayers(),
 ) {
-    var regionMode by rememberSaveable { mutableStateOf(initialRegionMode) }
+    var showNames by rememberSaveable { mutableStateOf(initialLayers.names) }
+    var showRoute by rememberSaveable { mutableStateOf(initialLayers.route) }
+    var showRegions by rememberSaveable { mutableStateOf(initialLayers.regions) }
+    val layers = MapLayers(showNames, showRoute, showRegions)
+    val regionMode = showRegions                       // the card under the map tells about the township picked while the regions are shown
     var picked by rememberSaveable { mutableStateOf(-1) }
     val walking = rememberWalking(steps)
     val shown = if (picked >= 0) picked else currentTown
@@ -205,34 +209,42 @@ internal fun HomeContent(
                 is HomeMap.Real -> {
                     RouteMapView(
                         map.route, map.walkedKm, Modifier.fillMaxWidth(), initialZoom = map.zoom,
-                        regionMode = regionMode, selectedTown = if (regionMode) shown else -1,
+                        layers = layers, selectedTown = if (regionMode) shown else -1,
                         onTapTown = { id -> picked = if (id >= 0) id else -1 },
                         onTapCard = onOpenCard,
                         onTapPoi = onOpenPoi,
                         onTapStation = onOpenStation,
                         walking = walking,
                     )
-                    ModeSwitch(regionMode, Modifier.align(Alignment.TopEnd).padding(8.dp)) { regionMode = it; if (!it) picked = -1 }
                 }
             }
         }
 
+        if (map is HomeMap.Real) LayerBar(layers, Modifier.align(Alignment.CenterHorizontally)) {
+            showNames = it.names; showRoute = it.route; showRegions = it.regions
+            if (!it.regions) picked = -1
+        }
         Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM, regionMode, infoOf(shown), shown == currentTown)
     }
 }
 
 
-/** Two small buttons on the map: the route with its stops, or the townships walked through. */
+/** Three lamps above the dashboard, each switching one thing on the map on or off: the names of places, the route, the outlines of the townships. */
 @Composable
-private fun ModeSwitch(regionMode: Boolean, modifier: Modifier, onChange: (Boolean) -> Unit) {
-    Row(modifier.clip(RoundedCornerShape(16.dp)).background(Vintage.parchmentLight.copy(alpha = 0.95f)).padding(2.dp)) {
-        listOf(false to "路線", true to "區域").forEach { (mode, text) ->
-            val on = regionMode == mode
+private fun LayerBar(layers: MapLayers, modifier: Modifier, onChange: (MapLayers) -> Unit) {
+    Row(modifier.clip(RoundedCornerShape(16.dp)).background(Vintage.parchmentLight.copy(alpha = 0.95f)).padding(2.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        listOf(
+            Triple("地名", layers.names, Color(0xFF6B4A24)),
+            Triple("路線", layers.route, Color(0xFFB3202A)),
+            Triple("區域", layers.regions, Color(0xFF1A8CFF)),
+        ).forEachIndexed { i, (text, on, color) ->
             Text(
                 text, fontSize = 12.sp, fontWeight = FontWeight.Bold,
                 color = if (on) Color.White else Vintage.inkSoft,
-                modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(if (on) (if (mode) Color(0xFF1A8CFF) else Color(0xFFB3202A)) else Color.Transparent)
-                    .clickable { onChange(mode) }.padding(horizontal = 12.dp, vertical = 5.dp),
+                modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(if (on) color else Color.Transparent)
+                    .clickable {
+                        onChange(when (i) { 0 -> layers.copy(names = !on); 1 -> layers.copy(route = !on); else -> layers.copy(regions = !on) })
+                    }.padding(horizontal = 14.dp, vertical = 5.dp),
             )
         }
     }
