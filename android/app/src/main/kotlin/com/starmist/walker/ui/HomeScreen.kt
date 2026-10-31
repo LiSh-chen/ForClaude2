@@ -1,6 +1,8 @@
 package com.starmist.walker.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -191,7 +193,7 @@ internal fun HomeContent(
     var showRoute by rememberSaveable { mutableStateOf(initialLayers.route) }
     var showRegions by rememberSaveable { mutableStateOf(initialLayers.regions) }
     val layers = MapLayers(showNames, showRoute, showRegions)
-    val regionMode = showRegions                       // the card under the map tells about the township picked while the regions are shown
+    val regionMode = showRegions                       // while the regions are shown, a card over the map tells about the township picked
     var picked by rememberSaveable { mutableStateOf(-1) }
     val walking = rememberWalking(steps)
     val shown = if (picked >= 0) picked else currentTown
@@ -217,39 +219,23 @@ internal fun HomeContent(
                         onTapStation = onOpenStation,
                         walking = walking,
                     )
+                    // The township picked tells its features on a card over the foot of the map, so that the dashboard (and its buttons) stay where they are.
+                    if (regionMode) RegionPanel(
+                        infoOf(shown), shown == currentTown,
+                        Modifier.align(Alignment.BottomCenter).padding(8.dp).clip(RoundedCornerShape(14.dp))
+                            .background(Vintage.parchmentLight.copy(alpha = 0.96f)).pointerInput(Unit) { detectTapGestures { } }.padding(12.dp),
+                    )
                 }
             }
         }
 
-        Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM, regionMode, infoOf(shown), shown == currentTown)
-        if (map is HomeMap.Real) LayerBar(layers, Modifier.align(Alignment.CenterHorizontally)) {
+        Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM, layers) {
             showNames = it.names; showRoute = it.route; showRegions = it.regions
             if (!it.regions) picked = -1
         }
     }
 }
 
-
-/** Three lamps under the dashboard, each switching one thing on the map on or off: the names of places, the route, the outlines of the townships. */
-@Composable
-private fun LayerBar(layers: MapLayers, modifier: Modifier, onChange: (MapLayers) -> Unit) {
-    Row(modifier.clip(RoundedCornerShape(16.dp)).background(Vintage.parchmentLight.copy(alpha = 0.95f)).padding(2.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        listOf(
-            Triple("地名", layers.names, Color(0xFF6B4A24)),
-            Triple("路線", layers.route, Color(0xFFB3202A)),
-            Triple("區域", layers.regions, Color(0xFF1A8CFF)),
-        ).forEachIndexed { i, (text, on, color) ->
-            Text(
-                text, fontSize = 12.sp, fontWeight = FontWeight.Bold,
-                color = if (on) Color.White else Vintage.inkSoft,
-                modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(if (on) color else Color.Transparent)
-                    .clickable {
-                        onChange(when (i) { 0 -> layers.copy(names = !on); 1 -> layers.copy(route = !on); else -> layers.copy(regions = !on) })
-                    }.padding(horizontal = 14.dp, vertical = 5.dp),
-            )
-        }
-    }
-}
 
 // ---- the region card -------------------------------------------------------------------------
 
@@ -315,18 +301,18 @@ private fun LockedTag(icon: String = "") {
 
 // ---- the dashboard ---------------------------------------------------------------------------
 
-/** Today's steps as a ring; beside it the region panel (region mode) or, on the route, the day's walk with the way ahead as a table below. */
+/** On the route: the instrument cluster, with the compass and the buttons on it. Before a route is chosen: today's steps as a ring. */
 @Composable
-private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double, regionMode: Boolean, region: RegionInfo?, isCurrent: Boolean) {
+private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double, layers: MapLayers, onLayers: (MapLayers) -> Unit) {
     val progress = BodyMetrics.goalProgress(steps, goal).toFloat().coerceIn(0f, 1f)
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(0.dp)) {
-        Column(Modifier.padding(horizontal = if (map != null && !regionMode) 0.dp else 14.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (map != null && !regionMode) {
-                InstrumentPanel(map.route, map.walkedKm, goal, steps, km, kcal, onSync, Modifier.fillMaxWidth())
+        Column(Modifier.padding(horizontal = if (map != null) 0.dp else 14.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            if (map != null) {
+                InstrumentPanel(map.route, map.walkedKm, goal, steps, km, kcal, onSync, layers, onLayers, Modifier.fillMaxWidth())
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     StepRing(steps, goal, progress, 96.dp)
-                    if (map != null) RegionPanel(region, isCurrent, Modifier.weight(1f)) else Spacer(Modifier.weight(1f))
+                    Spacer(Modifier.weight(1f))
                 }
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Text("今日走了 ${km.twoDecimals()} 公里，消耗約 ${kcal.roundToInt()} 大卡", fontSize = 12.sp, color = Vintage.inkSoft)
@@ -360,7 +346,7 @@ private fun StepRing(steps: Long, goal: Int, progress: Float, size: androidx.com
  * (a dialog with the exact readings).
  */
 @Composable
-private fun InstrumentPanel(route: RouteDef, walkedKm: Double, goal: Int, steps: Long, todayKm: Double, kcal: Double, onSync: () -> Unit, modifier: Modifier) {
+private fun InstrumentPanel(route: RouteDef, walkedKm: Double, goal: Int, steps: Long, todayKm: Double, kcal: Double, onSync: () -> Unit, layers: MapLayers, onLayers: (MapLayers) -> Unit, modifier: Modifier) {
     val areas = rememberTownAreas()
     val border = remember(areas, route, (walkedKm * 10).toInt()) { areas.nextBorder(route, walkedKm) }
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
@@ -374,7 +360,7 @@ private fun InstrumentPanel(route: RouteDef, walkedKm: Double, goal: Int, steps:
     }
     InstrumentCluster(
         steps, goal, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone, todayKm, kcal, heading, onSync,
-        modifier,
+        layers, onLayers, modifier,
     )
 }
 

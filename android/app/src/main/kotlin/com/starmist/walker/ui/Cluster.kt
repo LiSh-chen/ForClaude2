@@ -7,6 +7,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -271,24 +273,51 @@ internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm:
 }
 
 /**
- * The whole cluster, mounted on a stitched leather strip with brass rivets: the step dial and the way-round dial side by side, and between
- * them the compass, which turns to the walker's heading, with the brass knob that syncs under it.
+ * The whole cluster, mounted on a stitched leather strip with brass rivets: the step dial and the way-round dial side by side, and under them,
+ * still on the strip, the compass (it turns to the walker's heading), the three brass buttons that switch what the map shows, and the knob that syncs.
  */
 @Composable
 internal fun InstrumentCluster(
     steps: Long, goal: Int, overall: Float, region: Float?, walkedKm: Double, townKm: Double?, todayKm: Double, kcal: Double, heading: Float, onSync: () -> Unit,
+    layers: MapLayers, onLayers: (MapLayers) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier.fillMaxWidth()) {
         Canvas(Modifier.matchParentSize()) { drawStrip() }
-        Row(Modifier.fillMaxWidth().padding(horizontal = 6.dp, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy((-4).dp), verticalAlignment = Alignment.CenterVertically) {
-            StepsDial(steps, goal, todayKm, kcal, Modifier.weight(1f))
-            Column(Modifier.width(42.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Compass(heading, Modifier.size(40.dp))
+        Column(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 10.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                StepsDial(steps, goal, todayKm, kcal, Modifier.weight(1f))
+                RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f))
+            }
+            Row(Modifier.fillMaxWidth().padding(horizontal = 2.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Compass(heading, Modifier.size(46.dp))
+                LampSwitch("地名", layers.names, Color(0xFFF2A93B)) { onLayers(layers.copy(names = !layers.names)) }
+                LampSwitch("路線", layers.route, Color(0xFFE04B3F)) { onLayers(layers.copy(route = !layers.route)) }
+                LampSwitch("區域", layers.regions, Color(0xFF3B9BFF)) { onLayers(layers.copy(regions = !layers.regions)) }
                 SyncKnob(onSync)
             }
-            RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f))
         }
+    }
+}
+
+/** A brass push button with a lamp above its name, like the others on the panel: the lamp is lit while what the button switches is shown on the map. */
+@Composable
+private fun LampSwitch(text: String, on: Boolean, lit: Color, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(10.dp)
+    Column(
+        Modifier.size(width = 54.dp, height = 40.dp).clip(shape)
+            .background(Brush.verticalGradient(if (on) listOf(Vintage.brassLight, Vintage.brass) else listOf(Vintage.brass, Vintage.brassDark)))
+            .border(1.6.dp, Vintage.ink, shape)
+            .clickable(role = Role.Switch, onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center,
+    ) {
+        Box(
+            Modifier.size(9.dp).clip(CircleShape)
+                .background(if (on) Brush.radialGradient(listOf(Color.White, lit, lit.copy(alpha = 0.75f))) else Brush.radialGradient(listOf(Vintage.ink.copy(alpha = 0.55f), Vintage.ink.copy(alpha = 0.8f))))
+                .border(0.9.dp, Vintage.ink, CircleShape),
+        )
+        Spacer(Modifier.height(2.dp))
+        Text(text, fontSize = 13.sp, fontWeight = FontWeight.Black, color = if (on) Vintage.ink else Vintage.ink.copy(alpha = 0.55f))
     }
 }
 
