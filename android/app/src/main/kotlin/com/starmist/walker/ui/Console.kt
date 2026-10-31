@@ -92,15 +92,15 @@ private val NOTE_SIZE = 10.sp
 private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, townLeft: Double?, walkedKm: Double, totalKm: Double, modifier: Modifier) {
     val tm = rememberTextMeasurer()
     val stepsRoll = rememberRolling(steps.toFloat(), "steps")
-    val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat(), "town")
-    val total = rememberRolling((walkedKm * 10).toFloat(), "total")
+    val town = rememberRolling(((townKm ?: 0.0) * 10).roundToInt().toFloat(), "town")
+    val total = rememberRolling((walkedKm * 10).roundToInt().toFloat(), "total")
     Column(modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly) {
         Counter(NoteKind.TODAY, "今日已走 步", Color(0xFF2E7D4F), tm, stepsRoll, decimal = false, framed = true) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                MiniDrums(tm, rememberRolling((todayKm * 10).toFloat(), "todayKm"), cells = 3, decimal = true, Modifier.size(44.dp, 18.dp))
-                Text(" 公里 ", fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
-                MiniDrums(tm, rememberRolling(kcal.toFloat(), "kcal"), cells = 4, decimal = false, Modifier.size(48.dp, 18.dp))
-                Text(" 大卡", fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
+                MiniDrums(tm, rememberRolling((todayKm * 10).roundToInt().toFloat(), "todayKm"), cells = 3, decimal = true, Modifier.size(38.dp, 18.dp))
+                Text("公里", Modifier.padding(horizontal = 2.dp), softWrap = false, fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
+                MiniDrums(tm, rememberRolling(kcal.roundToInt().toFloat(), "kcal"), cells = 4, decimal = false, Modifier.size(42.dp, 18.dp))
+                Text("大卡", Modifier.padding(start = 2.dp), softWrap = false, fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
             }
         }
         Counter(NoteKind.REGION, "本區域已走 公里", INK_RED, tm, if (townKm != null) town else null, decimal = true) { Left("未走", townLeft, tm, "townLeft") }
@@ -152,10 +152,10 @@ private fun MiniDrums(tm: TextMeasurer, reading: Float?, cells: Int, decimal: Bo
 @Composable
 private fun Left(word: String, km: Double?, tm: TextMeasurer, key: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text("$word ", fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
-        val roll = rememberRolling(((km ?: 0.0) * 10).toFloat(), key)
+        Text("$word ", softWrap = false, fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
+        val roll = rememberRolling(((km ?: 0.0) * 10).roundToInt().toFloat(), key)
         MiniDrums(tm, if (km != null) roll else null, cells = 5, decimal = true, Modifier.size(70.dp, 18.dp))
-        Text(" 公里", fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
+        Text(" 公里", softWrap = false, fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
     }
 }
 

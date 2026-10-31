@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -375,7 +376,7 @@ private fun BottomDeck(
                     .offset { androidx.compose.ui.unit.IntOffset(0, -(slide.value * slidePx).roundToInt()) },
             ) {
                 if (regionMode) regionInfo(Modifier.fillMaxWidth().height(faceHeight))
-                else Box(Modifier.fillMaxWidth().onSizeChanged { faceHeight = with(density) { it.height.toDp() }.coerceAtLeast(190.dp) }) { instruments() }
+                else Box(Modifier.fillMaxWidth().heightIn(min = 232.dp).onSizeChanged { faceHeight = with(density) { it.height.toDp() }.coerceAtLeast(232.dp) }, contentAlignment = Alignment.Center) { instruments() }
                 Box(Modifier.fillMaxWidth().height(faceHeight)) { console() }
             }
         }
