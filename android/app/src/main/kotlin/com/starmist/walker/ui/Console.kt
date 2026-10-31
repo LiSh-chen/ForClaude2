@@ -55,10 +55,10 @@ internal fun compassName(deg: Float): String = listOf("北", "東北", "東", "�
 @Composable
 internal fun ConsoleDeck(
     layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: Float, lastSync: Long?, onSync: () -> Unit,
-    steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier = Modifier,
+    steps: Long, todayKm: Double, kcal: Double, townKm: Double?, townLeft: Double?, walkedKm: Double, totalKm: Double, modifier: Modifier = Modifier,
 ) {
     Row(modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Counters(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.12f))
+        Notes(steps, todayKm, kcal, townKm, townLeft, walkedKm, totalKm, Modifier.weight(1.12f))
         Column(Modifier.width(78.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Compass(heading, Modifier.size(72.dp))
             Text("${compassName(heading)} ${heading.toInt()}°", fontSize = 12.sp, fontWeight = FontWeight.Black, color = Vintage.ink)
@@ -81,31 +81,68 @@ internal fun ConsoleDeck(
     }
 }
 
-/** The three counters, with the day's distance and energy under the steps. */
+private val NOTE_INK = Color(0xFF23407A)   // fountain-pen blue-black
+private val NOTE_SIZE = 12.sp
+private val NOTE_FONT = androidx.compose.ui.text.font.FontFamily.Cursive
+
+/**
+ * The three notes, written in one hand at one size: what was walked today, how far through this township, how far round the island - each with a small
+ * drawing and a title in the colour of its needle on the dials, and under it what is walked ("已走") and what is left ("未走").
+ */
 @Composable
-private fun Counters(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier) {
-    val tm = rememberTextMeasurer()
-    val stepsRoll = rememberRolling(steps.toFloat(), "steps")
-    val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat(), "town")
-    val total = rememberRolling((walkedKm * 10).toFloat(), "total")
+private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, townLeft: Double?, walkedKm: Double, totalKm: Double, modifier: Modifier) {
     Column(modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly) {
-        CounterRow("今日步數", Color(0xFF2E7D4F), tm, stepsRoll, cells = 5, decimal = false)
-        Text("${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡", fontSize = 9.sp, lineHeight = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft)
-        CounterRow("區域 km", Color(0xFFB3202A), tm, if (townKm != null) town else null, cells = 5, decimal = true)
-        CounterRow("總里程 km", Color(0xFF6B4A24), tm, total, cells = 5, decimal = true)
+        Note(NoteKind.TODAY, "今日", Color(0xFF2E7D4F), "已走 ${steps.withCommas()} 步", "${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡")
+        Note(
+            NoteKind.REGION, "本區域", INK_RED,
+            if (townKm != null) "已走 ${townKm.fixed(1)} 公里" else "已走 -", if (townLeft != null) "未走 ${townLeft.fixed(1)} 公里" else "未走 -",
+        )
+        Note(NoteKind.ISLAND, "環島全程", COLD_BLUE, "已走 ${walkedKm.fixed(1)} 公里", "未走 ${(totalKm - walkedKm).coerceAtLeast(0.0).fixed(1)} 公里")
     }
 }
 
-/** A counter with its name over it, the drums the same as on the dials. */
+private enum class NoteKind { TODAY, REGION, ISLAND }
+
+/** One note: a drawing, the title underlined in its colour, then two lines of writing. */
 @Composable
-private fun CounterRow(label: String, color: Color, tm: TextMeasurer, reading: Float?, cells: Int, decimal: Boolean) {
-    Column {
-        Text(label, fontSize = 10.sp, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = color)
-        Canvas(Modifier.fillMaxWidth().height(27.dp)) {
-            val pen = Pen(this, size)
-            // the pen's unit is the height of this strip, so the width is a few hundred units: its left edge is this far out
-            val left = -(size.width - size.height) / 2f / (size.height / 100f)
-            with(pen) { odometer(tm, left + 1f, 5f, reading, cells = cells, cw = 74f, ch = 90f, decimal = decimal) }
+private fun Note(kind: NoteKind, title: String, color: Color, line1: String, line2: String) {
+    val style = androidx.compose.ui.text.TextStyle(fontFamily = NOTE_FONT, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, fontSize = NOTE_SIZE, lineHeight = 15.sp)
+    Row(verticalAlignment = Alignment.Top) {
+        Canvas(Modifier.size(26.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
+        Column(Modifier.padding(start = 3.dp)) {
+            Text(title, style = style, fontWeight = FontWeight.Black, color = color)
+            Canvas(Modifier.fillMaxWidth().height(3.dp)) {
+                Pen(this, size).stroke(listOf(Offset(0f, size.height / 2), Offset(size.width * 0.85f, size.height / 2)), color, 600 + kind.ordinal, 1.dp.toPx(), alpha = 0.7f, calm = 1.5f)
+            }
+            Text(line1, style = style, fontWeight = FontWeight.Bold, color = NOTE_INK)
+            Text(line2, style = style, color = NOTE_INK.copy(alpha = 0.65f))
+        }
+    }
+}
+
+/** The note's little drawing, in the pen's 100 x 100 square. */
+private fun Pen.noteIcon(kind: NoteKind, color: Color, seed: Int) {
+    val w = line * 1.5f
+    when (kind) {
+        NoteKind.TODAY -> {
+            // two footprints
+            for ((i, c) in listOf(p(36f, 62f), p(64f, 40f)).withIndex()) {
+                val sole = circle(c, 15f * u, 18)
+                wash(sole, color, 0.35f, 0f, 0f)
+                stroke(sole, ink, seed + i, w, closed = true, calm = 0.4f)
+                for (t in 0..2) wash(circle(Offset(c.x + (t - 1) * 8f * u, c.y - 21f * u), 3.4f * u, 8), color, 0.8f, 0f, 0f)
+            }
+        }
+        NoteKind.REGION -> {
+            val hex = (0 until 6).map { val ang = PI / 3 * it - PI / 2; p(50f + (38f * cos(ang)).toFloat(), 52f + (38f * sin(ang)).toFloat()) }
+            wash(hex, color, 0.25f, 0f, 0f)
+            stroke(hex, ink, seed, w, closed = true, dash = dashed(this, 5f, 3.5f), calm = 0.3f)
+            wash(circle(p(50f, 52f), 7f * u, 10), color, 0.9f, 0f, 0f)
+        }
+        NoteKind.ISLAND -> {
+            val isle = listOf(p(52f, 8f), p(64f, 22f), p(68f, 45f), p(60f, 70f), p(50f, 94f), p(40f, 76f), p(33f, 52f), p(38f, 26f))
+            wash(isle, color, 0.3f, 0f, 0f)
+            stroke(isle, ink, seed, w, closed = true, calm = 0.4f)
         }
     }
 }

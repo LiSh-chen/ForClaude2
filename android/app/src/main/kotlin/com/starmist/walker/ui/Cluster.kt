@@ -73,10 +73,10 @@ import kotlin.math.sin
  * between them two half dials (fuel for today's steps, temperature for the way through the township), . What is going on is read from where the needles point and which lamps are lit, not from words.
  */
 
-private val INK_RED = Color(0xFFB3202A)
+internal val INK_RED = Color(0xFFB3202A)
 private val AMBER = Color(0xFFE0A21B)
 private val OK_GREEN = Color(0xFF3C8D5A)
-private val COLD_BLUE = Color(0xFF0E86D4)
+internal val COLD_BLUE = Color(0xFF0E86D4)
 private val PAPER = Color(0xFFFFFBEA)
 private val STEP_GREEN = Color(0xFF2E7D4F)
 private val BRONZE = Color(0xFF6B4A24)
@@ -254,6 +254,13 @@ internal fun RouteDial(overall: Float, region: Float?, modifier: Modifier = Modi
             val num = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
             for (i in 0..5) label(tm, "${i * 20}", num, at(cx, cy, r * 0.66f, start + sweep * i / 5f))
             label(tm, "進度 %", TextStyle(fontSize = 6.sp, color = Vintage.inkSoft), p(cx, 30f))
+            // what the two needles are: a little needle, then whose progress it shows
+            val key = TextStyle(fontSize = 7.sp, fontWeight = FontWeight.Black)
+            val wLong = with(d) { 1.6.dp.toPx() }; val wShort = with(d) { 3.4.dp.toPx() }
+            d.drawLine(INK_RED, p(20f, 69f), p(38f, 69f), wLong, cap = StrokeCap.Round)
+            label(tm, "本區域", key.copy(color = INK_RED), p(60f, 69f))
+            d.drawLine(COLD_BLUE, p(20f, 80f), p(38f, 80f), wShort, cap = StrokeCap.Round)
+            label(tm, "環島全程", key.copy(color = COLD_BLUE), p(62f, 80f))
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)

@@ -245,7 +245,7 @@ internal fun HomeContent(
                             showNames = new.names; showRoute = new.route
                             if (new.regions != showRegions) { showRegions = new.regions; controlsOpen = false; if (!new.regions) picked = -1 }   // the regions replace the dials, so the console steps aside
                         },
-                        heading, lastSnapshot, onSync, steps, km, kcal, border?.kmDone, map.walkedKm,
+                        heading, lastSnapshot, onSync, steps, km, kcal, border?.kmDone, border?.kmLeft, map.walkedKm, map.route.totalKm,
                     )
                 },
             )
