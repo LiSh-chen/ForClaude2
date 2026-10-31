@@ -113,7 +113,7 @@ private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, w
             Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
                 Spacer(Modifier.width(22.dp))
                 for ((kind, name, color) in listOf(Triple(NoteKind.REGION, "本區域", INK_RED), Triple(NoteKind.ISLAND, "環島全程", COLD_BLUE))) {
-                    Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                    Row(if (kind == NoteKind.REGION) Modifier.width(60.dp) else Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
                         Canvas(Modifier.size(13.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
                         Text(name, Modifier.padding(start = 3.dp), style = small.copy(color = color), softWrap = false)
                     }
@@ -121,8 +121,8 @@ private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, w
             }
             Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.width(22.dp), contentAlignment = Alignment.CenterStart) { Text("已走", style = head, softWrap = false) }
-                Text("${townKm?.fixed(1) ?: "-"} 公里", Modifier.weight(1f).padding(start = 16.dp), style = value, softWrap = false)
-                Text("${walkedKm.fixed(1)} 公里", Modifier.weight(1f).padding(start = 16.dp), style = value, softWrap = false)
+                Text("${townKm?.fixed(1) ?: "-"} 公里", Modifier.width(60.dp), style = value, softWrap = false)
+                Text("${walkedKm.fixed(1)} 公里", Modifier.weight(1f), style = value, softWrap = false)
             }
         }
     }
