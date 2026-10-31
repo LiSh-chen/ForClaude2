@@ -133,11 +133,11 @@ private fun Pen.needle(cx: Float, cy: Float, len: Float, deg: Float, color: Colo
     }
 }
 
-private fun Pen.label(tm: TextMeasurer, s: String, style: TextStyle, c: Offset, grows: Boolean = true) {
+private fun Pen.label(tm: TextMeasurer, s: String, style: TextStyle, c: Offset, grows: Boolean = true, left: Boolean = false) {
     // the writing grows with the dial (up to 40%), so that a bigger dial is easier to read and not only emptier
     val grow = if (grows) (u / with(d) { 1.6.dp.toPx() }).coerceIn(1f, 1.4f) else 1f
     val l = tm.measure(s, if (grow == 1f) style else style.copy(fontSize = style.fontSize * grow))
-    d.drawText(l, topLeft = Offset(c.x - l.size.width / 2f, c.y - l.size.height / 2f))
+    d.drawText(l, topLeft = Offset(if (left) c.x else c.x - l.size.width / 2f, c.y - l.size.height / 2f))
 }
 
 /** What each counter showed last, kept while the app lives, so that coming back to the map it goes on from there instead of rolling up from zero again. */
@@ -213,7 +213,7 @@ internal fun StepsDial(steps: Long, goal: Int, modifier: Modifier = Modifier) {
             val step = stepScale(max.toInt())
             val goalDeg = start + sweep / 1.2f
             val thousands = step >= 1000
-            val small = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
+            val small = TextStyle(fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
             var value = 0
             while (value <= max + 1) {
                 val deg = start + sweep * value / max
@@ -228,12 +228,12 @@ internal fun StepsDial(steps: Long, goal: Int, modifier: Modifier = Modifier) {
             // the goal: a small red triangle in the rim, where its tick would be, pointing in at the scale, and its name inside the numbers
             val tri = listOf(at(cx, cy, r * 0.86f, goalDeg), at(cx, cy, r * 0.95f, goalDeg - 3.4f), at(cx, cy, r * 0.95f, goalDeg + 3.4f))
             wash(tri, INK_RED, 1f, 0f, 0f); inked(tri, 220, closed = true, width = line * 0.7f, calm = 0f)
-            label(tm, "GOAL", TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Black, color = INK_RED), at(cx, cy, r * 0.62f, goalDeg))
+            label(tm, "GOAL", TextStyle(fontSize = 7.5.sp, fontWeight = FontWeight.Black, color = INK_RED), at(cx, cy, r * 0.62f, goalDeg))
             // beyond the goal
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 1f / 1.2f, 1f, INK_RED, 230, alpha = 0.6f)
-            label(tm, if (thousands) "x1000" else "步", TextStyle(fontSize = 7.sp, color = Vintage.inkSoft), p(cx, 31f))
+            label(tm, if (thousands) "x1000" else "步", TextStyle(fontSize = 9.sp, color = Vintage.inkSoft), p(cx, 31f))
             // today's count in full, on green drums like the needle, with the distance and energy under it
-            label(tm, "今日步數", TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 72f))
+            label(tm, "今日步數", TextStyle(fontSize = 10.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 72f))
             needle(cx, cy, r * 0.72f, start + sweep * v, STEP_GREEN, 240)
         }
     }
@@ -251,17 +251,17 @@ internal fun RouteDial(overall: Float, region: Float?, modifier: Modifier = Modi
             val cx = 50f; val cy = 52f; val r = 46f; val start = 135f; val sweep = 270f
             face(cx, cy, r, start, sweep, 10, 300, whole = true)
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 0f, v, COLD_BLUE, 330, alpha = 0.5f)
-            val num = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
+            val num = TextStyle(fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
             for (i in 0..5) label(tm, "${i * 20}", num, at(cx, cy, r * 0.66f, start + sweep * i / 5f))
-            label(tm, "進度 %", TextStyle(fontSize = 6.sp, color = Vintage.inkSoft), p(cx, 30f))
+            label(tm, "進度 %", TextStyle(fontSize = 8.sp, color = Vintage.inkSoft), p(cx, 30f))
             // what the two needles are: a little needle, then whose progress it shows
-            val key = TextStyle(fontSize = 7.sp, fontWeight = FontWeight.Black)
+            val key = TextStyle(fontSize = 9.sp, fontWeight = FontWeight.Black)
             val wDot = with(d) { 2.6.dp.toPx() }
             // in the gap at the foot of the dial, where neither the needles nor the scale reach
-            d.drawCircle(INK_RED, wDot, p(42f, 73f))
-            label(tm, "本區域", key.copy(color = INK_RED), p(55f, 73f), grows = false)
-            d.drawCircle(COLD_BLUE, wDot, p(42f, 83f))
-            label(tm, "環島全程", key.copy(color = COLD_BLUE), p(58f, 83f), grows = false)
+            d.drawCircle(INK_RED, wDot, p(38f, 73f))
+            label(tm, "本區域", key.copy(color = INK_RED), p(43f, 73f), grows = false, left = true)
+            d.drawCircle(COLD_BLUE, wDot, p(38f, 83f))
+            label(tm, "環島全程", key.copy(color = COLD_BLUE), p(43f, 83f), grows = false, left = true)
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)

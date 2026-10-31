@@ -45,7 +45,7 @@ import kotlin.math.sin
 private val LAMP_NAMES = Color(0xFFF2A93B)
 private val LAMP_ROUTE = Color(0xFFE04B3F)
 private val LAMP_REGIONS = Color(0xFF3B9BFF)
-private val CELL = 50.dp
+private val CELL = 54.dp
 
 /** The north / north-east / ... name of a heading in degrees clockwise from north. */
 internal fun compassName(deg: Float): String = listOf("北", "東北", "東", "東南", "南", "西南", "西", "西北")[(((deg % 360f + 360f) % 360f + 22.5f) / 45f).toInt() % 8]
@@ -61,35 +61,34 @@ internal fun ConsoleDeck(
 ) {
     Row(modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
         Notes(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.5f))
-        Column(Modifier.width(70.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Compass(heading, Modifier.size(64.dp))
-            Text("${compassName(heading)} ${heading.toInt()}°", fontSize = 12.sp, fontWeight = FontWeight.Black, color = Vintage.ink)
-            Text("航向", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
+        Column(Modifier.width(72.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Compass(heading, Modifier.size(70.dp))
         }
-        Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Column(Modifier.weight(1f).height(PAGE_HEIGHT), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 KeyCell(KeyKind.NAMES, "地名", layers.names, LAMP_NAMES, 100) { onLayers(layers.copy(names = !layers.names)) }
                 KeyCell(KeyKind.ROUTE, "路線", layers.route, LAMP_ROUTE, 200) { onLayers(layers.copy(route = !layers.route)) }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 KeyCell(KeyKind.REGIONS, "區域", layers.regions, LAMP_REGIONS, 300) { onLayers(layers.copy(regions = !layers.regions)) }
+                // the sync knob: its lamp is green once the steps have been synced and red until then
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable(role = Role.Button, onClickLabel = "同步", onClick = onSync)) {
-                    Canvas(Modifier.size(CELL)) { Pen(this, size).knob(400) }
+                    Canvas(Modifier.size(CELL)) { Pen(this, size).knob(400, if (lastSync != null) Color(0xFF4FBF6A) else Color(0xFFE04B3F)) }
                     Text("同步", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
                 }
             }
-            Text(lastSync?.let { "上次同步 ${formatTime(it)}" } ?: "尚未同步", fontSize = 9.sp, color = Vintage.inkSoft)
         }
     }
 }
 
 private val QUILL = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(com.starmist.walker.R.font.lxgw_wenkai_tc_subset))
-private val NOTE_ROW = 22.dp
+private val NOTE_ROW = 26.dp
 private val SEPIA = Color(0xFF3A2A1B)
 private val TODAY_GREEN = Color(0xFF2E7D4F)
 
 private enum class NoteKind { TODAY, REGION, ISLAND, STEPS, ROAD, FLAME }
 private const val PAGE_LINES = 6
+private val PAGE_HEIGHT = NOTE_ROW * PAGE_LINES + 10.dp
 
 /**
  * One page of parchment with everything written on it in a scribe's kai hand (LXGW WenKai TC, a subset of it), six lines: today (a title and a line each for steps, distance and energy), then
@@ -98,16 +97,16 @@ private const val PAGE_LINES = 6
 @Composable
 private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier) {
     val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 16.sp, lineHeight = 20.sp)
-    val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 13.sp, lineHeight = 20.sp, color = SEPIA)
+    val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 14.sp, lineHeight = 20.sp, color = SEPIA)
     val head = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 11.sp, lineHeight = 14.sp, color = Vintage.inkSoft)
     val small = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 13.sp, lineHeight = 18.sp, fontWeight = FontWeight.Bold)
-    Box(modifier.fillMaxWidth().height(NOTE_ROW * PAGE_LINES + 10.dp)) {
+    Box(modifier.fillMaxWidth().height(PAGE_HEIGHT)) {
         Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(NOTE_ROW.toPx(), 5.dp.toPx(), PAGE_LINES) }
         Column(Modifier.padding(start = 6.dp, end = 6.dp, top = 5.dp)) {
             // today: a title and one line each for the steps, the distance and the energy
             PageLine(NoteKind.TODAY, "今日", title.copy(color = TODAY_GREEN), TODAY_GREEN)
-            PageLine(NoteKind.STEPS, "走了 ${steps.withCommas()} 步", value, SEPIA)
-            PageLine(NoteKind.ROAD, "${todayKm.fixed(1)} 公里", value, SEPIA)
+            PageLine(NoteKind.STEPS, "${steps.withCommas()} 步", value, SEPIA)
+            PageLine(NoteKind.ROAD, "${todayKm.fixed(1)} km", value, SEPIA)
             PageLine(NoteKind.FLAME, "${kcal.roundToInt()} 大卡", value, SEPIA)
             // township and island side by side, the reading under its title
             Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
@@ -120,9 +119,9 @@ private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, w
                 }
             }
             Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.width(26.dp), contentAlignment = Alignment.CenterStart) { Text("已走", style = head, softWrap = false) }
-                Text("${townKm?.fixed(1) ?: "-"} 公里", Modifier.width(56.dp), style = value, softWrap = false)
-                Text("${walkedKm.fixed(1)} 公里", Modifier.weight(1f), style = value, softWrap = false)
+                Box(Modifier.width(26.dp), contentAlignment = Alignment.CenterStart) { Text("達成", style = head, softWrap = false) }
+                Text("${townKm?.fixed(1) ?: "-"} km", Modifier.width(56.dp), style = value, softWrap = false)
+                Text("${walkedKm.fixed(1)} km", Modifier.weight(1f), style = value, softWrap = false)
             }
         }
     }
@@ -202,11 +201,14 @@ private fun Pen.noteIcon(kind: NoteKind, color: Color, seed: Int) {
             wash(isle, color, 0.3f, 0f, 0f)
             stroke(isle, ink, seed, w, closed = true, calm = 0.4f)
         }
-        NoteKind.STEPS -> for ((i, c) in listOf(p(36f, 64f), p(64f, 38f)).withIndex()) {
-            val sole = circle(c, 14f * u, 16)
-            wash(sole, SEPIA, 0.35f, 0f, 0f)
-            stroke(sole, ink, seed + i, w, closed = true, calm = 0.4f)
-            for (t in 0..2) wash(circle(Offset(c.x + (t - 1) * 8f * u, c.y - 20f * u), 3.2f * u, 8), SEPIA, 0.8f, 0f, 0f)
+        NoteKind.STEPS -> {
+            // a bare foot: the ball and the heel, and five toes
+            fun oval(cx: Float, cy: Float, rx: Float, ry: Float) = (0 until 20).map { val a = 2.0 * PI * it / 20; p(cx + (rx * cos(a)).toFloat(), cy + (ry * sin(a)).toFloat()) }
+            val ball = oval(46f, 56f, 22f, 26f); val heel = oval(50f, 84f, 13f, 12f)
+            wash(ball, SEPIA, 0.4f, 0f, 0f); wash(heel, SEPIA, 0.4f, 0f, 0f)
+            stroke(ball, ink, seed, w, closed = true, calm = 0.3f); stroke(heel, ink, seed + 1, w, closed = true, calm = 0.3f)
+            for ((i, t) in listOf(Triple(30f, 22f, 7f), Triple(44f, 15f, 5.4f), Triple(56f, 15f, 4.8f), Triple(66f, 20f, 4.2f), Triple(72f, 29f, 3.6f)).withIndex())
+                wash(circle(p(t.first, t.second), t.third * u, 10), SEPIA, 0.85f, 0f, 0f)
         }
         NoteKind.ROAD -> {
             val road = listOf(p(14f, 82f), p(34f, 82f), p(48f, 72f), p(52f, 56f), p(44f, 44f), p(52f, 30f), p(68f, 22f), p(86f, 20f))
@@ -278,7 +280,7 @@ private fun Pen.picture(kind: KeyKind, seed: Int, a: Float) {
 }
 
 /** The sync knob: brass with a knurled rim, and the arrow that goes round. */
-private fun Pen.knob(seed: Int) {
+private fun Pen.knob(seed: Int, lamp: Color) {
     for (i in 0 until 28) {
         val ang = 2.0 * PI * i / 28
         val cx = cos(ang).toFloat(); val sy = sin(ang).toFloat()
@@ -296,6 +298,13 @@ private fun Pen.knob(seed: Int) {
     val nor = Offset(-dir.y, dir.x)
     val head = listOf(last + dir * (6.5f * u), last - dir * (2f * u) + nor * (5f * u), last - dir * (2f * u) - nor * (5f * u))
     wash(head, ink, 1f, 0f, 0f)
+    // the lamp, at the top right of the knob
+    val lc = p(84f, 14f)
+    wash(circle(lc, 13f * u, 18), lamp, 0.28f, 0f, 0f)
+    val jewel = circle(lc, 7f * u, 14)
+    wash(jewel, lamp, 1f, 0f, 0f)
+    stroke(jewel, ink, seed + 60, line, closed = true, calm = 0.2f)
+    wash(circle(Offset(lc.x - 2f * u, lc.y - 2f * u), 2f * u, 8), Color.White, 0.8f, 0f, 0f)
 }
 
 /** The tab on the bottom edge of the panel, drawn like everything else on it: pull the panel up by it, or tap it; down for the dials again. */
