@@ -59,9 +59,9 @@ internal fun ConsoleDeck(
     steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier = Modifier,
 ) {
     Row(modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Notes(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.3f))
-        Column(Modifier.width(78.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Compass(heading, Modifier.size(72.dp))
+        Notes(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.5f))
+        Column(Modifier.width(70.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Compass(heading, Modifier.size(64.dp))
             Text("${compassName(heading)} ${heading.toInt()}°", fontSize = 12.sp, fontWeight = FontWeight.Black, color = Vintage.ink)
             Text("航向", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
         }
@@ -97,24 +97,24 @@ private const val PAGE_LINES = 7
 @Composable
 private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier) {
     val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 16.sp, lineHeight = 20.sp)
-    val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 14.sp, lineHeight = 20.sp, color = SEPIA)
+    val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 13.sp, lineHeight = 20.sp, color = SEPIA)
     val head = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 12.sp, lineHeight = 16.sp, color = Vintage.inkSoft)
     Box(modifier.fillMaxWidth().height(NOTE_ROW * PAGE_LINES + 10.dp)) {
         Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(NOTE_ROW.toPx(), 5.dp.toPx(), PAGE_LINES) }
         Column(Modifier.padding(start = 6.dp, end = 6.dp, top = 5.dp)) {
             // today: the title, then a table without lines: what each column is (a drawing and its unit), and under it the reading
             PageLine(NoteKind.TODAY, "今日", title.copy(color = TODAY_GREEN), TODAY_GREEN)
-            Row(Modifier.height(NOTE_ROW).padding(start = 26.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.height(NOTE_ROW).padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 for ((kind, unit) in listOf(NoteKind.STEPS to "步", NoteKind.ROAD to "公里", NoteKind.FLAME to "大卡")) {
-                    Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
-                        Canvas(Modifier.size(14.dp)) { Pen(this, size).noteIcon(kind, SEPIA, 500 + kind.ordinal) }
+                    Row(Modifier.weight(if (unit == "步") 1.2f else 1f), verticalAlignment = Alignment.CenterVertically) {
+                        Canvas(Modifier.size(13.dp)) { Pen(this, size).noteIcon(kind, SEPIA, 500 + kind.ordinal) }
                         Text(unit, Modifier.padding(start = 2.dp), style = head, softWrap = false)
                     }
                 }
             }
-            Row(Modifier.height(NOTE_ROW).padding(start = 26.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.height(NOTE_ROW).padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 for (reading in listOf(steps.withCommas(), todayKm.fixed(1), "${kcal.roundToInt()}")) {
-                    Text(reading, Modifier.weight(1f), style = value, softWrap = false)
+                    Text(reading, Modifier.weight(if (reading == steps.withCommas()) 1.2f else 1f), style = value, softWrap = false)
                 }
             }
             PageLine(NoteKind.REGION, "本區域", title.copy(color = INK_RED), INK_RED)
