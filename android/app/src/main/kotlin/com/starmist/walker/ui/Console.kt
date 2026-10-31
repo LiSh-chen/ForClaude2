@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -88,39 +89,41 @@ private val SEPIA = Color(0xFF3A2A1B)
 private val TODAY_GREEN = Color(0xFF2E7D4F)
 
 private enum class NoteKind { TODAY, REGION, ISLAND, STEPS, ROAD, FLAME }
-private const val PAGE_LINES = 7
+private const val PAGE_LINES = 6
 
 /**
- * One page of parchment with everything written on it in a scribe's kai hand (LXGW WenKai TC, a subset of it), seven lines: today (a title and a table without rules: steps, distance, energy), then
+ * One page of parchment with everything written on it in a scribe's kai hand (LXGW WenKai TC, a subset of it), six lines: today (a title and a line each for steps, distance and energy), then
  * what has been walked in this township and round the island. Each part has a title in the colour of its needle on the dials and a little drawing in the margin.
  */
 @Composable
 private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier) {
     val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 16.sp, lineHeight = 20.sp)
     val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 13.sp, lineHeight = 20.sp, color = SEPIA)
-    val head = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 12.sp, lineHeight = 16.sp, color = Vintage.inkSoft)
+    val head = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 11.sp, lineHeight = 14.sp, color = Vintage.inkSoft)
+    val small = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 13.sp, lineHeight = 18.sp, fontWeight = FontWeight.Bold)
     Box(modifier.fillMaxWidth().height(NOTE_ROW * PAGE_LINES + 10.dp)) {
         Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(NOTE_ROW.toPx(), 5.dp.toPx(), PAGE_LINES) }
         Column(Modifier.padding(start = 6.dp, end = 6.dp, top = 5.dp)) {
-            // today: the title, then a table without lines: what each column is (a drawing and its unit), and under it the reading
+            // today: a title and one line each for the steps, the distance and the energy
             PageLine(NoteKind.TODAY, "今日", title.copy(color = TODAY_GREEN), TODAY_GREEN)
-            Row(Modifier.height(NOTE_ROW).padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                for ((kind, unit) in listOf(NoteKind.STEPS to "步", NoteKind.ROAD to "公里", NoteKind.FLAME to "大卡")) {
-                    Row(Modifier.weight(if (unit == "步") 1.2f else 1f), verticalAlignment = Alignment.CenterVertically) {
-                        Canvas(Modifier.size(13.dp)) { Pen(this, size).noteIcon(kind, SEPIA, 500 + kind.ordinal) }
-                        Text(unit, Modifier.padding(start = 2.dp), style = head, softWrap = false)
+            PageLine(NoteKind.STEPS, "走了 ${steps.withCommas()} 步", value, SEPIA)
+            PageLine(NoteKind.ROAD, "${todayKm.fixed(1)} 公里", value, SEPIA)
+            PageLine(NoteKind.FLAME, "${kcal.roundToInt()} 大卡", value, SEPIA)
+            // township and island side by side, the reading under its title
+            Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
+                Spacer(Modifier.width(22.dp))
+                for ((kind, name, color) in listOf(Triple(NoteKind.REGION, "本區域", INK_RED), Triple(NoteKind.ISLAND, "環島全程", COLD_BLUE))) {
+                    Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                        Canvas(Modifier.size(13.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
+                        Text(name, Modifier.padding(start = 3.dp), style = small.copy(color = color), softWrap = false)
                     }
                 }
             }
-            Row(Modifier.height(NOTE_ROW).padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                for (reading in listOf(steps.withCommas(), todayKm.fixed(1), "${kcal.roundToInt()}")) {
-                    Text(reading, Modifier.weight(if (reading == steps.withCommas()) 1.2f else 1f), style = value, softWrap = false)
-                }
+            Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.width(22.dp), contentAlignment = Alignment.CenterStart) { Text("已走", style = head, softWrap = false) }
+                Text("${townKm?.fixed(1) ?: "-"} 公里", Modifier.weight(1f).padding(start = 16.dp), style = value, softWrap = false)
+                Text("${walkedKm.fixed(1)} 公里", Modifier.weight(1f).padding(start = 16.dp), style = value, softWrap = false)
             }
-            PageLine(NoteKind.REGION, "本區域", title.copy(color = INK_RED), INK_RED)
-            PageLine(null, "已走 ${townKm?.fixed(1) ?: "-"} 公里", value, SEPIA)
-            PageLine(NoteKind.ISLAND, "環島全程", title.copy(color = COLD_BLUE), COLD_BLUE)
-            PageLine(null, "已走 ${walkedKm.fixed(1)} 公里", value, SEPIA)
         }
     }
 }
@@ -128,7 +131,7 @@ private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, w
 /** The margin of the page: a drawing (or none) in a column of its own. */
 @Composable
 private fun Margin(kind: NoteKind?, color: Color) {
-    Box(Modifier.width(20.dp), contentAlignment = Alignment.Center) {
+    Box(Modifier.width(22.dp), contentAlignment = Alignment.Center) {
         if (kind != null) Canvas(Modifier.size(18.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
     }
 }
@@ -170,7 +173,7 @@ private fun Pen.parchmentPage(row: Float, top: Float, lines: Int) {
         val y = top + row * k
         stroke(listOf(Offset(6f * dp, y), Offset(w - 6f * dp, y)), Color(0xFF8A6B3F), 720 + k, 0.7f * line, alpha = 0.35f, calm = 0.8f)
     }
-    val mx = 25f * dp
+    val mx = 27f * dp
     stroke(listOf(Offset(mx, 4f * dp), Offset(mx, h - 4f * dp)), Color(0xFFB3463C), 730, 0.9f * line, alpha = 0.45f, calm = 0.4f)
 }
 

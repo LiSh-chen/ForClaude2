@@ -256,12 +256,12 @@ internal fun RouteDial(overall: Float, region: Float?, modifier: Modifier = Modi
             label(tm, "進度 %", TextStyle(fontSize = 6.sp, color = Vintage.inkSoft), p(cx, 30f))
             // what the two needles are: a little needle, then whose progress it shows
             val key = TextStyle(fontSize = 7.sp, fontWeight = FontWeight.Black)
-            val wLong = with(d) { 1.6.dp.toPx() }; val wShort = with(d) { 3.4.dp.toPx() }
+            val wDot = with(d) { 2.6.dp.toPx() }
             // in the gap at the foot of the dial, where neither the needles nor the scale reach
-            d.drawLine(INK_RED, p(37f, 73f), p(46f, 73f), wLong, cap = StrokeCap.Round)
-            label(tm, "本區域", key.copy(color = INK_RED), p(56f, 73f), grows = false)
-            d.drawLine(COLD_BLUE, p(37f, 83f), p(46f, 83f), wShort, cap = StrokeCap.Round)
-            label(tm, "環島全程", key.copy(color = COLD_BLUE), p(59f, 83f), grows = false)
+            d.drawCircle(INK_RED, wDot, p(42f, 73f))
+            label(tm, "本區域", key.copy(color = INK_RED), p(55f, 73f), grows = false)
+            d.drawCircle(COLD_BLUE, wDot, p(42f, 83f))
+            label(tm, "環島全程", key.copy(color = COLD_BLUE), p(58f, 83f), grows = false)
             // long needle: through the township; short one: round the island
             needle(cx, cy, r * 0.80f, start + sweep * w, INK_RED, 310, wide = 0.05f, hub = false)
             needle(cx, cy, r * 0.50f, start + sweep * v, COLD_BLUE, 320, wide = 0.13f)
