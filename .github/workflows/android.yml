@@ -91,7 +91,11 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: gradle/actions/setup-gradle@v4
+      # One native build at a time: two Kotlin/Native link tasks in one Gradle run can fight over the compiler
+      # ("Cannot get target from triple ..."), so each gets its own run.
       - name: Compile core and shared for the iOS simulator
-        run: ./gradlew :shared:compileKotlinIosSimulatorArm64 :core:compileKotlinIosSimulatorArm64
+        run: ./gradlew --no-parallel --max-workers=1 :shared:compileKotlinIosSimulatorArm64 :core:compileKotlinIosSimulatorArm64
+      - name: Run the core tests on the iOS simulator
+        run: ./gradlew --no-parallel --max-workers=1 :core:iosSimulatorArm64Test
       - name: Run the shared tests on the iOS simulator
-        run: ./gradlew :core:iosSimulatorArm64Test :shared:iosSimulatorArm64Test
+        run: ./gradlew --no-parallel --max-workers=1 :shared:iosSimulatorArm64Test
