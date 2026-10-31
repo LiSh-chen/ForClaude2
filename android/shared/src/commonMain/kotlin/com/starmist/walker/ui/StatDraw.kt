@@ -113,12 +113,12 @@ private fun steps(n: Long) = n.withCommas()
 /** A count for people: 1,234 / 56 / 3.4 / 0.27 */
 fun niceCount(x: Double): String = when {
     x >= 100 -> x.roundToLong().withCommas()
-    x >= 10 -> String.format("%.0f", x)
-    x >= 1 -> String.format("%.1f", x)
-    else -> String.format("%.2f", x)
+    x >= 10 -> x.fixed(0)
+    x >= 1 -> x.fixed(1)
+    else -> x.fixed(2)
 }
 
-private fun nice(x: Double): String = if (x >= 10) x.roundToLong().withCommas() else String.format("%.1f", x)
+private fun nice(x: Double): String = if (x >= 10) x.roundToLong().withCommas() else x.fixed(1)
 
 /** Days from [from] to [to], both included. */
 private fun span(from: LocalDate, to: LocalDate): Sequence<LocalDate> = generateSequence(from) { if (it < to) it.plusDays(1) else null }
@@ -126,7 +126,7 @@ private fun span(from: LocalDate, to: LocalDate): Sequence<LocalDate> = generate
 private fun StatInputs.sum(from: LocalDate, to: LocalDate): Long = span(from, to).sumOf { history[it] ?: 0L }
 
 /** Consecutive days reaching the goal, ending today (or yesterday while today is not done yet), and the longest run in the last year. */
-internal fun streaks(history: Map<LocalDate, Long>, goal: Int, today: LocalDate): Pair<Int, Int> {
+fun streaks(history: Map<LocalDate, Long>, goal: Int, today: LocalDate): Pair<Int, Int> {
     if (goal <= 0) return 0 to 0
     fun hit(d: LocalDate) = (history[d] ?: 0L) >= goal
     var cur = 0
@@ -258,7 +258,7 @@ fun buildStat(kind: StatKind, i: StatInputs, seed: Long, ruler: Ruler? = null): 
             val perDay = i.sum(i.today.minusDays(13), i.today) * i.strideM / 1000.0 / 14.0
             val left = (i.routeTotalKm - i.walkedKm).coerceAtLeast(0.0)
             StatCard(
-                kind, "${String.format("%.1f", pct)}%", "已走 ${nice(i.walkedKm)} / ${nice(i.routeTotalKm)} 公里，還剩 ${nice(left)} 公里。",
+                kind, "${pct.fixed(1)}%", "已走 ${nice(i.walkedKm)} / ${nice(i.routeTotalKm)} 公里，還剩 ${nice(left)} 公里。",
                 if (perDay > 0.05 && left > 0) "照近兩週的速度，大約再走 ${nice(left / perDay)} 天。" else null,
             )
         }

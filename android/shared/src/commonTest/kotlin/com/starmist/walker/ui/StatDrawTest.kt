@@ -4,12 +4,12 @@ import com.starmist.core.time.minusDays
 import com.starmist.core.time.of
 import com.starmist.core.time.value
 import kotlinx.datetime.LocalDate
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
+import kotlin.test.Test
 
 /** The daily statistics draw: what each card says, which are available, and that a day's pick is steady. */
 class StatDrawTest {
@@ -36,9 +36,9 @@ class StatDrawTest {
     fun withAFullHistoryEveryKindHasACard() {
         for (k in StatKind.values()) {
             val c = buildStat(k, full, dayStatSeed(today))
-            assertNotNull("$k has no card", c)
-            assertTrue("$k headline", c!!.headline.isNotBlank())
-            assertTrue("$k line", c.line.isNotBlank())
+            assertNotNull(c, "$k has no card")
+            assertTrue(c!!.headline.isNotBlank(), "$k headline")
+            assertTrue(c.line.isNotBlank(), "$k line")
         }
         assertTrue(StatKind.values().size >= 15)
     }
@@ -57,7 +57,7 @@ class StatDrawTest {
             val c = buildStat(StatKind.RULER, full, 3L, r)!!
             val n = c.headline.substringBefore(' ').replace(",", "").toDouble()
             val half = when { km / r.km < 1 -> 0.0051; km / r.km < 10 -> 0.051; else -> 0.51 }     // the headline is rounded: two, one or no decimals
-            assertTrue("${c.headline} for $km km with ${r.id}", kotlin.math.abs(km / r.km - n) <= half)
+            assertTrue(kotlin.math.abs(km / r.km - n) <= half, "${c.headline} for $km km with ${r.id}")
             assertTrue(c.headline.endsWith(r.unit + r.what))
             assertTrue(c.line.contains(steps.withCommas()))
         }
@@ -79,7 +79,7 @@ class StatDrawTest {
         assertEquals(drawRuler(today, rulers)?.id, drawRuler(today, rulers)?.id)
         for (back in 0..60) {
             val d = today.minusDays(back.toLong())
-            assertNotEquals("$d repeats the day before", drawRuler(d, rulers)?.id, drawRuler(d.minusDays(1), rulers)?.id)
+            assertNotEquals(drawRuler(d, rulers)?.id, drawRuler(d.minusDays(1), rulers)?.id, "$d repeats the day before")
         }
         assertNull(drawRuler(today, emptyList()))
         assertEquals("0.27", niceCount(0.2712)); assertEquals("3.4", niceCount(3.44)); assertEquals("56", niceCount(55.6)); assertEquals("1,235", niceCount(1234.6))
@@ -138,7 +138,7 @@ class StatDrawTest {
         assertEquals(drawStat(today, kinds), drawStat(today, kinds))
         for (back in 0..60) {
             val d = today.minusDays(back.toLong())
-            assertNotEquals("$d repeats the day before", drawStat(d, kinds), drawStat(d.minusDays(1), kinds))   // the same list of cards both days
+            assertNotEquals(drawStat(d, kinds), drawStat(d.minusDays(1), kinds), "$d repeats the day before")   // the same list of cards both days
         }
         assertNull(drawStat(today, emptyList()))
         assertEquals(StatKind.FORTUNE, drawStat(today, listOf(StatKind.FORTUNE)))
