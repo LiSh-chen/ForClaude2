@@ -195,11 +195,12 @@ internal fun HomeContent(
     var picked by rememberSaveable { mutableStateOf(-1) }
     val walking = rememberWalking(steps)
     val shown = if (picked >= 0) picked else currentTown
-    Column(Modifier.padding(padding).padding(horizontal = 10.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        if (!granted) PermissionCard(onRequestPermission, onOpenAppSettings)
-        if (!hasCounter) NoticeCard("這台裝置沒有硬體計步器，目前版本無法計步。")
+    // The dashboard runs nearly edge to edge so that the dials can be big; the rest keeps a margin.
+    Column(Modifier.padding(padding).padding(horizontal = 4.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        if (!granted) Box(Modifier.padding(horizontal = 6.dp)) { PermissionCard(onRequestPermission, onOpenAppSettings) }
+        if (!hasCounter) Box(Modifier.padding(horizontal = 6.dp)) { NoticeCard("這台裝置沒有硬體計步器，目前版本無法計步。") }
 
-        Box(Modifier.weight(1f).fillMaxWidth().clip(RoundedCornerShape(14.dp))) {
+        Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 6.dp).clip(RoundedCornerShape(14.dp))) {
             when (map) {
                 HomeMap.Preparing -> Text("準備中……", Modifier.align(Alignment.Center))
                 HomeMap.ChooseRoute ->
@@ -220,16 +221,16 @@ internal fun HomeContent(
             }
         }
 
+        Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM, regionMode, infoOf(shown), shown == currentTown)
         if (map is HomeMap.Real) LayerBar(layers, Modifier.align(Alignment.CenterHorizontally)) {
             showNames = it.names; showRoute = it.route; showRegions = it.regions
             if (!it.regions) picked = -1
         }
-        Dashboard(steps, goal, km, kcal, lastSnapshot, onSync, (map as? HomeMap.Real), strideM, regionMode, infoOf(shown), shown == currentTown)
     }
 }
 
 
-/** Three lamps above the dashboard, each switching one thing on the map on or off: the names of places, the route, the outlines of the townships. */
+/** Three lamps under the dashboard, each switching one thing on the map on or off: the names of places, the route, the outlines of the townships. */
 @Composable
 private fun LayerBar(layers: MapLayers, modifier: Modifier, onChange: (MapLayers) -> Unit) {
     Row(modifier.clip(RoundedCornerShape(16.dp)).background(Vintage.parchmentLight.copy(alpha = 0.95f)).padding(2.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -319,7 +320,7 @@ private fun LockedTag(icon: String = "") {
 private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnapshot: Long?, onSync: () -> Unit, map: HomeMap.Real?, strideM: Double, regionMode: Boolean, region: RegionInfo?, isCurrent: Boolean) {
     val progress = BodyMetrics.goalProgress(steps, goal).toFloat().coerceIn(0f, 1f)
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Color.Transparent), elevation = CardDefaults.cardElevation(0.dp)) {
-        Column(Modifier.padding(horizontal = if (map != null && !regionMode) 0.dp else 8.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(Modifier.padding(horizontal = if (map != null && !regionMode) 0.dp else 14.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (map != null && !regionMode) {
                 InstrumentPanel(map.route, map.walkedKm, goal, steps, km, kcal, onSync, Modifier.fillMaxWidth())
             } else {

@@ -130,8 +130,10 @@ private fun Pen.needle(cx: Float, cy: Float, len: Float, deg: Float, color: Colo
     }
 }
 
-private fun Pen.label(tm: TextMeasurer, s: String, style: TextStyle, c: Offset) {
-    val l = tm.measure(s, style)
+private fun Pen.label(tm: TextMeasurer, s: String, style: TextStyle, c: Offset, grows: Boolean = true) {
+    // the writing grows with the dial (up to 40%), so that a bigger dial is easier to read and not only emptier
+    val grow = if (grows) (u / with(d) { 1.6.dp.toPx() }).coerceIn(1f, 1.4f) else 1f
+    val l = tm.measure(s, if (grow == 1f) style else style.copy(fontSize = style.fontSize * grow))
     d.drawText(l, topLeft = Offset(c.x - l.size.width / 2f, c.y - l.size.height / 2f))
 }
 
@@ -177,14 +179,14 @@ private fun Pen.odometer(tm: TextMeasurer, x: Float, y: Float, tenths: Float?, c
         wash(cell, if (last) cream else drum, 1f, 0f, 0f)
         val style = TextStyle(fontSize = fontSize, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = if (last) Vintage.ink else cream)
         val cx = x0 + w / 2f
-        if (t == null) { label(tm, "-", style, p(cx, y + ch / 2f)); continue }
+        if (t == null) { label(tm, "-", style, p(cx, y + ch / 2f), grows = false); continue }
         var m = 1L; repeat(k) { m *= 10 }
         val roll = if (whole % m == m - 1) carry else 0f
         val digit = ((whole / m) % 10).toInt()
         fun text(d: Int) = if (last) ".${d % 10}" else "${d % 10}"
         clipTo(cell) {
-            label(tm, text(digit), style, p(cx, y + ch / 2f - roll * ch))
-            label(tm, text(digit + 1), style, p(cx, y + ch / 2f + (1f - roll) * ch))
+            label(tm, text(digit), style, p(cx, y + ch / 2f - roll * ch), grows = false)
+            label(tm, text(digit + 1), style, p(cx, y + ch / 2f + (1f - roll) * ch), grows = false)
         }
     }
 }
@@ -279,10 +281,10 @@ internal fun InstrumentCluster(
 ) {
     Box(modifier.fillMaxWidth()) {
         Canvas(Modifier.matchParentSize()) { drawStrip() }
-        Row(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 6.dp, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy((-4).dp), verticalAlignment = Alignment.CenterVertically) {
             StepsDial(steps, goal, todayKm, kcal, Modifier.weight(1f))
-            Column(Modifier.width(48.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Compass(heading, Modifier.size(44.dp))
+            Column(Modifier.width(42.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Compass(heading, Modifier.size(40.dp))
                 SyncKnob(onSync)
             }
             RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f))
