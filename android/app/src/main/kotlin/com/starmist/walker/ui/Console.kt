@@ -59,10 +59,12 @@ internal fun ConsoleDeck(
     layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: Float, lastSync: Long?, onSync: () -> Unit,
     steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier = Modifier,
 ) {
-    Row(modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Notes(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.7f))
-        Column(Modifier.width(62.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Compass(heading, Modifier.size(60.dp))
+    // laid out on one design size and scaled to the room, so that it is the same on every phone (see FitDesign)
+    FitDesign(CONSOLE_DESIGN_WIDTH, PAGE_HEIGHT + 12.dp, modifier.fillMaxSize()) {
+    Row(Modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        Notes(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.6f))
+        Column(Modifier.width(58.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Compass(heading, Modifier.size(56.dp))
         }
         // the keys only say what is shown on the map; the four cells are all the same size
         Column(Modifier.weight(1f).height(PAGE_HEIGHT), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
@@ -80,7 +82,10 @@ internal fun ConsoleDeck(
             }
         }
     }
+    }
 }
+
+private val CONSOLE_DESIGN_WIDTH = 360.dp
 
 private val QUILL = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(com.starmist.walker.R.font.lxgw_wenkai_tc_subset))
 private val NOTE_ROW = 26.dp
