@@ -255,7 +255,7 @@ internal fun RouteDial(overall: Float, region: Float?, modifier: Modifier = Modi
             for (i in 0..5) label(tm, "${i * 20}", num, at(cx, cy, r * 0.66f, start + sweep * i / 5f))
             label(tm, "進度 %", TextStyle(fontSize = 8.sp, color = Vintage.inkSoft), p(cx, 30f))
             // what the two needles are: a little needle, then whose progress it shows
-            val key = TextStyle(fontSize = 9.sp, fontWeight = FontWeight.Black)
+            val key = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Black)
             val wDot = with(d) { 2.6.dp.toPx() }
             // in the gap at the foot of the dial, where neither the needles nor the scale reach
             d.drawCircle(INK_RED, wDot, p(38f, 73f))
