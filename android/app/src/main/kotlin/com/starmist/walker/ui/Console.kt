@@ -81,42 +81,42 @@ internal fun ConsoleDeck(
     }
 }
 
-private val NOTE_INK = Color(0xFF23407A)   // fountain-pen blue-black
-private val NOTE_SIZE = 12.sp
-private val NOTE_FONT = androidx.compose.ui.text.font.FontFamily.Cursive
+private val NOTE_SIZE = 10.sp
 
 /**
- * The three notes, written in one hand at one size: what was walked today, how far through this township, how far round the island - each with a small
- * drawing and a title in the colour of its needle on the dials, and under it what is walked ("已走") and what is left ("未走").
+ * The three counters, all labelled in one size and one weight: a small drawing and the title in the colour of its needle on the dials, the drums under
+ * it (what is walked), and under them one line of what is left ("未走").
  */
 @Composable
 private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, townLeft: Double?, walkedKm: Double, totalKm: Double, modifier: Modifier) {
+    val tm = rememberTextMeasurer()
+    val stepsRoll = rememberRolling(steps.toFloat(), "steps")
+    val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat(), "town")
+    val total = rememberRolling((walkedKm * 10).toFloat(), "total")
     Column(modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly) {
-        Note(NoteKind.TODAY, "今日", Color(0xFF2E7D4F), "已走 ${steps.withCommas()} 步", "${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡")
-        Note(
-            NoteKind.REGION, "本區域", INK_RED,
-            if (townKm != null) "已走 ${townKm.fixed(1)} 公里" else "已走 -", if (townLeft != null) "未走 ${townLeft.fixed(1)} 公里" else "未走 -",
-        )
-        Note(NoteKind.ISLAND, "環島全程", COLD_BLUE, "已走 ${walkedKm.fixed(1)} 公里", "未走 ${(totalKm - walkedKm).coerceAtLeast(0.0).fixed(1)} 公里")
+        Counter(NoteKind.TODAY, "今日已走 步", Color(0xFF2E7D4F), tm, stepsRoll, decimal = false, "${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡")
+        Counter(NoteKind.REGION, "本區域已走 公里", INK_RED, tm, if (townKm != null) town else null, decimal = true, if (townLeft != null) "未走 ${townLeft.fixed(1)} 公里" else "未走 -")
+        Counter(NoteKind.ISLAND, "環島全程已走 公里", COLD_BLUE, tm, total, decimal = true, "未走 ${(totalKm - walkedKm).coerceAtLeast(0.0).fixed(1)} 公里")
     }
 }
 
 private enum class NoteKind { TODAY, REGION, ISLAND }
 
-/** One note: a drawing, the title underlined in its colour, then two lines of writing. */
+/** One counter: drawing and title, the drums, and the line under them. */
 @Composable
-private fun Note(kind: NoteKind, title: String, color: Color, line1: String, line2: String) {
-    val style = androidx.compose.ui.text.TextStyle(fontFamily = NOTE_FONT, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, fontSize = NOTE_SIZE, lineHeight = 15.sp)
-    Row(verticalAlignment = Alignment.Top) {
-        Canvas(Modifier.size(26.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
-        Column(Modifier.padding(start = 3.dp)) {
-            Text(title, style = style, fontWeight = FontWeight.Black, color = color)
-            Canvas(Modifier.fillMaxWidth().height(3.dp)) {
-                Pen(this, size).stroke(listOf(Offset(0f, size.height / 2), Offset(size.width * 0.85f, size.height / 2)), color, 600 + kind.ordinal, 1.dp.toPx(), alpha = 0.7f, calm = 1.5f)
-            }
-            Text(line1, style = style, fontWeight = FontWeight.Bold, color = NOTE_INK)
-            Text(line2, style = style, color = NOTE_INK.copy(alpha = 0.65f))
+private fun Counter(kind: NoteKind, title: String, color: Color, tm: TextMeasurer, reading: Float?, decimal: Boolean, under: String) {
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Canvas(Modifier.size(14.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
+            Text(title, Modifier.padding(start = 3.dp), fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = color)
         }
+        Canvas(Modifier.fillMaxWidth().height(27.dp)) {
+            val pen = Pen(this, size)
+            // the pen's unit is the height of this strip, so the width is a few hundred units: its left edge is this far out
+            val left = -(size.width - size.height) / 2f / (size.height / 100f)
+            with(pen) { odometer(tm, left + 1f, 5f, reading, cells = 5, cw = 74f, ch = 90f, decimal = decimal) }
+        }
+        Text(under, fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
     }
 }
 
