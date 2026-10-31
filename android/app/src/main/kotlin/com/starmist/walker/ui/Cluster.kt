@@ -273,18 +273,15 @@ internal fun RouteDial(overall: Float, region: Float?, townKm: Double?, totalKm:
     }
 }
 
-/** The two dials side by side, mounted on a stitched leather strip with brass rivets. */
+/** The two dials side by side; the strip they are mounted on is the panel's, so that the console below can be part of it. */
 @Composable
 internal fun InstrumentCluster(
     steps: Long, goal: Int, overall: Float, region: Float?, walkedKm: Double, townKm: Double?, todayKm: Double, kcal: Double,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier.fillMaxWidth()) {
-        Canvas(Modifier.matchParentSize()) { drawStrip() }
-        Row(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-            StepsDial(steps, goal, todayKm, kcal, Modifier.weight(1f))
-            RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f))
-        }
+    Row(modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        StepsDial(steps, goal, todayKm, kcal, Modifier.weight(1f))
+        RouteDial(overall, region, townKm, walkedKm, Modifier.weight(1f))
     }
 }
 

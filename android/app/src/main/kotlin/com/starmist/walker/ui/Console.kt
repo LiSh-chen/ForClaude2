@@ -4,230 +4,166 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
 /*
- * The control console: what slides up over the dials when the player pulls it up from the bottom edge. It is made like the rest of the panel: the same stitched
- * leather strip with its brass rivets, and brass fittings: a name plate, three big keys with jewel lamps that switch what the map shows, the compass with the
- * heading written out, and the knurled knob that syncs the steps.
+ * The control console under the dials: one piece with them, on the same strip, shown when the panel is pulled up. It is drawn with the same pen as the dials
+ * (inked outlines, a wash of colour, hatching for shade) and laid out like the row of keys on a car's centre console: a lamp over each key, its picture in
+ * the middle and its name under it, the compass and the sync knob at the two ends.
  */
 
 private val LAMP_NAMES = Color(0xFFF2A93B)
 private val LAMP_ROUTE = Color(0xFFE04B3F)
 private val LAMP_REGIONS = Color(0xFF3B9BFF)
+private val CELL = 60.dp
 
 /** The north / north-east / ... name of a heading in degrees clockwise from north. */
 internal fun compassName(deg: Float): String = listOf("北", "東北", "東", "東南", "南", "西南", "西", "西北")[(((deg % 360f + 360f) % 360f + 22.5f) / 45f).toInt() % 8]
 
 @Composable
-internal fun ControlPanel(layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: Float, lastSync: Long?, onSync: () -> Unit, modifier: Modifier = Modifier) {
-    // solid paper under the strip, so that the dials below do not show through it
-    Box(modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).background(Vintage.parchment)) {
-        Canvas(Modifier.matchParentSize()) { drawStrip() }
-        Column(
-            Modifier.fillMaxSize().padding(start = 18.dp, end = 18.dp, top = 12.dp, bottom = 22.dp),
-            horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween,
-        ) {
-            NamePlate("操控台")
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                KeyCap(KeyKind.NAMES, "地名", layers.names, LAMP_NAMES, Modifier.weight(1f)) { onLayers(layers.copy(names = !layers.names)) }
-                KeyCap(KeyKind.ROUTE, "路線", layers.route, LAMP_ROUTE, Modifier.weight(1f)) { onLayers(layers.copy(route = !layers.route)) }
-                KeyCap(KeyKind.REGIONS, "區域", layers.regions, LAMP_REGIONS, Modifier.weight(1f)) { onLayers(layers.copy(regions = !layers.regions)) }
-            }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Compass(heading, Modifier.size(58.dp))
-                    Column {
-                        Text("航向", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
-                        Text("${compassName(heading)} ${heading.toInt()}°", fontSize = 16.sp, fontWeight = FontWeight.Black, color = Vintage.ink)
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Column(horizontalAlignment = Alignment.End) {
-                        Text("同步步數", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
-                        Text(lastSync?.let { formatTime(it) } ?: "尚未同步", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
-                    }
-                    BrassKnob(onSync, Modifier.size(54.dp))
-                }
+internal fun ConsoleDeck(layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: Float, lastSync: Long?, onSync: () -> Unit, modifier: Modifier = Modifier) {
+    Column(modifier.fillMaxWidth().padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        // a double rule, where the dials end and the console begins
+        Canvas(Modifier.fillMaxWidth().height(8.dp)) {
+            val pen = Pen(this, size)
+            pen.stroke(listOf(Offset(0f, size.height * 0.30f), Offset(size.width, size.height * 0.30f)), Vintage.ink, 71, pen.line * 0.9f, alpha = 0.7f, calm = 0.4f)
+            pen.stroke(listOf(Offset(0f, size.height * 0.75f), Offset(size.width, size.height * 0.75f)), Vintage.brassDark, 72, pen.line * 0.6f, alpha = 0.8f, calm = 0.4f)
+        }
+        Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
+            Cell("航向 ${compassName(heading)}") { Compass(heading, Modifier.size(CELL)) }
+            KeyCell(KeyKind.NAMES, "地名", layers.names, LAMP_NAMES, 100) { onLayers(layers.copy(names = !layers.names)) }
+            KeyCell(KeyKind.ROUTE, "路線", layers.route, LAMP_ROUTE, 200) { onLayers(layers.copy(route = !layers.route)) }
+            KeyCell(KeyKind.REGIONS, "區域", layers.regions, LAMP_REGIONS, 300) { onLayers(layers.copy(regions = !layers.regions)) }
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable(role = Role.Button, onClickLabel = "同步", onClick = onSync)) {
+                Canvas(Modifier.size(CELL)) { Pen(this, size).knob(400) }
+                Text("同步", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
             }
         }
+        Text(
+            "${heading.toInt()}°　" + (lastSync?.let { "上次同步 ${formatTime(it)}" } ?: "尚未同步"),
+            fontSize = 10.sp, color = Vintage.inkSoft, modifier = Modifier.padding(top = 4.dp),
+        )
     }
 }
 
-/** A brass name plate between two engraved rules. */
 @Composable
-private fun NamePlate(text: String) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Box(Modifier.width(56.dp).height(1.5.dp).background(Vintage.brassDark.copy(alpha = 0.8f)))
-        val shape = RoundedCornerShape(7.dp)
-        Box(
-            Modifier.clip(shape).background(Brush.verticalGradient(listOf(Vintage.brassLight, Vintage.brass, Vintage.brassDark))).border(1.1.dp, Vintage.ink, shape)
-                .padding(horizontal = 16.dp, vertical = 2.dp),
-        ) {
-            Text(text, fontSize = 12.sp, fontWeight = FontWeight.Black, color = Vintage.ink, letterSpacing = 4.sp)
-        }
-        Box(Modifier.width(56.dp).height(1.5.dp).background(Vintage.brassDark.copy(alpha = 0.8f)))
+private fun Cell(label: String, content: @Composable () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        content()
+        Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
     }
 }
 
 private enum class KeyKind { NAMES, ROUTE, REGIONS }
 
-/**
- * A big brass key with a bevelled edge and a jewel lamp above its drawn symbol and its name. Lit, the key stands out and the lamp glows;
- * off, it sits pressed in with a dark lamp.
- */
+/** One key: its lamp lights (and the key stands out) while what it switches is shown on the map. */
 @Composable
-private fun KeyCap(kind: KeyKind, text: String, on: Boolean, lamp: Color, modifier: Modifier, onClick: () -> Unit) {
+private fun KeyCell(kind: KeyKind, label: String, on: Boolean, lamp: Color, seed: Int, onClick: () -> Unit) {
     val glow by animateFloatAsState(if (on) 1f else 0f, spring(stiffness = Spring.StiffnessMediumLow), label = "lamp")
-    val shape = RoundedCornerShape(15.dp)
-    Box(modifier.height(74.dp).clip(shape).clickable(role = Role.Switch, onClick = onClick), contentAlignment = Alignment.TopCenter) {
-        Canvas(Modifier.matchParentSize()) {
-            val r = 15.dp.toPx()
-            val w = size.width
-            val h = size.height
-            // the face, brighter when lit
-            drawRoundRect(
-                Brush.verticalGradient(listOf(lerp(Vintage.brass, Vintage.brassLight, glow), lerp(Vintage.brassDark, Vintage.brass, glow))),
-                cornerRadius = CornerRadius(r),
-            )
-            // pressed in: a shadow along the top edge
-            drawRoundRect(
-                Brush.verticalGradient(listOf(Vintage.ink.copy(alpha = 0.38f * (1f - glow)), Color.Transparent), endY = 16.dp.toPx()),
-                cornerRadius = CornerRadius(r),
-            )
-            // the bevel: a light edge on top, a dark one underneath
-            drawLine(Color.White.copy(alpha = 0.18f + 0.38f * glow), Offset(r, 3.dp.toPx()), Offset(w - r, 3.dp.toPx()), 1.6.dp.toPx(), StrokeCap.Round)
-            drawLine(Vintage.ink.copy(alpha = 0.30f), Offset(r, h - 3.dp.toPx()), Offset(w - r, h - 3.dp.toPx()), 1.6.dp.toPx(), StrokeCap.Round)
-            drawRoundRect(Vintage.ink, cornerRadius = CornerRadius(r), style = Stroke(1.8.dp.toPx()))
-            // the jewel lamp, with its glow
-            val c = Offset(w / 2f, 13.dp.toPx())
-            if (glow > 0.01f) drawCircle(Brush.radialGradient(listOf(lamp.copy(alpha = 0.6f * glow), Color.Transparent), center = c, radius = 17.dp.toPx()), 17.dp.toPx(), c)
-            drawCircle(lerp(Color(0xFF3A2E22), lamp, glow), 5.dp.toPx(), c)
-            drawCircle(Color.White.copy(alpha = 0.25f + 0.6f * glow), 1.7.dp.toPx(), Offset(c.x - 1.6.dp.toPx(), c.y - 1.6.dp.toPx()))
-            drawCircle(Vintage.ink, 5.dp.toPx(), c, style = Stroke(1.1.dp.toPx()))
-        }
-        Column(Modifier.padding(top = 25.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            val ink = Vintage.ink.copy(alpha = 0.55f + 0.45f * glow)
-            Canvas(Modifier.size(22.dp)) { keySymbol(kind, ink) }
-            Spacer(Modifier.height(1.dp))
-            Text(text, fontSize = 13.sp, fontWeight = FontWeight.Black, color = ink)
-        }
+    Column(Modifier.clickable(role = Role.Switch, onClick = onClick), horizontalAlignment = Alignment.CenterHorizontally) {
+        Canvas(Modifier.size(CELL)) { Pen(this, size).key(kind, glow, lamp, seed) }
+        Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink.copy(alpha = 0.6f + 0.4f * glow))
     }
 }
 
-/** The small symbol on a key, drawn in a 24-unit square: a map pin, a winding path, an outlined region. */
-private fun DrawScope.keySymbol(kind: KeyKind, color: Color) {
-    val s = size.minDimension / 24f
-    fun o(x: Float, y: Float) = Offset(x * s, y * s)
-    val line = Stroke(2.1f * s, cap = StrokeCap.Round, join = StrokeJoin.Round)
+/** The key itself, in the pen's 100 x 100 square. */
+private fun Pen.key(kind: KeyKind, glow: Float, lamp: Color, seed: Int) {
+    val body = roundRect(6f, 6f, 94f, 94f, 15f)
+    // lit: pale and standing out; off: a darker paper, hatched as if pressed in
+    wash(body, lerp(Color(0xFFB59A62), Color(0xFFFBEFC8), glow), 1f, 0f, 0f)
+    if (glow < 0.98f) hatch(body, ink, 6f, 94f, 6f, 94f, gap = 4.2f, lean = 9f, alpha = 0.24f * (1f - glow))
+    inked(body, seed, closed = true, width = line * 1.5f, calm = 0.3f)
+    stroke(roundRect(13f, 13f, 87f, 87f, 10f), ink, seed + 7, line * 0.55f, closed = true, alpha = 0.4f, calm = 0.2f)
+    // the lamp over the picture
+    val c = p(50f, 22f)
+    if (glow > 0.02f) wash(circle(c, 11f * u, 20), lamp, 0.30f * glow, 0f, 0f)
+    wash(circle(c, 5.4f * u, 16), lerp(Color(0xFF4A3E32), lamp, glow), 1f, 0f, 0f)
+    inked(circle(c, 5.4f * u, 16), seed + 9, closed = true, width = line * 0.9f, calm = 0.1f)
+    d.drawCircle(Color.White.copy(alpha = 0.3f + 0.6f * glow), 1.5f * u, Offset(c.x - 1.7f * u, c.y - 1.7f * u))
+    picture(kind, seed + 20, 0.55f + 0.45f * glow)
+}
+
+/** The key's picture: a map pin, a winding road, an outlined region. */
+private fun Pen.picture(kind: KeyKind, seed: Int, a: Float) {
+    val w = line * 1.7f
     when (kind) {
         KeyKind.NAMES -> {
-            drawCircle(color, 5.6f * s, o(12f, 9f), style = line)
-            drawLine(color, o(7.4f, 12.8f), o(12f, 21.5f), 2.1f * s, StrokeCap.Round)
-            drawLine(color, o(16.6f, 12.8f), o(12f, 21.5f), 2.1f * s, StrokeCap.Round)
-            drawCircle(color, 1.8f * s, o(12f, 9f))
+            val c = p(50f, 55f)
+            stroke(circle(c, 12f * u, 20), ink, seed, w, closed = true, alpha = a, calm = 0.3f)
+            stroke(listOf(p(40.5f, 63f), p(50f, 82f)), ink, seed + 1, w, alpha = a, calm = 0.2f)
+            stroke(listOf(p(59.5f, 63f), p(50f, 82f)), ink, seed + 2, w, alpha = a, calm = 0.2f)
+            wash(circle(c, 3.6f * u, 10), ink, a, 0f, 0f)
         }
         KeyKind.ROUTE -> {
-            val path = Path().apply {
-                moveTo(4f * s, 19f * s)
-                cubicTo(11f * s, 19f * s, 5f * s, 11f * s, 12f * s, 11f * s)
-                cubicTo(19f * s, 11f * s, 13f * s, 5f * s, 20f * s, 5f * s)
-            }
-            drawPath(path, color, style = line)
-            drawCircle(color, 2.3f * s, o(4f, 19f))
-            drawCircle(color, 2.3f * s, o(20f, 5f))
+            val road = listOf(p(25f, 80f), p(39f, 80f), p(50f, 74f), p(54f, 64f), p(48f, 56f), p(52f, 48f), p(62f, 42f), p(76f, 40f))
+            stroke(road, ink, seed, w, alpha = a, calm = 0.25f)
+            wash(circle(p(25f, 80f), 4f * u, 10), ink, a, 0f, 0f)
+            wash(circle(p(76f, 40f), 4f * u, 10), ink, a, 0f, 0f)
         }
         KeyKind.REGIONS -> {
-            val shape = Path().apply {
-                moveTo(12f * s, 3f * s); lineTo(20f * s, 8f * s); lineTo(19f * s, 17f * s); lineTo(11f * s, 21.5f * s); lineTo(4f * s, 16f * s); lineTo(5f * s, 7f * s); close()
-            }
-            drawPath(shape, color, style = Stroke(2.0f * s, cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = PathEffect.dashPathEffect(floatArrayOf(3.6f * s, 2.4f * s))))
-            drawCircle(color, 1.9f * s, o(12f, 12.5f))
+            val hex = (0 until 6).map { val ang = PI / 3 * it - PI / 2; p(50f + (18f * cos(ang)).toFloat(), 59f + (18f * sin(ang)).toFloat()) }
+            stroke(hex, ink, seed, w, closed = true, alpha = a, dash = dashed(this, 5f, 3.5f), calm = 0.2f)
+            wash(circle(p(50f, 59f), 3.2f * u, 10), ink, a, 0f, 0f)
         }
     }
 }
 
-/** The knob that syncs the steps: brass with a knurled rim, like the winder of a watch. */
-@Composable
-private fun BrassKnob(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Box(modifier.clip(CircleShape).clickable(role = Role.Button, onClickLabel = "同步", onClick = onClick), contentAlignment = Alignment.Center) {
-        Canvas(Modifier.fillMaxSize()) {
-            val r = size.minDimension / 2f
-            val c = center
-            drawCircle(Brush.radialGradient(listOf(Vintage.brassDark, Vintage.ink), center = c, radius = r), r)
-            // the knurling: short ridges all round the rim
-            val teeth = 30
-            for (i in 0 until teeth) {
-                val a = (i * 2.0 * Math.PI / teeth).toFloat()
-                val inner = Offset(c.x + cos(a) * r * 0.86f, c.y + sin(a) * r * 0.86f)
-                val outer = Offset(c.x + cos(a) * r * 0.99f, c.y + sin(a) * r * 0.99f)
-                drawLine(Vintage.brassLight.copy(alpha = 0.85f), inner, outer, 1.6.dp.toPx(), StrokeCap.Round)
-            }
-            drawCircle(Brush.radialGradient(listOf(Vintage.brassLight, Vintage.brass, Vintage.brassDark), center = Offset(c.x - r * 0.22f, c.y - r * 0.25f), radius = r * 0.95f), r * 0.78f, c)
-            drawCircle(Vintage.ink.copy(alpha = 0.55f), r * 0.78f, c, style = Stroke(1.1.dp.toPx()))
-            drawCircle(Vintage.ink.copy(alpha = 0.3f), r * 0.58f, c, style = Stroke(0.9.dp.toPx()))
-            drawCircle(Vintage.ink, r, c, style = Stroke(1.8.dp.toPx()))
-        }
-        Icon(Icons.Filled.Refresh, contentDescription = "同步", tint = Vintage.ink, modifier = Modifier.size(24.dp))
+/** The sync knob: brass with a knurled rim, and the arrow that goes round. */
+private fun Pen.knob(seed: Int) {
+    for (i in 0 until 28) {
+        val ang = 2.0 * PI * i / 28
+        val cx = cos(ang).toFloat(); val sy = sin(ang).toFloat()
+        stroke(listOf(p(50f + 42f * cx, 54f + 42f * sy), p(50f + 48f * cx, 54f + 48f * sy)), ink, seed + i, line, alpha = 0.85f, calm = 0f)
     }
+    val face = circle(p(50f, 54f), 38f * u, 28)
+    wash(face, Vintage.brass, 1f, 0f, 0f)
+    wash(circle(p(44f, 48f), 22f * u, 20), Vintage.brassLight, 0.6f, 0f, 0f)
+    inked(face, seed + 50, closed = true, width = line * 1.5f, calm = 0.3f)
+    stroke(circle(p(50f, 54f), 46f * u, 28), ink, seed + 51, line * 0.8f, closed = true, alpha = 0.6f, calm = 0.2f)
+    // the arrow going round
+    val arc = (0..22).map { val ang = Math.toRadians(40.0 + it * 13.0); p(50f + (17f * cos(ang)).toFloat(), 54f + (17f * sin(ang)).toFloat()) }
+    stroke(arc, ink, seed + 52, line * 1.8f, calm = 0.2f)
+    val last = arc.last(); val dir = (last - arc[arc.size - 2]).let { it / it.getDistance() }
+    val nor = Offset(-dir.y, dir.x)
+    val head = listOf(last + dir * (6.5f * u), last - dir * (2f * u) + nor * (5f * u), last - dir * (2f * u) - nor * (5f * u))
+    wash(head, ink, 1f, 0f, 0f)
 }
 
-/** The brass tab on the bottom edge of the panel: pull it up, or tap it, for the console; down for the dials again. */
+/** The tab on the bottom edge of the panel, drawn like everything else on it: pull the panel up by it, or tap it; down for the dials again. */
 @Composable
 internal fun GripTab(open: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val shape = RoundedCornerShape(topStart = 13.dp, topEnd = 13.dp)
-    Box(
-        modifier.size(width = 72.dp, height = 20.dp).clip(shape).background(Brush.verticalGradient(listOf(Vintage.brassLight, Vintage.brass, Vintage.brassDark)))
-            .border(1.3.dp, Vintage.ink, shape).clickable(role = Role.Button, onClickLabel = if (open) "收起操控台" else "打開操控台", onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Canvas(Modifier.size(width = 20.dp, height = 8.dp)) {
-            val path = Path().apply {
-                if (open) { moveTo(0f, 0f); lineTo(size.width / 2f, size.height); lineTo(size.width, 0f) }
-                else { moveTo(0f, size.height); lineTo(size.width / 2f, 0f); lineTo(size.width, size.height) }
-            }
-            drawPath(path, Vintage.ink, style = Stroke(2.2.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+    Canvas(modifier.size(width = 76.dp, height = 22.dp).clickable(role = Role.Button, onClickLabel = if (open) "收起操控台" else "打開操控台", onClick = onClick)) {
+        val pen = Pen(this, size)
+        with(pen) {
+            // the unit is the tab's height, so the width is about 345 units: from -123 to 222
+            val tab = roundRect(-123f, 0f, 222f, 150f, 48f)
+            wash(tab, Vintage.brass, 1f, 0f, 0f)
+            wash(roundRect(-100f, 6f, 200f, 60f, 30f), Vintage.brassLight, 0.55f, 0f, 0f)
+            inked(tab, 31, closed = true, width = line * 1.4f, calm = 0.25f)
+            val chevron = if (open) listOf(p(40f, 36f), p(50f, 58f), p(60f, 36f)) else listOf(p(40f, 58f), p(50f, 36f), p(60f, 58f))
+            stroke(chevron, ink, 32, line * 1.9f, calm = 0.1f)
         }
     }
 }

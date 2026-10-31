@@ -4,6 +4,9 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.background
+import kotlinx.coroutines.launch
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -233,12 +236,12 @@ internal fun HomeContent(
             BottomDeck(
                 controlsOpen = controlsOpen, onControlsOpen = { controlsOpen = it }, regionMode = regionMode,
                 instruments = { InstrumentPanel(map.route, map.walkedKm, goal, steps, km, kcal, Modifier.fillMaxWidth()) },
-                regionInfo = { RegionDeck(infoOf(shown), shown == currentTown, it) },
-                controls = {
-                    ControlPanel(layers, { new ->
+                regionInfo = { RegionPlate(infoOf(shown), shown == currentTown, it) },
+                console = {
+                    ConsoleDeck(layers, { new ->
                         showNames = new.names; showRoute = new.route
                         if (new.regions != showRegions) { showRegions = new.regions; controlsOpen = false; if (!new.regions) picked = -1 }   // the regions replace the dials, so the console steps aside
-                    }, heading, lastSnapshot, onSync, it)
+                    }, heading, lastSnapshot, onSync)
                 },
             )
         } else {
@@ -332,50 +335,55 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
 }
 
 /**
- * The panel under the map: the dials; or, while the regions are shown, what the township picked holds; and over either of them, pulled up from the bottom
- * edge (or by the tab there), the control console. The three are the same height, so that the map does not jump when they change.
+ * The panel under the map: one strip with the dials on it (or, while the regions are shown, what the township picked holds) and, below them on the same
+ * strip, the control console. The panel shows the top part; pulled up from the bottom edge (or by the tab there) it slides up with the finger and the
+ * console comes into view. The top part and the window are the same height whichever is shown, so that the map does not jump.
  */
 @Composable
 private fun BottomDeck(
     controlsOpen: Boolean, onControlsOpen: (Boolean) -> Unit, regionMode: Boolean,
-    instruments: @Composable () -> Unit, regionInfo: @Composable (Modifier) -> Unit, controls: @Composable (Modifier) -> Unit,
+    instruments: @Composable () -> Unit, regionInfo: @Composable (Modifier) -> Unit, console: @Composable () -> Unit,
 ) {
     val density = androidx.compose.ui.platform.LocalDensity.current
-    var height by remember { mutableStateOf(210.dp) }       // the height the dials take; the other two panels are made as tall
-    val pull = with(density) { 36.dp.toPx() }
+    var faceHeight by remember { mutableStateOf(204.dp) }       // the height the dials take; the township card is made as tall
+    val consoleHeight = 150.dp
+    val consolePx = with(density) { consoleHeight.toPx() }
+    val slide = remember { androidx.compose.animation.core.Animatable(if (controlsOpen) 1f else 0f) }     // 0: the dials, 1: the console
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val settle = androidx.compose.animation.core.spring<Float>(dampingRatio = 0.85f, stiffness = androidx.compose.animation.core.Spring.StiffnessMediumLow)
+    androidx.compose.runtime.LaunchedEffect(controlsOpen) { slide.animateTo(if (controlsOpen) 1f else 0f, settle) }
     Box(
-        Modifier.fillMaxWidth().height(height).pointerInput(controlsOpen) {
-            var total = 0f
-            detectVerticalDragGestures(
-                onDragStart = { total = 0f },
-                onDragEnd = { if (total < -pull) onControlsOpen(true) else if (total > pull) onControlsOpen(false) },
-                onDragCancel = { total = 0f },
-                onVerticalDrag = { _, dy -> total += dy },
-            )
-        },
+        Modifier.fillMaxWidth().height(faceHeight + 12.dp).clip(RoundedCornerShape(20.dp)).draggable(
+            orientation = androidx.compose.foundation.gestures.Orientation.Vertical,
+            state = androidx.compose.foundation.gestures.rememberDraggableState { delta -> scope.launch { slide.snapTo((slide.value - delta / consolePx).coerceIn(0f, 1f)) } },
+            onDragStopped = { velocity ->
+                val open = if (kotlin.math.abs(velocity) > 500f) velocity < 0f else slide.value > 0.5f
+                onControlsOpen(open)
+                scope.launch { slide.animateTo(if (open) 1f else 0f, settle) }
+            },
+        ),
     ) {
-        if (regionMode) regionInfo(Modifier.fillMaxSize())
-        else Box(
-            Modifier.fillMaxWidth().wrapContentHeight(align = Alignment.Top, unbounded = true)
-                .onSizeChanged { height = with(density) { it.height.toDp() }.coerceAtLeast(196.dp) },
-        ) { instruments() }
-        androidx.compose.animation.AnimatedVisibility(
-            visible = controlsOpen, modifier = Modifier.fillMaxSize(),
-            enter = androidx.compose.animation.slideInVertically(androidx.compose.animation.core.tween(300)) { it } + androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(200)),
-            exit = androidx.compose.animation.slideOutVertically(androidx.compose.animation.core.tween(260)) { it } + androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(200)),
-        ) { controls(Modifier.fillMaxSize()) }
+        Canvas(Modifier.matchParentSize()) { drawStrip() }
+        // the part inside the stitching: the dials above, the console below, the whole of it slid up by the finger
+        Box(Modifier.fillMaxSize().padding(6.dp).clip(RoundedCornerShape(15.dp))) {
+            Column(
+                Modifier.fillMaxWidth().wrapContentHeight(align = Alignment.Top, unbounded = true)
+                    .offset { androidx.compose.ui.unit.IntOffset(0, -(slide.value * consolePx).roundToInt()) },
+            ) {
+                if (regionMode) regionInfo(Modifier.fillMaxWidth().height(faceHeight))
+                else Box(Modifier.fillMaxWidth().onSizeChanged { faceHeight = with(density) { it.height.toDp() }.coerceAtLeast(190.dp) }) { instruments() }
+                Box(Modifier.fillMaxWidth().height(consoleHeight)) { console() }
+            }
+        }
         GripTab(controlsOpen, { onControlsOpen(!controlsOpen) }, Modifier.align(Alignment.BottomCenter))
     }
 }
 
-/** What the township picked holds, on a paper plate set into the same stitched strip as the dials. */
+/** What the township picked holds, on a paper plate set into the strip where the dials would be. */
 @Composable
-private fun RegionDeck(region: RegionInfo?, isCurrent: Boolean, modifier: Modifier) {
-    Box(modifier.fillMaxWidth()) {
-        Canvas(Modifier.matchParentSize()) { drawStrip() }
-        Box(Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 22.dp).clip(RoundedCornerShape(12.dp)).background(Vintage.parchmentLight.copy(alpha = 0.92f)).padding(12.dp)) {
-            RegionPanel(region, isCurrent, Modifier.fillMaxWidth())
-        }
+private fun RegionPlate(region: RegionInfo?, isCurrent: Boolean, modifier: Modifier) {
+    Box(modifier.padding(start = 8.dp, end = 8.dp, top = 6.dp, bottom = 12.dp).clip(RoundedCornerShape(12.dp)).background(Vintage.parchmentLight.copy(alpha = 0.92f)).padding(12.dp)) {
+        RegionPanel(region, isCurrent, Modifier.fillMaxWidth())
     }
 }
 
