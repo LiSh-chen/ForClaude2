@@ -233,15 +233,20 @@ internal fun HomeContent(
 
         if (map is HomeMap.Real) {
             val heading = remember(map.route, (map.walkedKm * 5).toInt()) { routeHeading(map.route, map.walkedKm) }
+            val areas = rememberTownAreas()
+            val border = remember(areas, map.route, (map.walkedKm * 10).toInt()) { areas.nextBorder(map.route, map.walkedKm) }
             BottomDeck(
                 controlsOpen = controlsOpen, onControlsOpen = { controlsOpen = it }, regionMode = regionMode,
-                instruments = { InstrumentPanel(map.route, map.walkedKm, goal, steps, km, kcal, Modifier.fillMaxWidth()) },
+                instruments = { InstrumentPanel(map.route, map.walkedKm, goal, steps, border, Modifier.fillMaxWidth()) },
                 regionInfo = { RegionPlate(infoOf(shown), shown == currentTown, it) },
                 console = {
-                    ConsoleDeck(layers, { new ->
-                        showNames = new.names; showRoute = new.route
-                        if (new.regions != showRegions) { showRegions = new.regions; controlsOpen = false; if (!new.regions) picked = -1 }   // the regions replace the dials, so the console steps aside
-                    }, heading, lastSnapshot, onSync)
+                    ConsoleDeck(
+                        layers, { new ->
+                            showNames = new.names; showRoute = new.route
+                            if (new.regions != showRegions) { showRegions = new.regions; controlsOpen = false; if (!new.regions) picked = -1 }   // the regions replace the dials, so the console steps aside
+                        },
+                        heading, lastSnapshot, onSync, steps, km, kcal, border?.kmDone, map.walkedKm,
+                    )
                 },
             )
         } else {
@@ -336,8 +341,8 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
 
 /**
  * The panel under the map: one strip with the dials on it (or, while the regions are shown, what the township picked holds) and, below them on the same
- * strip, the control console. The panel shows the top part; pulled up from the bottom edge (or by the tab there) it slides up with the finger and the
- * console comes into view. The top part and the window are the same height whichever is shown, so that the map does not jump.
+ * strip, the control console, as tall as they are. The panel shows the top part; pulled up from the bottom edge (or by the tab there) it slides up with the
+ * finger by its whole height, so that at rest only one of the two is in view. The window is the same height whichever is shown, so that the map does not jump.
  */
 @Composable
 private fun BottomDeck(
@@ -346,8 +351,7 @@ private fun BottomDeck(
 ) {
     val density = androidx.compose.ui.platform.LocalDensity.current
     var faceHeight by remember { mutableStateOf(204.dp) }       // the height the dials take; the township card is made as tall
-    val consoleHeight = 150.dp
-    val consolePx = with(density) { consoleHeight.toPx() }
+    val slidePx = with(density) { faceHeight.toPx() }        // the whole height: at the end of the slide only the console is in view
     val slide = remember { androidx.compose.animation.core.Animatable(if (controlsOpen) 1f else 0f) }     // 0: the dials, 1: the console
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     val settle = androidx.compose.animation.core.spring<Float>(dampingRatio = 0.85f, stiffness = androidx.compose.animation.core.Spring.StiffnessMediumLow)
@@ -355,7 +359,7 @@ private fun BottomDeck(
     Box(
         Modifier.fillMaxWidth().height(faceHeight + 12.dp).clip(RoundedCornerShape(20.dp)).draggable(
             orientation = androidx.compose.foundation.gestures.Orientation.Vertical,
-            state = androidx.compose.foundation.gestures.rememberDraggableState { delta -> scope.launch { slide.snapTo((slide.value - delta / consolePx).coerceIn(0f, 1f)) } },
+            state = androidx.compose.foundation.gestures.rememberDraggableState { delta -> scope.launch { slide.snapTo((slide.value - delta / slidePx).coerceIn(0f, 1f)) } },
             onDragStopped = { velocity ->
                 val open = if (kotlin.math.abs(velocity) > 500f) velocity < 0f else slide.value > 0.5f
                 onControlsOpen(open)
@@ -368,11 +372,11 @@ private fun BottomDeck(
         Box(Modifier.fillMaxSize().padding(6.dp).clip(RoundedCornerShape(15.dp))) {
             Column(
                 Modifier.fillMaxWidth().wrapContentHeight(align = Alignment.Top, unbounded = true)
-                    .offset { androidx.compose.ui.unit.IntOffset(0, -(slide.value * consolePx).roundToInt()) },
+                    .offset { androidx.compose.ui.unit.IntOffset(0, -(slide.value * slidePx).roundToInt()) },
             ) {
                 if (regionMode) regionInfo(Modifier.fillMaxWidth().height(faceHeight))
                 else Box(Modifier.fillMaxWidth().onSizeChanged { faceHeight = with(density) { it.height.toDp() }.coerceAtLeast(190.dp) }) { instruments() }
-                Box(Modifier.fillMaxWidth().height(consoleHeight)) { console() }
+                Box(Modifier.fillMaxWidth().height(faceHeight)) { console() }
             }
         }
         GripTab(controlsOpen, { onControlsOpen(!controlsOpen) }, Modifier.align(Alignment.BottomCenter))
@@ -418,11 +422,9 @@ private fun StepRing(steps: Long, goal: Int, progress: Float, size: androidx.com
  * (a dialog with the exact readings).
  */
 @Composable
-private fun InstrumentPanel(route: RouteDef, walkedKm: Double, goal: Int, steps: Long, todayKm: Double, kcal: Double, modifier: Modifier) {
-    val areas = rememberTownAreas()
-    val border = remember(areas, route, (walkedKm * 10).toInt()) { areas.nextBorder(route, walkedKm) }
+private fun InstrumentPanel(route: RouteDef, walkedKm: Double, goal: Int, steps: Long, border: TownAreas.RegionBorder?, modifier: Modifier) {
     val overall = (walkedKm / route.totalKm).coerceIn(0.0, 1.0)
-    InstrumentCluster(steps, goal, overall.toFloat(), border?.fraction?.toFloat(), walkedKm, border?.kmDone, todayKm, kcal, modifier)
+    InstrumentCluster(steps, goal, overall.toFloat(), border?.fraction?.toFloat(), modifier)
 }
 
 @Composable

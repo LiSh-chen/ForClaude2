@@ -8,10 +8,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import kotlin.math.roundToInt
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,42 +42,70 @@ import kotlin.math.sin
 private val LAMP_NAMES = Color(0xFFF2A93B)
 private val LAMP_ROUTE = Color(0xFFE04B3F)
 private val LAMP_REGIONS = Color(0xFF3B9BFF)
-private val CELL = 60.dp
+private val CELL = 50.dp
 
 /** The north / north-east / ... name of a heading in degrees clockwise from north. */
 internal fun compassName(deg: Float): String = listOf("北", "東北", "東", "東南", "南", "西南", "西", "西北")[(((deg % 360f + 360f) % 360f + 22.5f) / 45f).toInt() % 8]
 
+/**
+ * The console, as tall as the dials: on the left the three counters (steps today, kilometres in this township, kilometres in all), in the middle the compass,
+ * on the right the buttons.
+ */
 @Composable
-internal fun ConsoleDeck(layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: Float, lastSync: Long?, onSync: () -> Unit, modifier: Modifier = Modifier) {
-    Column(modifier.fillMaxWidth().padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        // a double rule, where the dials end and the console begins
-        Canvas(Modifier.fillMaxWidth().height(8.dp)) {
-            val pen = Pen(this, size)
-            pen.stroke(listOf(Offset(0f, size.height * 0.30f), Offset(size.width, size.height * 0.30f)), Vintage.ink, 71, pen.line * 0.9f, alpha = 0.7f, calm = 0.4f)
-            pen.stroke(listOf(Offset(0f, size.height * 0.75f), Offset(size.width, size.height * 0.75f)), Vintage.brassDark, 72, pen.line * 0.6f, alpha = 0.8f, calm = 0.4f)
+internal fun ConsoleDeck(
+    layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: Float, lastSync: Long?, onSync: () -> Unit,
+    steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier = Modifier,
+) {
+    Row(modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        Counters(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.12f))
+        Column(Modifier.width(78.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Compass(heading, Modifier.size(72.dp))
+            Text("${compassName(heading)} ${heading.toInt()}°", fontSize = 12.sp, fontWeight = FontWeight.Black, color = Vintage.ink)
+            Text("航向", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
         }
-        Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
-            Cell("航向 ${compassName(heading)}") { Compass(heading, Modifier.size(CELL)) }
-            KeyCell(KeyKind.NAMES, "地名", layers.names, LAMP_NAMES, 100) { onLayers(layers.copy(names = !layers.names)) }
-            KeyCell(KeyKind.ROUTE, "路線", layers.route, LAMP_ROUTE, 200) { onLayers(layers.copy(route = !layers.route)) }
-            KeyCell(KeyKind.REGIONS, "區域", layers.regions, LAMP_REGIONS, 300) { onLayers(layers.copy(regions = !layers.regions)) }
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable(role = Role.Button, onClickLabel = "同步", onClick = onSync)) {
-                Canvas(Modifier.size(CELL)) { Pen(this, size).knob(400) }
-                Text("同步", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
+        Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                KeyCell(KeyKind.NAMES, "地名", layers.names, LAMP_NAMES, 100) { onLayers(layers.copy(names = !layers.names)) }
+                KeyCell(KeyKind.ROUTE, "路線", layers.route, LAMP_ROUTE, 200) { onLayers(layers.copy(route = !layers.route)) }
             }
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                KeyCell(KeyKind.REGIONS, "區域", layers.regions, LAMP_REGIONS, 300) { onLayers(layers.copy(regions = !layers.regions)) }
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable(role = Role.Button, onClickLabel = "同步", onClick = onSync)) {
+                    Canvas(Modifier.size(CELL)) { Pen(this, size).knob(400) }
+                    Text("同步", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
+                }
+            }
+            Text(lastSync?.let { "上次同步 ${formatTime(it)}" } ?: "尚未同步", fontSize = 9.sp, color = Vintage.inkSoft)
         }
-        Text(
-            "${heading.toInt()}°　" + (lastSync?.let { "上次同步 ${formatTime(it)}" } ?: "尚未同步"),
-            fontSize = 10.sp, color = Vintage.inkSoft, modifier = Modifier.padding(top = 4.dp),
-        )
     }
 }
 
+/** The three counters, with the day's distance and energy under the steps. */
 @Composable
-private fun Cell(label: String, content: @Composable () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        content()
-        Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
+private fun Counters(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier) {
+    val tm = rememberTextMeasurer()
+    val stepsRoll = rememberRolling(steps.toFloat(), "steps")
+    val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat(), "town")
+    val total = rememberRolling((walkedKm * 10).toFloat(), "total")
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(5.dp)) {
+        CounterRow("今日步數", Color(0xFF2E7D4F), tm, stepsRoll, cells = 5, decimal = false)
+        Text("${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft)
+        CounterRow("區域 km", Color(0xFFB3202A), tm, if (townKm != null) town else null, cells = 5, decimal = true)
+        CounterRow("總里程 km", Color(0xFF6B4A24), tm, total, cells = 5, decimal = true)
+    }
+}
+
+/** A counter with its name over it, the drums the same as on the dials. */
+@Composable
+private fun CounterRow(label: String, color: Color, tm: TextMeasurer, reading: Float?, cells: Int, decimal: Boolean) {
+    Column {
+        Text(label, fontSize = 10.sp, fontWeight = FontWeight.Black, color = color)
+        Canvas(Modifier.fillMaxWidth().height(30.dp)) {
+            val pen = Pen(this, size)
+            // the pen's unit is the height of this strip, so the width is a few hundred units: its left edge is this far out
+            val left = -(size.width - size.height) / 2f / (size.height / 100f)
+            with(pen) { odometer(tm, left + 1f, 5f, reading, cells = cells, cw = 74f, ch = 90f, decimal = decimal) }
+        }
     }
 }
 
