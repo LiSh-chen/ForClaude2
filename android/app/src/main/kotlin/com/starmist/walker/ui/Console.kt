@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -87,9 +88,9 @@ private fun Counters(steps: Long, todayKm: Double, kcal: Double, townKm: Double?
     val stepsRoll = rememberRolling(steps.toFloat(), "steps")
     val town = rememberRolling(((townKm ?: 0.0) * 10).toFloat(), "town")
     val total = rememberRolling((walkedKm * 10).toFloat(), "total")
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(5.dp)) {
+    Column(modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly) {
         CounterRow("今日步數", Color(0xFF2E7D4F), tm, stepsRoll, cells = 5, decimal = false)
-        Text("${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft)
+        Text("${todayKm.twoDecimals()} 公里・${kcal.roundToInt()} 大卡", fontSize = 9.sp, lineHeight = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft)
         CounterRow("區域 km", Color(0xFFB3202A), tm, if (townKm != null) town else null, cells = 5, decimal = true)
         CounterRow("總里程 km", Color(0xFF6B4A24), tm, total, cells = 5, decimal = true)
     }
@@ -99,8 +100,8 @@ private fun Counters(steps: Long, todayKm: Double, kcal: Double, townKm: Double?
 @Composable
 private fun CounterRow(label: String, color: Color, tm: TextMeasurer, reading: Float?, cells: Int, decimal: Boolean) {
     Column {
-        Text(label, fontSize = 10.sp, fontWeight = FontWeight.Black, color = color)
-        Canvas(Modifier.fillMaxWidth().height(30.dp)) {
+        Text(label, fontSize = 10.sp, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = color)
+        Canvas(Modifier.fillMaxWidth().height(27.dp)) {
             val pen = Pen(this, size)
             // the pen's unit is the height of this strip, so the width is a few hundred units: its left edge is this far out
             val left = -(size.width - size.height) / 2f / (size.height / 100f)
