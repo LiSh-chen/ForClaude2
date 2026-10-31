@@ -15,6 +15,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api("com.starmist:core")
+            api(libs.kotlinx.coroutines.core)
+            api(libs.androidx.datastore.preferences.core)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
