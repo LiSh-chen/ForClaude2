@@ -83,48 +83,63 @@ internal fun ConsoleDeck(
 }
 
 private val QUILL = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(com.starmist.walker.R.font.lxgw_wenkai_tc_subset))
-private val NOTE_ROW = 24.dp
+private val NOTE_ROW = 22.dp
 private val SEPIA = Color(0xFF3A2A1B)
 private val TODAY_GREEN = Color(0xFF2E7D4F)
 
 private enum class NoteKind { TODAY, REGION, ISLAND, STEPS, ROAD, FLAME }
+private const val PAGE_LINES = 6
 
 /**
- * One page of parchment with everything written on it in a scribe's kai hand (LXGW WenKai TC, a subset of it): today's steps, distance and energy, then what has been
- * walked in this township and round the island. Each part has a title in the colour of its needle on the dials and a little drawing in the margin.
+ * One page of parchment with everything written on it in a scribe's kai hand (LXGW WenKai TC, a subset of it), six lines: today (steps; distance and energy), then
+ * what has been walked in this township and round the island. Each part has a title in the colour of its needle on the dials and a little drawing in the margin.
  */
 @Composable
 private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier) {
-    val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 17.sp, lineHeight = 22.sp)
-    val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 15.sp, lineHeight = 20.sp, color = SEPIA)
-    Box(modifier.fillMaxWidth().height(NOTE_ROW * 8 + 10.dp)) {
-        Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(NOTE_ROW.toPx(), 5.dp.toPx()) }
+    val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 16.sp, lineHeight = 20.sp)
+    val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 14.sp, lineHeight = 20.sp, color = SEPIA)
+    Box(modifier.fillMaxWidth().height(NOTE_ROW * PAGE_LINES + 10.dp)) {
+        Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(NOTE_ROW.toPx(), 5.dp.toPx(), PAGE_LINES) }
         Column(Modifier.padding(start = 6.dp, end = 6.dp, top = 5.dp)) {
-            PageLine(NoteKind.TODAY, "今日", title.copy(color = TODAY_GREEN))
-            PageLine(NoteKind.STEPS, "走了 ${steps.withCommas()} 步", value)
-            PageLine(NoteKind.ROAD, "${todayKm.fixed(1)} 公里", value)
-            PageLine(NoteKind.FLAME, "${kcal.roundToInt()} 大卡", value)
-            PageLine(NoteKind.REGION, "本區域", title.copy(color = INK_RED))
-            PageLine(null, "已走 ${townKm?.fixed(1) ?: "-"} 公里", value)
-            PageLine(NoteKind.ISLAND, "環島全程", title.copy(color = COLD_BLUE))
-            PageLine(null, "已走 ${walkedKm.fixed(1)} 公里", value)
+            // today: the title and the steps on one line, the distance and the energy on the next
+            Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
+                Margin(NoteKind.TODAY, TODAY_GREEN)
+                Text("今日", Modifier.padding(start = 6.dp), style = title.copy(color = TODAY_GREEN), softWrap = false)
+                Text("${steps.withCommas()} 步", Modifier.padding(start = 8.dp), style = value, softWrap = false)
+            }
+            Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
+                Margin(NoteKind.ROAD, SEPIA)
+                Text("${todayKm.fixed(1)} 公里", Modifier.padding(start = 6.dp), style = value, softWrap = false)
+                Canvas(Modifier.padding(start = 7.dp).size(12.dp)) { Pen(this, size).noteIcon(NoteKind.FLAME, SEPIA, 505) }
+                Text("${kcal.roundToInt()} 大卡", Modifier.padding(start = 2.dp), style = value, softWrap = false)
+            }
+            PageLine(NoteKind.REGION, "本區域", title.copy(color = INK_RED), INK_RED)
+            PageLine(null, "已走 ${townKm?.fixed(1) ?: "-"} 公里", value, SEPIA)
+            PageLine(NoteKind.ISLAND, "環島全程", title.copy(color = COLD_BLUE), COLD_BLUE)
+            PageLine(null, "已走 ${walkedKm.fixed(1)} 公里", value, SEPIA)
         }
+    }
+}
+
+/** The margin of the page: a drawing (or none) in a column of its own. */
+@Composable
+private fun Margin(kind: NoteKind?, color: Color) {
+    Box(Modifier.width(20.dp), contentAlignment = Alignment.Center) {
+        if (kind != null) Canvas(Modifier.size(18.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
     }
 }
 
 /** One ruled line of the page: a drawing in the margin (or none) and the writing. */
 @Composable
-private fun PageLine(kind: NoteKind?, text: String, style: androidx.compose.ui.text.TextStyle) {
+private fun PageLine(kind: NoteKind?, text: String, style: androidx.compose.ui.text.TextStyle, color: Color) {
     Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.width(22.dp), contentAlignment = Alignment.Center) {
-            if (kind != null) Canvas(Modifier.size(19.dp)) { Pen(this, size).noteIcon(kind, style.color.takeIf { it != Color.Unspecified && kind in setOf(NoteKind.TODAY, NoteKind.REGION, NoteKind.ISLAND) } ?: SEPIA, 500 + kind.ordinal) }
-        }
-        Text(text, Modifier.padding(start = 8.dp), style = style, softWrap = false)
+        Margin(kind, color)
+        Text(text, Modifier.padding(start = 6.dp), style = style, softWrap = false)
     }
 }
 
 /** The page itself: uneven parchment with stains, a dark edge, faint brown rules, a faded red margin and two holes for the cord. */
-private fun Pen.parchmentPage(row: Float, top: Float) {
+private fun Pen.parchmentPage(row: Float, top: Float, lines: Int) {
     // the page is tall and narrow, so it is drawn in pixels and not in the pen's square units
     val dp = with(d) { 1.dp.toPx() }
     val w = d.size.width; val h = d.size.height
@@ -147,11 +162,11 @@ private fun Pen.parchmentPage(row: Float, top: Float) {
     }
     stroke(page, Vintage.edge, 710, line * 1.8f, closed = true, alpha = 0.9f, calm = 2.2f)
     stroke(page, Vintage.brassDark, 711, line * 0.6f, closed = true, alpha = 0.6f, calm = 1.4f)
-    for (k in 1..8) {
+    for (k in 1..lines) {
         val y = top + row * k
         stroke(listOf(Offset(6f * dp, y), Offset(w - 6f * dp, y)), Color(0xFF8A6B3F), 720 + k, 0.7f * line, alpha = 0.35f, calm = 0.8f)
     }
-    val mx = 27f * dp
+    val mx = 25f * dp
     stroke(listOf(Offset(mx, 4f * dp), Offset(mx, h - 4f * dp)), Color(0xFFB3463C), 730, 0.9f * line, alpha = 0.45f, calm = 0.4f)
 }
 
