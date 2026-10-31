@@ -125,27 +125,34 @@ private fun PageLine(kind: NoteKind?, text: String, style: androidx.compose.ui.t
 
 /** The page itself: uneven parchment with stains, a dark edge, faint brown rules, a faded red margin and two holes for the cord. */
 private fun Pen.parchmentPage(row: Float, top: Float) {
+    // the page is tall and narrow, so it is drawn in pixels and not in the pen's square units
     val dp = with(d) { 1.dp.toPx() }
-    val wu = d.size.width / u; val l = (100f - wu) / 2f
-    val page = roundRect(l + 1f, 1f, l + wu - 1f, 99f, 4f)
+    val w = d.size.width; val h = d.size.height
+    fun rounded(l: Float, t: Float, r: Float, b: Float, rad: Float): List<Offset> {
+        val out = ArrayList<Offset>()
+        fun arc(cx: Float, cy: Float, from: Int) { for (i in 0..4) { val a = Math.toRadians((from + i * 22.5)); out += Offset(cx + (rad * cos(a)).toFloat(), cy + (rad * sin(a)).toFloat()) } }
+        arc(r - rad, t + rad, 270); arc(r - rad, b - rad, 0); arc(l + rad, b - rad, 90); arc(l + rad, t + rad, 180)
+        return out
+    }
+    val page = rounded(1.5f * dp, 1.5f * dp, w - 1.5f * dp, h - 1.5f * dp, 5f * dp)
     wash(page, Color(0xFFEBD7A4), 1f, 0f, 0f)
     // stains: soft brown blotches near the corners and edges, clipped to the page
     clipTo(page) {
-        val blots = listOf(Triple(0.08f, 0.1f, 22f), Triple(0.93f, 0.2f, 16f), Triple(0.85f, 0.92f, 26f), Triple(0.12f, 0.88f, 18f), Triple(0.55f, 0.5f, 12f))
+        val blots = listOf(Triple(0.08f, 0.1f, 26f), Triple(0.93f, 0.2f, 20f), Triple(0.85f, 0.92f, 30f), Triple(0.12f, 0.88f, 22f), Triple(0.55f, 0.5f, 14f))
         for ((k, bl) in blots.withIndex()) {
-            val c = Offset(d.size.width * bl.first, d.size.height * bl.second)
-            d.drawCircle(Color(0xFFB07F3A).copy(alpha = 0.10f), bl.third * u, c)
-            d.drawCircle(Color(0xFFB07F3A).copy(alpha = 0.07f), bl.third * u * 0.6f, Offset(c.x + 3f * k, c.y - 2f * k))
+            val c = Offset(w * bl.first, h * bl.second)
+            d.drawCircle(Color(0xFFB07F3A).copy(alpha = 0.10f), bl.third * dp, c)
+            d.drawCircle(Color(0xFFB07F3A).copy(alpha = 0.07f), bl.third * dp * 0.6f, Offset(c.x + 3f * k * dp, c.y - 2f * k * dp))
         }
     }
     stroke(page, Vintage.edge, 710, line * 1.8f, closed = true, alpha = 0.9f, calm = 2.2f)
     stroke(page, Vintage.brassDark, 711, line * 0.6f, closed = true, alpha = 0.6f, calm = 1.4f)
     for (k in 1..8) {
         val y = top + row * k
-        stroke(listOf(Offset(6f * dp, y), Offset(d.size.width * 0.97f, y)), Color(0xFF8A6B3F), 720 + k, 0.7f * line, alpha = 0.35f, calm = 0.8f)
+        stroke(listOf(Offset(6f * dp, y), Offset(w - 6f * dp, y)), Color(0xFF8A6B3F), 720 + k, 0.7f * line, alpha = 0.35f, calm = 0.8f)
     }
     val mx = 27f * dp
-    stroke(listOf(Offset(mx, 4f * dp), Offset(mx, d.size.height - 4f * dp)), Color(0xFFB3463C), 730, 0.9f * line, alpha = 0.45f, calm = 0.4f)
+    stroke(listOf(Offset(mx, 4f * dp), Offset(mx, h - 4f * dp)), Color(0xFFB3463C), 730, 0.9f * line, alpha = 0.45f, calm = 0.4f)
 }
 
 /** The little drawings in the margin, in the pen's 100 x 100 square. */
