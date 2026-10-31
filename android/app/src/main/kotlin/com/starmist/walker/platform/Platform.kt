@@ -4,7 +4,6 @@ import com.starmist.walker.data.RegionStore
 import com.starmist.walker.data.RouteStore
 import com.starmist.walker.data.SettingsStore
 import com.starmist.walker.data.StepRepository
-import com.starmist.walker.data.ExploreStore
 import com.starmist.walker.ui.TownAreas
 import com.starmist.walker.ui.TownTag
 import kotlinx.coroutines.flow.Flow
@@ -85,7 +84,6 @@ interface AppServices {
     val settings: SettingsStore
     val routes: RouteStore
     val regions: RegionStore
-    val explore: ExploreStore
     val repository: StepRepository
     val platform: PlatformInfo
 

@@ -5,7 +5,6 @@ import android.content.Context
 import androidx.room.Room
 import com.starmist.walker.content.ContentStore
 import com.starmist.walker.data.AppDatabase
-import com.starmist.walker.data.exploreDataStore
 import com.starmist.walker.data.regionDataStore
 import com.starmist.walker.data.routeDataStore
 import com.starmist.walker.data.settingsDataStore
@@ -15,7 +14,6 @@ import com.starmist.walker.platform.PlatformInfo
 import com.starmist.walker.ui.TownAreas
 import com.starmist.walker.ui.TownTag
 import com.starmist.walker.ui.loadTownBlurbs
-import com.starmist.walker.data.ExploreStore
 import com.starmist.walker.data.RegionStore
 import com.starmist.walker.data.RouteStore
 import com.starmist.walker.data.SettingsStore
@@ -31,7 +29,6 @@ class AppContainer(context: Context) : AppServices {
     override val settings = SettingsStore(appContext.settingsDataStore)
     override val routes = RouteStore(appContext.routeDataStore)
     override val regions = RegionStore(appContext.regionDataStore)
-    override val explore = ExploreStore(appContext.exploreDataStore)
     override val platform: PlatformInfo = AndroidPlatformInfo(appContext)
     val reader = StepCounterReader(appContext)
     override val repository = StepRepository(platform, database, settings, reader)
