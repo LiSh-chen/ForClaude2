@@ -99,7 +99,7 @@ private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, w
     val title = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 16.sp, lineHeight = 20.sp)
     val value = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 14.sp, lineHeight = 20.sp, color = SEPIA)
     val head = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 11.sp, lineHeight = 14.sp, color = Vintage.inkSoft)
-    val small = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 13.sp, lineHeight = 18.sp, fontWeight = FontWeight.Bold)
+    val small = androidx.compose.ui.text.TextStyle(fontFamily = QUILL, fontSize = 12.sp, lineHeight = 18.sp, fontWeight = FontWeight.Bold)
     Box(modifier.fillMaxWidth().height(PAGE_HEIGHT)) {
         Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(NOTE_ROW.toPx(), 5.dp.toPx(), PAGE_LINES) }
         Column(Modifier.padding(start = 6.dp, end = 6.dp, top = 5.dp)) {
@@ -110,18 +110,18 @@ private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, w
             PageLine(NoteKind.FLAME, "${kcal.roundToInt()} 大卡", value, SEPIA)
             // township and island side by side, the reading under its title
             Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
-                Spacer(Modifier.width(26.dp))
+                Spacer(Modifier.width(24.dp))
                 for ((kind, name, color) in listOf(Triple(NoteKind.REGION, "本區域", INK_RED), Triple(NoteKind.ISLAND, "環島全程", COLD_BLUE))) {
-                    Row(if (kind == NoteKind.REGION) Modifier.width(56.dp) else Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
-                        Canvas(Modifier.size(13.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
-                        Text(name, Modifier.padding(start = 3.dp), style = small.copy(color = color), softWrap = false)
+                    Row(if (kind == NoteKind.REGION) Modifier.width(58.dp) else Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                        Canvas(Modifier.size(12.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
+                        Text(name, Modifier.padding(start = 2.dp), style = small.copy(color = color), softWrap = false)
                     }
                 }
             }
             Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.width(26.dp), contentAlignment = Alignment.CenterStart) { Text("達成", style = head, softWrap = false) }
-                Text("${townKm?.fixed(1) ?: "-"} km", Modifier.width(56.dp), style = value, softWrap = false)
-                Text("${walkedKm.fixed(1)} km", Modifier.weight(1f), style = value, softWrap = false)
+                Box(Modifier.width(24.dp), contentAlignment = Alignment.CenterStart) { Text("達成", style = head, softWrap = false) }
+                Text("${townKm?.fixed(1) ?: "-"} km", Modifier.width(58.dp).padding(start = 14.dp), style = value, softWrap = false)
+                Text("${walkedKm.fixed(1)} km", Modifier.weight(1f).padding(start = 14.dp), style = value, softWrap = false)
             }
         }
     }
@@ -298,13 +298,13 @@ private fun Pen.knob(seed: Int, lamp: Color) {
     val nor = Offset(-dir.y, dir.x)
     val head = listOf(last + dir * (6.5f * u), last - dir * (2f * u) + nor * (5f * u), last - dir * (2f * u) - nor * (5f * u))
     wash(head, ink, 1f, 0f, 0f)
-    // the lamp, at the top right of the knob
-    val lc = p(84f, 14f)
-    wash(circle(lc, 13f * u, 18), lamp, 0.28f, 0f, 0f)
-    val jewel = circle(lc, 7f * u, 14)
+    // the lamp, at the top centre of the face, level with the lamps over the keys
+    val lc = p(50f, 27f)
+    wash(circle(lc, 11f * u, 18), lamp, 0.30f, 0f, 0f)
+    val jewel = circle(lc, 6f * u, 14)
     wash(jewel, lamp, 1f, 0f, 0f)
     stroke(jewel, ink, seed + 60, line, closed = true, calm = 0.2f)
-    wash(circle(Offset(lc.x - 2f * u, lc.y - 2f * u), 2f * u, 8), Color.White, 0.8f, 0f, 0f)
+    wash(circle(Offset(lc.x - 1.8f * u, lc.y - 1.8f * u), 1.8f * u, 8), Color.White, 0.8f, 0f, 0f)
 }
 
 /** The tab on the bottom edge of the panel, drawn like everything else on it: pull the panel up by it, or tap it; down for the dials again. */
