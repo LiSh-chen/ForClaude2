@@ -56,8 +56,9 @@ class ScreenshotTest {
                 onRequestPermission = {}, onOpenAppSettings = {}, onSync = {}, onStartRoute = {},
                 currentTown = cur, exploredTowns = visited.keys,
                 infoOf = { id -> if (id !in areas.towns.indices) null else areas.towns[id].let { t -> RegionInfo(t, blurbs["${t.county}|${t.name}"], 1, visited[id] ?: 0.0, visited.keys.indexOf(id) + 1, id in visited) } },
-                initialLayers = layers ?: if (regionMode) MapLayers(names = true, route = false, regions = true) else MapLayers(),
+                initialLayers = layers ?: if (regionMode) MapLayers(spots = true, route = false, regions = true) else MapLayers(),
                 initialControlsOpen = controlsOpen,
+                initialPicked = if (regionMode) cur else -1,
             )
         }
     }
@@ -91,12 +92,12 @@ class ScreenshotTest {
     @Test fun home_zoom_max_taipei() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 2.0, 12f)) }
     @Test fun home_region_mode() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), regionMode = true) }
     @Test fun home_region_mode_zoom_min() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0, 1f), regionMode = true) }
-    @Test fun home_layers_all() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), layers = MapLayers(names = true, route = true, regions = true)) }
-    @Test fun home_layers_no_names() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(names = false, route = true, regions = false)) }
-    @Test fun home_layers_none() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(names = false, route = false, regions = false)) }
+    @Test fun home_layers_all() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), layers = MapLayers(spots = true, route = true, regions = true)) }
+    @Test fun home_layers_no_names() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(spots = false, route = true, regions = false)) }
+    @Test fun home_layers_none() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(spots = false, route = false, regions = false)) }
     @Test fun home_console() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), controlsOpen = true) }
-    @Test fun home_console_layers_off() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(names = false, route = true, regions = false), controlsOpen = true) }
-    @Test fun home_console_over_region() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), layers = MapLayers(names = true, route = true, regions = true), controlsOpen = true) }
+    @Test fun home_console_layers_off() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), layers = MapLayers(spots = false, route = true, regions = false), controlsOpen = true) }
+    @Test fun home_console_over_region() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), layers = MapLayers(spots = true, route = true, regions = true), controlsOpen = true) }
     @Test fun home_choose_route() = paparazzi.snapshot { Home(true, HomeMap.ChooseRoute, 0) }
 
     @Test fun collection_real() = paparazzi.snapshot {

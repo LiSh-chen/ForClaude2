@@ -168,7 +168,7 @@ private fun inside(p: Offset, poly: List<Offset>): Boolean {
  * What the map shows: the names of places (of the cards and stations while the route is shown, of the townships while the regions are), the route (its line,
  * cards, stations and small sights), and the outlines of the townships walked through.
  */
-data class MapLayers(val names: Boolean = true, val route: Boolean = true, val regions: Boolean = false)
+data class MapLayers(val spots: Boolean = true, val route: Boolean = true, val regions: Boolean = false)
 
 /**
  * Draws the island walk in a [w] by [h] box: coastline, a few decorations, the route (walked part
@@ -342,7 +342,7 @@ internal fun DrawScope.drawRealMap(
             }
         }
         if (selectedTown in explored) { drawPath(areas.path(selectedTown, w, h), Color.White.copy(alpha = 0.9f), style = Stroke(5.dp.toPx(), join = StrokeJoin.Round)); drawPath(areas.path(selectedTown, w, h), grey, style = Stroke(2.2.dp.toPx(), join = StrokeJoin.Round)) }
-        if (w > 3000f && layers.names) {
+        if (w > 3000f) {
             val placedNames = ArrayList<Rect>()
             val pxPerKm = w / 222.5f
             val ids = explored.toList()   // a township not walked through keeps its name hidden
@@ -469,7 +469,7 @@ internal fun DrawScope.drawRealMap(
 
     // Cards and stamps: collected ones are solid blue, the next card is a big red target; nothing further on is shown.
     val nextCardId = route.next(walkedKm)?.first?.id
-    if (layers.route) route.stops.forEachIndexed { i, stop ->
+    if (layers.spots) route.stops.forEachIndexed { i, stop ->
         val o = stop.at.px()
         val reached = route.cumulativeKm[i] <= walkedKm + 1e-9
         if (stop.landmark != null) {
@@ -490,7 +490,7 @@ internal fun DrawScope.drawRealMap(
     }
 
     // Small sights: a plain ring until the stamp is earned, then the teal seal.
-    if (layers.route) {
+    if (layers.spots) {
         val earned = earnedPois
         shownPois.forEach { poi ->
             val o = poiSpot(poi)
@@ -510,7 +510,7 @@ internal fun DrawScope.drawRealMap(
     val next = route.next(walkedKm)?.first
     val lastCard = route.collected(walkedKm).lastOrNull()
     // How far to the next card (its name stays hidden until it is reached).
-    if (w >= 1700f && layers.route) next?.let { n ->
+    if (w >= 1700f && layers.spots) next?.let { n ->
         val toNext = route.next(walkedKm)!!.second
         queue += Label(100) {
             val o = route.stops.first { it.landmark?.id == n.id }.at.px()
@@ -518,13 +518,13 @@ internal fun DrawScope.drawRealMap(
         }
     }
     // Names of the cards already collected.
-    if (w >= 1700f && layers.names && layers.route) route.collected(walkedKm).forEach { card ->
+    if (w >= 1700f && layers.spots) route.collected(walkedKm).forEach { card ->
         val o = route.stops.first { it.landmark?.id == card.id }.at.px()
         if (card.id != lastCard?.id && (w <= 3000f || o.x < view.left - 60f || o.x > view.right + 60f || o.y < view.top - 40f || o.y > view.bottom + 40f)) return@forEach
         queue += Label(if (card.id == lastCard?.id) 90 else 60) { placeName(card.name, o, 12.sp, Vintage.ink, 11.dp.toPx(), force = card.id == lastCard?.id) }
     }
     // Stations whose stamp has been collected: the square on the map gets its name.
-    if (w >= 1700f && layers.names && layers.route) route.stops.forEachIndexed { i, stop ->
+    if (w >= 1700f && layers.spots) route.stops.forEachIndexed { i, stop ->
         val supply = stop.supply ?: return@forEachIndexed
         if (route.cumulativeKm[i] > walkedKm + 1e-9) return@forEachIndexed
         val o = stop.at.px()
@@ -532,7 +532,7 @@ internal fun DrawScope.drawRealMap(
         queue += Label(45) { placeName(supply.name, o, 11.sp, Vintage.ink, 9.dp.toPx(), plain = true, weight = FontWeight.Medium) }
     }
     // A small sight's name appears only when its dot has been tapped.
-    if (layers.route) shownPois.firstOrNull { it.id == selectedPoi }?.let { poi ->
+    if (layers.spots) shownPois.firstOrNull { it.id == selectedPoi }?.let { poi ->
         queue += Label(120) { placeName(poi.name, poiSpot(poi), 12.sp, Color(0xFF16584A), 9.dp.toPx(), force = true, edge = Color(0xFF2F7F6E), weight = FontWeight.Bold) }
     }
     queue.sortedByDescending { it.priority }.forEach { it.place() }

@@ -178,10 +178,10 @@ fun RouteMapView(
         initialZoom = initialZoom ?: if (base != null) 5.5f else 12f,
         maxZoom = 12f,
         background = SEA_COLOR,
-        onTap = if ((layers.regions && onTapTown != null) || (layers.route && (onTapCard != null || onTapPoi != null || onTapStation != null))) { u, perPx ->
-            // A township is picked by a tap that hits no card, station or small sight (or anywhere, when the route is not shown).
+        onTap = if ((layers.regions && onTapTown != null) || (layers.spots && (onTapCard != null || onTapPoi != null || onTapStation != null))) { u, perPx ->
+            // A township is picked by a tap that hits no card, station or small sight (or anywhere, when the sights are not shown).
             fun pickTown() { onTapTown?.invoke(areas.find(MAP_LAT_MAX - u.y.toDouble() * (MAP_LAT_MAX - MAP_LAT_MIN), MAP_LON_MIN + u.x.toDouble() * (MAP_LON_MAX - MAP_LON_MIN))) }
-            if (!layers.route) { selectedPoi = null; pickTown() } else {
+            if (!layers.spots) { selectedPoi = null; pickTown() } else {
             // The nearest collected card's marker within about 30 dp of the tap.
             val owned = route.collected(walkedKm).map { it.id }.toSet()
             var best: String? = null

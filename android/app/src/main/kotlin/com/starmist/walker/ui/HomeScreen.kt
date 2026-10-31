@@ -196,16 +196,16 @@ internal fun HomeContent(
     infoOf: (Int) -> RegionInfo? = { null },
     initialLayers: MapLayers = MapLayers(),
     initialControlsOpen: Boolean = false,
+    initialPicked: Int = -1,
 ) {
-    var showNames by rememberSaveable { mutableStateOf(initialLayers.names) }
+    var showSpots by rememberSaveable { mutableStateOf(initialLayers.spots) }
     var showRoute by rememberSaveable { mutableStateOf(initialLayers.route) }
     var showRegions by rememberSaveable { mutableStateOf(initialLayers.regions) }
-    val layers = MapLayers(showNames, showRoute, showRegions)
-    val regionMode = showRegions                       // while the regions are shown, the panel under the map tells about the township picked
+    var picked by rememberSaveable { mutableStateOf(initialPicked) }
+    val layers = MapLayers(showSpots, showRoute, showRegions)
+    val regionMode = showRegions && picked >= 0       // the panel under the map tells about the township picked, and only then
     var controlsOpen by rememberSaveable { mutableStateOf(initialControlsOpen) }   // the console, pulled up over the dials
-    var picked by rememberSaveable { mutableStateOf(-1) }
     val walking = rememberWalking(steps)
-    val shown = if (picked >= 0) picked else currentTown
     // The dashboard runs nearly edge to edge so that the dials can be big; the rest keeps a margin.
     Column(Modifier.padding(padding).padding(horizontal = 4.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (!granted) Box(Modifier.padding(horizontal = 6.dp)) { PermissionCard(onRequestPermission, onOpenAppSettings) }
@@ -221,7 +221,7 @@ internal fun HomeContent(
                 is HomeMap.Real -> {
                     RouteMapView(
                         map.route, map.walkedKm, Modifier.fillMaxWidth(), initialZoom = map.zoom,
-                        layers = layers, selectedTown = if (regionMode) shown else -1,
+                        layers = layers, selectedTown = if (regionMode) picked else -1,
                         onTapTown = { id -> picked = if (id >= 0) id else -1 },
                         onTapCard = onOpenCard,
                         onTapPoi = onOpenPoi,
@@ -239,12 +239,13 @@ internal fun HomeContent(
             BottomDeck(
                 controlsOpen = controlsOpen, onControlsOpen = { controlsOpen = it }, regionMode = regionMode,
                 instruments = { InstrumentPanel(map.route, map.walkedKm, goal, steps, border, Modifier.fillMaxWidth()) },
-                regionInfo = { RegionPlate(infoOf(shown), shown == currentTown, it) },
+                regionInfo = { RegionPlate(infoOf(picked), picked == currentTown, it) },
                 console = {
                     ConsoleDeck(
                         layers, { new ->
-                            showNames = new.names; showRoute = new.route
-                            if (new.regions != showRegions) { showRegions = new.regions; controlsOpen = false; if (!new.regions) picked = -1 }   // the regions replace the dials, so the console steps aside
+                            // the keys only say what is shown on the map; the panel stays as it is
+                            showSpots = new.spots; showRoute = new.route; showRegions = new.regions
+                            if (!new.regions) picked = -1
                         },
                         heading, lastSnapshot, onSync, steps, km, kcal, border?.kmDone, map.walkedKm,
                     )
@@ -341,7 +342,7 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
 }
 
 /**
- * The panel under the map: one strip with the dials on it (or, while the regions are shown, what the township picked holds) and, below them on the same
+ * The panel under the map: one strip with the dials on it (or, while a township is picked on the map, what it holds) and, below them on the same
  * strip, the control console, as tall as they are. The panel shows the top part; pulled up from the bottom edge (or by the tab there) it slides up with the
  * finger by its whole height, so that at rest only one of the two is in view. The window is the same height whichever is shown, so that the map does not jump.
  */

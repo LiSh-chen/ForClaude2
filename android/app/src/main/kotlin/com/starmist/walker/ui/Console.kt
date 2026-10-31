@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,10 +43,9 @@ import kotlin.math.sin
  * the middle and its name under it, the compass and the sync knob at the two ends.
  */
 
-private val LAMP_NAMES = Color(0xFFF2A93B)
+private val LAMP_SPOTS = Color(0xFFF2A93B)
 private val LAMP_ROUTE = Color(0xFFE04B3F)
 private val LAMP_REGIONS = Color(0xFF3B9BFF)
-private val CELL = 54.dp
 
 /** The north / north-east / ... name of a heading in degrees clockwise from north. */
 internal fun compassName(deg: Float): String = listOf("北", "東北", "東", "東南", "南", "西南", "西", "西北")[(((deg % 360f + 360f) % 360f + 22.5f) / 45f).toInt() % 8]
@@ -60,20 +60,21 @@ internal fun ConsoleDeck(
     steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier = Modifier,
 ) {
     Row(modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Notes(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.5f))
-        Column(Modifier.width(72.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Compass(heading, Modifier.size(70.dp))
+        Notes(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.7f))
+        Column(Modifier.width(62.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Compass(heading, Modifier.size(60.dp))
         }
+        // the keys only say what is shown on the map; the four cells are all the same size
         Column(Modifier.weight(1f).height(PAGE_HEIGHT), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                KeyCell(KeyKind.NAMES, "地名", layers.names, LAMP_NAMES, 100) { onLayers(layers.copy(names = !layers.names)) }
-                KeyCell(KeyKind.ROUTE, "路線", layers.route, LAMP_ROUTE, 200) { onLayers(layers.copy(route = !layers.route)) }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                KeyCell(KeyKind.SPOTS, "景點", layers.spots, LAMP_SPOTS, 100, Modifier.weight(1f)) { onLayers(layers.copy(spots = !layers.spots)) }
+                KeyCell(KeyKind.ROUTE, "路線", layers.route, LAMP_ROUTE, 200, Modifier.weight(1f)) { onLayers(layers.copy(route = !layers.route)) }
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                KeyCell(KeyKind.REGIONS, "區域", layers.regions, LAMP_REGIONS, 300) { onLayers(layers.copy(regions = !layers.regions)) }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                KeyCell(KeyKind.REGIONS, "區域", layers.regions, LAMP_REGIONS, 300, Modifier.weight(1f)) { onLayers(layers.copy(regions = !layers.regions)) }
                 // the sync knob: its lamp is green once the steps have been synced and red until then
-                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable(role = Role.Button, onClickLabel = "同步", onClick = onSync)) {
-                    Canvas(Modifier.size(CELL)) { Pen(this, size).knob(400, if (lastSync != null) Color(0xFF4FBF6A) else Color(0xFFE04B3F)) }
+                Column(Modifier.weight(1f).clickable(role = Role.Button, onClickLabel = "同步", onClick = onSync), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Canvas(Modifier.fillMaxWidth().aspectRatio(1f)) { Pen(this, size).knob(400, if (lastSync != null) Color(0xFF4FBF6A) else Color(0xFFE04B3F)) }
                     Text("同步", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
                 }
             }
@@ -225,14 +226,14 @@ private fun Pen.noteIcon(kind: NoteKind, color: Color, seed: Int) {
     }
 }
 
-private enum class KeyKind { NAMES, ROUTE, REGIONS }
+private enum class KeyKind { SPOTS, ROUTE, REGIONS }
 
 /** One key: its lamp lights (and the key stands out) while what it switches is shown on the map. */
 @Composable
-private fun KeyCell(kind: KeyKind, label: String, on: Boolean, lamp: Color, seed: Int, onClick: () -> Unit) {
+private fun KeyCell(kind: KeyKind, label: String, on: Boolean, lamp: Color, seed: Int, modifier: Modifier = Modifier, onClick: () -> Unit) {
     val glow by animateFloatAsState(if (on) 1f else 0f, spring(stiffness = Spring.StiffnessMediumLow), label = "lamp")
-    Column(Modifier.clickable(role = Role.Switch, onClick = onClick), horizontalAlignment = Alignment.CenterHorizontally) {
-        Canvas(Modifier.size(CELL)) { Pen(this, size).key(kind, glow, lamp, seed) }
+    Column(modifier.clickable(role = Role.Switch, onClick = onClick), horizontalAlignment = Alignment.CenterHorizontally) {
+        Canvas(Modifier.fillMaxWidth().aspectRatio(1f)) { Pen(this, size).key(kind, glow, lamp, seed) }
         Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink.copy(alpha = 0.6f + 0.4f * glow))
     }
 }
@@ -258,12 +259,16 @@ private fun Pen.key(kind: KeyKind, glow: Float, lamp: Color, seed: Int) {
 private fun Pen.picture(kind: KeyKind, seed: Int, a: Float) {
     val w = line * 1.7f
     when (kind) {
-        KeyKind.NAMES -> {
-            val c = p(50f, 55f)
-            stroke(circle(c, 12f * u, 20), ink, seed, w, closed = true, alpha = a, calm = 0.3f)
-            stroke(listOf(p(40.5f, 63f), p(50f, 82f)), ink, seed + 1, w, alpha = a, calm = 0.2f)
-            stroke(listOf(p(59.5f, 63f), p(50f, 82f)), ink, seed + 2, w, alpha = a, calm = 0.2f)
-            wash(circle(c, 3.6f * u, 10), ink, a, 0f, 0f)
+        KeyKind.SPOTS -> {
+            // a big sight: a pin; a small one: a ring with a dot
+            val c = p(41f, 50f)
+            stroke(circle(c, 14f * u, 20), ink, seed, w, closed = true, alpha = a, calm = 0.3f)
+            stroke(listOf(p(31.5f, 59f), p(41f, 80f)), ink, seed + 1, w, alpha = a, calm = 0.2f)
+            stroke(listOf(p(50.5f, 59f), p(41f, 80f)), ink, seed + 2, w, alpha = a, calm = 0.2f)
+            wash(circle(c, 4f * u, 10), ink, a, 0f, 0f)
+            val s = p(71f, 70f)
+            stroke(circle(s, 8f * u, 14), ink, seed + 3, w * 0.9f, closed = true, alpha = a, calm = 0.2f)
+            wash(circle(s, 2.6f * u, 8), ink, a, 0f, 0f)
         }
         KeyKind.ROUTE -> {
             val road = listOf(p(25f, 80f), p(39f, 80f), p(50f, 74f), p(54f, 64f), p(48f, 56f), p(52f, 48f), p(62f, 42f), p(76f, 40f))
