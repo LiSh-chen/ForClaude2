@@ -85,7 +85,7 @@ internal fun ConsoleDeck(
     }
 }
 
-private val CONSOLE_DESIGN_WIDTH = 360.dp
+private val CONSOLE_DESIGN_WIDTH = 380.dp
 
 private val QUILL = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(com.starmist.walker.R.font.lxgw_wenkai_tc_subset))
 private val NOTE_ROW = 26.dp
@@ -118,7 +118,7 @@ private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, w
             Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
                 Spacer(Modifier.width(24.dp))
                 for ((kind, name, color) in listOf(Triple(NoteKind.REGION, "本區域", INK_RED), Triple(NoteKind.ISLAND, "環島全程", COLD_BLUE))) {
-                    Row(if (kind == NoteKind.REGION) Modifier.width(58.dp) else Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                    Row(if (kind == NoteKind.REGION) Modifier.width(66.dp) else Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
                         Canvas(Modifier.size(12.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
                         Text(name, Modifier.padding(start = 2.dp), style = small.copy(color = color), softWrap = false)
                     }
@@ -126,7 +126,7 @@ private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, w
             }
             Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.width(24.dp), contentAlignment = Alignment.CenterStart) { Text("達成", style = head, softWrap = false) }
-                Text("${townKm?.fixed(1) ?: "-"} km", Modifier.width(58.dp).padding(start = 14.dp), style = value, softWrap = false)
+                Text("${townKm?.fixed(1) ?: "-"} km", Modifier.width(66.dp).padding(start = 14.dp), style = value, softWrap = false)
                 Text("${walkedKm.fixed(1)} km", Modifier.weight(1f).padding(start = 14.dp), style = value, softWrap = false)
             }
         }

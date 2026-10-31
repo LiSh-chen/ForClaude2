@@ -79,6 +79,11 @@ fun SettingsScreen(
             Text("性別只用來估算步長。", style = MaterialTheme.typography.labelSmall)
         }
 
+        Section("字體大小") {
+            FontSizePicker(settings.fontSize) { vm.setFontSize(it) }
+            Text("只改本 App 的字，不跟手機系統的字體設定走。", style = MaterialTheme.typography.labelSmall)
+        }
+
         Section("穩定計步模式") {
             Row(
                 Modifier.fillMaxWidth(),
@@ -136,6 +141,16 @@ fun SettingsScreen(
     if (showAdjust) AdjustDialog(vm) { showAdjust = false }
     if (showStride) StrideDialog(settings, onApply = { m -> vm.updateSettings { it.copy(strideOverrideM = m) } }) {
         showStride = false
+    }
+}
+
+/** Small, medium or large writing for the whole app. */
+@Composable
+internal fun FontSizePicker(step: Int, onPick: (Int) -> Unit) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        listOf("小", "中", "大").forEachIndexed { i, label ->
+            FilterChip(selected = step == i, onClick = { onPick(i) }, label = { Text(label) })
+        }
     }
 }
 

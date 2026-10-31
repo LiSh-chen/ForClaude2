@@ -15,8 +15,7 @@ import androidx.compose.ui.unit.Dp
 /**
  * Lays [content] out on a fixed design size ([designWidth] x [designHeight]) and scales the whole of it, writing included, to the room there is, so that it looks
  * the same on a narrow phone and on a wide one: nothing in it can be cut off by the width of the screen. It is done by giving the content a density scaled to fit,
- * so the picture stays sharp (it is drawn at its real size, not stretched). The text follows that scale and not the system's font-size setting, which would
- * otherwise make the writing wider than the room it was laid out for.
+ * so the picture stays sharp (it is drawn at its real size, not stretched). The text follows that scale and the size the user picked in the settings (see [AppFontScale]), not the system's font-size setting.
  */
 @Composable
 internal fun FitDesign(designWidth: Dp, designHeight: Dp, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
@@ -27,16 +26,19 @@ internal fun FitDesign(designWidth: Dp, designHeight: Dp, modifier: Modifier = M
             constraints.maxHeight / (designHeight.value * outer.density),
         ).coerceIn(0.6f, 1.6f)
         Box(Modifier.size(designWidth * fit, designHeight * fit)) {
-            CompositionLocalProvider(LocalDensity provides Density(outer.density * fit, fontScale = 1f)) {
+            CompositionLocalProvider(LocalDensity provides Density(outer.density * fit, fontScale = outer.fontScale)) {
                 Box(Modifier.fillMaxSize()) { content() }
             }
         }
     }
 }
 
-/** [content] with the writing at its own size whatever the system's font-size setting: for the dials, where the writing sits on a drawn scale. */
+/** How much bigger or smaller the app's writing is than the design for each of the three sizes the user can pick (small, medium, large). */
+internal fun fontScaleOf(step: Int): Float = when (step) { 0 -> 0.9f; 2 -> 1.15f; else -> 1f }
+
+/** The app's writing at the size the user picked, whatever the system's font-size setting is: the layouts are made and checked for these three sizes only. */
 @Composable
-internal fun OwnFontSize(content: @Composable () -> Unit) {
+internal fun AppFontScale(step: Int, content: @Composable () -> Unit) {
     val d = LocalDensity.current
-    CompositionLocalProvider(LocalDensity provides Density(d.density, fontScale = 1f)) { content() }
+    CompositionLocalProvider(LocalDensity provides Density(d.density, fontScale = fontScaleOf(step))) { content() }
 }

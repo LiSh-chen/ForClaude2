@@ -334,6 +334,8 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
 
     fun setStableMode(on: Boolean) = updateSettings { it.copy(stableMode = on) }
 
+    fun setFontSize(step: Int) = updateSettings { it.copy(fontSize = step.coerceIn(0, 2)) }
+
     private companion object {
 
         const val LIVE_MIN_INTERVAL_MS = 300L

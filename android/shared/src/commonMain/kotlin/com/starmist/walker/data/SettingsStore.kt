@@ -28,6 +28,8 @@ data class UserSettings(
      * work with the screen off.
      */
     val stableMode: Boolean = true,
+    /** The size of the writing in the app, whatever the system's font-size setting says: 0 small, 1 medium, 2 large. */
+    val fontSize: Int = 1,
 ) {
     val profile: Profile
         get() = Profile(heightCm, weightKg, sex, strideOverrideM)
@@ -64,6 +66,7 @@ class SettingsStore(private val store: DataStore<Preferences>) {
             val stride = updated.strideOverrideM
             if (stride == null) prefs.remove(STRIDE) else prefs[STRIDE] = stride
             prefs[STABLE] = updated.stableMode
+            prefs[FONT_SIZE] = updated.fontSize.coerceIn(0, 2)
         }
     }
 
@@ -77,6 +80,7 @@ class SettingsStore(private val store: DataStore<Preferences>) {
             multiplier = StepScaler.clampMultiplier(this[MULTIPLIER] ?: d.multiplier),
             strideOverrideM = this[STRIDE],
             stableMode = this[STABLE] ?: d.stableMode,
+            fontSize = (this[FONT_SIZE] ?: d.fontSize).coerceIn(0, 2),
         )
     }
 
@@ -88,6 +92,7 @@ class SettingsStore(private val store: DataStore<Preferences>) {
         val MULTIPLIER = doublePreferencesKey("multiplier")
         val STRIDE = doublePreferencesKey("stride_override_m")
         val STABLE = booleanPreferencesKey("stable_mode")
+        val FONT_SIZE = intPreferencesKey("font_size")
         val GOAL_DEFAULT_MOVED = booleanPreferencesKey("goal_default_moved_to_9000")
         const val OLD_DEFAULT_GOAL = 8_000
     }

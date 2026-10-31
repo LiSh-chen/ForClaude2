@@ -59,7 +59,12 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT),
         )
-        setContent { StarMistTheme { AppRoot() } }
+        setContent {
+            val vm: AppViewModel = viewModel(factory = appViewModelFactory(LocalContext.current.container))
+            val settings by vm.settings.collectAsStateWithLifecycle()
+            // the writing is the size picked in the settings, not the system's
+            AppFontScale(settings?.fontSize ?: 1) { StarMistTheme { AppRoot(vm) } }
+        }
     }
 }
 
