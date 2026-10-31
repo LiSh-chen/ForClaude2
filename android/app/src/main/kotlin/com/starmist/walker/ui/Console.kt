@@ -56,10 +56,10 @@ internal fun compassName(deg: Float): String = listOf("北", "東北", "東", "�
 @Composable
 internal fun ConsoleDeck(
     layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: Float, lastSync: Long?, onSync: () -> Unit,
-    steps: Long, todayKm: Double, kcal: Double, townKm: Double?, townLeft: Double?, walkedKm: Double, totalKm: Double, modifier: Modifier = Modifier,
+    steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier = Modifier,
 ) {
     Row(modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Notes(steps, todayKm, kcal, townKm, townLeft, walkedKm, totalKm, Modifier.weight(1.12f))
+        Notes(steps, todayKm, kcal, townKm, walkedKm, Modifier.weight(1.12f))
         Column(Modifier.width(78.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Compass(heading, Modifier.size(72.dp))
             Text("${compassName(heading)} ${heading.toInt()}°", fontSize = 12.sp, fontWeight = FontWeight.Black, color = Vintage.ink)
@@ -85,15 +85,12 @@ internal fun ConsoleDeck(
 private val NOTE_SIZE = 10.sp
 
 /**
- * The three counters, all labelled in one size and one weight: a small drawing and the title in the colour of its needle on the dials, the drums under
- * it (what is walked), and under them one line of what is left ("未走").
+ * Today in a frame of its own with drums (steps, distance, energy); under it a notebook page with what has been walked in this township and round the island.
  */
 @Composable
-private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, townLeft: Double?, walkedKm: Double, totalKm: Double, modifier: Modifier) {
+private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, walkedKm: Double, modifier: Modifier) {
     val tm = rememberTextMeasurer()
     val stepsRoll = rememberRolling(steps.toFloat(), "steps")
-    val town = rememberRolling(((townKm ?: 0.0) * 10).roundToInt().toFloat(), "town")
-    val total = rememberRolling((walkedKm * 10).roundToInt().toFloat(), "total")
     Column(modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly) {
         Counter(NoteKind.TODAY, "今日已走 步", Color(0xFF2E7D4F), tm, stepsRoll, decimal = false, framed = true) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -103,8 +100,7 @@ private fun Notes(steps: Long, todayKm: Double, kcal: Double, townKm: Double?, t
                 Text("大卡", Modifier.padding(start = 2.dp), softWrap = false, fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
             }
         }
-        Counter(NoteKind.REGION, "本區域已走 公里", INK_RED, tm, if (townKm != null) town else null, decimal = true) { Left("未走", townLeft, tm, "townLeft") }
-        Counter(NoteKind.ISLAND, "環島全程已走 公里", COLD_BLUE, tm, total, decimal = true) { Left("未走", (totalKm - walkedKm).coerceAtLeast(0.0), tm, "totalLeft") }
+        NotebookPage(townKm, walkedKm)
     }
 }
 
@@ -148,14 +144,57 @@ private fun MiniDrums(tm: TextMeasurer, reading: Float?, cells: Int, decimal: Bo
     }
 }
 
-/** What is left, as drums with the word "未走" before and the unit after. */
+private val NOTE_INK = Color(0xFF23407A)   // fountain-pen blue-black
+private val NOTE_ROW = 22.dp
+
+/**
+ * A page of a notebook: ruled lines, a red margin and binder holes, and in blue-black ink what has been walked in this township and round the island,
+ * each written under a title in the colour of its needle on the dials.
+ */
 @Composable
-private fun Left(word: String, km: Double?, tm: TextMeasurer, key: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text("$word ", softWrap = false, fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
-        val roll = rememberRolling(((km ?: 0.0) * 10).roundToInt().toFloat(), key)
-        MiniDrums(tm, if (km != null) roll else null, cells = 5, decimal = true, Modifier.size(70.dp, 18.dp))
-        Text(" 公里", softWrap = false, fontSize = NOTE_SIZE, lineHeight = 12.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
+private fun NotebookPage(townKm: Double?, walkedKm: Double) {
+    val style = androidx.compose.ui.text.TextStyle(
+        fontFamily = androidx.compose.ui.text.font.FontFamily.Cursive, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, fontSize = 13.sp, lineHeight = 16.sp,
+    )
+    Box(Modifier.fillMaxWidth().height(NOTE_ROW * 4 + 8.dp)) {
+        Canvas(Modifier.matchParentSize()) {
+            val pen = Pen(this, size)
+            with(pen) {
+                val wu = size.width / u; val l = (100f - wu) / 2f
+                val page = roundRect(l + 1f, 1f, l + wu - 1f, 99f, 5f)
+                wash(page, Color(0xFFFFFBEA), 1f, 0f, 0f)
+                inked(page, 710, closed = true, width = line, calm = 0.4f)
+                val top = 4.dp.toPx()
+                for (k in 1..4) {
+                    val y = top + NOTE_ROW.toPx() * k
+                    stroke(listOf(Offset(10.dp.toPx(), y), Offset(size.width - 6.dp.toPx(), y)), Color(0xFF6C8EBF), 720 + k, 0.8.dp.toPx(), alpha = 0.55f, calm = 0.5f)
+                }
+                val mx = 22.dp.toPx()
+                stroke(listOf(Offset(mx, 3.dp.toPx()), Offset(mx, size.height - 3.dp.toPx())), Color(0xFFD24A4A), 730, 0.9.dp.toPx(), alpha = 0.6f, calm = 0.3f)
+                for (k in 0..2) wash(circle(Offset(9.dp.toPx(), size.height * (0.2f + 0.3f * k)), 2.4.dp.toPx(), 10), Vintage.parchmentDark, 1f, 0f, 0f)
+            }
+        }
+        Column(Modifier.padding(start = 26.dp, end = 6.dp, top = 4.dp)) {
+            NoteLine(NoteKind.REGION, "本區域", INK_RED, style)
+            NoteValue("已走 ${townKm?.fixed(1) ?: "-"} 公里", style)
+            NoteLine(NoteKind.ISLAND, "環島全程", COLD_BLUE, style)
+            NoteValue("已走 ${walkedKm.fixed(1)} 公里", style)
+        }
+    }
+}
+
+@Composable
+private fun NoteLine(kind: NoteKind, title: String, color: Color, style: androidx.compose.ui.text.TextStyle) {
+    Row(Modifier.height(NOTE_ROW), verticalAlignment = Alignment.CenterVertically) {
+        Canvas(Modifier.size(14.dp)) { Pen(this, size).noteIcon(kind, color, 500 + kind.ordinal) }
+        Text(title, Modifier.padding(start = 3.dp), style = style, fontWeight = FontWeight.Black, color = color)
+    }
+}
+
+@Composable
+private fun NoteValue(text: String, style: androidx.compose.ui.text.TextStyle) {
+    Box(Modifier.height(NOTE_ROW).padding(start = 17.dp), contentAlignment = Alignment.CenterStart) {
+        Text(text, style = style, fontWeight = FontWeight.Bold, color = NOTE_INK, softWrap = false)
     }
 }
 
