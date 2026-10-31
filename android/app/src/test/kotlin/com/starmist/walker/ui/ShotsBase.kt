@@ -32,10 +32,10 @@ abstract class ShotsBase(device: DeviceConfig, private val fontStep: Int = 1) {
         )
     }
 
-    protected val forward = Routes.byId("taiwan_loop")!!
+    internal val forward = Routes.byId("taiwan_loop")!!
 
     @Composable
-    protected fun Page(tab: Int = 0, content: @Composable (PaddingValues) -> Unit) {
+    internal fun Page(tab: Int = 0, content: @Composable (PaddingValues) -> Unit) {
         AppFontScale(fontStep) {
             StarMistTheme {
                 Scaffold(containerColor = Vintage.parchment, bottomBar = { AppBottomBar(tab) {} }) { content(it) }
@@ -44,7 +44,7 @@ abstract class ShotsBase(device: DeviceConfig, private val fontStep: Int = 1) {
     }
 
     @Composable
-    protected fun Home(real: Boolean, map: HomeMap, steps: Long = 4321, regionMode: Boolean = false, layers: MapLayers? = null, controlsOpen: Boolean = false) {
+    internal fun Home(real: Boolean, map: HomeMap, steps: Long = 4321, regionMode: Boolean = false, layers: MapLayers? = null, controlsOpen: Boolean = false) {
         val context = androidx.compose.ui.platform.LocalContext.current
         val areas = remember { TownAreas.load(context) }
         val blurbs = remember { loadTownBlurbs(context) }
