@@ -82,7 +82,7 @@ internal fun ConsoleDeck(
     }
 }
 
-private val QUILL = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(com.starmist.walker.R.font.ma_shan_zheng_subset))
+private val QUILL = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(com.starmist.walker.R.font.lxgw_wenkai_tc_subset))
 private val NOTE_ROW = 24.dp
 private val SEPIA = Color(0xFF3A2A1B)
 private val TODAY_GREEN = Color(0xFF2E7D4F)
@@ -90,7 +90,7 @@ private val TODAY_GREEN = Color(0xFF2E7D4F)
 private enum class NoteKind { TODAY, REGION, ISLAND, STEPS, ROAD, FLAME }
 
 /**
- * One page of parchment with everything written on it in a brush-pen hand (Ma Shan Zheng, a subset of it): today's steps, distance and energy, then what has been
+ * One page of parchment with everything written on it in a scribe's kai hand (LXGW WenKai TC, a subset of it): today's steps, distance and energy, then what has been
  * walked in this township and round the island. Each part has a title in the colour of its needle on the dials and a little drawing in the margin.
  */
 @Composable
