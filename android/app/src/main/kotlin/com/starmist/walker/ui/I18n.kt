@@ -35,7 +35,7 @@ object I18n {
         val key = number.replace(text, "#")
         val en = EN[key] ?: return text
         var i = 0
-        return en.replace("#") { if (i < numbers.size) numbers[i++] else "#" }
+        return Regex("#").replace(en) { if (i < numbers.size) numbers[i++] else "#" }
     }
 
     /** [template] with {0}, {1}… in it, in the language asked for, with [args] put in. */
