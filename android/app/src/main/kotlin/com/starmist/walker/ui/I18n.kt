@@ -38,6 +38,11 @@ object I18n {
         return Regex("#").replace(en) { if (i < numbers.size) numbers[i++] else "#" }
     }
 
+    /** The short form of a text for places with little room (the writing on a dial), where it has one; otherwise the same as [tr]. */
+    fun trShort(text: String, lang: Lang = this.lang): String = if (lang == Lang.EN) SHORT[text] ?: tr(text, lang) else text
+
+    private val SHORT = mapOf("今日步數" to "Steps")
+
     /** [template] with {0}, {1}… in it, in the language asked for, with [args] put in. */
     fun trf(template: String, vararg args: Any?, lang: Lang = this.lang): String {
         var s = if (lang == Lang.ZH) template else (EN[template] ?: template)

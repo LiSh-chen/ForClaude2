@@ -36,7 +36,7 @@ internal val EN: Map<String, String> = mapOf(
     "路線" to "Route",
     "區域" to "Areas",
     "同步" to "Sync",
-    "今日距離" to "Distance today",
+    "今日距離" to "Distance",
     "熱量" to "Energy",
     "尚未授予「動作與健身」權限，無法讀取計步器。" to "The \"Physical activity\" permission has not been granted, so the step counter cannot be read.",
     "這台裝置沒有硬體計步器，目前版本無法計步。" to "This device has no hardware step counter, so this version cannot count steps.",

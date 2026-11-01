@@ -232,7 +232,7 @@ internal fun StepsDial(steps: Long, goal: Int, modifier: Modifier = Modifier) {
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 1f / 1.2f, 1f, INK_RED, 230, alpha = 0.6f)
             label(tm, if (thousands) "x1000" else "步", TextStyle(fontSize = 9.sp, color = Vintage.inkSoft), p(cx, 31f))
             // today's count in full, on green drums like the needle, with the distance and energy under it
-            label(tm, "今日步數", TextStyle(fontSize = 10.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 72f))
+            label(tm, I18n.trShort("今日步數"), TextStyle(fontSize = 10.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 72f))
             needle(cx, cy, r * 0.72f, start + sweep * v, STEP_GREEN, 240)
         }
     }

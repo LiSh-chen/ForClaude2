@@ -35,11 +35,11 @@ abstract class ShotsBase(device: DeviceConfig, private val fontStep: Int = 1, pr
     internal val forward = Routes.byId("taiwan_loop")!!
 
     @Composable
-    internal fun Page(tab: Int = 0, content: @Composable (PaddingValues) -> Unit) {
+    internal fun Page(tab: Int = 0, bar: Boolean = true, content: @Composable (PaddingValues) -> Unit) {
         AppLanguage(lang) {
             AppFontScale(fontStep) {
                 StarMistTheme {
-                    Scaffold(containerColor = Vintage.parchment, bottomBar = { AppBottomBar(tab) {} }) { content(it) }
+                    Scaffold(containerColor = Vintage.parchment, bottomBar = { if (bar) AppBottomBar(tab) {} }) { content(it) }
                 }
             }
         }

@@ -45,23 +45,23 @@ class ScreenshotFontPickerTest : ShotsBase(DeviceConfig.PIXEL_5) {
 /** The first-run pages and the privacy policy, at the three writing sizes. */
 abstract class FirstRunShots(step: Int) : ShotsBase(DeviceConfig.PIXEL_5, step) {
     private fun page(n: Int) = paparazzi.snapshot {
-        Page { _ -> OnboardingScreen(com.starmist.walker.data.UserSettings(), {}, permissionGranted = n == 3, onRequestPermission = {}, onFinish = {}, startPage = n) }
+        Page(bar = false) { _ -> OnboardingScreen(com.starmist.walker.data.UserSettings(), {}, permissionGranted = n == 3, onRequestPermission = {}, onFinish = {}, startPage = n) }
     }
     @Test fun first_run_0() = page(0)
     @Test fun first_run_1() = page(1)
     @Test fun first_run_2() = page(2)
     @Test fun first_run_3() = page(3)
     @Test fun first_run_4() = page(4)
-    @Test fun privacy() = paparazzi.snapshot { Page { _ -> PrivacySheet {} } }
+    @Test fun privacy() = paparazzi.snapshot { Page(bar = false) { _ -> PrivacySheet {} } }
     @Test fun letter_finished() = paparazzi.snapshot {
-        Page { pad ->
+        Page(bar = false) { pad ->
             androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier.padding(pad).padding(24.dp)) {
                 LetterSheet("環島完成！", listOf("你沿著「環島（順時針）」，用自己的腳步走完了全程 1,045 km。", "一路上收集了 45 張景點卡、12 個補給站紀念章和 30 個小景點章，走過 124 個鄉鎮區。", "再出發一圈，每個鄉鎮都有新的特色等著你。"), "太棒了") {}
             }
         }
     }
     @Test fun letter_county() = paparazzi.snapshot {
-        Page { pad ->
+        Page(bar = false) { pad ->
             androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier.padding(pad).padding(24.dp)) {
                 LetterSheet("完成 新竹縣", listOf("你走過了 新竹縣 的 6 個鄉鎮區：湖口鄉、新豐鄉、竹北市、新埔鎮、關西鎮、芎林鄉。", "前面是 苗栗縣，繼續走吧。"), "繼續走") {}
             }
@@ -78,12 +78,12 @@ abstract class EnglishShots(step: Int) : ShotsBase(DeviceConfig.PIXEL_5, step, L
     @Test fun dials() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0)) }
     @Test fun notebook() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), notebook = true) }
     @Test fun township() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), pick = "湖口鄉") }
-    @Test fun first_run_0() = paparazzi.snapshot { Page { _ -> OnboardingScreen(com.starmist.walker.data.UserSettings(), {}, permissionGranted = false, onRequestPermission = {}, onFinish = {}, startPage = 0) } }
-    @Test fun first_run_2() = paparazzi.snapshot { Page { _ -> OnboardingScreen(com.starmist.walker.data.UserSettings(), {}, permissionGranted = false, onRequestPermission = {}, onFinish = {}, startPage = 2) } }
-    @Test fun first_run_3() = paparazzi.snapshot { Page { _ -> OnboardingScreen(com.starmist.walker.data.UserSettings(), {}, permissionGranted = false, onRequestPermission = {}, onFinish = {}, startPage = 3) } }
-    @Test fun privacy() = paparazzi.snapshot { Page { _ -> PrivacySheet {} } }
+    @Test fun first_run_0() = paparazzi.snapshot { Page(bar = false) { _ -> OnboardingScreen(com.starmist.walker.data.UserSettings(), {}, permissionGranted = false, onRequestPermission = {}, onFinish = {}, startPage = 0) } }
+    @Test fun first_run_2() = paparazzi.snapshot { Page(bar = false) { _ -> OnboardingScreen(com.starmist.walker.data.UserSettings(), {}, permissionGranted = false, onRequestPermission = {}, onFinish = {}, startPage = 2) } }
+    @Test fun first_run_3() = paparazzi.snapshot { Page(bar = false) { _ -> OnboardingScreen(com.starmist.walker.data.UserSettings(), {}, permissionGranted = false, onRequestPermission = {}, onFinish = {}, startPage = 3) } }
+    @Test fun privacy() = paparazzi.snapshot { Page(bar = false) { _ -> PrivacySheet {} } }
     @Test fun letter_finished() = paparazzi.snapshot {
-        Page { pad ->
+        Page(bar = false) { pad ->
             androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier.padding(pad).padding(24.dp)) {
                 LetterSheet(
                     tr("環島完成！"),
