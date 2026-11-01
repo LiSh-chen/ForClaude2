@@ -106,6 +106,7 @@ class StepService : Service() {
         // The channel keeps only the newest value, so the delay below simply spaces out the work.
         for (counter in values) {
             repository.ingestLive(counter)
+            container.goal.check(repository.getDay(LocalDate.now())?.total ?: 0L)
             if (screenIsOn) updateNotification()
             delay(if (screenIsOn) SCREEN_ON_INTERVAL_MS else SCREEN_OFF_INTERVAL_MS)
         }

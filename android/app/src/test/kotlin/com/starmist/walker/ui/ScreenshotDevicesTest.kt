@@ -39,3 +39,20 @@ class ScreenshotFontPickerTest : ShotsBase(DeviceConfig.PIXEL_5) {
         }
     }
 }
+
+/** The first-run pages and the privacy policy, at the three writing sizes. */
+abstract class FirstRunShots(step: Int) : ShotsBase(DeviceConfig.PIXEL_5, step) {
+    private fun page(n: Int) = paparazzi.snapshot {
+        Page { _ -> OnboardingScreen(com.starmist.walker.data.UserSettings(), {}, permissionGranted = n == 3, onRequestPermission = {}, onFinish = {}, startPage = n) }
+    }
+    @Test fun first_run_0() = page(0)
+    @Test fun first_run_1() = page(1)
+    @Test fun first_run_2() = page(2)
+    @Test fun first_run_3() = page(3)
+    @Test fun first_run_4() = page(4)
+    @Test fun privacy() = paparazzi.snapshot { Page { _ -> PrivacySheet {} } }
+}
+
+class ScreenshotFirstRunSmallTest : FirstRunShots(0)
+class ScreenshotFirstRunMediumTest : FirstRunShots(1)
+class ScreenshotFirstRunLargeTest : FirstRunShots(2)

@@ -141,6 +141,18 @@ private fun AppRoot(vm: AppViewModel = viewModel(factory = appViewModelFactory(L
         return
     }
 
+    val onboarding by vm.showOnboarding.collectAsStateWithLifecycle()
+    when (onboarding) {
+        null -> { Box(Modifier.fillMaxSize().parchmentTexture(rememberArt("paper_page") ?: rememberArt("parchment_tile"))); return }
+        true -> {
+            Box(Modifier.fillMaxSize().parchmentTexture(rememberArt("paper_page") ?: rememberArt("parchment_tile"))) {
+                OnboardingScreen(current, { vm.updateSettings(it) }, permissionGranted, requestPermission, onFinish = { vm.finishOnboarding() })
+            }
+            return
+        }
+        false -> {}
+    }
+
     val routeEvents by vm.pendingRouteEvents.collectAsStateWithLifecycle()
     routeEvents.firstOrNull()?.let { RouteEventDialog(it, onDismiss = { vm.dismissRouteEvent() }) }
 

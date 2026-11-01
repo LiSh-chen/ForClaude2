@@ -49,6 +49,7 @@ fun SettingsScreen(
     var showCalibration by remember { mutableStateOf(false) }
     var showAdjust by remember { mutableStateOf(false) }
     var showStride by remember { mutableStateOf(false) }
+    var showPrivacy by remember { mutableStateOf(false) }
 
     Column(
         Modifier
@@ -91,6 +92,14 @@ fun SettingsScreen(
                 }
             }
             Text("地圖下方顯示儀表（兩個錶盤），或一整頁手寫筆記加進度長條圖，二選一。", style = MaterialTheme.typography.labelSmall)
+        }
+
+        Section("提醒") {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("走到每日目標時通知", Modifier.weight(1f), fontWeight = FontWeight.SemiBold)
+                Switch(checked = settings.goalNotify, onCheckedChange = { on -> vm.updateSettings { it.copy(goalNotify = on) } })
+            }
+            Text("每天只通知一次。系統通知被關閉時，只會在 App 裡提示。", style = MaterialTheme.typography.labelSmall)
         }
 
         Section("穩定計步模式") {
@@ -140,6 +149,10 @@ fun SettingsScreen(
             }
         }
 
+        Section("關於") {
+            OutlinedButton(onClick = { showPrivacy = true }, modifier = Modifier.fillMaxWidth()) { Text("隱私權政策") }
+        }
+
         Section("診斷") {
             Text("檢查感測器、權限與背景讀取狀態；懷疑漏記時先看這裡。", style = MaterialTheme.typography.bodyMedium)
             OutlinedButton(onClick = onOpenDiagnostics, modifier = Modifier.fillMaxWidth()) { Text("開啟診斷") }
@@ -148,6 +161,7 @@ fun SettingsScreen(
 
     if (showCalibration) CalibrationDialog(vm, settings.multiplier) { showCalibration = false }
     if (showAdjust) AdjustDialog(vm) { showAdjust = false }
+    if (showPrivacy) PrivacyDialog { showPrivacy = false }
     if (showStride) StrideDialog(settings, onApply = { m -> vm.updateSettings { it.copy(strideOverrideM = m) } }) {
         showStride = false
     }

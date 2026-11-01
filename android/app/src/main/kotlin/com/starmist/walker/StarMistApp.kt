@@ -27,6 +27,7 @@ class AppContainer(context: Context) : AppServices {
     private val database = Room.databaseBuilder(appContext, AppDatabase::class.java, "starmist.db").build()
     val content = ContentStore(appContext)
     override val settings = SettingsStore(appContext.settingsDataStore)
+    override val goal = com.starmist.walker.platform.GoalWatcher(appContext, settings)
     override val routes = RouteStore(appContext.routeDataStore)
     override val regions = RegionStore(appContext.regionDataStore)
     override val platform: PlatformInfo = AndroidPlatformInfo(appContext)

@@ -14,6 +14,7 @@ interface AppServices {
     val regions: RegionStore
     val repository: StepRepository
     val platform: PlatformInfo
+    val goal: GoalWatcher
 
     /** The township outlines and their features, read once from the app's files. */
     val townAreas: TownAreas

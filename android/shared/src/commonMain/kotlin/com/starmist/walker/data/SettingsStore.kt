@@ -32,6 +32,12 @@ data class UserSettings(
     val fontSize: Int = 1,
     /** What the panel under the map shows: 0 the dials, 1 the notebook page. */
     val panelStyle: Int = 0,
+    /** The first-run pages have been gone through. */
+    val onboarded: Boolean = false,
+    /** Tell the user when the day's goal is reached. */
+    val goalNotify: Boolean = true,
+    /** The day (yyyy-MM-dd) the goal was last announced on, so that it is announced once a day. */
+    val goalShownOn: String = "",
 ) {
     val profile: Profile
         get() = Profile(heightCm, weightKg, sex, strideOverrideM)
@@ -70,6 +76,9 @@ class SettingsStore(private val store: DataStore<Preferences>) {
             prefs[STABLE] = updated.stableMode
             prefs[FONT_SIZE] = updated.fontSize.coerceIn(0, 2)
             prefs[PANEL_STYLE] = updated.panelStyle.coerceIn(0, 1)
+            prefs[ONBOARDED] = updated.onboarded
+            prefs[GOAL_NOTIFY] = updated.goalNotify
+            prefs[GOAL_SHOWN_ON] = updated.goalShownOn
         }
     }
 
@@ -85,6 +94,9 @@ class SettingsStore(private val store: DataStore<Preferences>) {
             stableMode = this[STABLE] ?: d.stableMode,
             fontSize = (this[FONT_SIZE] ?: d.fontSize).coerceIn(0, 2),
             panelStyle = (this[PANEL_STYLE] ?: d.panelStyle).coerceIn(0, 1),
+            onboarded = this[ONBOARDED] ?: d.onboarded,
+            goalNotify = this[GOAL_NOTIFY] ?: d.goalNotify,
+            goalShownOn = this[GOAL_SHOWN_ON] ?: d.goalShownOn,
         )
     }
 
@@ -98,6 +110,9 @@ class SettingsStore(private val store: DataStore<Preferences>) {
         val STABLE = booleanPreferencesKey("stable_mode")
         val FONT_SIZE = intPreferencesKey("font_size")
         val PANEL_STYLE = intPreferencesKey("panel_style")
+        val ONBOARDED = booleanPreferencesKey("onboarded")
+        val GOAL_NOTIFY = booleanPreferencesKey("goal_notify")
+        val GOAL_SHOWN_ON = stringPreferencesKey("goal_shown_on")
         val GOAL_DEFAULT_MOVED = booleanPreferencesKey("goal_default_moved_to_9000")
         const val OLD_DEFAULT_GOAL = 8_000
     }

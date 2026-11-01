@@ -137,6 +137,15 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
     init {
         viewModelScope.launch { container.settings.migrateDefaults() }
         viewModelScope.launch {
+            val done = container.settings.current().onboarded
+            val inUse = repository.allTimeTotal() > 0 || container.routes.flow.first() != null
+            if (!done && inUse) container.settings.update { it.copy(onboarded = true) }
+            _showOnboarding.value = !done && !inUse
+        }
+        // the day's goal: announced once a day, here for the screen being looked at (the step service does the same while the app is closed)
+        viewModelScope.launch { todaySteps.collect { container.goal.check(it) } }
+        viewModelScope.launch { container.goal.reached.collect { goal -> _message.value = "今日目標達成！已走滿 ${goal.toLong().withCommas()} 步" } }
+        viewModelScope.launch {
             var previous: Long? = null
             todayRow.collect { row ->
                 val total = row?.total ?: 0L
@@ -335,6 +344,15 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
     fun setStableMode(on: Boolean) = updateSettings { it.copy(stableMode = on) }
 
     fun setPanelStyle(style: Int) = updateSettings { it.copy(panelStyle = style.coerceIn(0, 1)) }
+
+    /** Null until it is known whether the first-run pages are due; people who already use the app never see them. */
+    private val _showOnboarding = MutableStateFlow<Boolean?>(null)
+    val showOnboarding: StateFlow<Boolean?> = _showOnboarding
+
+    fun finishOnboarding() {
+        _showOnboarding.value = false
+        updateSettings { it.copy(onboarded = true) }
+    }
 
     fun setFontSize(step: Int) = updateSettings { it.copy(fontSize = step.coerceIn(0, 2)) }
 
