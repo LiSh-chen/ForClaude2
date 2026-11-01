@@ -53,11 +53,9 @@ private val QUILL = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui
 private val NOTE_ROW = 22.dp
 private val SEPIA = Color(0xFF3A2A1B)
 private val TODAY_GREEN = Color(0xFF2E7D4F)
-private val NEXT_ORANGE = Color(0xFFD9822B)
-private val CARD_TEAL = Color(0xFF2F7F6E)
 private val KEY_MAX = 60.dp
 
-private enum class NoteKind { TODAY, REGION, ISLAND, STEPS, ROAD, FLAME, NEXT, CARD }
+private enum class NoteKind { TODAY, REGION, ISLAND, STEPS, ROAD, FLAME }
 
 /** The row of buttons along the foot of the panel: the compass, the three things the map can show, and the sync knob with its lamp. */
 @Composable
@@ -86,16 +84,15 @@ internal fun KeyRow(layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: F
 internal class NotebookData(
     val steps: Long, val goal: Int, val todayKm: Double, val kcal: Double,
     val townKm: Double?, val townTotalKm: Double?, val walkedKm: Double, val totalKm: Double,
-    val toNextKm: Double?, val nextFraction: Float, val cardsDone: Int, val cardsTotal: Int,
 )
 
 private val NOTEBOOK_WIDTH = 372.dp
-private const val NOTEBOOK_LINES = 11
+private const val NOTEBOOK_LINES = 7
 private val NOTEBOOK_HEIGHT = NOTE_ROW * NOTEBOOK_LINES + 12.dp
 
 /**
  * The notebook page, the other way (besides the dials) to see how the walk is going: a whole page of parchment, written in a scribe's kai hand (LXGW WenKai TC,
- * a subset of it), with each thing that can be measured on a line of its own and, under it, a crayon-hatched bar of how far it has got. It is laid out on one
+ * a subset of it), with the steps, the distance and energy, the township and the way round the island, each measured on a line of its own and (but the distance and energy) with a crayon-hatched bar under it of how far it has got. It is laid out on one
  * design size and scaled to the room (see [FitDesign]), so it is the same on every phone.
  */
 @Composable
@@ -124,8 +121,6 @@ internal fun NotebookPanel(data: NotebookData, modifier: Modifier = Modifier) {
                     if (data.townKm != null && data.townTotalKm != null && data.townTotalKm > 0) (data.townKm / data.townTotalKm).toFloat() else null, title, value,
                 )
                 Entry(NoteKind.ISLAND, "環島全程", COLD_BLUE, "達成 ${km(data.walkedKm)} / ${data.totalKm.toLong().withCommas()} km", (data.walkedKm / data.totalKm.coerceAtLeast(1.0)).toFloat(), title, value)
-                Entry(NoteKind.NEXT, "下一張卡片", NEXT_ORANGE, if (data.toNextKm == null) "已到終點" else "還有 ${km(data.toNextKm)} km", if (data.toNextKm == null) 1f else data.nextFraction, title, value)
-                Entry(NoteKind.CARD, "卡片收集", CARD_TEAL, "${data.cardsDone} / ${data.cardsTotal} 張", data.cardsDone.toFloat() / data.cardsTotal.coerceAtLeast(1), title, value)
             }
         }
     }
@@ -236,22 +231,6 @@ private fun Pen.noteIcon(kind: NoteKind, color: Color, seed: Int) {
             val isle = listOf(p(52f, 8f), p(64f, 22f), p(68f, 45f), p(60f, 70f), p(50f, 94f), p(40f, 76f), p(33f, 52f), p(38f, 26f))
             wash(isle, color, 0.3f, 0f, 0f)
             stroke(isle, ink, seed, w, closed = true, calm = 0.4f)
-        }
-        NoteKind.NEXT -> {
-            // a flag on a pole
-            stroke(listOf(p(30f, 10f), p(30f, 92f)), ink, seed, w, calm = 0.3f)
-            val flag = listOf(p(30f, 14f), p(80f, 30f), p(30f, 48f))
-            wash(flag, color, 0.7f, 0f, 0f)
-            stroke(flag, ink, seed + 1, w, closed = true, calm = 0.3f)
-        }
-        NoteKind.CARD -> {
-            // a card: a frame with a picture and two lines of writing
-            val card = listOf(p(22f, 12f), p(78f, 12f), p(78f, 90f), p(22f, 90f))
-            wash(card, color, 0.25f, 0f, 0f)
-            stroke(card, ink, seed, w, closed = true, calm = 0.3f)
-            wash(circle(p(50f, 38f), 11f * u, 10), color, 0.9f, 0f, 0f)
-            stroke(listOf(p(33f, 64f), p(67f, 64f)), ink, seed + 1, w * 0.8f, calm = 0.2f)
-            stroke(listOf(p(33f, 76f), p(57f, 76f)), ink, seed + 2, w * 0.8f, calm = 0.2f)
         }
         NoteKind.STEPS -> {
             // a bare foot: the ball and the heel, and five toes

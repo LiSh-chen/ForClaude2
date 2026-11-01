@@ -236,14 +236,10 @@ internal fun HomeContent(
             val heading = remember(map.route, (map.walkedKm * 5).toInt()) { routeHeading(map.route, map.walkedKm) }
             val areas = rememberTownAreas()
             val border = remember(areas, map.route, (map.walkedKm * 10).toInt()) { areas.nextBorder(map.route, map.walkedKm) }
-            val toNext = map.route.next(map.walkedKm)?.second
-            val prevKm = map.route.cards.lastOrNull { it.second <= map.walkedKm + 1e-9 }?.second ?: 0.0
             val data = NotebookData(
                 steps = steps, goal = goal, todayKm = km, kcal = kcal,
                 townKm = border?.kmDone, townTotalKm = border?.let { it.kmDone + it.kmLeft },
                 walkedKm = map.walkedKm, totalKm = map.route.totalKm,
-                toNextKm = toNext, nextFraction = if (toNext == null) 1f else ((map.walkedKm - prevKm) / (map.walkedKm + toNext - prevKm)).toFloat().coerceIn(0f, 1f),
-                cardsDone = map.route.collected(map.walkedKm).size, cardsTotal = map.route.cards.size,
             )
             BottomDeck(
                 regionMode = regionMode,
