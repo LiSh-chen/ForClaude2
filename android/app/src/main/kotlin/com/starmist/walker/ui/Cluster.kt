@@ -135,7 +135,7 @@ private fun Pen.needle(cx: Float, cy: Float, len: Float, deg: Float, color: Colo
 private fun Pen.label(tm: TextMeasurer, s: String, style: TextStyle, c: Offset, grows: Boolean = true, left: Boolean = false) {
     // the writing grows with the dial (up to 40%), so that a bigger dial is easier to read and not only emptier
     val grow = if (grows) (u / with(d) { 1.6.dp.toPx() }).coerceIn(1f, 1.4f) else 1f
-    val l = tm.measure(I18n.tr(s), if (grow == 1f) style else style.copy(fontSize = style.fontSize * grow))
+    val l = tm.measure(I18n.trShort(s), if (grow == 1f) style else style.copy(fontSize = style.fontSize * grow))
     d.drawText(l, topLeft = Offset(if (left) c.x else c.x - l.size.width / 2f, c.y - l.size.height / 2f))
 }
 
@@ -232,7 +232,7 @@ internal fun StepsDial(steps: Long, goal: Int, modifier: Modifier = Modifier) {
             band(cx, cy, r * 0.76f, r * 0.82f, start, sweep, 1f / 1.2f, 1f, INK_RED, 230, alpha = 0.6f)
             label(tm, if (thousands) "x1000" else "步", TextStyle(fontSize = 9.sp, color = Vintage.inkSoft), p(cx, 31f))
             // today's count in full, on green drums like the needle, with the distance and energy under it
-            label(tm, I18n.trShort("今日步數"), TextStyle(fontSize = 10.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 72f))
+            label(tm, "今日步數", TextStyle(fontSize = 10.sp, fontWeight = FontWeight.Black, color = STEP_GREEN), p(cx, 72f))
             needle(cx, cy, r * 0.72f, start + sweep * v, STEP_GREEN, 240)
         }
     }
