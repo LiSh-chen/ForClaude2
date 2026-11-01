@@ -249,6 +249,16 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
     /** Cards, stamps and crossings waiting to be shown, oldest first; the screen shows one at a time. */
     val pendingRouteEvents: StateFlow<List<RouteEvent>> = _pendingRouteEvents
 
+    /** What the finishing letter tells about the route just walked. */
+    fun finishStats(): FinishStats? {
+        val state = routeState.value ?: return null
+        val route = Routes.byId(state.routeId) ?: return null
+        return FinishStats(
+            routeName = route.name, totalKm = route.totalKm, cards = route.cards.size, stations = route.supplies.size,
+            sights = PoiStamps.of(route, townAreas).count { it.second != null }, towns = townAreas.visited(route, route.totalKm).size,
+        )
+    }
+
     fun dismissRouteEvent() = _pendingRouteEvents.update { it.drop(1) }
 
     fun startRoute(routeId: String) {
@@ -281,8 +291,27 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
             val sights = PoiStamps.of(route, townAreas).mapNotNull { (poi, km) ->
                 if (km != null && km > before + 1e-9 && km <= advance.state.walkedKm + 1e-9) RouteEvent.PoiCollected(poi, km) else null
             }
-            val shown = (advance.events + sights).filter {
-                it is RouteEvent.CardCollected || it is RouteEvent.StampCollected || it is RouteEvent.PoiCollected || it is RouteEvent.Transit || it is RouteEvent.Finished
+            // a county is done when the walker leaves it: look along what was just walked for a change of county
+            val counties = ArrayList<RouteEvent>()
+            run {
+                fun countyAt(km: Double): String? = route.positionAt(km).let { townAreas.townAt(it.lat, it.lng)?.county }
+                val end = advance.state.walkedKm
+                var k = before
+                var here = countyAt(k)
+                var steps = 0
+                while (k < end && steps++ < 4000) {
+                    k = minOf(end, k + 0.5)
+                    val there = countyAt(k)
+                    if (here != null && there != null && there != here) {
+                        val done = here
+                        val towns = townAreas.visited(route, k).keys.map { townAreas.towns[it] }.filter { it.county == done }.map { it.name }
+                        counties += RouteEvent.CountyCompleted(done, towns, there)
+                    }
+                    if (there != null) here = there
+                }
+            }
+            val shown = (advance.events + sights + counties).filter {
+                it is RouteEvent.CardCollected || it is RouteEvent.StampCollected || it is RouteEvent.PoiCollected || it is RouteEvent.Transit || it is RouteEvent.Finished || it is RouteEvent.CountyCompleted
             }
             if (shown.isNotEmpty()) _pendingRouteEvents.update { it + shown }
         }

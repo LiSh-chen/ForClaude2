@@ -393,7 +393,7 @@ fun StationStamp(name: String, opened: String, modifier: Modifier = Modifier) {
 
 /** One thing that happened on the route, shown when it is reached. */
 @Composable
-fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit) {
+fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishStats? = null) {
     when (event) {
         is RouteEvent.CardCollected -> AlertDialog(
             onDismissRequest = onDismiss,
@@ -432,11 +432,24 @@ fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit) {
             text = { Text("這一段不能步行，直接${event.by}抵達，不計步數。") },
             confirmButton = { TextButton(onClick = onDismiss) { Text("上車") } },
         )
-        RouteEvent.Finished -> AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text("環島完成！") },
-            text = { Text("你用自己的腳步繞完了整座島。景點卡和紀念章都留在「路線」頁。") },
-            confirmButton = { TextButton(onClick = onDismiss) { Text("太棒了") } },
+        RouteEvent.Finished -> LetterDialog(
+            title = "環島完成！",
+            paragraphs = finish?.let {
+                listOf(
+                    "你沿著「${it.routeName}」，用自己的腳步走完了全程 ${it.totalKm.toLong().withCommas()} km。",
+                    "一路上收集了 ${it.cards} 張景點卡、${it.stations} 個補給站紀念章和 ${it.sights} 個小景點章，走過 ${it.towns} 個鄉鎮區。",
+                    "再出發一圈，每個鄉鎮都有新的特色等著你。",
+                )
+            } ?: listOf("你用自己的腳步繞完了整座島。景點卡和紀念章都留在「路線」頁。"),
+            button = "太棒了", onDismiss = onDismiss,
+        )
+        is RouteEvent.CountyCompleted -> LetterDialog(
+            title = "完成 ${event.county}",
+            paragraphs = listOfNotNull(
+                if (event.towns.isEmpty()) "你走過了 ${event.county}。" else "你走過了 ${event.county} 的 ${event.towns.size} 個鄉鎮區：${event.towns.joinToString("、")}。",
+                event.next?.let { "前面是 $it，繼續走吧。" },
+            ),
+            button = "繼續走", onDismiss = onDismiss,
         )
     }
 }

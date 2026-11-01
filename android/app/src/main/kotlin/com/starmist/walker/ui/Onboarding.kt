@@ -158,3 +158,34 @@ internal fun OnboardingScreen(
         }
     }
 }
+
+/** What the letter at the end of the route tells. */
+internal class FinishStats(val routeName: String, val totalKm: Double, val cards: Int, val stations: Int, val sights: Int, val towns: Int)
+
+/** A letter on parchment in the middle of the screen: a title, some paragraphs on the ruled lines, and one button that closes it. */
+@Composable
+internal fun LetterDialog(title: String, paragraphs: List<String>, button: String, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) { LetterSheet(title, paragraphs, button, onDismiss) }
+}
+
+@Composable
+internal fun LetterSheet(title: String, paragraphs: List<String>, button: String, onDismiss: () -> Unit) {
+    val rowSp = with(androidx.compose.ui.platform.LocalDensity.current) { LETTER_ROW.toSp() }
+    val onRule = TextStyle(
+        fontFamily = QUILL, fontSize = 16.sp, color = SEPIA, lineHeight = rowSp,
+        lineHeightStyle = androidx.compose.ui.text.style.LineHeightStyle(androidx.compose.ui.text.style.LineHeightStyle.Alignment.Center, androidx.compose.ui.text.style.LineHeightStyle.Trim.None),
+    )
+    Box(Modifier.fillMaxWidth()) {
+        Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(LETTER_ROW.toPx(), 10.dp.toPx(), -1) }
+        Column(Modifier.fillMaxWidth().padding(start = 34.dp, end = 18.dp, top = 10.dp, bottom = 8.dp)) {
+            Box(Modifier.height(LETTER_ROW * 2), contentAlignment = Alignment.CenterStart) {
+                Text(title, fontFamily = QUILL, fontSize = 28.sp, fontWeight = FontWeight.Black, color = INK_RED)
+            }
+            paragraphs.forEach { p ->
+                Text(p, style = onRule)
+                Spacer(Modifier.height(LETTER_ROW))
+            }
+            Box(Modifier.fillMaxWidth().height(LETTER_ROW), contentAlignment = Alignment.CenterEnd) { TextButton(onClick = onDismiss) { Text(button, fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black) } }
+        }
+    }
+}

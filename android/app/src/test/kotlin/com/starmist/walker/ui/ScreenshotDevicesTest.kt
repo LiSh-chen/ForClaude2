@@ -53,6 +53,20 @@ abstract class FirstRunShots(step: Int) : ShotsBase(DeviceConfig.PIXEL_5, step) 
     @Test fun first_run_3() = page(3)
     @Test fun first_run_4() = page(4)
     @Test fun privacy() = paparazzi.snapshot { Page { _ -> PrivacySheet {} } }
+    @Test fun letter_finished() = paparazzi.snapshot {
+        Page { pad ->
+            androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier.padding(pad).padding(24.dp)) {
+                LetterSheet("環島完成！", listOf("你沿著「環島（順時針）」，用自己的腳步走完了全程 1,045 km。", "一路上收集了 45 張景點卡、12 個補給站紀念章和 30 個小景點章，走過 124 個鄉鎮區。", "再出發一圈，每個鄉鎮都有新的特色等著你。"), "太棒了") {}
+            }
+        }
+    }
+    @Test fun letter_county() = paparazzi.snapshot {
+        Page { pad ->
+            androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier.padding(pad).padding(24.dp)) {
+                LetterSheet("完成 新竹縣", listOf("你走過了 新竹縣 的 6 個鄉鎮區：湖口鄉、新豐鄉、竹北市、新埔鎮、關西鎮、芎林鄉。", "前面是 苗栗縣，繼續走吧。"), "繼續走") {}
+            }
+        }
+    }
 }
 
 class ScreenshotFirstRunSmallTest : FirstRunShots(0)

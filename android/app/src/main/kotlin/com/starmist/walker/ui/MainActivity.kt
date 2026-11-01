@@ -154,7 +154,7 @@ private fun AppRoot(vm: AppViewModel = viewModel(factory = appViewModelFactory(L
     }
 
     val routeEvents by vm.pendingRouteEvents.collectAsStateWithLifecycle()
-    routeEvents.firstOrNull()?.let { RouteEventDialog(it, onDismiss = { vm.dismissRouteEvent() }) }
+    routeEvents.firstOrNull()?.let { RouteEventDialog(it, onDismiss = { vm.dismissRouteEvent() }, finish = if (it == com.starmist.core.route.RouteEvent.Finished) vm.finishStats() else null) }
 
     openCard?.let { id ->
         val route = vm.routeState.value?.let { Routes.byId(it.routeId) }

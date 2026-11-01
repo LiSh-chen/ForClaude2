@@ -18,6 +18,8 @@ sealed interface RouteEvent {
     data class PoiCollected(val poi: Poi, val atKm: Double) : RouteEvent
     /** The walker went over a leg crossed by train or ferry. */
     data class Transit(val by: String, val into: String) : RouteEvent
+    /** The walker has left a county after walking through [towns] in it; [next] is the county entered (made by the app, which knows the townships). */
+    data class CountyCompleted(val county: String, val towns: List<String>, val next: String?) : RouteEvent
     data object Finished : RouteEvent
 }
 
