@@ -51,6 +51,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -230,6 +232,8 @@ internal fun HomeContent(
                     )
                 }
             }
+            // the township picked: a letter over the top of the map, closed by its seal (or a tap on the map elsewhere)
+            if (map is HomeMap.Real && regionMode) RegionLetter(infoOf(picked), picked == currentTown, { picked = -1 }, Modifier.align(Alignment.TopCenter).padding(8.dp))
         }
 
         if (map is HomeMap.Real) {
@@ -242,12 +246,10 @@ internal fun HomeContent(
                 walkedKm = map.walkedKm, totalKm = map.route.totalKm,
             )
             BottomDeck(
-                regionMode = regionMode,
                 face = {
                     if (panelStyle == 1) NotebookPanel(data)
                     else Box(Modifier.fillMaxWidth().heightIn(min = 186.dp), contentAlignment = Alignment.Center) { HalfFontScale { InstrumentPanel(map.route, map.walkedKm, goal, steps, border, Modifier.fillMaxWidth()) } }
                 },
-                regionInfo = { RegionPlate(infoOf(picked), picked == currentTown, it) },
                 keys = {
                     KeyRow(
                         layers, { new ->
@@ -280,7 +282,7 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
         val a = region.area
         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             // The name is told only when the township has been walked through.
-            Text(if (region.explored) a.name else "？？？", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 20.sp, color = Color(0xFF0058C8), maxLines = 1)
+            Text(if (region.explored) a.name else "？？？", fontWeight = FontWeight.Black, fontSize = 22.sp, color = Color(0xFF0058C8), maxLines = 1)
             if (region.explored) Text(a.county, fontSize = 11.sp, color = Vintage.inkSoft, modifier = Modifier.padding(bottom = 2.dp), maxLines = 1)
             Spacer(Modifier.weight(1f))
             Text(if (isCurrent) "目前所在" else if (region.explored) "第 ${region.order} 區" else "", fontSize = 11.sp, color = Vintage.brassDark, modifier = Modifier.padding(bottom = 2.dp))
@@ -349,29 +351,33 @@ private fun Dashboard(steps: Long, goal: Int, km: Double, kcal: Double, lastSnap
     }
 }
 
-/**
- * The panel under the map: one strip with, above, either the dials or the notebook page (the user picks in the settings) or, while a township is picked on the
- * map, what it holds, and under it on the same strip the row of buttons. The township card is as tall as what it replaces, so that the map does not jump.
- */
+/** The panel under the map: one strip with, above, either the dials or the notebook page (the user picks in the settings) and under it the row of buttons. */
 @Composable
-private fun BottomDeck(regionMode: Boolean, face: @Composable () -> Unit, regionInfo: @Composable (Modifier) -> Unit, keys: @Composable () -> Unit) {
-    val density = androidx.compose.ui.platform.LocalDensity.current
-    var faceHeight by remember { mutableStateOf(204.dp) }
+private fun BottomDeck(face: @Composable () -> Unit, keys: @Composable () -> Unit) {
     Box(Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp))) {
         Canvas(Modifier.matchParentSize()) { drawStrip() }
         Column(Modifier.fillMaxWidth().padding(6.dp)) {
-            if (regionMode) regionInfo(Modifier.fillMaxWidth().heightIn(min = faceHeight))   // as tall as the dials at least, and taller when the writing needs it: nothing is cut off or made to scroll
-            else Box(Modifier.fillMaxWidth().onSizeChanged { faceHeight = with(density) { it.height.toDp() } }) { face() }
+            face()
             keys()
         }
     }
 }
 
-/** What the township picked holds, on a paper plate set into the strip where the dials would be. */
+/**
+ * What the township picked holds, as a letter on parchment laid over the top of the map, with a brass seal to close it. It is as tall as its writing needs,
+ * so nothing is cut off and nothing has to be scrolled.
+ */
 @Composable
-private fun RegionPlate(region: RegionInfo?, isCurrent: Boolean, modifier: Modifier) {
-    Box(modifier.padding(start = 8.dp, end = 8.dp, top = 6.dp, bottom = 12.dp).clip(RoundedCornerShape(12.dp)).background(Vintage.parchmentLight.copy(alpha = 0.92f)).padding(12.dp)) {
-        RegionPanel(region, isCurrent, Modifier.fillMaxWidth())
+private fun RegionLetter(region: RegionInfo?, isCurrent: Boolean, onClose: () -> Unit, modifier: Modifier) {
+    Box(modifier.fillMaxWidth().shadow(8.dp, RoundedCornerShape(8.dp))) {
+        Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(24.dp.toPx(), 10.dp.toPx(), -1) }
+        androidx.compose.material3.ProvideTextStyle(androidx.compose.ui.text.TextStyle(fontFamily = QUILL, color = SEPIA)) {
+            RegionPanel(region, isCurrent, Modifier.fillMaxWidth().padding(start = 34.dp, end = 46.dp, top = 12.dp, bottom = 14.dp))
+        }
+        Box(
+            Modifier.align(Alignment.TopEnd).padding(6.dp).size(44.dp).clickable(role = Role.Button, onClickLabel = "關閉", onClick = onClose),
+            contentAlignment = Alignment.Center,
+        ) { Canvas(Modifier.size(32.dp)) { Pen(this, size).closeSeal(900) } }
     }
 }
 

@@ -49,9 +49,9 @@ private val LAMP_SPOTS = Color(0xFFF2A93B)
 private val LAMP_ROUTE = Color(0xFFE04B3F)
 private val LAMP_REGIONS = Color(0xFF3B9BFF)
 
-private val QUILL = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(com.starmist.walker.R.font.lxgw_wenkai_tc_subset))
+internal val QUILL = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(com.starmist.walker.R.font.lxgw_wenkai_tc_subset))
 private val NOTE_ROW = 22.dp
-private val SEPIA = Color(0xFF3A2A1B)
+internal val SEPIA = Color(0xFF3A2A1B)
 private val TODAY_GREEN = Color(0xFF2E7D4F)
 private val KEY_MAX = 60.dp
 
@@ -150,7 +150,7 @@ private fun Entry(kind: NoteKind, name: String, color: Color, text: String, frac
 }
 
 /** A rounded rectangle in pixels, as a list of points (the pen's own rectangles are in its square units, which does not suit a long thin shape). */
-private fun pxRound(l: Float, t: Float, r: Float, b: Float, rad: Float): List<Offset> {
+internal fun pxRound(l: Float, t: Float, r: Float, b: Float, rad: Float): List<Offset> {
     val out = ArrayList<Offset>()
     fun arc(cx: Float, cy: Float, from: Int) { for (i in 0..4) { val a = Math.toRadians(from + i * 22.5); out += Offset(cx + (rad * cos(a)).toFloat(), cy + (rad * sin(a)).toFloat()) } }
     arc(r - rad, t + rad, 270); arc(r - rad, b - rad, 0); arc(l + rad, b - rad, 90); arc(l + rad, t + rad, 180)
@@ -182,7 +182,7 @@ private fun Pen.hatchedBar(fraction: Float, color: Color, seed: Int) {
 }
 
 /** The page itself: uneven parchment with stains, a dark edge, faint brown rules, a faded red margin and two holes for the cord. */
-private fun Pen.parchmentPage(row: Float, top: Float, lines: Int) {
+internal fun Pen.parchmentPage(row: Float, top: Float, lines: Int) {
     // the page is drawn in pixels and not in the pen's square units
     val dp = with(d) { 1.dp.toPx() }
     val w = d.size.width; val h = d.size.height
@@ -199,7 +199,8 @@ private fun Pen.parchmentPage(row: Float, top: Float, lines: Int) {
     }
     stroke(page, Vintage.edge, 710, line * 1.8f, closed = true, alpha = 0.9f, calm = 2.2f)
     stroke(page, Vintage.brassDark, 711, line * 0.6f, closed = true, alpha = 0.6f, calm = 1.4f)
-    for (k in 1..lines) {
+    val count = if (lines < 0) ((h - top) / row).toInt() else lines   // a negative number: as many rules as the page has room for
+    for (k in 1..count) {
         val y = top + row * k
         stroke(listOf(Offset(6f * dp, y), Offset(w - 6f * dp, y)), Color(0xFF8A6B3F), 720 + k, 0.7f * line, alpha = 0.35f, calm = 0.8f)
     }
@@ -342,4 +343,14 @@ private fun Pen.knob(seed: Int, lamp: Color) {
     wash(jewel, lamp, 1f, 0f, 0f)
     stroke(jewel, ink, seed + 60, line, closed = true, calm = 0.2f)
     wash(circle(Offset(lc.x - 1.8f * u, lc.y - 1.8f * u), 1.8f * u, 8), Color.White, 0.8f, 0f, 0f)
+}
+
+/** The button that closes a letter: a brass seal with a cross on it. */
+internal fun Pen.closeSeal(seed: Int) {
+    val face = circle(p(50f, 50f), 40f * u, 28)
+    wash(face, Vintage.brass, 1f, 0f, 0f)
+    wash(circle(p(42f, 42f), 22f * u, 18), Vintage.brassLight, 0.6f, 0f, 0f)
+    inked(face, seed, closed = true, width = line * 1.3f, calm = 0.3f)
+    stroke(listOf(p(34f, 34f), p(66f, 66f)), ink, seed + 1, line * 1.8f, calm = 0.2f)
+    stroke(listOf(p(66f, 34f), p(34f, 66f)), ink, seed + 2, line * 1.8f, calm = 0.2f)
 }
