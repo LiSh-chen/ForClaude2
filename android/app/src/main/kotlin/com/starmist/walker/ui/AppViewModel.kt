@@ -108,7 +108,7 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
                 _message.value = when (result) {
                     is SnapshotResult.Success -> when {
                         result.baseline -> "已建立計步基準，之後的步數會開始累計"
-                        result.addedSteps > 0 -> "已同步，新增 ${result.addedSteps} 步"
+                        result.addedSteps > 0 -> I18n.tr("已同步，新增 ${result.addedSteps} 步")
                         else -> "已同步，沒有新的步數"
                     }
                     SnapshotResult.NoSensor -> "這台裝置沒有硬體計步器"
@@ -144,7 +144,7 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
         }
         // the day's goal: announced once a day, here for the screen being looked at (the step service does the same while the app is closed)
         viewModelScope.launch { todaySteps.collect { container.goal.check(it) } }
-        viewModelScope.launch { container.goal.reached.collect { goal -> _message.value = "今日目標達成！已走滿 ${goal.toLong().withCommas()} 步" } }
+        viewModelScope.launch { container.goal.reached.collect { goal -> _message.value = I18n.tr("今日目標達成！已走滿 ${goal.toLong().withCommas()} 步") } }
         viewModelScope.launch {
             var previous: Long? = null
             todayRow.collect { row ->
@@ -240,7 +240,7 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
             if (found == null && com.starmist.core.route.TagDiscovery.reachedHalfway(total[id] ?: 0.0, km)) {
                 found = container.regions.visit(key, tags.size, stage = 2)
             }
-            if (found != null) _message.value = "${t.name}：發現新特色「${tags[found].tag}」"
+            if (found != null) _message.value = I18n.trf("{0}：發現新特色「{1}」", t.name, tags[found].tag)
         }
     }
 
@@ -356,12 +356,12 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
 
     suspend fun setDayTotal(date: LocalDate, total: Long) {
         repository.setDayTotal(date, total)
-        _message.value = "已修正 $date 為 $total 步"
+        _message.value = I18n.tr("已修正 $date 為 $total 步")
     }
 
     suspend fun clearAdjustment(date: LocalDate) {
         repository.clearAdjustment(date)
-        _message.value = "已還原 $date 的感測器數值"
+        _message.value = I18n.tr("已還原 $date 的感測器數值")
     }
 
     suspend fun loadDiagnostics(): DiagnosticsInfo =
@@ -380,14 +380,16 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
         viewModelScope.launch {
             _message.value = try {
                 val r = com.starmist.walker.data.Backup.restore(container, text)
-                "已匯入 ${r.days} 天的步數紀錄"
+                I18n.tr("已匯入 ${r.days} 天的步數紀錄")
             } catch (e: IllegalArgumentException) {
-                "匯入失敗：${e.message}"
+                I18n.trf("匯入失敗：{0}", I18n.tr(e.message ?: ""))
             }
         }
     }
 
     fun say(text: String) { _message.value = text }
+
+    fun setLanguage(choice: Int) = updateSettings { it.copy(language = choice.coerceIn(0, 2)) }
 
     fun setPanelStyle(style: Int) = updateSettings { it.copy(panelStyle = style.coerceIn(0, 1)) }
 

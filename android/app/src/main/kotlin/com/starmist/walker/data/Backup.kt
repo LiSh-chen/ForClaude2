@@ -1,6 +1,7 @@
 package com.starmist.walker.data
 
 import com.starmist.core.route.RouteStateCodec
+import com.starmist.walker.ui.I18n
 import com.starmist.walker.platform.AppServices
 import kotlinx.datetime.LocalDate
 import org.json.JSONArray
@@ -47,7 +48,7 @@ object Backup {
         for (i in 0 until daysJson.length()) {
             val row = daysJson.optJSONArray(i) ?: throw IllegalArgumentException("步數紀錄的格式不對")
             val date = row.optString(0)
-            try { LocalDate.parse(date) } catch (e: Exception) { throw IllegalArgumentException("步數紀錄裡有不正確的日期：$date") }
+            try { LocalDate.parse(date) } catch (e: Exception) { throw IllegalArgumentException(I18n.trf("步數紀錄裡有不正確的日期：{0}", date)) }
             val raw = row.optLong(1); val scaled = row.optLong(2)
             require(raw >= 0 && scaled >= 0) { "步數紀錄裡有負數" }
             days += DailyStepsEntity(date, raw, scaled, row.optLong(3))

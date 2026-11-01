@@ -25,7 +25,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -106,7 +105,7 @@ internal fun RoutePicker(onStart: (String) -> Unit) {
         val first = family.first()
         Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight)) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("${first.region}・環島一圈", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(trf("{0}・環島一圈", first.region), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(first.description, style = MaterialTheme.typography.bodyMedium)
                 Text(
                     "全長約 ${first.totalKm.roundToInt()} 公里・${first.cards.size} 張景點卡・${first.supplies.size} 個紀念章",
@@ -114,7 +113,7 @@ internal fun RoutePicker(onStart: (String) -> Unit) {
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
                     family.forEach { route ->
-                        Button(onClick = { onStart(route.id) }, modifier = Modifier.weight(1f)) { Text("${route.direction}出發") }
+                        Button(onClick = { onStart(route.id) }, modifier = Modifier.weight(1f)) { Text(trf("{0}出發", tr(route.direction))) }
                     }
                 }
             }
@@ -145,8 +144,8 @@ internal fun LazyListScope.routeProgressItems(
                 Text("已走約 ${"%.1f".format(km)} / ${route.totalKm.roundToInt()} 公里", fontWeight = FontWeight.SemiBold)
                 if (done) Text("環島完成！", color = Vintage.brassDark, fontWeight = FontWeight.Bold)
                 else {
-                    Text("目前在 ${here.name} 附近", style = MaterialTheme.typography.bodyMedium)
-                    next?.let { (card, away) -> Text("下一張卡：${card.name}，還有約 ${"%.1f".format(away)} 公里", style = MaterialTheme.typography.bodyMedium) }
+                    Text(trf("目前在 {0} 附近", here.name), style = MaterialTheme.typography.bodyMedium)
+                    next?.let { (card, away) -> Text(trf("下一張卡：{0}，還有約 {1} 公里", card.name, "%.1f".format(away)), style = MaterialTheme.typography.bodyMedium) }
                 }
             }
         }
@@ -155,7 +154,7 @@ internal fun LazyListScope.routeProgressItems(
         item {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Routes.all.filter { it.family == route.family && it.id != route.id }.forEach { other ->
-                    OutlinedButton(onClick = { onSwitch(other.id) }, modifier = Modifier.fillMaxWidth()) { Text("改成${other.direction}走（還沒出發才能改）") }
+                    OutlinedButton(onClick = { onSwitch(other.id) }, modifier = Modifier.fillMaxWidth()) { Text(trf("改成{0}走（還沒出發才能改）", tr(other.direction))) }
                 }
             }
         }
@@ -265,7 +264,7 @@ private fun StampGrid(route: RouteDef, owned: Set<String>) {
                 row.forEach { (supply, at) ->
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                         if (supply.id in owned) StationStamp(supply.name, supply.opened, Modifier.size(104.dp))
-                        else Text("${supply.name}\n第 ${at.roundToInt()} 公里", style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(vertical = 36.dp))
+                        else Text(supply.name + "\n" + tr("第 ${at.roundToInt()} 公里"), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(vertical = 36.dp))
                     }
                 }
                 repeat(3 - row.size) { Box(Modifier.weight(1f)) {} }
@@ -283,7 +282,7 @@ private fun PoiStampGrid(stamps: List<Pair<com.starmist.core.route.Poi, Double?>
                 row.forEach { (poi, at) ->
                     Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                         if (poi.id in owned) PoiStamp(poi, Modifier.size(104.dp))
-                        else Text(if (at != null) "？？？\n第 ${at.roundToInt()} 公里" else "？？？", style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(vertical = 36.dp))
+                        else Text(if (at != null) "？？？\n" + tr("第 ${at.roundToInt()} 公里") else "？？？", style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(vertical = 36.dp))
                     }
                 }
                 repeat(3 - row.size) { Box(Modifier.weight(1f)) {} }

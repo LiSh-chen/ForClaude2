@@ -17,7 +17,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import android.content.Intent
 import android.provider.Settings
@@ -83,6 +82,15 @@ fun SettingsScreen(
             Text("性別只用來估算步長。", style = MaterialTheme.typography.labelSmall)
         }
 
+        Section("語言") {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf("自動", "中文", "English").forEachIndexed { i, label ->
+                    FilterChip(selected = settings.language == i, onClick = { vm.setLanguage(i) }, label = { Text(label) })
+                }
+            }
+            Text("App 內的選單和說明可以用英文；景點卡、鄉鎮特色和地名目前只有中文。", style = MaterialTheme.typography.labelSmall)
+        }
+
         Section("字體大小") {
             FontSizePicker(settings.fontSize) { vm.setFontSize(it) }
             Text("只改本 App 的字，不跟手機系統的字體設定走。", style = MaterialTheme.typography.labelSmall)
@@ -114,9 +122,9 @@ fun SettingsScreen(
                 Switch(checked = settings.stableMode, onCheckedChange = { vm.setStableMode(it) })
             }
             Text(
-                "許多手機的計步器只在有程式監聽時才累計。開啟後，本 App 會用一個低調的常駐通知保持監聽；" +
-                    "感測器會把步數累積一小段時間再一起交給 App，CPU 大部分時間不用醒來，不持有喚醒鎖，耗電很低。" +
-                    "關閉後，螢幕關閉期間的步數在多數手機上將無法記錄。",
+                tr("許多手機的計步器只在有程式監聽時才累計。開啟後，本 App 會用一個低調的常駐通知保持監聽；") +
+                    tr("感測器會把步數累積一小段時間再一起交給 App，CPU 大部分時間不用醒來，不持有喚醒鎖，耗電很低。") +
+                    tr("關閉後，螢幕關閉期間的步數在多數手機上將無法記錄。"),
                 style = MaterialTheme.typography.labelSmall,
             )
             Text(OemHints.forThisDevice(), style = MaterialTheme.typography.labelSmall)
@@ -128,7 +136,7 @@ fun SettingsScreen(
 
         Section("計步微調") {
             var local by remember(settings.multiplier) { mutableFloatStateOf(settings.multiplier.toFloat()) }
-            Text("修正係數　×${String.format(Locale.getDefault(), "%.2f", local)}", fontWeight = FontWeight.SemiBold)
+            Text(trf("修正係數　×{0}", String.format(Locale.getDefault(), "%.2f", local)), fontWeight = FontWeight.SemiBold)
             Slider(
                 value = local,
                 onValueChange = { local = it },
@@ -148,7 +156,7 @@ fun SettingsScreen(
             }
             val stride = BodyMetrics.strideMeters(settings.profile)
             OutlinedButton(onClick = { showStride = true }, modifier = Modifier.fillMaxWidth()) {
-                Text("步長校準（目前 ${String.format(Locale.getDefault(), "%.2f", stride)} 公尺）")
+                Text(trf("步長校準（目前 {0} 公尺）", String.format(Locale.getDefault(), "%.2f", stride)))
             }
         }
 

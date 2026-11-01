@@ -514,7 +514,7 @@ internal fun DrawScope.drawRealMap(
         val toNext = route.next(walkedKm)!!.second
         queue += Label(100) {
             val o = route.stops.first { it.landmark?.id == n.id }.at.px()
-            placeName("還有 ${"%.1f".format(toNext)} 公里", o, 13.sp, Color(0xFFB3202A), 16.dp.toPx(), force = true, edge = Color(0xFFB3202A))
+            placeName(I18n.trf("還有 {0} 公里", "%.1f".format(toNext)), o, 13.sp, Color(0xFFB3202A), 16.dp.toPx(), force = true, edge = Color(0xFFB3202A))
         }
     }
     // Names of the cards already collected.

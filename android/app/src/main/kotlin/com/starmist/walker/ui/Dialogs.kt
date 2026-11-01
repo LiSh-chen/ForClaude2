@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,8 +63,7 @@ fun CalibrationDialog(vm: AppViewModel, currentMultiplier: Double, onDismiss: ()
                         NumberField("實際步數", actualText, KeyboardType.Number) { actualText = it }
                     }
                     else -> Text(
-                        "建議修正係數 ×${String.format(Locale.getDefault(), "%.2f", proposed ?: 1.0)}" +
-                            "（目前 ×${String.format(Locale.getDefault(), "%.2f", currentMultiplier)}）",
+                        trf("建議修正係數 ×{0}（目前 ×{1}）", String.format(Locale.getDefault(), "%.2f", proposed ?: 1.0), String.format(Locale.getDefault(), "%.2f", currentMultiplier)),
                     )
                 }
                 if (busy) Text("讀取中…", style = MaterialTheme.typography.labelMedium)
@@ -165,7 +163,7 @@ fun AdjustDialog(vm: AppViewModel, onDismiss: () -> Unit) {
                 val r = row
                 Text(
                     if (r == null) "這天沒有紀錄" else
-                        "感測器 ${r.scaledSteps.withCommas()} 步，手動調整 ${if (r.manualAdjust >= 0) "+" else ""}${r.manualAdjust}",
+                        trf("感測器 {0} 步，手動調整 {1}", r.scaledSteps.withCommas(), (if (r.manualAdjust >= 0) "+" else "") + r.manualAdjust),
                     style = MaterialTheme.typography.labelMedium,
                 )
                 // The field keeps its own text, so it is rebuilt whenever another day has been loaded.
@@ -219,7 +217,7 @@ fun StrideDialog(settings: UserSettings, onApply: (Double?) -> Unit, onDismiss: 
                 error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
                 if (settings.strideOverrideM != null) {
                     Text(
-                        "目前使用自訂步長 ${String.format(Locale.getDefault(), "%.2f", settings.strideOverrideM)} 公尺",
+                        trf("目前使用自訂步長 {0} 公尺", String.format(Locale.getDefault(), "%.2f", settings.strideOverrideM)),
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }

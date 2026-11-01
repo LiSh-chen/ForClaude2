@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import com.starmist.walker.R
 import com.starmist.walker.container
 import com.starmist.walker.sensor.StepCounterReader
+import com.starmist.walker.ui.I18n
 import com.starmist.walker.ui.MainActivity
 import com.starmist.walker.ui.withCommas
 import kotlinx.coroutines.CoroutineScope
@@ -138,8 +139,8 @@ class StepService : Service() {
         )
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_walk)
-            .setContentTitle("來台灣走走 正在計步")
-            .setContentText(steps?.let { "今日 ${it.withCommas()} 步" } ?: "準備中…")
+            .setContentTitle(I18n.tr("來台灣走走 正在計步"))
+            .setContentText(steps?.let { I18n.tr("今日 ${it.withCommas()} 步") } ?: I18n.tr("準備中…"))
             .setContentIntent(open)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
@@ -150,8 +151,8 @@ class StepService : Service() {
     }
 
     private fun createChannel() {
-        val channel = NotificationChannel(CHANNEL_ID, "計步", NotificationManager.IMPORTANCE_LOW).apply {
-            description = "讓手機在螢幕關閉時也能持續計步"
+        val channel = NotificationChannel(CHANNEL_ID, I18n.tr("計步"), NotificationManager.IMPORTANCE_LOW).apply {
+            description = I18n.tr("讓手機在螢幕關閉時也能持續計步")
             setShowBadge(false)
         }
         getSystemService(NotificationManager::class.java).createNotificationChannel(channel)

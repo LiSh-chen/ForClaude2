@@ -29,7 +29,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
@@ -136,7 +135,7 @@ private fun Pen.needle(cx: Float, cy: Float, len: Float, deg: Float, color: Colo
 private fun Pen.label(tm: TextMeasurer, s: String, style: TextStyle, c: Offset, grows: Boolean = true, left: Boolean = false) {
     // the writing grows with the dial (up to 40%), so that a bigger dial is easier to read and not only emptier
     val grow = if (grows) (u / with(d) { 1.6.dp.toPx() }).coerceIn(1f, 1.4f) else 1f
-    val l = tm.measure(s, if (grow == 1f) style else style.copy(fontSize = style.fontSize * grow))
+    val l = tm.measure(I18n.tr(s), if (grow == 1f) style else style.copy(fontSize = style.fontSize * grow))
     d.drawText(l, topLeft = Offset(if (left) c.x else c.x - l.size.width / 2f, c.y - l.size.height / 2f))
 }
 

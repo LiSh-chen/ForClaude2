@@ -38,6 +38,8 @@ data class UserSettings(
     val goalNotify: Boolean = true,
     /** The day (yyyy-MM-dd) the goal was last announced on, so that it is announced once a day. */
     val goalShownOn: String = "",
+    /** The language of the app's writing: 0 follows the phone, 1 Chinese, 2 English. */
+    val language: Int = 0,
 ) {
     val profile: Profile
         get() = Profile(heightCm, weightKg, sex, strideOverrideM)
@@ -79,6 +81,7 @@ class SettingsStore(private val store: DataStore<Preferences>) {
             prefs[ONBOARDED] = updated.onboarded
             prefs[GOAL_NOTIFY] = updated.goalNotify
             prefs[GOAL_SHOWN_ON] = updated.goalShownOn
+            prefs[LANGUAGE] = updated.language.coerceIn(0, 2)
         }
     }
 
@@ -97,6 +100,7 @@ class SettingsStore(private val store: DataStore<Preferences>) {
             onboarded = this[ONBOARDED] ?: d.onboarded,
             goalNotify = this[GOAL_NOTIFY] ?: d.goalNotify,
             goalShownOn = this[GOAL_SHOWN_ON] ?: d.goalShownOn,
+            language = (this[LANGUAGE] ?: d.language).coerceIn(0, 2),
         )
     }
 
@@ -113,6 +117,7 @@ class SettingsStore(private val store: DataStore<Preferences>) {
         val ONBOARDED = booleanPreferencesKey("onboarded")
         val GOAL_NOTIFY = booleanPreferencesKey("goal_notify")
         val GOAL_SHOWN_ON = stringPreferencesKey("goal_shown_on")
+        val LANGUAGE = intPreferencesKey("language")
         val GOAL_DEFAULT_MOVED = booleanPreferencesKey("goal_default_moved_to_9000")
         const val OLD_DEFAULT_GOAL = 8_000
     }

@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -329,7 +328,7 @@ fun PoiStamp(poi: com.starmist.core.route.Poi, modifier: Modifier = Modifier) {
         rotate(6f, c) {
             drawCircle(POI_INK.copy(alpha = 0.9f), r, c, style = Stroke(3.dp.toPx() * k))
             drawCircle(POI_INK.copy(alpha = 0.7f), r - 6.dp.toPx() * k, c, style = Stroke(1.dp.toPx() * k))
-            val top = measurer.measure("小景點", small.copy(fontSize = small.fontSize * k))
+            val top = measurer.measure(I18n.tr("小景點"), small.copy(fontSize = small.fontSize * k))
             drawText(top, topLeft = Offset(c.x - top.size.width / 2f, c.y - r * 0.66f))
             val lines = if (poi.name.length > 5) poi.name.chunked((poi.name.length + 1) / 2) else listOf(poi.name)
             val laid = lines.map { measurer.measure(it, name.copy(fontSize = name.fontSize * k)) }
@@ -381,11 +380,11 @@ fun StationStamp(name: String, opened: String, modifier: Modifier = Modifier) {
         rotate(-8f, c) {
             drawCircle(STAMP_INK.copy(alpha = 0.9f), r, c, style = Stroke(3.dp.toPx()))
             drawCircle(STAMP_INK.copy(alpha = 0.7f), r - 6.dp.toPx(), c, style = Stroke(1.dp.toPx()))
-            val top = measurer.measure("台鐵車站", small)
+            val top = measurer.measure(I18n.tr("台鐵車站"), small)
             drawText(top, topLeft = Offset(c.x - top.size.width / 2f, c.y - r * 0.62f))
             val title = measurer.measure(name, big)
             drawText(title, topLeft = Offset(c.x - title.size.width / 2f, c.y - title.size.height / 2f))
-            val year = measurer.measure("$opened 年開站", small)
+            val year = measurer.measure(I18n.tr("$opened 年開站"), small)
             drawText(year, topLeft = Offset(c.x - year.size.width / 2f, c.y + r * 0.38f))
         }
     }
@@ -397,7 +396,7 @@ fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishSta
     when (event) {
         is RouteEvent.CardCollected -> AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text("獲得景點卡：${event.landmark.name}") },
+            title = { Text(trf("獲得景點卡：{0}", event.landmark.name)) },
             text = { CardFace(event.landmark, event.atKm) },
             confirmButton = { TextButton(onClick = onDismiss) { Text("收下") } },
         )
@@ -407,7 +406,7 @@ fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishSta
             text = {
                 Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     StationStamp(event.supply.name, event.supply.opened, Modifier.size(170.dp))
-                    Text("${event.supply.name}・${event.supply.opened} 年開站", style = MaterialTheme.typography.bodyMedium)
+                    Text(trf("{0}・{1} 年開站", event.supply.name, event.supply.opened), style = MaterialTheme.typography.bodyMedium)
                 }
             },
             confirmButton = { TextButton(onClick = onDismiss) { Text("收下") } },
@@ -416,7 +415,7 @@ fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishSta
             val lines = rememberPoiIntros()[event.poi.id].orEmpty()
             AlertDialog(
                 onDismissRequest = onDismiss,
-                title = { Text("蓋上小章：${event.poi.name}") },
+                title = { Text(trf("蓋上小章：{0}", event.poi.name)) },
                 text = {
                     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         PoiStamp(event.poi, Modifier.size(150.dp))
@@ -428,26 +427,26 @@ fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishSta
         }
         is RouteEvent.Transit -> AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text("${event.by}前往${event.into}") },
-            text = { Text("這一段不能步行，直接${event.by}抵達，不計步數。") },
+            title = { Text(trf("{0}前往{1}", event.by, event.into)) },
+            text = { Text(trf("這一段不能步行，直接{0}抵達，不計步數。", event.by)) },
             confirmButton = { TextButton(onClick = onDismiss) { Text("上車") } },
         )
         RouteEvent.Finished -> LetterDialog(
             title = "環島完成！",
             paragraphs = finish?.let {
                 listOf(
-                    "你沿著「${it.routeName}」，用自己的腳步走完了全程 ${it.totalKm.toLong().withCommas()} km。",
-                    "一路上收集了 ${it.cards} 張景點卡、${it.stations} 個補給站紀念章和 ${it.sights} 個小景點章，走過 ${it.towns} 個鄉鎮區。",
+                    trf("你沿著「{0}」，用自己的腳步走完了全程 {1} km。", it.routeName, it.totalKm.toLong().withCommas()),
+                    trf("一路上收集了 {0} 張景點卡、{1} 個補給站紀念章和 {2} 個小景點章，走過 {3} 個鄉鎮區。", it.cards, it.stations, it.sights, it.towns),
                     "再出發一圈，每個鄉鎮都有新的特色等著你。",
                 )
             } ?: listOf("你用自己的腳步繞完了整座島。景點卡和紀念章都留在「路線」頁。"),
             button = "太棒了", onDismiss = onDismiss,
         )
         is RouteEvent.CountyCompleted -> LetterDialog(
-            title = "完成 ${event.county}",
+            title = trf("完成 {0}", event.county),
             paragraphs = listOfNotNull(
-                if (event.towns.isEmpty()) "你走過了 ${event.county}。" else "你走過了 ${event.county} 的 ${event.towns.size} 個鄉鎮區：${event.towns.joinToString("、")}。",
-                event.next?.let { "前面是 $it，繼續走吧。" },
+                if (event.towns.isEmpty()) trf("你走過了 {0}。", event.county) else trf("你走過了 {0} 的 {1} 個鄉鎮區：{2}。", event.county, event.towns.size, event.towns.joinToString(tr("、"))),
+                event.next?.let { trf("前面是 {0}，繼續走吧。", it) },
             ),
             button = "繼續走", onDismiss = onDismiss,
         )

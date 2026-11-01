@@ -15,6 +15,7 @@ import com.starmist.core.time.now
 import com.starmist.walker.R
 import com.starmist.walker.data.SettingsStore
 import com.starmist.walker.ui.MainActivity
+import com.starmist.walker.ui.I18n
 import com.starmist.walker.ui.withCommas
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -45,12 +46,12 @@ class GoalWatcher(private val context: Context, private val settings: SettingsSt
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) return
         val manager = context.getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(NotificationChannel(CHANNEL_ID, "每日目標", NotificationManager.IMPORTANCE_DEFAULT).apply { description = "走到每日步數目標時通知一次" })
+        manager.createNotificationChannel(NotificationChannel(CHANNEL_ID, I18n.tr("每日目標"), NotificationManager.IMPORTANCE_DEFAULT).apply { description = I18n.tr("走到每日步數目標時通知一次") })
         val open = PendingIntent.getActivity(context, 1, Intent(context, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_walk)
-            .setContentTitle("今日目標達成！")
-            .setContentText("今天已走 ${steps.withCommas()} 步，達成每日目標 ${goal.toLong().withCommas()} 步。")
+            .setContentTitle(I18n.tr("今日目標達成！"))
+            .setContentText(I18n.tr("今天已走 ${steps.withCommas()} 步，達成每日目標 ${goal.toLong().withCommas()} 步。"))
             .setContentIntent(open)
             .setAutoCancel(true)
             .build()

@@ -22,7 +22,6 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -72,7 +71,7 @@ internal fun KeyRow(layers: MapLayers, onLayers: (MapLayers) -> Unit, heading: F
         KeyCell(KeyKind.REGIONS, "區域", layers.regions, LAMP_REGIONS, 300, Modifier.weight(1f)) { onLayers(layers.copy(regions = !layers.regions)) }
         // the sync knob: its lamp is green once the steps have been synced and red until then
         Box(Modifier.weight(1f), contentAlignment = Alignment.TopCenter) {
-            Column(Modifier.widthIn(max = KEY_MAX).clickable(role = Role.Button, onClickLabel = "同步", onClick = onSync), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(Modifier.widthIn(max = KEY_MAX).clickable(role = Role.Button, onClickLabel = tr("同步"), onClick = onSync), horizontalAlignment = Alignment.CenterHorizontally) {
                 Canvas(Modifier.fillMaxWidth().aspectRatio(1f)) { Pen(this, size).knob(400, if (lastSync != null) Color(0xFF4FBF6A) else Color(0xFFE04B3F)) }
                 Text("同步", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
             }

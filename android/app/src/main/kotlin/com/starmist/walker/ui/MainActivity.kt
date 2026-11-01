@@ -28,7 +28,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -63,7 +62,8 @@ class MainActivity : ComponentActivity() {
             val vm: AppViewModel = viewModel(factory = appViewModelFactory(LocalContext.current.container))
             val settings by vm.settings.collectAsStateWithLifecycle()
             // the writing is the size picked in the settings, not the system's
-            AppFontScale(settings?.fontSize ?: 1) { StarMistTheme { AppRoot(vm) } }
+            val lang = langOf(settings?.language ?: 0, java.util.Locale.getDefault().language)
+            AppLanguage(lang) { AppFontScale(settings?.fontSize ?: 1) { StarMistTheme { AppRoot(vm) } } }
         }
     }
 }
@@ -129,7 +129,7 @@ private fun AppRoot(vm: AppViewModel = viewModel(factory = appViewModelFactory(L
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { vm.stopLive() }
     LaunchedEffect(message) {
         message?.let {
-            snackbar.showSnackbar(it)
+            snackbar.showSnackbar(I18n.tr(it))
             vm.messageShown()
         }
     }

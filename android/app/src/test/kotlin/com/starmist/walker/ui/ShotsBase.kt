@@ -20,7 +20,7 @@ import org.junit.Rule
 import org.junit.Test
 
 /** The set-up the screenshot tests share: the real screens with made-up data, on the device the subclass names. */
-abstract class ShotsBase(device: DeviceConfig, private val fontStep: Int = 1) {
+abstract class ShotsBase(device: DeviceConfig, private val fontStep: Int = 1, private val lang: Lang = Lang.ZH) {
     init { decodeThumbsInline = true }
 
     @get:Rule
@@ -36,9 +36,11 @@ abstract class ShotsBase(device: DeviceConfig, private val fontStep: Int = 1) {
 
     @Composable
     internal fun Page(tab: Int = 0, content: @Composable (PaddingValues) -> Unit) {
-        AppFontScale(fontStep) {
-            StarMistTheme {
-                Scaffold(containerColor = Vintage.parchment, bottomBar = { AppBottomBar(tab) {} }) { content(it) }
+        AppLanguage(lang) {
+            AppFontScale(fontStep) {
+                StarMistTheme {
+                    Scaffold(containerColor = Vintage.parchment, bottomBar = { AppBottomBar(tab) {} }) { content(it) }
+                }
             }
         }
     }

@@ -18,7 +18,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -93,7 +92,7 @@ fun StatsScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
             goal = settings.dailyGoal,
             amount = amount,
         )
-        ruler?.let { Text("單位：${it.legend}", style = MaterialTheme.typography.labelSmall, color = Vintage.inkSoft) }
+        ruler?.let { Text(trf("單位：{0}", it.legend), style = MaterialTheme.typography.labelSmall, color = Vintage.inkSoft) }
 
         Row(
             Modifier.fillMaxWidth().padding(top = 16.dp),
@@ -121,7 +120,7 @@ private fun rangeLabel(period: Period, s: PeriodSummary): String = when (period)
         fun md(d: kotlinx.datetime.LocalDate) = "${d.monthNumber}/${d.dayOfMonth}"
         "${md(s.rangeStart)} – ${md(s.rangeEnd)}"
     }
-    Period.MONTH -> "${s.rangeStart.year} 年 ${s.rangeStart.monthNumber} 月"
+    Period.MONTH -> I18n.trf("{0} 年 {1} 月", s.rangeStart.year, s.rangeStart.monthNumber)
     Period.YEAR -> "${s.rangeStart.year} 年"
 }
 

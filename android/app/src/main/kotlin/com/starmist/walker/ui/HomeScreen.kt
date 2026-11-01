@@ -37,7 +37,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
@@ -326,7 +325,7 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
         }
         val p = picked
         // No line limit: the fact can be seventy characters and the letter grows to fit it instead of cutting it off.
-        Text(if (p != null) "你知道嗎？${tags[p].fact}" else "再走一段，就會發現這裡的特色。", fontSize = 13.sp, style = onRule, color = Vintage.inkSoft)
+        Text(if (p != null) trf("你知道嗎？{0}", tags[p].fact) else "再走一段，就會發現這裡的特色。", fontSize = 13.sp, style = onRule, color = Vintage.inkSoft)
     }
 }
 
@@ -334,7 +333,7 @@ private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modif
 @Composable
 private fun LockedTag(icon: String = "") {
     Box(Modifier.height(CHIP_HEIGHT).clip(RoundedCornerShape(13.dp)).background(Vintage.edge.copy(alpha = 0.22f)).padding(horizontal = 10.dp), contentAlignment = Alignment.Center) {
-        if (icon.isNotEmpty()) Text("$icon ？？？", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft, maxLines = 1)
+        if (icon.isNotEmpty()) Text(trf("{0} ？？？", icon), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft, maxLines = 1)
         else Canvas(Modifier.size(width = 12.dp, height = 14.dp)) {
             val c = Vintage.inkSoft.copy(alpha = 0.7f)
             val w = size.width; val h = size.height

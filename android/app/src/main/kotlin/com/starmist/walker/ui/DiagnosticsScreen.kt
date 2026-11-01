@@ -14,7 +14,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,11 +40,11 @@ private fun Issue.describe(): String = when (this) {
     Issue.NEVER_READ ->
         "還沒有成功讀取過計步器。按下「立即讀取」試試。"
     Issue.SERVICE_NOT_RUNNING ->
-        "穩定計步模式已開啟，但背景服務目前沒有在執行，螢幕關閉時可能計不到步。開啟本 App 會嘗試重新啟動它；" +
-            "如果常常被關掉，請依下方的提示調整省電設定。"
+        I18n.tr("穩定計步模式已開啟，但背景服務目前沒有在執行，螢幕關閉時可能計不到步。開啟本 App 會嘗試重新啟動它；") +
+            I18n.tr("如果常常被關掉，請依下方的提示調整省電設定。")
     Issue.STALE_SNAPSHOT ->
-        "超過 6 小時沒有讀取，系統可能限制了背景工作。步數不會遺失（計步器會持續累計），開啟 App 後會自動補上；" +
-            "如果經常發生，請檢查電池設定。"
+        I18n.tr("超過 6 小時沒有讀取，系統可能限制了背景工作。步數不會遺失（計步器會持續累計），開啟 App 後會自動補上；") +
+            I18n.tr("如果經常發生，請檢查電池設定。")
     Issue.BATTERY_RESTRICTED ->
         "系統套用了電池最佳化，可能在背景關閉計步服務。若發現螢幕關閉時漏記步數，請把本 App 設為「不限制」。"
 }
@@ -80,19 +79,18 @@ fun DiagnosticsScreen(vm: AppViewModel, padding: PaddingValues, onOpenAppSetting
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text("硬體計步器：${if (d.hasHardwareCounter) "有" else "沒有"}")
-                Text("動作與健身權限：${if (d.permissionGranted) "已授予" else "未授予"}")
-                Text("穩定計步模式：${if (stableMode == true) "開啟" else "關閉"}，背景服務${if (serviceRunning) "執行中" else "未執行"}")
-                Text("最近一次讀取：${d.lastSnapshotAtMillis?.let(::formatTime) ?: "從未"}")
-                multiplier?.let { Text("修正係數：×${String.format(java.util.Locale.getDefault(), "%.2f", it)}") }
+                Text(trf("硬體計步器：{0}", tr(if (d.hasHardwareCounter) "有" else "沒有")))
+                Text(trf("動作與健身權限：{0}", tr(if (d.permissionGranted) "已授予" else "未授予")))
+                Text(trf("穩定計步模式：{0}，背景服務{1}", tr(if (stableMode == true) "開啟" else "關閉"), tr(if (serviceRunning) "執行中" else "未執行")))
+                Text(trf("最近一次讀取：{0}", d.lastSnapshotAtMillis?.let(::formatTime) ?: tr("從未")))
+                multiplier?.let { Text(trf("修正係數：×{0}", String.format(java.util.Locale.getDefault(), "%.2f", it))) }
                 Text(
                     if (lastRead == null) "最近一次硬體讀取：尚無" else
-                        "最近一次硬體讀取：計步器累計 ${lastRead.value} 步，收到 ${lastRead.events} 筆事件，" +
-                            "排空緩衝${if (lastRead.flushCompleted) "完成" else "未完成"}（${formatTime(lastRead.atMillis)}）",
+                        trf("最近一次硬體讀取：計步器累計 {0} 步，收到 {1} 筆事件，排空緩衝{2}（{3}）", lastRead.value, lastRead.events, tr(if (lastRead.flushCompleted) "完成" else "未完成"), formatTime(lastRead.atMillis)),
                 )
                 Text(
-                    "最近偵測到的重新開機：" +
-                        if (d.recentReboots.isEmpty()) "無" else d.recentReboots.joinToString("、") { formatTime(it.atMillis) },
+                    tr("最近偵測到的重新開機：") +
+                        if (d.recentReboots.isEmpty()) tr("無") else d.recentReboots.joinToString(tr("、")) { formatTime(it.atMillis) },
                 )
             }
         }
@@ -127,8 +125,8 @@ fun DiagnosticsScreen(vm: AppViewModel, padding: PaddingValues, onOpenAppSetting
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text("常見的背景限制", fontWeight = FontWeight.SemiBold)
                 Text(
-                    "許多手機的計步器只在有程式監聽時才累計，所以本 App 用前景服務保持監聽。" +
-                        "部分廠牌會在背景強力清理 App，造成服務被關掉、螢幕關閉時漏記。",
+                    tr("許多手機的計步器只在有程式監聽時才累計，所以本 App 用前景服務保持監聽。") +
+                        tr("部分廠牌會在背景強力清理 App，造成服務被關掉、螢幕關閉時漏記。"),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(OemHints.forThisDevice(), style = MaterialTheme.typography.bodyMedium)
@@ -147,13 +145,12 @@ private fun BatchTestCard(vm: AppViewModel) {
             Text("步伐偵測批次測試（實驗）", fontWeight = FontWeight.SemiBold)
             Text(
                 if (!info.present) "這台裝置沒有步伐偵測感測器。"
-                else "步伐偵測器緩衝容量：${info.fifoMax} 筆（保留 ${info.fifoReserved}），" +
-                    if (info.wakeUp) "會喚醒 CPU" else "不會喚醒 CPU",
+                else trf("步伐偵測器緩衝容量：{0} 筆（保留 {1}），{2}", info.fifoMax, info.fifoReserved, tr(if (info.wakeUp) "會喚醒 CPU" else "不會喚醒 CPU")),
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                "按下後請持續走路 2 分半鐘，期間可以關螢幕。系統會把每一步先存在感測晶片裡，每分鐘才送出一批；" +
-                    "如果事件成批送達、且有原本的時間，之後就能在背景還原走路的節奏。",
+                tr("按下後請持續走路 2 分半鐘，期間可以關螢幕。系統會把每一步先存在感測晶片裡，每分鐘才送出一批；") +
+                    tr("如果事件成批送達、且有原本的時間，之後就能在背景還原走路的節奏。"),
                 style = MaterialTheme.typography.bodySmall,
             )
             when (state) {
@@ -162,9 +159,8 @@ private fun BatchTestCard(vm: AppViewModel) {
                     val r = state.result
                     Text(
                         if (r == null) "無法測試。" else
-                            "收到 ${r.detectorEvents} 筆步伐事件，同時間計步器增加 ${r.counterSteps} 步。\n" +
-                                "事件分 ${r.bursts} 批送達，最大一批 ${r.largestBurst} 筆，最晚延遲 ${r.maxDelayMs / 1000} 秒。\n" +
-                                verdict(r),
+                            trf("收到 {0} 筆步伐事件，同時間計步器增加 {1} 步。\n事件分 {2} 批送達，最大一批 {3} 筆，最晚延遲 {4} 秒。\n", r.detectorEvents, r.counterSteps, r.bursts, r.largestBurst, r.maxDelayMs / 1000) +
+                                tr(verdict(r)),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
