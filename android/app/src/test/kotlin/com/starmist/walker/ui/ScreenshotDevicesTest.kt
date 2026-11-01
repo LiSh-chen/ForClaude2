@@ -16,6 +16,8 @@ abstract class PanelShots(device: DeviceConfig, step: Int) : ShotsBase(device, s
     @Test fun dials() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0)) }
     @Test fun notebook() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 85.0), notebook = true) }
     @Test fun township() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), regionMode = true) }
+    /** A township with a long note, to see that all of it is shown. */
+    @Test fun township_long() = paparazzi.snapshot { Home(true, HomeMap.Real(forward, 830.0), pick = "湖口鄉") }
 }
 
 class ScreenshotNarrowSmallTest : PanelShots(DeviceConfig.NEXUS_5, 0)

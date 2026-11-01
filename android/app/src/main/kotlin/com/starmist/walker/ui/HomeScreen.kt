@@ -360,7 +360,7 @@ private fun BottomDeck(regionMode: Boolean, face: @Composable () -> Unit, region
     Box(Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp))) {
         Canvas(Modifier.matchParentSize()) { drawStrip() }
         Column(Modifier.fillMaxWidth().padding(6.dp)) {
-            if (regionMode) regionInfo(Modifier.fillMaxWidth().height(faceHeight))
+            if (regionMode) regionInfo(Modifier.fillMaxWidth().heightIn(min = faceHeight))   // as tall as the dials at least, and taller when the writing needs it: nothing is cut off or made to scroll
             else Box(Modifier.fillMaxWidth().onSizeChanged { faceHeight = with(density) { it.height.toDp() } }) { face() }
             keys()
         }
