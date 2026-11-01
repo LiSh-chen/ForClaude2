@@ -159,7 +159,7 @@ internal fun OnboardingScreen(
 }
 
 /** What the letter at the end of the route tells. */
-internal class FinishStats(val routeName: String, val totalKm: Double, val cards: Int, val stations: Int, val sights: Int, val towns: Int)
+class FinishStats(val routeName: String, val totalKm: Double, val cards: Int, val stations: Int, val sights: Int, val towns: Int)
 
 /** A letter on parchment in the middle of the screen: a title, some paragraphs on the ruled lines, and one button that closes it. */
 @Composable
