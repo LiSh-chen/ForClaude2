@@ -270,56 +270,70 @@ internal fun HomeContent(
 
 // ---- the region card -------------------------------------------------------------------------
 
+/** The height of one ruled line of the township letter: everything on the letter is made a whole number of these tall, so that it stands on the rules. */
+internal val LETTER_ROW = 30.dp
+private val CHIP_HEIGHT = 26.dp
+
 /** The township picked on the map (the one being walked through at first): its name and three features, each found on a different visit. */
 @Composable
 private fun RegionPanel(region: RegionInfo?, isCurrent: Boolean, modifier: Modifier) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    val rowSp = with(androidx.compose.ui.platform.LocalDensity.current) { LETTER_ROW.toSp() }
+    // a line of writing as tall as a ruled line, with the writing in the middle of it
+    val onRule = androidx.compose.material3.LocalTextStyle.current.merge(
+        androidx.compose.ui.text.TextStyle(lineHeight = rowSp, lineHeightStyle = androidx.compose.ui.text.style.LineHeightStyle(androidx.compose.ui.text.style.LineHeightStyle.Alignment.Center, androidx.compose.ui.text.style.LineHeightStyle.Trim.None)),
+    )
+    Column(modifier) {
         if (region == null) {
-            Text("點一下走過的區域", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text("藍色的區域是你走過的，點它看這裡的特色。", fontSize = 12.sp, color = Vintage.inkSoft)
+            Box(Modifier.height(LETTER_ROW), contentAlignment = Alignment.CenterStart) { Text("點一下走過的區域", fontWeight = FontWeight.Bold, fontSize = 16.sp) }
+            Text("藍色的區域是你走過的，點它看這裡的特色。", fontSize = 13.sp, style = onRule, color = Vintage.inkSoft)
             return@Column
         }
         val a = region.area
-        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Row(Modifier.height(LETTER_ROW), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             // The name is told only when the township has been walked through.
             Text(if (region.explored) a.name else "？？？", fontWeight = FontWeight.Black, fontSize = 22.sp, color = Color(0xFF0058C8), maxLines = 1)
-            if (region.explored) Text(a.county, fontSize = 11.sp, color = Vintage.inkSoft, modifier = Modifier.padding(bottom = 2.dp), maxLines = 1)
+            if (region.explored) Text(a.county, fontSize = 12.sp, color = Vintage.inkSoft, maxLines = 1)
             Spacer(Modifier.weight(1f))
-            Text(if (isCurrent) "目前所在" else if (region.explored) "第 ${region.order} 區" else "", fontSize = 11.sp, color = Vintage.brassDark, modifier = Modifier.padding(bottom = 2.dp))
+            Text(if (isCurrent) "目前所在" else if (region.explored) "第 ${region.order} 區" else "", fontSize = 12.sp, color = Vintage.brassDark, maxLines = 1)
         }
         val tags = region.tags
         if (!region.explored || tags == null) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) { repeat(3) { LockedTag(tags?.getOrNull(it)?.icon.orEmpty()) } }
-            Text(if (!region.explored) "還沒走到這裡" else "特色整理中", fontSize = 12.sp, color = Vintage.inkSoft)
+            Row(Modifier.padding(vertical = 2.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) { repeat(3) { LockedTag(tags?.getOrNull(it)?.icon.orEmpty()) } }
+            Text(if (!region.explored) "還沒走到這裡" else "特色整理中", fontSize = 13.sp, style = onRule, color = Vintage.inkSoft)
             return@Column
         }
         val newest = tags.indices.lastOrNull { region.foundMask and (1 shl it) != 0 }
         var picked by remember(a.name, region.foundMask) { mutableStateOf(newest) }
+        // the chips: each row of them is one ruled line (a chip and the space under it make up the line), however many rows the three of them come to
         @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
-        androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        androidx.compose.foundation.layout.FlowRow(
+            Modifier.padding(vertical = (LETTER_ROW - CHIP_HEIGHT) / 2),
+            horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(LETTER_ROW - CHIP_HEIGHT),
+        ) {
             tags.forEachIndexed { i, t ->
                 val found = region.foundMask and (1 shl i) != 0
                 if (!found) LockedTag(t.icon) else {
                     val on = picked == i
-                    Text(
-                        if (t.icon.isEmpty()) t.tag else "${t.icon} ${t.tag}", fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1,
-                        color = if (on) Color.White else Color(0xFF0058C8),
-                        modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(if (on) Color(0xFF1A8CFF) else Color(0xFF1A8CFF).copy(alpha = 0.14f))
-                            .clickable { picked = i }.padding(horizontal = 10.dp, vertical = 3.dp),
-                    )
+                    Box(
+                        Modifier.height(CHIP_HEIGHT).clip(RoundedCornerShape(13.dp)).background(if (on) Color(0xFF1A8CFF) else Color(0xFF1A8CFF).copy(alpha = 0.14f))
+                            .clickable { picked = i }.padding(horizontal = 10.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(if (t.icon.isEmpty()) t.tag else "${t.icon} ${t.tag}", fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1, color = if (on) Color.White else Color(0xFF0058C8))
+                    }
                 }
             }
         }
         val p = picked
-        // No line limit: the fact can be seventy characters and the panel grows to fit it instead of cutting it off.
-        Text(if (p != null) "你知道嗎？${tags[p].fact}" else "再走一段，就會發現這裡的特色。", fontSize = 11.sp, color = Vintage.inkSoft)
+        // No line limit: the fact can be seventy characters and the letter grows to fit it instead of cutting it off.
+        Text(if (p != null) "你知道嗎？${tags[p].fact}" else "再走一段，就會發現這裡的特色。", fontSize = 13.sp, style = onRule, color = Vintage.inkSoft)
     }
 }
 
 /** A feature not found yet: its little picture and question marks, so there is something to guess (a padlock when it has no picture). */
 @Composable
 private fun LockedTag(icon: String = "") {
-    Box(Modifier.clip(RoundedCornerShape(12.dp)).background(Vintage.edge.copy(alpha = 0.22f)).padding(horizontal = 10.dp, vertical = 3.dp)) {
+    Box(Modifier.height(CHIP_HEIGHT).clip(RoundedCornerShape(13.dp)).background(Vintage.edge.copy(alpha = 0.22f)).padding(horizontal = 10.dp), contentAlignment = Alignment.Center) {
         if (icon.isNotEmpty()) Text("$icon ？？？", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Vintage.inkSoft, maxLines = 1)
         else Canvas(Modifier.size(width = 12.dp, height = 14.dp)) {
             val c = Vintage.inkSoft.copy(alpha = 0.7f)
@@ -370,9 +384,9 @@ private fun BottomDeck(face: @Composable () -> Unit, keys: @Composable () -> Uni
 @Composable
 private fun RegionLetter(region: RegionInfo?, isCurrent: Boolean, onClose: () -> Unit, modifier: Modifier) {
     Box(modifier.fillMaxWidth().shadow(8.dp, RoundedCornerShape(8.dp))) {
-        Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(24.dp.toPx(), 10.dp.toPx(), -1) }
+        Canvas(Modifier.matchParentSize()) { Pen(this, size).parchmentPage(LETTER_ROW.toPx(), 10.dp.toPx(), -1) }
         androidx.compose.material3.ProvideTextStyle(androidx.compose.ui.text.TextStyle(fontFamily = QUILL, color = SEPIA)) {
-            RegionPanel(region, isCurrent, Modifier.fillMaxWidth().padding(start = 34.dp, end = 46.dp, top = 12.dp, bottom = 14.dp))
+            RegionPanel(region, isCurrent, Modifier.fillMaxWidth().padding(start = 34.dp, end = 46.dp, top = 10.dp, bottom = 8.dp))
         }
         Box(
             Modifier.align(Alignment.TopEnd).padding(6.dp).size(44.dp).clickable(role = Role.Button, onClickLabel = "關閉", onClick = onClose),
