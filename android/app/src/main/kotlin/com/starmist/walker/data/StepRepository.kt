@@ -122,6 +122,15 @@ class StepRepository(
 
     suspend fun allTimeTotal(): Long = dao.allTimeTotal()
 
+    /** Every day on record, oldest first (for the backup). */
+    suspend fun allDays(): List<DailyStepsEntity> = dao.allDays()
+
+    /** Replaces every day on record with [days] (restoring a backup). */
+    suspend fun replaceAllDays(days: List<DailyStepsEntity>) {
+        dao.clearDays()
+        dao.putDays(days)
+    }
+
     suspend fun getDay(date: LocalDate): DailyStepsEntity? = dao.getDay(date.toString())
 
     /** Makes the day's total equal [desiredTotal] by storing the difference as a manual adjustment. */

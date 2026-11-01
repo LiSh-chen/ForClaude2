@@ -343,6 +343,23 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
 
     fun setStableMode(on: Boolean) = updateSettings { it.copy(stableMode = on) }
 
+    /** The backup file's text. */
+    suspend fun buildBackup(): String = com.starmist.walker.data.Backup.build(container, container.platform.nowMillis())
+
+    /** Restores from the backup file's text and says how it went. */
+    fun restoreBackup(text: String) {
+        viewModelScope.launch {
+            _message.value = try {
+                val r = com.starmist.walker.data.Backup.restore(container, text)
+                "已匯入 ${r.days} 天的步數紀錄"
+            } catch (e: IllegalArgumentException) {
+                "匯入失敗：${e.message}"
+            }
+        }
+    }
+
+    fun say(text: String) { _message.value = text }
+
     fun setPanelStyle(style: Int) = updateSettings { it.copy(panelStyle = style.coerceIn(0, 1)) }
 
     /** Null until it is known whether the first-run pages are due; people who already use the app never see them. */

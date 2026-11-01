@@ -31,6 +31,15 @@ interface StepDao {
     @Query("UPDATE daily_steps SET manualAdjust = :adjust WHERE date = :date")
     suspend fun setManualAdjust(date: String, adjust: Long)
 
+    @Query("SELECT * FROM daily_steps ORDER BY date")
+    suspend fun allDays(): List<DailyStepsEntity>
+
+    @Query("DELETE FROM daily_steps")
+    suspend fun clearDays()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun putDays(days: List<DailyStepsEntity>)
+
     @Query("SELECT * FROM snapshot_state WHERE id = 1")
     suspend fun getState(): SnapshotStateEntity?
 

@@ -10,6 +10,7 @@ import com.starmist.core.route.RouteState
 import com.starmist.core.route.RouteStateCodec
 import com.starmist.core.route.RouteTracker
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 
@@ -44,6 +45,14 @@ class RouteStore(private val store: DataStore<Preferences>) {
             val current = RouteStateCodec.decode(prefs[key]) ?: return@edit
             prefs[key] = RouteStateCodec.encode(current.copy(consumedSteps = allTimeSteps))
         }
+    }
+
+    /** The stored state as its one line of text, for the backup. */
+    suspend fun exportRaw(): String? = store.data.first()[key]
+
+    /** Puts back a state saved by [exportRaw] (null: no route chosen). */
+    suspend fun importRaw(text: String?) {
+        store.edit { if (text.isNullOrBlank() || RouteStateCodec.decode(text) == null) it.remove(key) else it[key] = text }
     }
 
     suspend fun clear() {

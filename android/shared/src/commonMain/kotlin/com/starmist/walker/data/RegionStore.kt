@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.starmist.core.route.TagDiscovery
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 
@@ -22,6 +23,14 @@ class RegionStore(private val store: DataStore<Preferences>) {
     private val lapKey = intPreferencesKey("lap")
 
     val logs: Flow<Map<String, RegionLog>> = store.data.map { decode(it[logKey]) }
+
+    /** The township log (one line per township) and the lap number, for the backup. */
+    suspend fun exportRaw(): Pair<String, Int> = store.data.first().let { (it[logKey] ?: "") to (it[lapKey] ?: 0) }
+
+    /** Puts back what [exportRaw] gave. */
+    suspend fun importRaw(log: String, lap: Int) {
+        store.edit { it[logKey] = log; it[lapKey] = lap.coerceAtLeast(0) }
+    }
 
     /** Starts a new lap: every township can give a new tag again. */
     suspend fun newLap() {

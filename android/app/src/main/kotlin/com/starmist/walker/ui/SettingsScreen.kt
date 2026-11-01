@@ -37,6 +37,8 @@ import com.starmist.core.metrics.Sex
 import com.starmist.core.steps.StepScaler
 import com.starmist.walker.data.UserSettings
 import java.util.Locale
+import com.starmist.core.time.now
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(
@@ -50,6 +52,7 @@ fun SettingsScreen(
     var showAdjust by remember { mutableStateOf(false) }
     var showStride by remember { mutableStateOf(false) }
     var showPrivacy by remember { mutableStateOf(false) }
+    var pendingImport by remember { mutableStateOf<android.net.Uri?>(null) }
 
     Column(
         Modifier
@@ -146,6 +149,44 @@ fun SettingsScreen(
             val stride = BodyMetrics.strideMeters(settings.profile)
             OutlinedButton(onClick = { showStride = true }, modifier = Modifier.fillMaxWidth()) {
                 Text("步長校準（目前 ${String.format(Locale.getDefault(), "%.2f", stride)} 公尺）")
+            }
+        }
+
+        Section("資料備份") {
+            val scope = androidx.compose.runtime.rememberCoroutineScope()
+            val export = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json")) { uri ->
+                if (uri != null) scope.launch {
+                    val ok = runCatching {
+                        val text = vm.buildBackup()
+                        context.contentResolver.openOutputStream(uri)?.use { it.write(text.toByteArray(Charsets.UTF_8)) } ?: error("no stream")
+                    }.isSuccess
+                    vm.say(if (ok) "已匯出備份檔" else "匯出失敗")
+                }
+            }
+            val import = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.OpenDocument()) { uri ->
+                if (uri != null) pendingImport = uri
+            }
+            Text("把步數、設定、路線進度和鄉鎮收集存成一個檔案，換手機或重新安裝後可以匯入。檔案存在哪裡由你決定，App 不會傳到任何地方。", style = MaterialTheme.typography.labelSmall)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { export.launch("來台灣走走備份-${kotlinx.datetime.LocalDate.now()}.json") }) { Text("匯出備份") }
+                OutlinedButton(onClick = { import.launch(arrayOf("application/json", "text/plain", "application/octet-stream")) }) { Text("匯入備份") }
+            }
+            pendingImport?.let { uri ->
+                androidx.compose.material3.AlertDialog(
+                    onDismissRequest = { pendingImport = null },
+                    title = { Text("匯入備份？") },
+                    text = { Text("這會取代這支手機上現有的步數、設定、路線進度和鄉鎮收集。確定要匯入嗎？") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            pendingImport = null
+                            scope.launch {
+                                val text = runCatching { context.contentResolver.openInputStream(uri)?.use { it.readBytes().toString(Charsets.UTF_8) } }.getOrNull()
+                                if (text == null) vm.say("匯入失敗：讀不到檔案") else vm.restoreBackup(text)
+                            }
+                        }) { Text("匯入") }
+                    },
+                    dismissButton = { TextButton(onClick = { pendingImport = null }) { Text("取消") } },
+                )
             }
         }
 
