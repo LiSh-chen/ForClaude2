@@ -48,8 +48,8 @@ class I18nTest {
     }
 
     @Test fun every_chinese_text_in_the_code_has_its_english() {
-        // not texts for the user: the ones drawn as marks on the walker, the text of the content files' tags
-        val skip = setOf("呼", "景")
+        // not texts to translate: the marks drawn on the walker, the invisible spacer, the name of the language in its own words
+        val skip = setOf("呼", "景", "中文")
         val files = File("src/main/kotlin").walkTopDown().filter { it.extension == "kt" && it.name != "StringsEn.kt" && it.name != "TownAreas.kt" }.toList()
         assertTrue("source files not found", files.isNotEmpty())
         val missing = files.flatMap { f -> literals(f.readText()).filter { it !in EN && it !in skip }.map { "${f.name}: $it" } }
