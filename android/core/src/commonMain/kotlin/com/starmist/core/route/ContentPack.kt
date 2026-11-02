@@ -67,7 +67,7 @@ object ContentPack {
         return errors
     }
 
-    /** `county|name|tag:sentence` with one to three tags. */
+    /** `county|name|tag:sentence` with one to three tags; a sentence is 14 to [TOWN_MAX] characters. */
     fun validateTowns(lines: List<String>): List<String> {
         val errors = ArrayList<String>()
         data(lines).forEach { l ->
@@ -79,7 +79,7 @@ object ContentPack {
                 else {
                     val sentence = t[1].trim()
                     val checked = sentence.endsWith(CHECKED)
-                    if (sentence.trimEnd(CHECKED).length !in 14..70) errors += "${f[1]}/${t[0]}: sentence must be 14 to 70 characters"
+                    if (sentence.trimEnd(CHECKED).length !in 14..TOWN_MAX) errors += "${f[1]}/${t[0]}: sentence must be 14 to $TOWN_MAX characters"
                     if (!checked && superlatives.containsMatchIn(sentence)) errors += "${f[1]}/${t[0]}: no superlatives"
                 }
             }
@@ -92,6 +92,9 @@ object ContentPack {
      * against at least two sources (written in docs/research). The app does not show the mark.
      */
     const val CHECKED = '※'
+
+    /** A township sentence says what the place is and what one can do there, so it may run longer than a card fact. */
+    const val TOWN_MAX = 90
 
     /** `id|sentence|sentence`: one to three sentences of 14 to 70 characters about a roadside sight, one line for each sight in [knownIds]. */
     fun validatePois(lines: List<String>, knownIds: Set<String>): List<String> {
