@@ -55,4 +55,10 @@ class ContentPackTest {
         assertTrue(ContentPack.validateTowns(listOf(plain)).isNotEmpty())
         assertTrue(ContentPack.validateTowns(listOf(plain + "※")).isEmpty())
     }
+
+    @Test
+    fun `an editor note left in a township sentence is rejected`() {
+        val line = "臺北市|信義區|🏘️ 四四南村:四四南村是台北眷村，隨兵工廠遷臺的員工與家屬在廠區南側住下，改為信義公民會館。（拿掉冠軍）"
+        assertTrue(ContentPack.validateTowns(listOf(line)).any { "editor" in it })
+    }
 }

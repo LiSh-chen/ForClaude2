@@ -20,6 +20,9 @@ object ContentPack {
 
     private val superlatives = Regex("最|唯一|第一|全台|全國|僅存")
 
+    /** An editor's note that slipped into a sentence, such as "（拿掉冠軍）". */
+    private val editorNote = Regex("（(拿掉|維持|建議|二擇一|待|請|刪)")
+
     private fun data(lines: List<String>) = lines.filter { it.isNotBlank() && !it.startsWith("#") }
 
     /** `id|sentence|sentence` as id to its sentences. */
@@ -81,6 +84,7 @@ object ContentPack {
                     val checked = sentence.endsWith(CHECKED)
                     if (sentence.trimEnd(CHECKED).length !in 14..TOWN_MAX) errors += "${f[1]}/${t[0]}: sentence must be 14 to $TOWN_MAX characters"
                     if (!checked && superlatives.containsMatchIn(sentence)) errors += "${f[1]}/${t[0]}: no superlatives"
+                    if (editorNote.containsMatchIn(sentence)) errors += "${f[1]}/${t[0]}: editor's note left in the sentence"
                 }
             }
         }
