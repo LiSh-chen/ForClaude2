@@ -1,0 +1,92 @@
+{
+ "date": "2026-11-02",
+ "params_version": 1,
+ "picks": [
+  {
+   "ticker": "ORCL",
+   "name": "Oracle Corporation",
+   "zh_name": "Oracle",
+   "market": "US",
+   "sector": "cloud_software",
+   "rank": 1,
+   "entry_price": 130.67,
+   "entry_date": "2026-10-30",
+   "composite": 68.02,
+   "scores": {
+    "sector": 66.9,
+    "leader": 75.0,
+    "quality": 55.2,
+    "growth": 99.4,
+    "valuation": 100.0,
+    "momentum": 16.2,
+    "news": 80.9
+   },
+   "target": {
+    "base": 209.07,
+    "bull": 284.01,
+    "bear": 96.67,
+    "ev": 195.96,
+    "confidence": "中",
+    "upside": 0.6,
+    "ev_upside": 0.4996,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 262.69,
+      "weight": 0.5,
+      "upside": 1.0103
+     },
+     "peg": {
+      "value": 360.27,
+      "weight": 0.187,
+      "upside": 1.7571
+     },
+     "consensus": {
+      "value": 235.56,
+      "weight": 0.312,
+      "upside": 0.8027
+     }
+    }
+   },
+   "stop": 110.56,
+   "fundamentals": {
+    "market_cap": 372692746240,
+    "pe_ttm": 19.2696,
+    "pe_fwd": 11.1002,
+    "peg": 0.73,
+    "roe": 0.4119,
+    "gross_margin": 0.6396,
+    "op_margin": 0.3563,
+    "net_margin": 0.2636,
+    "rev_growth": 0.296,
+    "eps_growth": 0.545,
+    "de": 2.5172,
+    "beta": 1.778,
+    "target_mean": 235.5595,
+    "n_analysts": 41,
+    "fcf_margin": -0.6388
+   },
+   "tech": {
+    "ret_1m": -0.05009576590148235,
+    "ret_3m": -0.07540866328814022,
+    "rel_3m": -0.07272065910667191,
+    "dist200": -0.16195509948441167,
+    "vol_ann": 0.5620818478890383
+   },
+   "book": "bargain",
+   "also_main": true,
+   "bargain_score": 75.9,
+   "facts": {
+    "from_high": -0.4958,
+    "pos52": 0.1114,
+    "bounce20": 0.0409,
+    "ret_1m": -0.0501,
+    "dist200": -0.162,
+    "pe_discount": 0.6689,
+    "eps_up": 0.736,
+    "rev_growth": 0.296,
+    "upside": 0.6
+   }
+  }
+ ]
+}
