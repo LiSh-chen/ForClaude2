@@ -48,4 +48,11 @@ class ContentPackTest {
     fun `a fact with a superlative is rejected`() {
         assertTrue(ContentPack.validateFacts(listOf("keelung|小吃:這是全台灣最有名的廟口小吃街區，每天都有很多人來排隊"), ids).isNotEmpty())
     }
+
+    @Test
+    fun `a township sentence may say first only with the checked mark`() {
+        val plain = "臺北市|信義區|🏘️ 四四南村:四四南村是台北第一座眷村，位在聯勤四四兵工廠的南側，現在改為信義公民會館。"
+        assertTrue(ContentPack.validateTowns(listOf(plain)).isNotEmpty())
+        assertTrue(ContentPack.validateTowns(listOf(plain + "※")).isEmpty())
+    }
 }

@@ -77,13 +77,21 @@ object ContentPack {
                 val t = x.split(':', limit = 2)
                 if (t.size != 2 || t[0].isBlank() || t[1].isBlank()) errors += "${f[1]}: bad tag: $x"
                 else {
-                    if (t[1].trim().length !in 14..70) errors += "${f[1]}/${t[0]}: sentence must be 14 to 70 characters"
-                    if (superlatives.containsMatchIn(t[1])) errors += "${f[1]}/${t[0]}: no superlatives"
+                    val sentence = t[1].trim()
+                    val checked = sentence.endsWith(CHECKED)
+                    if (sentence.trimEnd(CHECKED).length !in 14..70) errors += "${f[1]}/${t[0]}: sentence must be 14 to 70 characters"
+                    if (!checked && superlatives.containsMatchIn(sentence)) errors += "${f[1]}/${t[0]}: no superlatives"
                 }
             }
         }
         return errors
     }
+
+    /**
+     * A township sentence may say "first" or "only" when it ends with this mark: the claim was checked
+     * against at least two sources (written in docs/research). The app does not show the mark.
+     */
+    const val CHECKED = '※'
 
     /** `id|sentence|sentence`: one to three sentences of 14 to 70 characters about a roadside sight, one line for each sight in [knownIds]. */
     fun validatePois(lines: List<String>, knownIds: Set<String>): List<String> {

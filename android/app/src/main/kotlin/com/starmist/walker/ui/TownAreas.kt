@@ -239,7 +239,7 @@ internal fun parseTag(raw: String, fact: String): TownTag {
     val t = raw.trim()
     val first = t.substringBefore(' ')
     val hasIcon = ' ' in t && first.isNotEmpty() && first.codePoints().noneMatch { Character.isLetterOrDigit(it) }
-    return if (hasIcon) TownTag(t.substringAfter(' ').trim(), fact.trim(), first) else TownTag(t, fact.trim())
+    return if (hasIcon) TownTag(t.substringAfter(' ').trim(), fact.trim().trimEnd(ContentPack.CHECKED), first) else TownTag(t, fact.trim().trimEnd(ContentPack.CHECKED))
 }
 
 /** Three features per township, for the township card (res/raw/town_blurbs.txt: county|name|tag:fact|tag:fact|tag:fact). */
