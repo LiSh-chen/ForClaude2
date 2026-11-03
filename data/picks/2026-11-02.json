@@ -13,7 +13,7 @@
    "rank": 1,
    "entry_price": 96.2,
    "entry_date": "2026-11-02",
-   "composite": 71.54,
+   "composite": 70.31,
    "scores": {
     "sector": 69.3,
     "leader": 0.0,
@@ -21,40 +21,35 @@
     "growth": 100.0,
     "valuation": 100.0,
     "momentum": 16.1,
-    "news": 81.7
+    "news": 66.2
    },
    "target": {
     "base": 153.92,
-    "bull": 213.12,
-    "bear": 65.12,
-    "ev": 143.56,
+    "bull": 213.34,
+    "bear": 64.79,
+    "ev": 143.52,
     "confidence": "中",
     "upside": 0.6,
-    "ev_upside": 0.4923,
+    "ev_upside": 0.4919,
     "horizon_days": 250,
     "methods": {
-     "pe": {
-      "value": 282.01,
-      "weight": 0.471,
-      "upside": 1.9315
-     },
      "dcf": {
-      "value": 262.03,
-      "weight": 0.235,
-      "upside": 1.7238
+      "value": 262.65,
+      "weight": 0.444,
+      "upside": 1.7303
      },
      "consensus": {
       "value": 163.5,
-      "weight": 0.294,
+      "weight": 0.556,
       "upside": 0.6996
      }
     }
    },
    "stop": 82.32,
    "fundamentals": {
-    "market_cap": 190466277376,
-    "pe_ttm": 23.1807,
-    "pe_fwd": 2.729,
+    "market_cap": 182348693504,
+    "pe_ttm": 22.0335,
+    "pe_fwd": 2.6127,
     "peg": null,
     "roe": 0.3485,
     "gross_margin": 0.5774,
@@ -69,11 +64,11 @@
     "fcf_margin": 0.288
    },
    "tech": {
-    "ret_1m": -0.21469387755102043,
-    "ret_3m": 0.04793024838748017,
-    "rel_3m": -0.07397435481855918,
-    "dist200": -0.22034241763962314,
-    "vol_ann": 0.5335109356207195
+    "ret_1m": -0.2146939024633291,
+    "ret_3m": 0.04793021514393203,
+    "rel_3m": -0.07397440367181773,
+    "dist200": -0.22034244227632604,
+    "vol_ann": 0.5335109326724905
    }
   },
   {
@@ -97,18 +92,18 @@
    },
    "target": {
     "base": 3000.0,
-    "bull": 3665.95,
-    "bear": 2001.08,
-    "ev": 2883.46,
+    "bull": 3796.29,
+    "bear": 1805.56,
+    "ev": 2860.65,
     "confidence": "中",
     "upside": 0.6,
-    "ev_upside": 0.5378,
+    "ev_upside": 0.5257,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 3304.39,
+      "value": 3464.72,
       "weight": 0.615,
-      "upside": 0.7623
+      "upside": 0.8479
      },
      "consensus": {
       "value": 2763.54,
@@ -119,9 +114,9 @@
    },
    "stop": 1624.11,
    "fundamentals": {
-    "market_cap": 414684348416,
-    "pe_ttm": 9.0114,
-    "pe_fwd": 6.6599,
+    "market_cap": 395885346816,
+    "pe_ttm": 8.8552,
+    "pe_fwd": 6.358,
     "peg": null,
     "roe": 0.6408,
     "gross_margin": 0.5685,
@@ -138,215 +133,9 @@
    "tech": {
     "ret_1m": -0.12790697674418605,
     "ret_3m": 0.254180602006689,
-    "rel_3m": 0.13227599880064966,
+    "rel_3m": 0.13227598319093925,
     "dist200": -0.07320828407851698,
     "vol_ann": 0.5314007921428414
-   }
-  },
-  {
-   "ticker": "6505.TW",
-   "name": "FORMOSA PETROCHEMICAL CORPORATI",
-   "zh_name": "台塑化",
-   "market": "TW",
-   "sector": "energy_materials",
-   "rank": 3,
-   "entry_price": 103.0,
-   "entry_date": "2026-11-02",
-   "composite": 68.36,
-   "scores": {
-    "sector": 91.7,
-    "leader": 100.0,
-    "quality": 51.0,
-    "growth": 87.7,
-    "valuation": 22.2,
-    "momentum": 85.0,
-    "news": 62.0
-   },
-   "target": {
-    "base": 111.78,
-    "bull": 131.28,
-    "bear": 82.53,
-    "ev": 108.37,
-    "confidence": "中",
-    "upside": 0.0852,
-    "ev_upside": 0.0521,
-    "horizon_days": 250,
-    "methods": {
-     "pe": {
-      "value": 110.39,
-      "weight": 0.615,
-      "upside": 0.0718
-     },
-     "consensus": {
-      "value": 114.0,
-      "weight": 0.385,
-      "upside": 0.1068
-     }
-    }
-   },
-   "stop": 84.46,
-   "fundamentals": {
-    "market_cap": 981173862400,
-    "pe_ttm": 17.913,
-    "pe_fwd": 17.2181,
-    "peg": 5.22,
-    "roe": 0.1399,
-    "gross_margin": 0.1115,
-    "op_margin": 0.1251,
-    "net_margin": 0.0841,
-    "rev_growth": 0.257,
-    "eps_growth": null,
-    "de": 0.0464,
-    "beta": 0.064,
-    "target_mean": 114.0,
-    "n_analysts": 6,
-    "fcf_margin": 0.0173
-   },
-   "tech": {
-    "ret_1m": 0.05858167286192306,
-    "ret_3m": 0.43854751669063274,
-    "rel_3m": 0.3166429134845934,
-    "dist200": 0.5838172515585087,
-    "vol_ann": 0.6335774396857276
-   }
-  },
-  {
-   "ticker": "2618.TW",
-   "name": "EVA AIRWAYS",
-   "zh_name": "長榮航",
-   "market": "TW",
-   "sector": "shipping",
-   "rank": 4,
-   "entry_price": 43.15,
-   "entry_date": "2026-11-02",
-   "composite": 51.89,
-   "scores": {
-    "sector": 74.7,
-    "leader": 50.0,
-    "quality": 47.6,
-    "growth": 39.3,
-    "valuation": 26.7,
-    "momentum": 58.7,
-    "news": 63.4
-   },
-   "target": {
-    "base": 45.43,
-    "bull": 50.88,
-    "bear": 37.25,
-    "ev": 44.48,
-    "confidence": "中",
-    "upside": 0.0528,
-    "ev_upside": 0.0307,
-    "horizon_days": 250,
-    "methods": {
-     "pe": {
-      "value": 44.3,
-      "weight": 0.615,
-      "upside": 0.0266
-     },
-     "consensus": {
-      "value": 47.24,
-      "weight": 0.385,
-      "upside": 0.0947
-     }
-    }
-   },
-   "stop": 40.56,
-   "fundamentals": {
-    "market_cap": 233029189632,
-    "pe_ttm": 9.1614,
-    "pe_fwd": 8.8545,
-    "peg": 2.54,
-    "roe": 0.1936,
-    "gross_margin": 0.2119,
-    "op_margin": 0.0844,
-    "net_margin": 0.1076,
-    "rev_growth": 0.225,
-    "eps_growth": -0.427,
-    "de": 0.7846,
-    "beta": 0.512,
-    "target_mean": 47.2375,
-    "n_analysts": 8,
-    "fcf_margin": 0.1354
-   },
-   "tech": {
-    "ret_1m": 0.007001202720230859,
-    "ret_3m": 0.033532934131736525,
-    "rel_3m": -0.08837166907430283,
-    "dist200": 0.13828583218605361,
-    "vol_ann": 0.2509247687132617
-   }
-  },
-  {
-   "ticker": "NVDA",
-   "name": "NVIDIA Corporation",
-   "zh_name": "NVIDIA",
-   "market": "US",
-   "sector": "ai_chips",
-   "rank": 1,
-   "entry_price": 204.64,
-   "entry_date": "2026-10-30",
-   "composite": 81.89,
-   "scores": {
-    "sector": 66.2,
-    "leader": 100.0,
-    "quality": 93.4,
-    "growth": 100.0,
-    "valuation": 100.0,
-    "momentum": 30.8,
-    "news": 82.4
-   },
-   "target": {
-    "base": 326.88,
-    "bull": 452.86,
-    "bear": 137.92,
-    "ev": 304.84,
-    "confidence": "中",
-    "upside": 0.5974,
-    "ev_upside": 0.4896,
-    "horizon_days": 250,
-    "methods": {
-     "pe": {
-      "value": 267.76,
-      "weight": 0.5,
-      "upside": 0.3085
-     },
-     "peg": {
-      "value": 481.09,
-      "weight": 0.187,
-      "upside": 1.3509
-     },
-     "consensus": {
-      "value": 328.95,
-      "weight": 0.312,
-      "upside": 0.6075
-     }
-    }
-   },
-   "stop": 188.29,
-   "fundamentals": {
-    "market_cap": 5002813767680,
-    "pe_ttm": 26.1924,
-    "pe_fwd": 13.0183,
-    "peg": 0.25,
-    "roe": 1.1721,
-    "gross_margin": 0.7467,
-    "op_margin": 0.6624,
-    "net_margin": 0.6366,
-    "rev_growth": 1.059,
-    "eps_growth": 1.278,
-    "de": 0.1697,
-    "beta": 2.247,
-    "target_mean": 328.9535,
-    "n_analysts": 58,
-    "fcf_margin": 0.138
-   },
-   "tech": {
-    "ret_1m": -0.11357533202539305,
-    "ret_3m": -0.008570569140465834,
-    "rel_3m": -0.005882564958997527,
-    "dist200": 0.0026842290219770693,
-    "vol_ann": 0.35397896710223614
    }
   },
   {
@@ -355,51 +144,51 @@
    "zh_name": "台積電 ADR",
    "market": "US",
    "sector": "ai_chips",
-   "rank": 2,
-   "entry_price": 406.13,
-   "entry_date": "2026-10-30",
-   "composite": 79.44,
+   "rank": 1,
+   "entry_price": 398.63,
+   "entry_date": "2026-11-02",
+   "composite": 78.31,
    "scores": {
-    "sector": 66.2,
+    "sector": 63.4,
     "leader": 75.0,
     "quality": 99.0,
     "growth": 100.0,
-    "valuation": 91.4,
-    "momentum": 31.3,
-    "news": 80.8
+    "valuation": 92.6,
+    "momentum": 28.2,
+    "news": 76.1
    },
    "target": {
-    "base": 539.39,
-    "bull": 706.06,
-    "bear": 289.39,
-    "ev": 510.22,
+    "base": 533.64,
+    "bull": 718.19,
+    "bear": 256.81,
+    "ev": 501.34,
     "confidence": "中",
-    "upside": 0.3281,
-    "ev_upside": 0.2563,
+    "upside": 0.3387,
+    "ev_upside": 0.2577,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 446.0,
+      "value": 432.84,
       "weight": 0.5,
-      "upside": 0.0982
+      "upside": 0.0858
      },
      "peg": {
-      "value": 713.43,
+      "value": 717.83,
       "weight": 0.187,
-      "upside": 0.7567
+      "upside": 0.8007
      },
      "consensus": {
       "value": 584.39,
       "weight": 0.312,
-      "upside": 0.4389
+      "upside": 0.466
      }
     }
    },
-   "stop": 370.1,
+   "stop": 361.1,
    "fundamentals": {
-    "market_cap": 2113073315840,
-    "pe_ttm": 26.4044,
-    "pe_fwd": 17.4221,
+    "market_cap": 2067484114944,
+    "pe_ttm": 25.8347,
+    "pe_fwd": 17.0462,
     "peg": 0.73,
     "roe": 0.4185,
     "gross_margin": 0.6585,
@@ -414,241 +203,164 @@
     "fcf_margin": 0.2433
    },
    "tech": {
-    "ret_1m": -0.11557057036900087,
-    "ret_3m": 0.002732107034700837,
-    "rel_3m": 0.005420111216169143,
-    "dist200": 0.01876569295826158,
-    "vol_ann": 0.3158137968332288
+    "ret_1m": -0.15683826322589223,
+    "ret_3m": -0.041878853124782456,
+    "rel_3m": -0.01665819620217268,
+    "dist200": -0.0007954699086999417,
+    "vol_ann": 0.31784721191915477
    }
   },
   {
-   "ticker": "CVX",
-   "name": "Chevron Corporation",
-   "zh_name": "Chevron",
+   "ticker": "NVO",
+   "name": "Novo Nordisk A/S",
+   "zh_name": "Novo Nordisk",
    "market": "US",
-   "sector": "energy_materials",
-   "rank": 3,
-   "entry_price": 235.52,
-   "entry_date": "2026-10-30",
-   "composite": 76.06,
+   "sector": "healthcare",
+   "rank": 2,
+   "entry_price": 40.45,
+   "entry_date": "2026-11-02",
+   "composite": 53.52,
    "scores": {
-    "sector": 82.2,
-    "leader": 66.7,
-    "quality": 73.1,
-    "growth": 100.0,
-    "valuation": 63.8,
-    "momentum": 85.1,
-    "news": 61.1
+    "sector": 77.2,
+    "leader": 60.0,
+    "quality": 71.9,
+    "growth": 10.1,
+    "valuation": 48.5,
+    "momentum": 21.8,
+    "news": 40.0
    },
    "target": {
-    "base": 266.57,
-    "bull": 353.57,
-    "bear": 136.07,
-    "ev": 251.34,
+    "base": 52.74,
+    "bull": 64.27,
+    "bear": 35.45,
+    "ev": 50.72,
     "confidence": "中",
-    "upside": 0.1318,
-    "ev_upside": 0.0672,
+    "upside": 0.3039,
+    "ev_upside": 0.254,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 240.56,
-      "weight": 0.5,
-      "upside": 0.0214
-     },
-     "peg": {
-      "value": 390.07,
-      "weight": 0.187,
-      "upside": 0.6562
+      "value": 57.54,
+      "weight": 0.615,
+      "upside": 0.4224
      },
      "consensus": {
-      "value": 234.08,
-      "weight": 0.312,
-      "upside": -0.0061
+      "value": 45.07,
+      "weight": 0.385,
+      "upside": 0.1142
      }
     }
    },
-   "stop": 221.39,
+   "stop": 38.02,
    "fundamentals": {
-    "market_cap": 448447119360,
-    "pe_ttm": 16.8763,
-    "pe_fwd": 14.1626,
-    "peg": 1.02,
+    "market_cap": 178412208128,
+    "pe_ttm": 9.89,
+    "pe_fwd": 11.7602,
+    "peg": 4.5,
+    "roe": 0.5981,
+    "gross_margin": 0.8199,
+    "op_margin": 0.4254,
+    "net_margin": 0.3535,
+    "rev_growth": 0.021,
+    "eps_growth": -0.206,
+    "de": 0.6333,
+    "beta": 0.372,
+    "target_mean": 45.0676,
+    "n_analysts": 12,
+    "fcf_margin": 0.1144
+   },
+   "tech": {
+    "ret_1m": 0.08386926832020647,
+    "ret_3m": -0.07482192215878158,
+    "rel_3m": -0.04960126523617181,
+    "dist200": -0.06587674295719836,
+    "vol_ann": 0.3083167268540275
+   }
+  },
+  {
+   "ticker": "MS",
+   "name": "Morgan Stanley",
+   "zh_name": "Morgan Stanley",
+   "market": "US",
+   "sector": "financials",
+   "rank": 3,
+   "entry_price": 185.73,
+   "entry_date": "2026-11-02",
+   "composite": 53.44,
+   "scores": {
+    "sector": 64.1,
+    "leader": 20.0,
+    "quality": 66.7,
+    "growth": 40.8,
+    "valuation": 62.1,
+    "momentum": 20.5,
+    "news": 76.3
+   },
+   "target": {
+    "base": 224.19,
+    "bull": 308.79,
+    "bear": 97.29,
+    "ev": 209.39,
+    "confidence": "中",
+    "upside": 0.2071,
+    "ev_upside": 0.1274,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 263.28,
+      "weight": 0.5,
+      "upside": 0.4175
+     },
+     "peg": {
+      "value": 141.11,
+      "weight": 0.187,
+      "upside": -0.2403
+     },
+     "consensus": {
+      "value": 211.5,
+      "weight": 0.312,
+      "upside": 0.1387
+     }
+    }
+   },
+   "stop": 172.1,
+   "fundamentals": {
+    "market_cap": 290667429888,
+    "pe_ttm": 14.7288,
+    "pe_fwd": 13.5866,
+    "peg": 1.61,
     "roe": null,
-    "gross_margin": 0.444,
-    "op_margin": 0.1801,
-    "net_margin": 0.1192,
-    "rev_growth": 0.348,
-    "eps_growth": 1.78,
-    "de": 0.1896,
-    "beta": 0.453,
-    "target_mean": 234.0833,
-    "n_analysts": 24,
+    "gross_margin": 0.8731,
+    "op_margin": 0.3989,
+    "net_margin": 0.2563,
+    "rev_growth": 0.108,
+    "eps_growth": 0.082,
+    "de": 5.1728,
+    "beta": 1.22,
+    "target_mean": 211.5,
+    "n_analysts": 22,
     "fcf_margin": null
    },
    "tech": {
-    "ret_1m": 0.13722837919541164,
-    "ret_3m": 0.22981381454693572,
-    "rel_3m": 0.23250181872840403,
-    "dist200": 0.23145670241726024,
-    "vol_ann": 0.22311494139987514
-   }
-  },
-  {
-   "ticker": "MSFT",
-   "name": "Microsoft Corporation",
-   "zh_name": "Microsoft",
-   "market": "US",
-   "sector": "cloud_software",
-   "rank": 4,
-   "entry_price": 521.91,
-   "entry_date": "2026-10-30",
-   "composite": 73.38,
-   "scores": {
-    "sector": 66.9,
-    "leader": 100.0,
-    "quality": 70.9,
-    "growth": 76.3,
-    "valuation": 66.3,
-    "momentum": 72.8,
-    "news": 74.5
-   },
-   "target": {
-    "base": 654.64,
-    "bull": 740.24,
-    "bear": 526.25,
-    "ev": 639.66,
-    "confidence": "高",
-    "upside": 0.2543,
-    "ev_upside": 0.2256,
-    "horizon_days": 250,
-    "methods": {
-     "pe": {
-      "value": 636.99,
-      "weight": 0.5,
-      "upside": 0.2205
-     },
-     "peg": {
-      "value": 737.33,
-      "weight": 0.187,
-      "upside": 0.4128
-     },
-     "consensus": {
-      "value": 633.28,
-      "weight": 0.312,
-      "upside": 0.2134
-     }
-    }
-   },
-   "stop": 490.6,
-   "fundamentals": {
-    "market_cap": 3889840521216,
-    "pe_ttm": 27.3382,
-    "pe_fwd": 21.6631,
-    "peg": 1.69,
-    "roe": 0.3422,
-    "gross_margin": 0.6766,
-    "op_margin": 0.4976,
-    "net_margin": 0.4117,
-    "rev_growth": 0.188,
-    "eps_growth": 0.323,
-    "de": 0.2847,
-    "beta": 1.045,
-    "target_mean": 633.2829,
-    "n_analysts": 52,
-    "fcf_margin": 0.0086
-   },
-   "tech": {
-    "ret_1m": 0.017765182465722784,
-    "ret_3m": 0.07227005089254757,
-    "rel_3m": 0.07495805507401587,
-    "dist200": 0.1947012855111998,
-    "vol_ann": 0.2120633889110291
-   }
-  },
-  {
-   "ticker": "ORCL",
-   "name": "Oracle Corporation",
-   "zh_name": "Oracle",
-   "market": "US",
-   "sector": "cloud_software",
-   "rank": 5,
-   "entry_price": 130.67,
-   "entry_date": "2026-10-30",
-   "composite": 68.02,
-   "scores": {
-    "sector": 66.9,
-    "leader": 75.0,
-    "quality": 55.2,
-    "growth": 99.4,
-    "valuation": 100.0,
-    "momentum": 16.2,
-    "news": 80.9
-   },
-   "target": {
-    "base": 209.07,
-    "bull": 284.01,
-    "bear": 96.67,
-    "ev": 195.96,
-    "confidence": "中",
-    "upside": 0.6,
-    "ev_upside": 0.4996,
-    "horizon_days": 250,
-    "methods": {
-     "pe": {
-      "value": 262.69,
-      "weight": 0.5,
-      "upside": 1.0103
-     },
-     "peg": {
-      "value": 360.27,
-      "weight": 0.187,
-      "upside": 1.7571
-     },
-     "consensus": {
-      "value": 235.56,
-      "weight": 0.312,
-      "upside": 0.8027
-     }
-    }
-   },
-   "stop": 110.56,
-   "fundamentals": {
-    "market_cap": 372692746240,
-    "pe_ttm": 19.2696,
-    "pe_fwd": 11.1002,
-    "peg": 0.73,
-    "roe": 0.4119,
-    "gross_margin": 0.6396,
-    "op_margin": 0.3563,
-    "net_margin": 0.2636,
-    "rev_growth": 0.296,
-    "eps_growth": 0.545,
-    "de": 2.5172,
-    "beta": 1.778,
-    "target_mean": 235.5595,
-    "n_analysts": 41,
-    "fcf_margin": -0.6388
-   },
-   "tech": {
-    "ret_1m": -0.05009576590148235,
-    "ret_3m": -0.07540866328814022,
-    "rel_3m": -0.07272065910667191,
-    "dist200": -0.16195509948441167,
-    "vol_ann": 0.5620818478890383
+    "ret_1m": -0.018123097119572495,
+    "ret_3m": -0.1390481050112249,
+    "rel_3m": -0.11382744808861511,
+    "dist200": -0.03302513889312331,
+    "vol_ann": 0.2392225870485097
    }
   }
  ],
  "focus_sectors": {
   "US": [
    "energy_materials",
+   "healthcare",
    "ai_servers",
-   "cloud_software",
-   "ai_chips",
-   "healthcare"
+   "financials",
+   "ai_chips"
   ],
   "TW": [
-   "financials",
    "energy_materials",
+   "financials",
    "internet_platforms",
    "shipping",
    "memory_storage"
