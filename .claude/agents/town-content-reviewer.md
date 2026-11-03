@@ -24,3 +24,8 @@ tools: Read, Grep, Glob, WebSearch, WebFetch, Bash
 - 先執行 `python3 android/tools/town_lint.py`，對每個 W（警告）逐條寫處置。
 - 輸出：逐條判定、漏選清單、W 處置表，方便撰寫者登記進台帳。
 
+
+## SOP v3 補充（以 android/docs/SOP_TOWN_CONTENT.md 為準）
+- 每個 FAIL 都要標明適用的決議規則編號（D1–D15）。如果沒有適用規則，明確寫「無適用規則（S1）」，並提出規則草案；不要寫「需要使用者決定」。
+- 證據標準看第 3 節（E1–E4）；「僅閱讀」不是通過。
+- 同主題重複的條目要提出（D6）。
