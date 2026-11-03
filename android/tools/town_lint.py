@@ -10,6 +10,20 @@ NOTE=re.compile('（(拿掉|維持|建議|二擇一|待|請|刪)')
 QUIP=re.compile('等於|堪稱|戲稱|請不要|沒有玄機|被形容|威尼斯|點鈔機|遊覽車')
 VAGUE=re.compile('傳說有多種|歷史悠久|知名|有名|聞名|特別的|獨特')
 ORIGIN=re.compile('舊名|舊稱|得名|地名|由來|改名|取名|稱為')
+LANDMARK=path.replace('town_blurbs.txt','landmark_facts.txt')
+def grams(t,n):
+    t=re.sub(r'[\s，。；、：「」『』（）()※,.\-0-9]','',t)
+    return {t[i:i+n] for i in range(len(t)-n+1)}
+cards=[]  # (id, text)
+try:
+    for l in open(LANDMARK,encoding='utf-8'):
+        if l.startswith('#') or not l.strip(): continue
+        f=l.rstrip('\n').split('|')
+        for t in f[1:]: cards.append((f[0],t.split(':',1)[-1]))
+except OSError: pass
+card_g=[(i,grams(t,4),t) for i,t in cards]
+seen_g={}  # 7-gram -> (district, tag)
+seen_tag={}
 E=[];W=[];cov=collections.Counter();rows=[]
 for n,l in enumerate(open(path,encoding='utf-8'),1):
     l=l.rstrip('\n')
@@ -35,6 +49,18 @@ for n,l in enumerate(open(path,encoding='utf-8'),1):
         m=VAGUE.search(core)
         if m: w('F9',f'籠統形容「{m.group()}」：需換成具體特點')
         if ORIGIN.search(core): w('F10','地名／由來類：必須有畫面或故事，否則刪')
+        if '※' in core: e('F13','※ 只能放在句尾')
+        g4=grams(core,4); g=g4
+        for cid,cg,ct in card_g:
+            sh=g&cg
+            if len(sh)>=3: w('F14',f'可能重述景點卡片 {cid}（D18）：{sorted(sh)[0]}…')
+        tn=re.sub(r'^\S+\s*','',tag).strip()
+        if tn in seen_tag and seen_tag[tn]!=d: w('F15',f'標籤「{tn}」也出現在{seen_tag[tn]}（D21）')
+        seen_tag.setdefault(tn,d)
+        for gg in grams(core,8):
+            o=seen_g.get(gg)
+            if o and o[0]!=d: w('F15',f'與{o[0]}「{o[1]}」有相同內容「{gg}」（D21）'); break
+            seen_g.setdefault(gg,(d,tn))
         if len(core)<40 and not re.search(r'[；，]',core[10:]): w('F12','資訊量偏少，可能只有一個事實')
     rows.append((c,d))
 for (c,d),k in cov.items():
@@ -45,5 +71,5 @@ else:
     for e in E: print('E',e)
     print(f'errors={len(E)} warnings={len(W)} by_code={dict(by)}')
     for w in W:
-        if w[3] in ('F3','F4','F7','F9','F10','F11'): print('W',w[3],w[1],w[2],w[4])
+        if w[3] in ('F3','F4','F7','F9','F10','F11','F14','F15'): print('W',w[3],w[1],w[2],w[4])
 sys.exit(1 if E else 0)
