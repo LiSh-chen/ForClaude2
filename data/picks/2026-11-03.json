@@ -1,0 +1,297 @@
+{
+ "date": "2026-11-03",
+ "params_version": 1,
+ "provider": "live",
+ "llm": false,
+ "picks": [
+  {
+   "ticker": "2337.TW",
+   "name": "MACRONIX INTERNATIONAL",
+   "zh_name": "旺宏",
+   "market": "TW",
+   "sector": "memory_storage",
+   "rank": 1,
+   "entry_price": 88.3,
+   "entry_date": "2026-11-03",
+   "composite": 69.98,
+   "scores": {
+    "sector": 74.7,
+    "leader": 0.0,
+    "quality": 96.9,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 6.0,
+    "news": 64.0
+   },
+   "target": {
+    "base": 141.28,
+    "bull": 197.79,
+    "bear": 56.51,
+    "ev": 131.39,
+    "confidence": "中",
+    "upside": 0.6,
+    "ev_upside": 0.488,
+    "horizon_days": 250,
+    "methods": {
+     "dcf": {
+      "value": 262.65,
+      "weight": 0.444,
+      "upside": 1.9745
+     },
+     "consensus": {
+      "value": 163.5,
+      "weight": 0.556,
+      "upside": 0.8516
+     }
+    }
+   },
+   "stop": 74.78,
+   "fundamentals": {
+    "market_cap": 174825095168,
+    "pe_ttm": 8.8477,
+    "pe_fwd": 2.5049,
+    "peg": null,
+    "roe": 0.3485,
+    "gross_margin": 0.5774,
+    "op_margin": 0.5336,
+    "net_margin": 0.3274,
+    "rev_growth": 1.951,
+    "eps_growth": null,
+    "de": 0.2866,
+    "beta": 1.779,
+    "target_mean": 163.5,
+    "n_analysts": 8,
+    "fcf_margin": 0.288
+   },
+   "tech": {
+    "ret_1m": -0.2702479086631586,
+    "ret_3m": -0.12139300446012125,
+    "rel_3m": -0.20588985834489493,
+    "dist200": -0.2856694785950926,
+    "vol_ann": 0.5564888847707398
+   }
+  },
+  {
+   "ticker": "8299.TWO",
+   "name": "PHISON ELECTRONICS CORP",
+   "zh_name": "群聯",
+   "market": "TW",
+   "sector": "memory_storage",
+   "rank": 2,
+   "entry_price": 1690.0,
+   "entry_date": "2026-11-03",
+   "composite": 68.56,
+   "scores": {
+    "sector": 74.7,
+    "leader": 33.3,
+    "quality": 79.9,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 17.7,
+    "news": 40.0
+   },
+   "target": {
+    "base": 2704.0,
+    "bull": 3359.11,
+    "bear": 1721.33,
+    "ev": 2589.36,
+    "confidence": "中",
+    "upside": 0.6,
+    "ev_upside": 0.5322,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 3117.17,
+      "weight": 0.615,
+      "upside": 0.8445
+     },
+     "consensus": {
+      "value": 2763.54,
+      "weight": 0.385,
+      "upside": 0.6352
+     }
+    }
+   },
+   "stop": 1432.86,
+   "fundamentals": {
+    "market_cap": 373768847360,
+    "pe_ttm": 8.1223,
+    "pe_fwd": 6.0028,
+    "peg": null,
+    "roe": 0.6408,
+    "gross_margin": 0.5685,
+    "op_margin": 0.3884,
+    "net_margin": 0.3221,
+    "rev_growth": 2.795,
+    "eps_growth": 30.955,
+    "de": 0.2873,
+    "beta": 1.859,
+    "target_mean": 2763.5386,
+    "n_analysts": 13,
+    "fcf_margin": -0.1209
+   },
+   "tech": {
+    "ret_1m": -0.19905213270142175,
+    "ret_3m": 0.030487804878048808,
+    "rel_3m": -0.054009049006724874,
+    "dist200": -0.16517883450181892,
+    "vol_ann": 0.5685636504760867
+   }
+  },
+  {
+   "ticker": "TSM",
+   "name": "Taiwan Semiconductor Manufactur",
+   "zh_name": "台積電 ADR",
+   "market": "US",
+   "sector": "ai_chips",
+   "rank": 1,
+   "entry_price": 398.63,
+   "entry_date": "2026-11-02",
+   "composite": 79.18,
+   "scores": {
+    "sector": 67.8,
+    "leader": 75.0,
+    "quality": 99.0,
+    "growth": 100.0,
+    "valuation": 92.6,
+    "momentum": 28.2,
+    "news": 76.1
+   },
+   "target": {
+    "base": 533.36,
+    "bull": 718.11,
+    "bear": 256.24,
+    "ev": 501.03,
+    "confidence": "中",
+    "upside": 0.338,
+    "ev_upside": 0.2569,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 432.29,
+      "weight": 0.5,
+      "upside": 0.0844
+     },
+     "peg": {
+      "value": 717.83,
+      "weight": 0.187,
+      "upside": 0.8007
+     },
+     "consensus": {
+      "value": 584.39,
+      "weight": 0.312,
+      "upside": 0.466
+     }
+    }
+   },
+   "stop": 361.1,
+   "fundamentals": {
+    "market_cap": 2067484114944,
+    "pe_ttm": 25.8347,
+    "pe_fwd": 17.0462,
+    "peg": 0.73,
+    "roe": 0.4185,
+    "gross_margin": 0.6585,
+    "op_margin": 0.5866,
+    "net_margin": 0.5112,
+    "rev_growth": 0.509,
+    "eps_growth": 0.687,
+    "de": 0.1162,
+    "beta": 1.233,
+    "target_mean": 584.3929,
+    "n_analysts": 20,
+    "fcf_margin": 0.2433
+   },
+   "tech": {
+    "ret_1m": -0.15683826322589223,
+    "ret_3m": -0.041878853124782456,
+    "rel_3m": -0.01665819620217268,
+    "dist200": -0.0007954676156678442,
+    "vol_ann": 0.31784721191915477
+   }
+  },
+  {
+   "ticker": "NVO",
+   "name": "Novo Nordisk A/S",
+   "zh_name": "Novo Nordisk",
+   "market": "US",
+   "sector": "healthcare",
+   "rank": 2,
+   "entry_price": 40.45,
+   "entry_date": "2026-11-02",
+   "composite": 51.34,
+   "scores": {
+    "sector": 66.2,
+    "leader": 60.0,
+    "quality": 71.9,
+    "growth": 10.1,
+    "valuation": 48.5,
+    "momentum": 21.8,
+    "news": 40.0
+   },
+   "target": {
+    "base": 52.75,
+    "bull": 64.27,
+    "bear": 35.48,
+    "ev": 50.74,
+    "confidence": "中",
+    "upside": 0.3042,
+    "ev_upside": 0.2543,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 57.54,
+      "weight": 0.615,
+      "upside": 0.4224
+     },
+     "consensus": {
+      "value": 45.1,
+      "weight": 0.385,
+      "upside": 0.1149
+     }
+    }
+   },
+   "stop": 38.02,
+   "fundamentals": {
+    "market_cap": 178412208128,
+    "pe_ttm": 9.89,
+    "pe_fwd": 11.7602,
+    "peg": 4.5,
+    "roe": 0.5981,
+    "gross_margin": 0.8199,
+    "op_margin": 0.4254,
+    "net_margin": 0.3535,
+    "rev_growth": 0.021,
+    "eps_growth": -0.206,
+    "de": 0.6333,
+    "beta": 0.372,
+    "target_mean": 45.0986,
+    "n_analysts": 12,
+    "fcf_margin": 0.1144
+   },
+   "tech": {
+    "ret_1m": 0.08386926832020647,
+    "ret_3m": -0.07482192215878158,
+    "rel_3m": -0.04960126523617181,
+    "dist200": -0.06587673966557683,
+    "vol_ann": 0.3083167268540275
+   }
+  }
+ ],
+ "focus_sectors": {
+  "US": [
+   "energy_materials",
+   "ai_servers",
+   "ai_chips",
+   "healthcare",
+   "financials"
+  ],
+  "TW": [
+   "financials",
+   "internet_platforms",
+   "energy_materials",
+   "shipping",
+   "memory_storage"
+  ]
+ }
+}
