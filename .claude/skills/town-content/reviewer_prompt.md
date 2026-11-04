@@ -1,8 +1,16 @@
-請依 /home/user/ForClaude2/android/docs/SOP_TOWN_CONTENT.md（v3.4）與 REVIEW_HANDBOOK.md 審查下列區域的候選池與擬定條目（只審不改）。檔案在 /home/user/ForClaude2/android/docs/research/candidate_pools/<縣市>_<區>.md，末尾 ```proposal 區塊是擬定條目。
+你是審查者（只審不改專案內容檔）。先讀 /home/user/ForClaude2/.claude/skills/town-content/agent_brief.md（精簡規則，必讀；完整規則在同資料夾 SKILL.md，只在遇到不確定的條目時 grep 對應 D 編號）。候選池在 /home/user/ForClaude2/android/docs/research/candidate_pools/<縣市>_<區>.md，末尾 ```proposal 區塊是擬定條目。
+
+查證範圍與方法（品質不變，只是不重複勞動）：
+- 逐條擬定句仍要全面審：Q1–Q7、模板必備資訊、證據分級、時效詞、店名、行政區、字數、禁用字。
+- 事實查證聚焦高風險項：稱號、會變的數字、單一來源的細節、行政區、傳說、研究員標「只見摘要／需核對」的事實；已有維基全文支持的普通事實不重查。
+- 維基用 `python3 /home/user/ForClaude2/android/tools/wiki_extract.py "<條目名>" --grep 關鍵字`（共用快取，不要自己 curl 整頁）。搜不到就標「無法查證」並依 D20 刪細節，不要反覆換字串硬搜。
+
 每區要做：
-1. 逐條擬定句判 PASS/FAIL：Q1–Q7、類型模板必備資訊、證據分級 E1–E4（稱號需兩個各自發布來源；傳說用相傳；變動數字）、時效詞、特定店名、行政區（D9：官方地址或可靠來源；存疑要查）、字數 14–90、禁用字。每個 FAIL 要標決議編號（D1–D17 或 S1 無適用規則）與建議改寫句（比現有規則更嚴者可自動套用）。
-2. 查證：用 Bash curl（-A "ForClaude2-research/1.0"，zh.wikipedia.org 可讀，429 就等 retry-after）與 WebSearch 核對研究員標記「只見摘要／需核對」的事實；你的搜尋額度若用完，如實標示「無法查證」，不得當作通過。
-3. 漏選檢查（D17）：不看研究員結論，自己判斷維基整頁與其他來源中該區的前 3 個特色，與擬定條目比對。
-4. 研究員標示的「建議放回」項目（使用者曾移除者）：判斷是否為核心特色、是否值得放回，給結論與建議句；使用者同意前不寫入。
-5. 條目數量是否符合 D10/D11。
-輸出：每區一節，附「最終建議條目（完整句子）」與狀態（PASS／需第2輪改寫／刪除），寫到 /home/user/ForClaude2/android/docs/research/{OUT}，回報精簡摘要（每區 PASS/FAIL 數與需決策項）。
+1. 逐條判 PASS／改寫後 PASS／刪除，每個修改標規則編號（D1–D22 或 S1），並直接給「最終可套用的句子」。
+2. 漏選檢查（D17）：不看研究員結論，自己判斷前 3 個特色，與擬定條目比對。
+3. 被取代的現有條目逐項交代原因；研究員標的「建議放回」給結論與建議句（使用者同意前不寫入）。
+4. 確認條數符合 D10／D11，行政區有疑慮的要查。
+
+輸出（節省我的上下文）：
+- 完整審查報告用 Bash heredoc 寫到 /home/user/ForClaude2/android/docs/research/reviews/{OUT}（這是唯一允許寫入的位置；目錄不存在就建立）。
+- 最終回報只給：(a) 每區「最終可套用的完整行」（`縣市|區|🙂 標籤:句子|…` 格式，每區一行）；(b) 每區 3–6 行重點（改了什麼、為什麼、規則編號）；(c) 無法查證清單（一行一項）；(d) 需要使用者決定的項目（無則寫「無」）。總長度不超過 60 行。
