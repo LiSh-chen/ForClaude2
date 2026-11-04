@@ -244,6 +244,29 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
         }
     }
 
+    /** The tasks (see [QuestCatalog]); built once, on first use. */
+    val quests: List<com.starmist.core.route.Quest> by lazy { QuestCatalog.build(townAreas, townTags) }
+
+    /** Everything ever collected and the tasks already celebrated. */
+    val ledger: StateFlow<com.starmist.walker.data.Ledger> = container.collection.flow.stateIn(viewModelScope, SharingStarted.Eagerly, com.starmist.walker.data.Ledger())
+    private var lastQuestKm = -1.0
+
+    /**
+     * Writes what the route has collected into the lifetime ledger and returns an event for each task that has just been
+     * completed. The first time it runs it only marks tasks that are already complete, so that an existing player is not showered with popups.
+     */
+    private suspend fun recordQuests(route: com.starmist.core.route.RouteDef, walkedKm: Double): List<RouteEvent> {
+        if (lastQuestKm >= 0 && walkedKm >= lastQuestKm && walkedKm - lastQuestKm < 0.5 && walkedKm < route.totalKm - 1e-9) return emptyList()
+        lastQuestKm = walkedKm
+        val cards = route.collected(walkedKm).map { it.id }
+        val towns = townAreas.visited(route, walkedKm).keys.map { townAreas.towns[it] }.map { "${it.county}|${it.name}" }
+        val l = container.collection.add(cards, towns)
+        val fresh = com.starmist.core.route.QuestEngine.newlyDone(quests, l.done, l.cards, l.towns)
+        container.collection.markDone(fresh.map { it.id })
+        if (!l.seeded) return emptyList()
+        return fresh.map { RouteEvent.QuestCompleted(it.id, it.title, it.desc, it.reward) }
+    }
+
     private val _pendingRouteEvents = MutableStateFlow<List<RouteEvent>>(emptyList())
 
     /** Cards, stamps and crossings waiting to be shown, oldest first; the screen shows one at a time. */
@@ -286,6 +309,7 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
             val stride = BodyMetrics.strideMeters(container.settings.current().profile)
             val advance = container.routes.settle(route, repository.allTimeTotal(), stride) ?: return@launch
             collectRegionTags(route, advance.state.walkedKm)
+            val questEvents = recordQuests(route, advance.state.walkedKm)
             // small sights earn their stamps here: the township and the nearest point both have to be reached
             val before = advance.state.walkedKm - advance.addedKm
             val sights = PoiStamps.of(route, townAreas).mapNotNull { (poi, km) ->
@@ -310,8 +334,8 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
                     if (there != null) here = there
                 }
             }
-            val shown = (advance.events + sights + counties).filter {
-                it is RouteEvent.CardCollected || it is RouteEvent.StampCollected || it is RouteEvent.PoiCollected || it is RouteEvent.Transit || it is RouteEvent.Finished || it is RouteEvent.CountyCompleted
+            val shown = (advance.events + sights + counties + questEvents).filter {
+                it is RouteEvent.CardCollected || it is RouteEvent.StampCollected || it is RouteEvent.PoiCollected || it is RouteEvent.Transit || it is RouteEvent.Finished || it is RouteEvent.CountyCompleted || it is RouteEvent.QuestCompleted
             }
             if (shown.isNotEmpty()) _pendingRouteEvents.update { it + shown }
         }

@@ -35,6 +35,7 @@ object Backup {
         root.put("route", c.routes.exportRaw() ?: JSONObject.NULL)
         val (log, lap) = c.regions.exportRaw()
         root.put("regionLog", log).put("regionLap", lap)
+        root.put("collection", c.collection.exportRaw())
         return root.toString(1)
     }
 
@@ -60,6 +61,7 @@ object Backup {
         c.repository.replaceAllDays(days)
         c.routes.importRaw(route)
         c.regions.importRaw(root.optString("regionLog"), root.optInt("regionLap", 0))
+        if (root.has("collection")) c.collection.importRaw(root.optString("collection"))
         c.settings.update {
             it.copy(
                 heightCm = st.optDouble("heightCm", it.heightCm), weightKg = st.optDouble("weightKg", it.weightKg),

@@ -431,6 +431,7 @@ fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishSta
             text = { Text(trf("這一段不能步行，直接{0}抵達，不計步數。", event.by)) },
             confirmButton = { TextButton(onClick = onDismiss) { Text("上車") } },
         )
+        is RouteEvent.QuestCompleted -> QuestCompletedDialog(event.title, event.desc, event.reward, onDismiss)
         RouteEvent.Finished -> LetterDialog(
             title = "環島完成！",
             paragraphs = finish?.let {

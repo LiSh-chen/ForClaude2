@@ -20,6 +20,8 @@ sealed interface RouteEvent {
     data class Transit(val by: String, val into: String) : RouteEvent
     /** The walker has left a county after walking through [towns] in it; [next] is the county entered (made by the app, which knows the townships). */
     data class CountyCompleted(val county: String, val towns: List<String>, val next: String?) : RouteEvent
+    /** A task (see [Quest]) has just been completed; made by the app, which knows what has been collected. */
+    data class QuestCompleted(val id: String, val title: String, val desc: String, val reward: String?) : RouteEvent
     data object Finished : RouteEvent
 }
 

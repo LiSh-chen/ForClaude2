@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import com.starmist.walker.content.ContentStore
 import com.starmist.walker.data.AppDatabase
+import com.starmist.walker.data.collectionDataStore
 import com.starmist.walker.data.regionDataStore
 import com.starmist.walker.data.routeDataStore
 import com.starmist.walker.data.settingsDataStore
@@ -30,6 +31,7 @@ class AppContainer(context: Context) : AppServices {
     override val goal = com.starmist.walker.platform.GoalWatcher(appContext, settings)
     override val routes = RouteStore(appContext.routeDataStore)
     override val regions = RegionStore(appContext.regionDataStore)
+    override val collection = com.starmist.walker.data.CollectionStore(appContext.collectionDataStore)
     override val platform: PlatformInfo = AndroidPlatformInfo(appContext)
     val reader = StepCounterReader(appContext)
     override val repository = StepRepository(platform, database, settings, reader)

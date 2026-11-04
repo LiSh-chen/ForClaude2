@@ -12,6 +12,7 @@ interface AppServices {
     val settings: SettingsStore
     val routes: RouteStore
     val regions: RegionStore
+    val collection: com.starmist.walker.data.CollectionStore
     val repository: StepRepository
     val platform: PlatformInfo
     val goal: GoalWatcher

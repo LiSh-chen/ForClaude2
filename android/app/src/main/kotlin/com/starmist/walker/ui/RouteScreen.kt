@@ -61,6 +61,10 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     var flipped by rememberSaveable { mutableStateOf(listOf<String>()) }
     var album by rememberSaveable { mutableStateOf(false) }
     val features = rememberLandmarkFacts()
+    var showQuests by remember { mutableStateOf(false) }
+    val ledger by vm.ledger.collectAsStateWithLifecycle()
+    val questList = remember { vm.quests }
+    val questRows = remember(ledger) { questList.map { com.starmist.core.route.QuestEngine.progress(it, ledger.cards, ledger.towns).done } }
     val areasForStamps = rememberTownAreas()
     val places = areasForStamps.cardPlaces
     val sightStamps = remember(route, areasForStamps) { route?.let { PoiStamps.of(it, areasForStamps) } ?: emptyList() }
@@ -72,6 +76,11 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item { Text("收藏・真實世界", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold) }
+        item {
+            OutlinedButton(onClick = { showQuests = true }, modifier = Modifier.fillMaxWidth()) {
+                Text(trf("任務與里程碑 {0} / {1}", questRows.count { it }, questRows.size))
+            }
+        }
         if (current == null || route == null) {
             item { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) { RoutePicker(onStart = { vm.startRoute(it) }) } }
         } else {
@@ -93,6 +102,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
             dismissButton = { TextButton(onClick = { confirmRestart = false }) { Text("取消") } },
         )
     }
+    if (showQuests) QuestsDialog(questList, ledger) { showQuests = false }
     val card = detail
     if (card != null && route != null) CardDialog(route, card) { detail = null }
 }
