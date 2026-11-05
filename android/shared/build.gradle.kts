@@ -23,6 +23,9 @@ kotlin {
             api(libs.androidx.room.runtime)
             api(libs.androidx.sqlite.bundled)
         }
+        iosMain.dependencies {
+            implementation("com.squareup.okio:okio:3.9.1")
+        }
         commonTest.dependencies {
             implementation(kotlin("test"))
         }
