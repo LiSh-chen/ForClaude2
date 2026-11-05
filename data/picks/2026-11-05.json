@@ -1,0 +1,297 @@
+{
+ "date": "2026-11-05",
+ "params_version": 1,
+ "provider": "live",
+ "llm": false,
+ "picks": [
+  {
+   "ticker": "6505.TW",
+   "name": "FORMOSA PETROCHEMICAL CORPORATI",
+   "zh_name": "台塑化",
+   "market": "TW",
+   "sector": "energy_materials",
+   "rank": 1,
+   "entry_price": 87.9,
+   "entry_date": "2026-11-05",
+   "composite": 65.98,
+   "scores": {
+    "sector": 79.3,
+    "leader": 100.0,
+    "quality": 51.0,
+    "growth": 87.7,
+    "valuation": 30.6,
+    "momentum": 76.0,
+    "news": 60.8
+   },
+   "target": {
+    "base": 101.54,
+    "bull": 132.87,
+    "bear": 54.54,
+    "ev": 96.05,
+    "confidence": "中",
+    "upside": 0.1551,
+    "ev_upside": 0.0927,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 93.75,
+      "weight": 0.615,
+      "upside": 0.0665
+     },
+     "consensus": {
+      "value": 114.0,
+      "weight": 0.385,
+      "upside": 0.2969
+     }
+    }
+   },
+   "stop": 72.08,
+   "fundamentals": {
+    "market_cap": 837331845120,
+    "pe_ttm": 15.287,
+    "pe_fwd": 14.6939,
+    "peg": 5.22,
+    "roe": 0.1399,
+    "gross_margin": 0.1115,
+    "op_margin": 0.1251,
+    "net_margin": 0.0841,
+    "rev_growth": 0.257,
+    "eps_growth": null,
+    "de": 0.0464,
+    "beta": 0.064,
+    "target_mean": 114.0,
+    "n_analysts": 6,
+    "fcf_margin": 0.0173
+   },
+   "tech": {
+    "ret_1m": -0.10851924050536921,
+    "ret_3m": 0.2888563850316195,
+    "rel_3m": 0.3306135020580213,
+    "dist200": 0.33693547370638033,
+    "vol_ann": 0.6844135604372339
+   }
+  },
+  {
+   "ticker": "META",
+   "name": "Meta Platforms, Inc.",
+   "zh_name": "Meta Platforms",
+   "market": "US",
+   "sector": "internet_platforms",
+   "rank": 1,
+   "entry_price": 630.0,
+   "entry_date": "2026-11-04",
+   "composite": 69.44,
+   "scores": {
+    "sector": 61.2,
+    "leader": 25.0,
+    "quality": 84.3,
+    "growth": 94.4,
+    "valuation": 86.2,
+    "momentum": 37.0,
+    "news": 85.1
+   },
+   "target": {
+    "base": 810.45,
+    "bull": 995.79,
+    "bear": 532.44,
+    "ev": 778.02,
+    "confidence": "高",
+    "upside": 0.2864,
+    "ev_upside": 0.2349,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 739.7,
+      "weight": 0.5,
+      "upside": 0.1741
+     },
+     "peg": {
+      "value": 935.91,
+      "weight": 0.187,
+      "upside": 0.4856
+     },
+     "consensus": {
+      "value": 848.38,
+      "weight": 0.312,
+      "upside": 0.3466
+     }
+    }
+   },
+   "stop": 574.08,
+   "fundamentals": {
+    "market_cap": 1610804756480,
+    "pe_ttm": 21.4944,
+    "pe_fwd": 17.7027,
+    "peg": 0.81,
+    "roe": 0.3226,
+    "gross_margin": 0.8103,
+    "op_margin": 0.3541,
+    "net_margin": 0.3115,
+    "rev_growth": 0.261,
+    "eps_growth": 2.648,
+    "de": 0.4216,
+    "beta": 1.279,
+    "target_mean": 848.3765,
+    "n_analysts": 58,
+    "fcf_margin": 0.0697
+   },
+   "tech": {
+    "ret_1m": -0.14735816934182844,
+    "ret_3m": 0.06882036709842643,
+    "rel_3m": 0.07158819518808168,
+    "dist200": -0.0021571997258399422,
+    "vol_ann": 0.4483068423841623
+   }
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet Inc.",
+   "zh_name": "Alphabet",
+   "market": "US",
+   "sector": "internet_platforms",
+   "rank": 2,
+   "entry_price": 288.93,
+   "entry_date": "2026-11-04",
+   "composite": 61.53,
+   "scores": {
+    "sector": 61.2,
+    "leader": 75.0,
+    "quality": 81.5,
+    "growth": 42.4,
+    "valuation": 65.8,
+    "momentum": 6.9,
+    "news": 81.0
+   },
+   "target": {
+    "base": 331.25,
+    "bull": 413.47,
+    "bear": 207.92,
+    "ev": 316.86,
+    "confidence": "中",
+    "upside": 0.1465,
+    "ev_upside": 0.0967,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 288.05,
+      "weight": 0.615,
+      "upside": -0.003
+     },
+     "consensus": {
+      "value": 400.37,
+      "weight": 0.385,
+      "upside": 0.3857
+     }
+    }
+   },
+   "stop": 262.27,
+   "fundamentals": {
+    "market_cap": 3552105201664,
+    "pe_ttm": 15.0877,
+    "pe_fwd": 18.6486,
+    "peg": 1.01,
+    "roe": 0.4429,
+    "gross_margin": 0.6086,
+    "op_margin": 0.318,
+    "net_margin": 0.5003,
+    "rev_growth": 0.247,
+    "eps_growth": -0.253,
+    "de": 0.2219,
+    "beta": 1.226,
+    "target_mean": 400.3736,
+    "n_analysts": 53,
+    "fcf_margin": -0.0025
+   },
+   "tech": {
+    "ret_1m": -0.1689772239922519,
+    "ret_3m": -0.19184988555914695,
+    "rel_3m": -0.1890820574694917,
+    "dist200": -0.1493749966720722,
+    "vol_ann": 0.3402206294036683
+   }
+  },
+  {
+   "ticker": "NVO",
+   "name": "Novo Nordisk A/S",
+   "zh_name": "Novo Nordisk",
+   "market": "US",
+   "sector": "healthcare",
+   "rank": 3,
+   "entry_price": 42.18,
+   "entry_date": "2026-11-04",
+   "composite": 56.74,
+   "scores": {
+    "sector": 75.0,
+    "leader": 60.0,
+    "quality": 71.9,
+    "growth": 10.1,
+    "valuation": 44.9,
+    "momentum": 30.0,
+    "news": 80.0
+   },
+   "target": {
+    "base": 53.73,
+    "bull": 65.08,
+    "bear": 36.7,
+    "ev": 51.74,
+    "confidence": "中",
+    "upside": 0.2738,
+    "ev_upside": 0.2267,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 58.95,
+      "weight": 0.615,
+      "upside": 0.3977
+     },
+     "consensus": {
+      "value": 45.37,
+      "weight": 0.385,
+      "upside": 0.0757
+     }
+    }
+   },
+   "stop": 39.65,
+   "fundamentals": {
+    "market_cap": 185981960192,
+    "pe_ttm": 9.8322,
+    "pe_fwd": 12.2632,
+    "peg": 4.52,
+    "roe": 0.5981,
+    "gross_margin": 0.8199,
+    "op_margin": 0.4254,
+    "net_margin": 0.3535,
+    "rev_growth": 0.021,
+    "eps_growth": -0.206,
+    "de": 0.6333,
+    "beta": 0.372,
+    "target_mean": 45.3748,
+    "n_analysts": 12,
+    "fcf_margin": 0.1144
+   },
+   "tech": {
+    "ret_1m": 0.12390092398414998,
+    "ret_3m": -0.07072024758305817,
+    "rel_3m": -0.06795241949340292,
+    "dist200": -0.02199653639226118,
+    "vol_ann": 0.3246438866777554
+   }
+  }
+ ],
+ "focus_sectors": {
+  "US": [
+   "ai_servers",
+   "energy_materials",
+   "healthcare",
+   "financials",
+   "internet_platforms"
+  ],
+  "TW": [
+   "financials",
+   "internet_platforms",
+   "energy_materials",
+   "ai_servers",
+   "shipping"
+  ]
+ }
+}
