@@ -53,13 +53,15 @@ object QuestCatalog {
         REGIONS.forEach { (name, counties) ->
             val cards = counties.flatMap { cardsBy[it].orEmpty() }.toSet()
             val towns = counties.flatMap { townsBy[it].orEmpty() }.toSet()
-            if (cards.size >= 2) out += Quest("rcards:$name", "區域", "$name 景點大滿貫", "集滿$name（${counties.joinToString("、")}）所有景點卡", cards = cards)
-            if (towns.size >= 2) out += Quest("rtowns:$name", "區域", "$name 足跡遍布", "走遍$name（${counties.joinToString("、")}）所有有特色的鄉鎮區", towns = towns)
+            val names = counties.joinToString("、")
+            if (cards.size >= 2) out += Quest("rcards:$name", "區域", "$name 景點大滿貫", "集滿$name（$names）所有景點卡", cards = cards)
+            if (towns.size >= 2) out += Quest("rtowns:$name", "區域", "$name 足跡遍布", "走遍$name（$names）所有有特色的鄉鎮區", towns = towns)
         }
 
         // themed sets of cards (a set is dropped if one of its cards is not on any route)
         COMBOS.filter { (_, _, ids) -> allCards.containsAll(ids) }.forEach { (id, title, ids) ->
-            out += Quest("combo:$id", "主題", title, "集齊：${ids.joinToString("、") { cardName(it) }}", cards = ids.toSet())
+            val names = ids.joinToString("、") { cardName(it) }
+            out += Quest("combo:$id", "主題", title, "集齊：$names", cards = ids.toSet())
         }
         return out
     }
