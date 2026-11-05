@@ -32,5 +32,5 @@ object QuestEngine {
     /** The quests that are complete now but are not in [alreadyDone], smallest first. */
     fun newlyDone(quests: List<Quest>, alreadyDone: Set<String>, cards: Set<String>, towns: Set<String>): List<Quest> =
         quests.filter { it.id !in alreadyDone && progress(it, cards, towns).done }
-            .sortedBy { progress(it, cards, towns).need }
+            .sortedWith(compareBy({ progress(it, cards, towns).need }, { it.id }))
 }
