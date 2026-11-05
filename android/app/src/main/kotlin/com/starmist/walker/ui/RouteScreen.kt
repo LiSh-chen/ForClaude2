@@ -62,6 +62,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     var album by rememberSaveable { mutableStateOf(false) }
     val features = rememberLandmarkFacts()
     var showQuests by remember { mutableStateOf(false) }
+    var showPostcards by remember { mutableStateOf(false) }
     val ledger by vm.ledger.collectAsStateWithLifecycle()
     val questList = remember { vm.quests }
     val questRows = remember(ledger) { questList.map { com.starmist.core.route.QuestEngine.progress(it, ledger.cards, ledger.towns).done } }
@@ -76,6 +77,11 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item { Text("收藏・真實世界", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold) }
+        item {
+            OutlinedButton(onClick = { showPostcards = true }, modifier = Modifier.fillMaxWidth()) {
+                Text(if (ledger.postcardsLeft > 0) trf("明信片：可選 {0} 張", ledger.postcardsLeft) else trf("明信片（已收集 {0} 張）", ledger.unlocked.size))
+            }
+        }
         item {
             OutlinedButton(onClick = { showQuests = true }, modifier = Modifier.fillMaxWidth()) {
                 Text(trf("任務與里程碑 {0} / {1}", questRows.count { it }, questRows.size))
@@ -102,6 +108,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
             dismissButton = { TextButton(onClick = { confirmRestart = false }) { Text("取消") } },
         )
     }
+    if (showPostcards) PostcardsDialog(vm, ledger) { showPostcards = false }
     if (showQuests) QuestsDialog(questList, ledger) { showQuests = false }
     val card = detail
     if (card != null && route != null) CardDialog(route, card) { detail = null }

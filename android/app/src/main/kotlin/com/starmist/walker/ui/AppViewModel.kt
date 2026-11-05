@@ -251,6 +251,17 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
     val ledger: StateFlow<com.starmist.walker.data.Ledger> = container.collection.flow.stateIn(viewModelScope, SharingStarted.Eagerly, com.starmist.walker.data.Ledger())
     private var lastQuestKm = -1.0
 
+    private val townPoints by lazy { townAreas.towns.map { com.starmist.core.route.TownPoint("${it.county}|${it.name}", it.lat, it.lon) } }
+
+    /** The off-route townships the player can pick a postcard from now (empty when no postcard is left to use). */
+    fun postcardOffer(l: com.starmist.walker.data.Ledger): List<String> =
+        if (l.postcardsLeft <= 0) emptyList()
+        else com.starmist.core.route.PostcardPicker.offered(townPoints, townTags.keys, l.unlocked, l.towns, seed = l.unlocked.size)
+
+    fun unlockPostcard(key: String) { viewModelScope.launch { container.collection.unlock(key) } }
+
+    fun townByKey(key: String): TownArea? = townAreas.towns.firstOrNull { "${it.county}|${it.name}" == key }
+
     /**
      * Writes what the route has collected into the lifetime ledger and returns an event for each task that has just been
      * completed. The first time it runs it only marks tasks that are already complete, so that an existing player is not showered with popups.
@@ -262,9 +273,9 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
         val towns = townAreas.visited(route, walkedKm).keys.map { townAreas.towns[it] }.map { "${it.county}|${it.name}" }
         val l = container.collection.add(cards, towns)
         val fresh = com.starmist.core.route.QuestEngine.newlyDone(quests, l.done, l.cards, l.towns)
-        container.collection.markDone(fresh.map { it.id })
+        container.collection.markDone(fresh.map { it.id }, postcards = fresh.sumOf { it.postcards })
         if (!l.seeded) return emptyList()
-        return fresh.map { RouteEvent.QuestCompleted(it.id, it.title, it.desc, it.reward) }
+        return fresh.map { RouteEvent.QuestCompleted(it.id, it.title, it.desc, it.reward ?: I18n.trf("明信片 ×{0}", it.postcards)) }
     }
 
     private val _pendingRouteEvents = MutableStateFlow<List<RouteEvent>>(emptyList())

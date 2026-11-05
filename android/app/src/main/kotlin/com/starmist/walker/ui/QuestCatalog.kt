@@ -36,7 +36,7 @@ object QuestCatalog {
         listOf(5, 10, 20, 30).filter { it < totalCards }.forEach {
             out += Quest("ms_cards_$it", "里程碑", "收集 $it 張景點卡", "累積收集 $it 張景點卡（跨路線、跨圈數都算）", needCards = it)
         }
-        out += Quest("ms_cards_all", "里程碑", "景點卡全收集", "集滿全部 $totalCards 張景點卡", cards = allCards)
+        out += Quest("ms_cards_all", "里程碑", "景點卡全收集", "集滿全部 $totalCards 張景點卡", cards = allCards, postcards = 3)
         listOf(10, 30, 60).filter { it < totalTowns }.forEach {
             out += Quest("ms_towns_$it", "里程碑", "走過 $it 個鄉鎮區", "累積走過 $it 個鄉鎮區", needTowns = it)
         }
@@ -54,14 +54,14 @@ object QuestCatalog {
             val cards = counties.flatMap { cardsBy[it].orEmpty() }.toSet()
             val towns = counties.flatMap { townsBy[it].orEmpty() }.toSet()
             val names = counties.joinToString("、")
-            if (cards.size >= 2) out += Quest("rcards:$name", "區域", "$name 景點大滿貫", "集滿$name（$names）所有景點卡", cards = cards)
-            if (towns.size >= 2) out += Quest("rtowns:$name", "區域", "$name 足跡遍布", "走遍$name（$names）所有有特色的鄉鎮區", towns = towns)
+            if (cards.size >= 2) out += Quest("rcards:$name", "區域", "$name 景點大滿貫", "集滿$name（$names）所有景點卡", cards = cards, postcards = 2)
+            if (towns.size >= 2) out += Quest("rtowns:$name", "區域", "$name 足跡遍布", "走遍$name（$names）所有有特色的鄉鎮區", towns = towns, postcards = 2)
         }
 
         // themed sets of cards (a set is dropped if one of its cards is not on any route)
         COMBOS.filter { (_, _, ids) -> allCards.containsAll(ids) }.forEach { (id, title, ids) ->
             val names = ids.joinToString("、") { cardName(it) }
-            out += Quest("combo:$id", "主題", title, "集齊：$names", cards = ids.toSet())
+            out += Quest("combo:$id", "主題", title, "集齊：$names", cards = ids.toSet(), postcards = 2)
         }
         return out
     }

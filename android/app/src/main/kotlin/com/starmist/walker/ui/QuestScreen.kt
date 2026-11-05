@@ -60,6 +60,7 @@ fun QuestCompletedDialog(title: String, desc: String, reward: String?, onDismiss
                 Text(tr(title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(tr(desc), style = MaterialTheme.typography.bodyMedium)
                 Text(if (reward != null) trf("獎勵：{0}", reward) else tr("獎勵即將開放，敬請期待！"), style = MaterialTheme.typography.bodySmall)
+                if (reward != null) Text("到「收藏」頁的「明信片」選一個路線以外的地方。", style = MaterialTheme.typography.bodySmall)
             }
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text("太棒了") } },

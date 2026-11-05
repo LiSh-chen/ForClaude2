@@ -14,6 +14,8 @@ data class Quest(
     val towns: Set<String> = emptySet(),
     val needCards: Int = cards.size,
     val needTowns: Int = towns.size,
+    /** How many postcards (a pick of an off-route township) completing it gives. */
+    val postcards: Int = 1,
     val reward: String? = null,
 )
 
