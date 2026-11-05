@@ -1,0 +1,260 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>2026-11-05-sop｜投資研究日誌</title><style>
+:root{--bg:#f7f7f4;--fg:#1c2421;--card:#fff;--muted:#68726d;--line:#dcdfda;--accent:#1f6f4a;--up:#c0392b;--down:#1a8f4c}
+@media (prefers-color-scheme:dark){:root{--bg:#121614;--fg:#e6eae7;--card:#1a1f1c;--muted:#9aa59f;--line:#2c342f;--accent:#5bbd8a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.7 system-ui,-apple-system,"Noto Sans TC",sans-serif}
+header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav{max-width:1000px;margin:0 auto;padding:10px 16px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+nav b{margin-right:auto}nav a{color:var(--accent);text-decoration:none;font-weight:600}
+main{max-width:1000px;margin:0 auto;padding:12px 16px 60px}
+h1{font-size:1.5rem}h2{margin-top:2rem;border-bottom:1px solid var(--line);padding-bottom:4px}h3{margin-top:1.6rem}
+a{color:var(--accent)}blockquote{margin:10px 0;padding:6px 14px;border-left:4px solid var(--accent);background:var(--card);color:var(--muted)}
+.tw{overflow-x:auto}table{border-collapse:collapse;font-size:13.5px;margin:10px 0;min-width:100%}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}th{background:var(--card)}
+code{background:var(--card);padding:1px 4px;border-radius:4px}.muted{color:var(--muted)}
+ul.arch{list-style:none;padding:0}ul.arch li{padding:6px 0;border-bottom:1px solid var(--line)}
+svg text{fill:var(--fg);font-size:11px}
+footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);font-size:12.5px}
+</style></head><body><header><nav><b>📒 投資研究日誌</b><a href="../index.html">儀表板</a><a href="../archive.html">日誌</a><a href="../reviews.html">檢討</a><a href="../methodology.html">方法論</a></nav></header><main><h1>SOP 檢討報告 2026-11-05</h1>
+<blockquote>
+<p>範圍：2026-10-06～2026-11-04，候選池 3523 筆觀察（18 個日期）、163 筆主榜推薦。<strong>樣本只涵蓋一段急跌行情</strong>，結論是『目前流程在這種行情下哪裡出問題』，不代表所有行情。</p>
+</blockquote>
+<h2>一、結論</h2>
+<ul>
+<li>選股排序（綜合分）與後續 5 日超額報酬<strong>沒有正相關、反而略為負相關</strong>；被選中的標的表現不如候選池平均。</li>
+<li>最強的訊號是<strong>波動率</strong>：波動越高，後續超額報酬越差；而推薦名單的波動明顯高於候選池。</li>
+<li>流程缺陷：推薦沒有<strong>停損記憶</strong>（已跌破停損價仍每天重複推薦）、沒有<strong>同題材跨市場上限</strong>（AI 硬體供應鏈占推薦六成）。</li>
+<li>已據此調整為 SOP v2（調整內容見 <code>config/params_history.json</code> 與儀表板『SOP 檢討與調整紀錄』）；因子權重因樣本單一行情、20 日樣本不足而<strong>暫不調整</strong>。</li>
+</ul>
+<h2>二、診斷證據</h2>
+<h3>2-1 各因子對後續 5 日超額報酬的排名相關（日均 Rank IC）</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>因子</th>
+<th>IC</th>
+<th>標準誤</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>綜合分</td>
+<td>-0.158</td>
+<td>0.032</td>
+</tr>
+<tr>
+<td>品質</td>
+<td>-0.189</td>
+<td>0.026</td>
+</tr>
+<tr>
+<td>成長</td>
+<td>-0.249</td>
+<td>0.035</td>
+</tr>
+<tr>
+<td>估值</td>
+<td>-0.056</td>
+<td>0.023</td>
+</tr>
+<tr>
+<td>動能</td>
+<td>-0.028</td>
+<td>0.041</td>
+</tr>
+<tr>
+<td>新聞</td>
+<td>-0.056</td>
+<td>0.022</td>
+</tr>
+<tr>
+<td>產業</td>
+<td>+0.020</td>
+<td>0.036</td>
+</tr>
+<tr>
+<td>龍頭</td>
+<td>+0.019</td>
+<td>0.012</td>
+</tr>
+<tr>
+<td>波動率</td>
+<td>-0.505</td>
+<td>0.059</td>
+</tr>
+<tr>
+<td>距52週高</td>
+<td>+0.194</td>
+<td>0.032</td>
+</tr>
+</tbody>
+</table></div>
+<p>IC &gt; 0 表示分數越高、後續越好。波動率 IC 為 −0.5：波動越高越差（此行情的主要特徵）。</p>
+<h3>2-2 波動率五分位（全候選池）</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>五分位</th>
+<th>平均年化波動</th>
+<th>後續 5 日平均超額</th>
+<th>觀察數</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1（最低）</td>
+<td>22%</td>
+<td>+3.4%</td>
+<td>705</td>
+</tr>
+<tr>
+<td>2</td>
+<td>32%</td>
+<td>+2.4%</td>
+<td>704</td>
+</tr>
+<tr>
+<td>3</td>
+<td>45%</td>
+<td>-0.8%</td>
+<td>705</td>
+</tr>
+<tr>
+<td>4</td>
+<td>62%</td>
+<td>-3.4%</td>
+<td>704</td>
+</tr>
+<tr>
+<td>5（最高）</td>
+<td>81%</td>
+<td>-5.4%</td>
+<td>705</td>
+</tr>
+</tbody>
+</table></div>
+<p>被選中的 133 筆：平均超額 -2.75%，平均波動 54%（候選池 48%，台股被選中者 68%）；候選池平均 -0.78%。</p>
+<h3>2-3 風險調整排序的效果（前 30% 標的的後續 5 日平均超額）</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>排序方式</th>
+<th>平均超額</th>
+<th>平均波動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>綜合分 − 0 × 波動百分位（原排序）</td>
+<td>-2.16%</td>
+<td>54%</td>
+</tr>
+<tr>
+<td>綜合分 − 0.25 × 波動百分位</td>
+<td>+0.22%</td>
+<td>40%</td>
+</tr>
+<tr>
+<td>綜合分 − 0.4 × 波動百分位（SOP v2 採用）</td>
+<td>+1.24%</td>
+<td>34%</td>
+</tr>
+<tr>
+<td>綜合分 − 0.5 × 波動百分位</td>
+<td>+1.88%</td>
+<td>30%</td>
+</tr>
+<tr>
+<td>綜合分 − 1.0 × 波動百分位</td>
+<td>+2.83%</td>
+<td>26%</td>
+</tr>
+</tbody>
+</table></div>
+<h3>2-4 推薦流程本身</h3>
+<ul>
+<li>163 筆推薦只有 21 檔不同股票；其中 <strong>48 筆（29%）是已跌破首次推薦停損價、仍被重複推薦</strong>，平均超額 -8.0%。</li>
+<li>停損觸及率 61%；若每檔嚴守參考停損，平均報酬 -6.6%，不守停損 -13.1%。停損規則本身有效，缺的是『被停損的標的不再推薦』。</li>
+<li>AI 硬體供應鏈（7 個產業）占推薦 60%，美股與台股的同一題材同時入選。</li>
+</ul>
+<h2>三、調整（SOP v2）與回溯檢驗</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>規則</th>
+<th>內容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>波動率上限</td>
+<td>年化波動 &gt; 70% 不推薦（前瞻專區 75%）</td>
+</tr>
+<tr>
+<td>風險調整排序</td>
+<td>綜合分 − 0.4 × 同市場波動百分位</td>
+</tr>
+<tr>
+<td>停損記憶</td>
+<td>90 天內曾推薦、之後跌破首次推薦停損價的標的，收復前不再推薦</td>
+</tr>
+<tr>
+<td>同題材上限</td>
+<td>AI 硬體供應鏈每日最多 4 檔（跨市場）</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>回溯檢驗（樣本內，只用來看方向；對象是已推薦的 163 筆）</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>情境</th>
+<th>保留筆數</th>
+<th>平均超額（迄今）</th>
+<th>平均報酬</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原本</td>
+<td>163（100%）</td>
+<td>-7.2%</td>
+<td>-11.0%</td>
+</tr>
+<tr>
+<td>只套用波動上限</td>
+<td>129（79%）</td>
+<td>-4.5%</td>
+<td>-6.9%</td>
+</tr>
+<tr>
+<td>只套用停損記憶</td>
+<td>115（71%）</td>
+<td>-6.8%</td>
+<td>-11.6%</td>
+</tr>
+<tr>
+<td>只套用題材上限</td>
+<td>148（91%）</td>
+<td>-5.8%</td>
+<td>-10.0%</td>
+</tr>
+<tr>
+<td>三項全套用</td>
+<td>83（51%）</td>
+<td>-3.0%</td>
+<td>-5.9%</td>
+</tr>
+</tbody>
+</table></div>
+<p>套用後仍為負：同期大盤本身大幅下跌，且回溯檢驗只涵蓋已被選中的標的（沒有包含新規則下會遞補進來的標的）。這只說明方向，不是對未來的保證。</p>
+<h2>四、暫不調整的項目</h2>
+<ul>
+<li><strong>因子權重</strong>（成長、品質 IC 為負）：樣本只涵蓋一段急跌行情；20 日 IC 僅有少數日期，按既有流程在 ≥20 個日期後由月度檢討處理。</li>
+<li><strong>停損幅度</strong>：嚴守停損可把平均損失減半，不調整。</li>
+</ul>
+<h2>五、後續監控與回退條件</h2>
+<ul>
+<li>每日在候選池記錄舊排序（綜合分）與新排序（風險調整後），週報比較兩者前 30% 的後續 5 日超額；累積 ≥15 個日期後，若新排序落後舊排序超過 1 個百分點，建議回退風險調整排序。</li>
+<li>合格標的變少是預期結果（照實少選）；某市場連續 10 個交易日 0 檔時，重新檢討波動上限。</li>
+<li>下一次完整檢討：月度流程（每月第一個週六）。</li>
+</ul></main><footer>本站內容由系統自動產生，僅供研究與教育用途，不構成投資建議；目標價為模型估算，投資有風險。</footer></body></html>
