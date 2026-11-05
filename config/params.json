@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "updated": "2026-10-06",
+  "version": 2,
+  "updated": "2026-11-05",
   "note": "初始參數。之後由 `ijournal review --tune` 依據績效檢討在『有足夠樣本』時以小步幅自動調整，並把每次變更記錄在 config/params_history.json。",
   "sector_weights": {
     "news": 0.35,
@@ -70,7 +70,22 @@
       "leader_score": 50,
       "quality_score": 65
     },
-    "min_quality_score": 45
+    "min_quality_score": 45,
+    "max_vol_ann": 0.7,
+    "vol_penalty": 0.4,
+    "cooldown_days": 90,
+    "max_per_cluster": 4,
+    "clusters": {
+      "ai_hardware": [
+        "ai_chips",
+        "ai_servers",
+        "cooling_power",
+        "networking_optics",
+        "memory_storage",
+        "semi_equipment",
+        "pcb_materials"
+      ]
+    }
   },
   "tuning": {
     "min_dates": 20,
@@ -117,7 +132,8 @@
     "max_method_spread": 0.6,
     "min_members": 3,
     "pick_themes": 8,
-    "relaxed_spread_max": 0.8
+    "relaxed_spread_max": 0.8,
+    "max_vol_ann": 0.75
   },
   "quality": {
     "coverage_warn": 0.9,

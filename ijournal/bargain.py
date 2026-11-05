@@ -29,6 +29,8 @@ def eligible(r: dict, p: dict) -> tuple[bool, str]:
     f, pf, sc, v = r["f"], r["pf"], r["scores"], r["val"]
     if v is None:
         return False, "資料不足，無法估值"
+    if r.get("ticker") in (p.get("_cooldown") or {}):
+        return False, "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
     if (f.get("market_cap") or 0) < s["min_market_cap"][m]:
         return False, "市值過小"
     if pf["turnover"] < s["min_avg_turnover"][m]:

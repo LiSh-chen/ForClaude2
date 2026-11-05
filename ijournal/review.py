@@ -123,6 +123,27 @@ def run_review(period: str, tune: bool = False, date: str | None = None, min_dat
                 prog = (p["last_price"] - p["entry"]) / (p["target"] - p["entry"]) if p["target"] != p["entry"] else None
                 A(f"| {tag} | {p['date']} | {p['ticker']} | {p['name']} | {sname.get(p['sector'], p['sector'])} | {pct(p['rlast'], 1, True)} | {pct(p['alast'], 1, True)} | {pct(prog, 0)} |")
         A("")
+    # 2-2 逐檔檢討：每檔股票（首次推薦起）的報酬、大盤、超額與歸因——區分『大盤下跌』與『個股／題材拖累』
+    if pos:
+        first = {}
+        for p_ in sorted(pos, key=lambda x: x["date"]):
+            first.setdefault(p_["ticker"], p_)
+        vols = {}
+        for f_ in sorted((C.path("data") / "picks").glob("*.json")):
+            for q_ in (C.load_json(f_) or {}).get("picks", []):
+                vols.setdefault((f_.stem, q_["ticker"]), (q_.get("tech") or {}).get("vol_ann"))
+        A("## 二之二、逐檔檢討（每檔股票從首次推薦起算）\n")
+        A("歸因規則：超額 ≥ 0＝贏大盤；報酬為負且大盤跌幅 ≥ 報酬跌幅的一半＝大盤下跌為主；其餘＝個股／題材拖累（需要檢討選股）。\n")
+        A("| 代號 | 名稱 | 首次推薦 | 持有天數 | 報酬 | 同期大盤 | 超額 | 推薦時年化波動 | 歸因 | 停損 |")
+        A("|---|---|---|---|---|---|---|---|---|---|")
+        for p_ in sorted(first.values(), key=lambda x: x["alast"] if x.get("alast") is not None else 0):
+            if p_.get("alast") is None:
+                continue
+            bench = p_["rlast"] - p_["alast"]
+            why = "贏大盤" if p_["alast"] >= 0 else ("大盤下跌為主" if p_["rlast"] < 0 and bench <= 0.5 * p_["rlast"] else "個股／題材拖累")
+            v_ = vols.get((p_["date"], p_["ticker"]))
+            A(f"| {p_['ticker']} | {p_['name']} | {p_['date']} | {p_['n_days']} | {pct(p_['rlast'], 1, True)} | {pct(bench, 1, True)} | {pct(p_['alast'], 1, True)} | {pct(v_, 0) if isnum(v_) else '—'} | {why} | {'已觸及' if p_.get('stop_hit') else '—'} |")
+        A("")
     # 3 選股效果
     A(f"## 三、選股有效性（{H} 個交易日超額報酬）\n")
     if d["n_sel"]:

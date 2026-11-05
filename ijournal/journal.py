@@ -31,7 +31,8 @@ def candidate_record(r: dict, picked: set, focus: set) -> dict:
     return {"ticker": r["ticker"], "market": r["market"], "sector": r["sector"], "price": round(r["price"], 4), "composite": round(r["composite"], 2) if r["composite"] is not None else None,
             "scores": {k: (round(x, 1) if isnum(x) else None) for k, x in r["scores"].items()},
             "method_upside": {k: round(m["upside"], 4) for k, m in v["methods"].items()} if v else {},
-            "upside": round(v["upside"], 4) if v else None, "picked": r["ticker"] in picked, "in_focus": r["sector"] in focus.get(r["market"], set())}
+            "upside": round(v["upside"], 4) if v else None, "comp_adj": round(r["comp_adj"], 2) if isnum(r.get("comp_adj")) else None,
+            "vol": round(r["pf"]["vol_ann"], 3) if isnum(r["pf"].get("vol_ann")) else None, "picked": r["ticker"] in picked, "in_focus": r["sector"] in focus.get(r["market"], set())}
 
 
 def _head(h: dict) -> dict:

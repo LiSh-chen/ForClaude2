@@ -112,7 +112,24 @@ def score_stocks(uni, feats, funds, sec_scores, scan_res, p) -> dict:
                    "price": pf["last"], "as_of": pf["date"], "scores": scores, "composite": comp, "val": val, "f": f, "pf": pf,
                    "rank_in_sector": (pos + 1), "n_in_sector": len(caps), "sector_rank": ss["rank"] if ss else None,
                    "news": nd, "dual_of": st.get("dual_of")}
+    risk_adjust(rows, p)
     return rows
+
+
+def risk_adjust(rows: dict, p: dict) -> None:
+    """風險調整排序（SOP v2）：綜合分扣掉『同市場內波動率百分位』× 係數。
+    2026-10 的檢討發現：高波動股在回檔行情中平均超額報酬明顯較差（最低波動五分位 +3.4%、最高 −5.4%），
+    而未經風險調整的綜合分排名與後續超額報酬呈負相關。comp_adj 用於排序；原綜合分仍保留供顯示與對照（A/B 追蹤）。"""
+    k = p["selection"].get("vol_penalty", 0.0)
+    for m in ("TW", "US"):
+        rs = [r for r in rows.values() if r["market"] == m and r["composite"] is not None and isnum(r["pf"].get("vol_ann"))]
+        rank = rank_scale({r["ticker"]: r["pf"]["vol_ann"] for r in rs})
+        for r in rows.values():
+            if r["market"] != m or r["composite"] is None:
+                continue
+            vr = rank.get(r["ticker"])
+            r["vol_rank"] = vr
+            r["comp_adj"] = r["composite"] - k * vr if vr is not None else r["composite"]
 
 
 def eligible(r: dict, p: dict) -> tuple[bool, str]:
@@ -120,6 +137,10 @@ def eligible(r: dict, p: dict) -> tuple[bool, str]:
     f, pf, sc = r["f"], r["pf"], r["scores"]
     if r["val"] is None:
         return False, "資料不足，無法估值"
+    if r.get("ticker") in (p.get("_cooldown") or {}):
+        return False, "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
+    if isnum(pf.get("vol_ann")) and pf["vol_ann"] > s.get("max_vol_ann", 9.0):
+        return False, f"波動過高（年化 > {s['max_vol_ann']:.0%}）"
     if r["val"]["spread"] > s["max_method_spread"]:
         return False, "各估值方法分歧過大"
     if (f.get("market_cap") or 0) < s["min_market_cap"][m]:
@@ -152,11 +173,13 @@ def pick(rows: dict, sec_scores: dict, p: dict) -> dict:
     picked: dict[str, list] = {"TW": [], "US": []}
     stats: dict[str, dict] = {"TW": {}, "US": {}}
     chosen = set()
+    cl_of = {sec: name for name, secs in (s.get("clusters") or {}).items() for sec in secs}
+    cl_cnt: dict[str, int] = defaultdict(int)
     for m in ("TW", "US"):
         ranked_sectors = sorted(sec_scores[m], key=lambda k: -(sec_scores[m][k]["score"] or 0))
         focus = ranked_sectors[: s["focus_sectors_per_market"]]
         cands = sorted((r for r in rows.values() if r["market"] == m and r["sector"] in focus and r["composite"] is not None),
-                       key=lambda r: -r["composite"])
+                       key=lambda r: -r.get("comp_adj", r["composite"]))
         cnt = defaultdict(int)
         reasons: dict[str, int] = defaultdict(int)
         for r in cands:
@@ -170,10 +193,14 @@ def pick(rows: dict, sec_scores: dict, p: dict) -> dict:
                 reasons[f"合格但同產業已達 {s['max_per_sector']} 檔上限"] += 1
             elif r["dual_of"] in chosen or r["ticker"] in chosen:
                 reasons["合格但與已選標的為同一公司（雙重上市）"] += 1
+            elif cl_of.get(r["sector"]) and cl_cnt[cl_of[r["sector"]]] >= s.get("max_per_cluster", 99):
+                reasons[f"合格但同題材（AI 硬體供應鏈）跨市場已達 {s['max_per_cluster']} 檔上限"] += 1
             else:
                 r["pick_pool"] = "focus"
                 picked[m].append(r)
                 cnt[r["sector"]] += 1
+                if cl_of.get(r["sector"]):
+                    cl_cnt[cl_of[r["sector"]]] += 1
                 chosen.add(r["ticker"])
         for i, r in enumerate(picked[m], 1):
             r["pick_rank"] = i

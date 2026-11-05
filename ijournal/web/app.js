@@ -314,9 +314,13 @@ function gauge(score, lv) {
   return h('div', {class: 'gauge', role: 'img', 'aria-label': `風險分數 ${nz(score, 0)}，${LV[lv]}`}, h('i', {class: 'g1'}), h('i', {class: 'g2'}), h('i', {class: 'g3'}), h('i', {class: 'g4'}), h('b', {class: 'gp', style: `left:${pos}%`}));
 }
 function factorDrawer(f, m) {
-  openDrawer(f.label, `${f.group === 'happened' ? '已發生（市場數據）' : '尚未發生（預期與事件）'}｜風險分 ${nz(f.score, 0)}｜${(ST[f.state] || ['—'])[0]}`, [
-    h('div', {class: 'kpis'}, kpi('目前數據', f.value), kpi('風險分（0–100）', nz(f.score, 0), '≥66 偏高、≥33 留意')), h('p', {class: 'p'}, f.detail),
-    f.group === 'ahead' ? h('div', {class: 'note'}, '這一類是『預期』：市場正在為尚未發生的事情定價，結果可能比預期更好或更差，所以只列為風險提示，不當成已發生的事實。') : h('div', {class: 'note'}, '這一類是『已經發生』的市場數據，價格已經反映，但可能還會延續。'),
+  const sc = isNum(f.score) ? f.score : 0, st = ST[f.state] || ['—', 'ok'];
+  openDrawer(f.label, `${f.group === 'happened' ? '已發生（市場數據）' : '尚未發生（預期與事件）'}`, [
+    h('div', {class: 'fhero ' + (f.state || 'ok')}, h('div', {class: 'fbig num'}, f.short || '—'),
+      h('div', {class: 'fscore'}, h('span', {class: 'lb'}, '風險分'), h('span', {class: 'ft', 'aria-hidden': 'true'}, h('i', {class: 'tk1'}), h('i', {class: 'tk2'}), h('b', {style: `width:${sc}%`})), h('b', {class: 'num'}, nz(f.score, 0)), h('span', {class: 'fchip'}, st[0])),
+      h('div', {class: 'muted sm'}, '分數：≥66 偏高、33–66 留意、<33 正常')),
+    sec('目前數據', h('p', {class: 'p'}, f.value)), sec('為什麼重要', h('p', {class: 'p'}, f.detail)),
+    f.group === 'ahead' ? h('div', {class: 'note'}, '這一類是『預期』：市場正在為尚未發生的事情定價，結果可能比預期更好或更差，只列為風險提示，不當成已發生的事實。') : h('div', {class: 'note'}, '這一類是『已經發生』的市場數據，價格已經反映，但可能還會延續。'),
     f.id === 'fed' ? fedChart(m.fed) : null]);
 }
 function fedChart(fed, compact) {
@@ -406,8 +410,9 @@ function macroView() {
 }
 function valuationBody(m) {
   const v = m.valuation || {};
-  return [h('div', {class: 'kpis'}, ['US', 'TW'].map(k => v[k] && isNum(v[k].rf) ? kpi(`${MK[k]} 無風險利率`, pct(v[k].rf, 2, false), `原設定 ${pct(v[k].rf_base, 2, false)}；PEG ×${nz(v[k].peg_factor, 2)}；上檔門檻 ≥${pct(Math.max(v[k].hurdle, .05), 1, false)}`) : null)),
-    h('ul', null, h('li', null, 'DCF：折現率採即時殖利率，利率升 → 目標價下修'), h('li', null, 'PEG：合理倍數隨利率偏離基準下修（每高 1pp 約 −8%）'), h('li', null, '同業相對本益比：不調整（同業價格已反映目前利率）'), h('li', null, '推薦上檔底線：≥ 無風險利率 ＋ 3pp（機會成本），且不低於 5%'), h('li', null, '警戒以上：bull／bear 區間加寬、推薦門檻再提高'))];
+  return [h('div', {class: 'vrows'}, ['US', 'TW'].map(k => v[k] && isNum(v[k].rf) ? h('div', {class: 'vrow'}, h('b', null, MK[k]), h('span', null, h('span', {class: 'lb'}, '無風險利率'), h('b', {class: 'num'}, pct(v[k].rf, 2, false)), h('span', {class: 'muted sm'}, `（原 ${pct(v[k].rf_base, 2, false)}）`)),
+      h('span', null, h('span', {class: 'lb'}, 'PEG 倍數'), h('b', {class: 'num'}, '×' + nz(v[k].peg_factor, 2))), h('span', null, h('span', {class: 'lb'}, '推薦上檔門檻'), h('b', {class: 'num'}, '≥' + pct(Math.max(v[k].hurdle, .05), 1, false)))) : null)),
+    h('ul', null, h('li', null, 'DCF：折現率採即時殖利率，利率升 → 目標價下修'), h('li', null, 'PEG：合理倍數隨利率偏離基準下修（每高 1pp 約 −8%）'), h('li', null, '同業相對本益比：不調整（同業價格已反映目前利率）'), h('li', null, '推薦上檔底線：≥ 無風險利率 ＋ 3pp（機會成本），且不低於 5%'), h('li', null, '警戒以上：悲觀／樂觀情境區間加寬、推薦門檻再提高'))];
 }
 function healthCard(hl) {
   if (!hl || !hl.verdict) return null;
@@ -432,17 +437,64 @@ function strategyCard(hl) {
         h('span', {class: 'num sv'}, pct(r.alpha)), h('span', {class: 'muted sm'}, `${r.n} 檔${r.n < 8 ? '・樣本太少' : ''}`)); })),
     h('div', {class: 'muted sm'}, '各分頁的數字起算日與重複推薦次數不同，直接比較會誤導；這裡統一後三者差距很小，現階段不足以說哪個策略比較好。'));
 }
+const STATUS = p => [p.stop_hit ? h('span', {class: 'badge lo', tip: '持有期間最低價曾跌破推薦當天算出的參考停損價（是「曾經」，不代表現在還在停損價之下）'}, '曾觸停損') : null,
+  p.target_hit ? h('span', {class: 'badge', tip: '持有期間最高價曾達到 12 個月目標價（目標價很近時容易達成，之後仍可能回吐）'}, p.rlast < 0 ? '曾達標・已回吐' : '曾達標') : null,
+  !p.stop_hit && !p.target_hit ? h('span', {class: 'muted sm'}, '持有中') : null];
+function perfTable(pos) {
+  const first = new Map(), cnt = new Map(), lastd = new Map();
+  for (const p of pos.slice().sort((a, b) => a.date < b.date ? -1 : 1)) { if (!first.has(p.ticker)) first.set(p.ticker, p); cnt.set(p.ticker, (cnt.get(p.ticker) || 0) + 1); lastd.set(p.ticker, p.date); }
+  const rows = [...first.values()].sort((a, b) => a.date < b.date ? 1 : -1), th = (arr) => h('thead', null, h('tr', null, arr.map((x, i) => h('th', {class: i > 2 && i < 9 ? 'r' : ''}, x))));
+  const tr = (p, extra) => h('tr', null, h('td', null, p.date), h('td', null, p.ticker), h('td', null, p.name), h('td', {class: 'r num'}, px(p.entry)), h('td', {class: 'r num'}, px(p.target)), h('td', {class: 'r num'}, px(p.last_price)), h('td', {class: 'r num'}, delta(p.rlast)), h('td', {class: 'r num'}, delta(p.alast)), h('td', {class: 'r num'}, p.n_days), extra, h('td', null, STATUS(p)));
+  return h('div', null, h('details', {class: 'card', style: 'margin-top:12px', open: true}, h('summary', null, `每檔股票一列（${rows.length} 檔；同一檔每天重複推薦只列首次）`),
+      h('div', {style: 'overflow-x:auto;margin-top:8px'}, h('table', {class: 't'}, th(['首次推薦', '代號', '名稱', '進場', '目標(12個月)', '現價', '報酬', '超額', '持有天數', '被推薦', '狀態']),
+        h('tbody', null, rows.map(p => tr(p, h('td', {class: 'r num', tip: `最近一次推薦：${lastd.get(p.ticker)}`}, cnt.get(p.ticker) + ' 次')))))),
+      h('p', {class: 'muted sm'}, '報酬、超額都從「首次推薦日」算到最新收盤；各檔起算日不同，持有天數不同，不能直接橫向比較。')),
+    h('details', {class: 'card', style: 'margin-top:10px'}, h('summary', null, `全部推薦明細（${pos.length} 筆，含每天重複推薦）`),
+      h('div', {style: 'overflow-x:auto;margin-top:8px'}, h('table', {class: 't'}, th(['推薦日', '代號', '名稱', '進場', '目標(12個月)', '現價', '報酬', '超額', '持有天數', '狀態']),
+        h('tbody', null, pos.slice().sort((a, b) => a.date < b.date ? 1 : -1).map(p => tr(p, null)))))));
+}
+function perfDefs() {
+  const d = (t, x) => h('div', {class: 'defrow'}, h('b', null, t), h('span', null, x));
+  return h('details', {class: 'card', style: 'margin-top:10px'}, h('summary', null, '這些欄位怎麼算？（點開看定義）'), h('div', {class: 'defs'},
+    d('進場價', '推薦日當天的收盤價（不是隔天開盤價；未計手續費、稅、滑價；已用實際收盤價核對，早期有 14 筆美股進場價記錄成前一天收盤，已自動校正）。'),
+    d('現價', '最新一個收盤價（資料日見頁首）。'),
+    d('報酬', '現價 ÷ 進場價 − 1，從推薦日算到現在，不含股息。若是舊推薦，報酬就是「迄今」，不是固定天數。'),
+    d('超額', '報酬 − 同期大盤報酬。台股對加權指數、美股對 S&P 500，起迄日與該檔相同。超額為負＝輸給大盤，即使報酬是正的也可能輸。'),
+    d('持有天數', '推薦日到最新收盤的交易日數。'),
+    d('目標價', '12 個月的基準目標價，不是短期目標。目標價離現價很近時，「曾達標」很容易發生。'),
+    d('狀態', '「曾觸停損」＝持有期間最低價曾跌破參考停損價；「曾達標」＝最高價曾達 12 個月目標價。兩者都是「曾經」，與現在的報酬無關——所以可能同時出現「曾達標・已回吐」與現報酬為負。'),
+    d('5／20／60 日平均超額', '只計已滿 5／20／60 個交易日的推薦，從推薦日起算正好 N 日的超額，各筆平均；到期筆數見方塊說明。'),
+    d('推薦筆數', '同一檔股票每天重複推薦會重複計入（例如 163 筆其實只有 21 檔）；表格預設每檔只列一次，健檢與策略比較也都以「不同股票」為準。'),
+    d('為什麼數字很大', '近期台股（加權指數）與部分 AI 題材股同步大跌，個股跌幅是大盤的 2 倍以上；報酬與超額已用 Yahoo 的實際收盤價重算核對，數字正確。')));
+}
+function sopCard() {
+  const hl = S.health || {}, sp = hl.sop || {}, hist = (S.hist || []).filter(x => x.kind === 'sop' || x.changes).slice().reverse();
+  if (!(sp.triggers || []).length && !hist.length) return null;
+  const T = sp.triggers || [], fired = T.filter(t => t.fired).length;
+  const fmt = t => t.id === 'ic' ? nz(t.value, 2) : t.id === 'gap' ? pct(t.value, 1) : pct(t.value, 0, false);
+  return h('div', {class: 'card sop' + (fired ? ' fired' : '')},
+    h('div', {class: 'hh'}, h('b', {class: 'hv'}, 'SOP 檢討與調整紀錄'), fired ? h('span', {class: 'badge lo'}, `警報 ${fired}／${T.length} 項已觸發`) : h('span', {class: 'badge'}, '檢查正常')),
+    T.length ? h('div', {class: 'trig'}, T.map(t => h('div', {class: 'tg' + (t.fired ? ' on' : '')}, h('span', {class: 'lb'}, t.label), h('b', {class: 'num'}, fmt(t)), h('span', {class: 'muted sm'}, `觸發條件 ${t.rule}`)))) : null,
+    hist.slice(0, 1).map(x => h('div', {class: 'sopl'}, h('b', null, `v${x.version}（${x.date}）${x.title || ''}`),
+      x.trigger ? h('p', {class: 'sm'}, '為什麼檢討：' + x.trigger) : null,
+      h('div', {class: 'sm'}, h('b', null, '調整了什麼'), h('ul', null, x.changes.map(c => h('li', null, c)))),
+      (x.skipped || []).length ? h('details', null, h('summary', {class: 'sm'}, '沒有調整的項目與理由'), h('ul', null, x.skipped.map(c => h('li', null, c)))) : null,
+      (x.evidence || []).length ? h('details', null, h('summary', {class: 'sm'}, '檢討依據（證據）'), h('ul', null, x.evidence.map(c => h('li', null, c)))) : null,
+      (x.monitor || []).length ? h('details', null, h('summary', {class: 'sm'}, '後續監控與回退條件'), h('ul', null, x.monitor.map(c => h('li', null, c)))) : null)),
+    hist.length > 1 ? h('details', null, h('summary', {class: 'sm'}, `更早的調整（${hist.length - 1}）`), h('ul', null, hist.slice(1).map(x => h('li', null, `v${x.version}（${x.date}）：${(x.changes || []).join('；')}`)))) : null,
+    h('div', {class: 'muted sm'}, h('a', {href: 'reviews.html'}, '看完整 SOP 檢討報告與週報 →')));
+}
 function perfView() {
   const P = S.perf, root = h('div');
   const pos = (P && P.positions || []).filter(p => (p.book || 'main') === S.pm), summ = S.pm === 'main' ? (P && P.summary) : (P && P[S.pm] && P[S.pm].summary);
   const seg = h('div', {class: 'seg', role: 'group', 'aria-label': '範圍'}, [['main', '主榜'], ['emerging', '前瞻專區'], ['bargain', '便宜好貨']].map(([k, l]) => h('button', {type: 'button', 'aria-pressed': S.pm === k, on: {click: () => { S.pm = k; render(); }}}, l)));
   root.append(h('div', {class: 'sec'}, h('h2', null, '績效追蹤'), seg, h('span', {class: 'sub'}, '進場價＝推薦日收盤；報酬未計成本；基準＝台股加權／S&P 500')));
-  { const hc = S.pm === 'main' ? healthCard(S.health) : null, st = strategyCard(S.health); if (hc) root.append(hc); if (st) root.append(st); }
+  { const hc = S.pm === 'main' ? healthCard(S.health) : null, sc = S.pm === 'main' ? sopCard() : null, st = strategyCard(S.health); if (hc) root.append(hc); if (sc) root.append(sc); if (st) root.append(st); }
   if (!pos.length) { root.append(h('div', {class: 'empty'}, '尚無追蹤資料：推薦後需累積交易日才會出現績效。')); return root; }
-  const done = h => summ && summ[h] && summ[h].n ? summ[h] : null, s5 = done('5'), s20 = done('20'), s60 = done('60');
+  const su = P && P.summary_unique && P.summary_unique[S.pm], sm = su || summ, done = h => sm && sm[h] && sm[h].n ? sm[h] : null, s5 = done('5'), s20 = done('20'), s60 = done('60');
   const last = pos.reduce((a, b) => (a.date > b.date ? a : b)).date;
   root.append(h('div', {class: 'kpis', style: 'margin-top:8px'}, kpi('追蹤中推薦', `${pos.length} 筆（${new Set(pos.map(p => p.ticker)).size} 檔）`, '同一檔股票每天重複推薦會重複計入，括號內為不同股票數'),
-    kpi('5日平均超額', s5 ? pct(s5.avg_alpha) : '待累積', s5 ? `${s5.n} 筆到期；贏大盤 ${pct(s5.win_alpha, 0, false)}` : '需 5 個交易日'), kpi('20日平均超額', s20 ? pct(s20.avg_alpha) : '待累積', s20 ? `${s20.n} 筆到期；贏大盤 ${pct(s20.win_alpha, 0, false)}` : '需 20 個交易日'),
+    kpi('5日平均超額', s5 ? pct(s5.avg_alpha) : '待累積', s5 ? `${su ? '每檔只計首次推薦；' : ''}${s5.n} 筆到期；贏大盤 ${pct(s5.win_alpha, 0, false)}` : '需 5 個交易日'), kpi('20日平均超額', s20 ? pct(s20.avg_alpha) : '待累積', s20 ? `${su ? '每檔只計首次推薦；' : ''}${s20.n} 筆到期；贏大盤 ${pct(s20.win_alpha, 0, false)}` : '需 20 個交易日'),
     kpi('60日平均超額', s60 ? pct(s60.avg_alpha) : '待累積', s60 ? `${s60.n} 筆到期` : '需 60 個交易日')));
   const coh = (P.cohorts || []).filter(c => (c.book || 'main') === S.pm && isNum(c.avg_alpha)).sort((a, b) => a.date < b.date ? -1 : 1).slice(-40);
   if (coh.length) { const W = 640, H = 210, L = 40, R = 8, T = 12, B = 30, mx = Math.max(.02, ...coh.map(c => Math.abs(c.avg_alpha))) * 1.1, Y = v => T + (H - T - B) / 2 * (1 - v / mx), bw = Math.min(24, (W - L - R) / coh.length - 4);
@@ -454,10 +506,7 @@ function perfView() {
       if (i === coh.length - 1) svg.append(s('text', {x: x + bw / 2, y: up ? top - 5 : top + hgt + 13, 'text-anchor': 'middle', style: 'font-weight:700;fill:var(--ink)'}, pct(c.avg_alpha)));
       if (coh.length <= 14 || i % Math.ceil(coh.length / 12) === 0) svg.append(s('text', {x: x + bw / 2, y: H - 10, 'text-anchor': 'middle'}, c.date.slice(5))); });
     root.append(h('div', {class: 'sec'}, h('h2', null, '各期推薦批次：平均超額報酬'), h('span', {class: 'sub'}, '▲紅＝贏大盤、▼藍＝輸大盤；滑過長條看詳細')), h('div', {class: 'card'}, h('div', {style: 'max-width:760px'}, svg))); }
-  root.append(h('details', {class: 'card', style: 'margin-top:12px'}, h('summary', null, `全部推薦明細（${pos.length} 筆，點擊展開）`),
-    h('div', {style: 'overflow-x:auto;margin-top:8px'}, h('table', {class: 't'}, h('thead', null, h('tr', null, ['推薦日', '代號', '名稱', '進場', '目標', '現價', '報酬', '超額', '天數', '狀態'].map((x, i) => h('th', {class: i > 2 && i < 9 ? 'r' : ''}, x)))),
-      h('tbody', null, pos.slice().sort((a, b) => a.date < b.date ? 1 : -1).map(p => h('tr', null, h('td', null, p.date), h('td', null, p.ticker), h('td', null, p.name), h('td', {class: 'r num'}, px(p.entry)), h('td', {class: 'r num'}, px(p.target)), h('td', {class: 'r num'}, px(p.last_price)),
-        h('td', {class: 'r num'}, delta(p.rlast)), h('td', {class: 'r num'}, delta(p.alast)), h('td', {class: 'r num'}, p.n_days), h('td', null, p.target_hit ? '達標' : p.stop_hit ? '觸停損' : '持有'))))))));
+  root.append(perfDefs(), perfTable(pos));
   return root;
 }
 
@@ -515,6 +564,7 @@ async function init() {
   try { S.perf = await getJSON('data/performance.json'); } catch (e) { S.perf = null; }
   try { S.status = await getJSON('data/status.json'); } catch (e) { S.status = null; }
   try { S.health = await getJSON('data/health.json'); } catch (e) { S.health = null; }
+  try { S.hist = await getJSON('data/params_history.json'); } catch (e) { S.hist = []; }
   const sel = document.getElementById('date'); sel.replaceChildren(...S.idx.map(x => h('option', {value: x.date}, x.date))); sel.addEventListener('change', () => loadDate(sel.value));
   if (S.idx.length) await loadDate(S.idx[0].date); else render();
 }
