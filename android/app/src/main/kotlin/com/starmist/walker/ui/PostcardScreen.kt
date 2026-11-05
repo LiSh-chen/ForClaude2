@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.starmist.walker.data.Ledger
 
 /** A line about a township that does not give its name away: where it is and how big and how high. */
+@androidx.compose.runtime.Composable
 internal fun postcardHint(t: TownArea): String {
     val kind = when {
         t.highElevM >= 2500 -> tr("高山")
@@ -36,6 +37,7 @@ internal fun postcardHint(t: TownArea): String {
 }
 
 /** What a postcard says, from the township's own figures (more words can be added per township later). */
+@androidx.compose.runtime.Composable
 internal fun postcardBody(t: TownArea): List<String> = listOf(
     trf("面積約 {0} 平方公里，共 {1} 個村里。", "%.1f".format(t.areaKm2), t.villages),
     trf("境內最高處海拔約 {0} 公尺，中位數約 {1} 公尺。", t.highElevM, t.medianElevM),
