@@ -1,6 +1,5 @@
 package com.starmist.walker.data
 
-import androidx.room.withTransaction
 import com.starmist.core.diagnostics.HealthInput
 import com.starmist.core.diagnostics.Issue
 import com.starmist.core.diagnostics.SnapshotHealth
@@ -38,6 +37,7 @@ data class DiagnosticsInfo(
 class StepRepository(
     private val platform: PlatformInfo,
     private val database: AppDatabase,
+    private val tx: DbTransaction,
     private val settings: SettingsStore,
     val reader: StepSensor,
 ) {
@@ -78,12 +78,12 @@ class StepRepository(
         val multiplier = settings.current().multiplier
         val ledger = StepLedger(TimeZone.currentSystemDefault())
 
-        database.withTransaction {
+        tx.run {
             val stored = dao.getState()
             val state = LedgerState(stored?.toSnapshot(), stored?.carry ?: 0.0)
             val update = ledger.process(state, snapshot, multiplier)
             if (update.isStale) {
-                return@withTransaction SnapshotResult.Success(addedSteps = 0, rebooted = false, baseline = false)
+                return@run SnapshotResult.Success(addedSteps = 0, rebooted = false, baseline = false)
             }
 
             for ((day, raw) in update.rawByDay) {
@@ -136,9 +136,9 @@ class StepRepository(
     /** Makes the day's total equal [desiredTotal] by storing the difference as a manual adjustment. */
     suspend fun setDayTotal(date: LocalDate, desiredTotal: Long) {
         val key = date.toString()
-        database.withTransaction {
+        tx.run {
             dao.insertIfAbsent(DailyStepsEntity(key))
-            val row = dao.getDay(key) ?: return@withTransaction
+            val row = dao.getDay(key) ?: return@run
             dao.setManualAdjust(key, desiredTotal.coerceAtLeast(0) - row.scaledSteps)
         }
     }

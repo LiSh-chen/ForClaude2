@@ -3,6 +3,7 @@ package com.starmist.walker
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import androidx.room.withTransaction
 import com.starmist.walker.content.ContentStore
 import com.starmist.walker.data.AppDatabase
 import com.starmist.walker.data.collectionDataStore
@@ -26,6 +27,9 @@ import com.starmist.walker.work.SnapshotScheduler
 class AppContainer(context: Context) : AppServices {
     private val appContext = context.applicationContext
     private val database = Room.databaseBuilder(appContext, AppDatabase::class.java, "starmist.db").build()
+    private val transaction = object : com.starmist.walker.data.DbTransaction {
+        override suspend fun <R> run(block: suspend () -> R): R = database.withTransaction { block() }
+    }
     val content = ContentStore(appContext)
     override val settings = SettingsStore(appContext.settingsDataStore)
     override val goal = com.starmist.walker.platform.GoalWatcher(appContext, settings)
@@ -34,7 +38,7 @@ class AppContainer(context: Context) : AppServices {
     override val collection = com.starmist.walker.data.CollectionStore(appContext.collectionDataStore)
     override val platform: PlatformInfo = AndroidPlatformInfo(appContext)
     val reader = StepCounterReader(appContext)
-    override val repository = StepRepository(platform, database, settings, reader)
+    override val repository = StepRepository(platform, database, transaction, settings, reader)
     override val townAreas: TownAreas by lazy { TownAreas.load(appContext) }
     override val townBlurbs: Map<String, List<TownTag>> by lazy { loadTownBlurbs(appContext) }
 }
