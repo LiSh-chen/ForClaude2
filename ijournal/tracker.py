@@ -43,6 +43,17 @@ def _fwd(df: pd.DataFrame, bench: pd.DataFrame, entry_date: str, entry_px: float
     return out
 
 
+def _entry(df: pd.DataFrame, date: str, px: float | None) -> tuple[float | None, bool]:
+    """進場價以『推薦日當天的實際收盤價』為準。早期（修正美股最新收盤補值之前）有些美股推薦記錄的是前一日收盤價，
+    差異超過 0.3% 就改用價格歷史中該日的收盤價（並標記 entry_fixed），避免進場價失真造成報酬與超額被錯算。"""
+    c = df["Close"].dropna()
+    ts = pd.Timestamp(date)
+    i = c.index.searchsorted(ts, side="right") - 1
+    if i >= 0 and c.index[i] == ts and isnum(px) and abs(px / float(c.iloc[i]) - 1) > 0.003:
+        return float(c.iloc[i]), True
+    return px, False
+
+
 def summarize(positions: list[dict]) -> dict:
     s = {}
     for h in HORIZONS:
@@ -111,16 +122,17 @@ def run_tracker(provider) -> dict:
                 df, b = prices.get(p["ticker"]), prices.get(uni["benchmarks"][p["market"]])
                 if df is None or b is None:
                     continue
-                f = _fwd(df, b, date, p["entry_price"])
+                e_px, fixed = _entry(df, date, p["entry_price"])
+                f = _fwd(df, b, date, e_px)
                 if not f:
                     continue
                 tg = p["target"]
                 n = max(f["n_days"], 0)
                 exp = (1 + tg["upside"]) ** (n / tg["horizon_days"]) - 1 if n else 0.0
                 rec = {"date": date, "ticker": p["ticker"], "name": p["zh_name"], "market": p["market"], "sector": p["sector"],
-                       "entry": p["entry_price"], "target": tg["base"], "target_upside": tg["upside"], "stop": p["stop"],
+                       "entry": e_px, "entry_fixed": fixed, "target": tg["base"], "target_upside": tg["upside"], "stop": p["stop"],
                        "expected_ret_now": exp, "ret_vs_expected": f["r" + "last"] - exp, **{k: v for k, v in f.items() if k not in ("entry",)},
-                       "stop_hit": f["min_low"] <= p["stop"] / p["entry_price"] - 1, "target_hit": f["max_high"] >= tg["upside"],
+                       "stop_hit": f["min_low"] <= p["stop"] / e_px - 1, "target_hit": f["max_high"] >= tg["upside"],
                        "params_version": pj.get("params_version"), "book": book, "theme": p.get("theme")}
                 positions.append(rec)
                 coh.append(rec)
@@ -138,7 +150,7 @@ def run_tracker(provider) -> dict:
             df, b = prices.get(r["ticker"]), prices.get(uni["benchmarks"][r["market"]])
             if df is None or b is None:
                 continue
-            fw = _fwd(df, b, cj["date"], r["price"])
+            fw = _fwd(df, b, cj["date"], _entry(df, cj["date"], r["price"])[0])
             if fw:
                 day[r["ticker"]] = {k: (round(fw[k], 5) if isnum(fw.get(k)) else None) for k in ("r5", "a5", "r20", "a20", "r60", "a60", "r120", "a120", "rlast", "alast")}
         pool[cj["date"]] = day
@@ -147,7 +159,12 @@ def run_tracker(provider) -> dict:
     main_pos = [p for p in positions if p["book"] == "main"]
     emg_pos = [p for p in positions if p["book"] == "emerging"]
     bar_pos = [p for p in positions if p["book"] == "bargain"]
+    first_pos = {}
+    for p in sorted(positions, key=lambda p: (p["book"], p["date"])):
+        first_pos.setdefault((p["book"], p["ticker"]), p)       # 每檔只計首次推薦（同一檔每天重複推薦不是獨立樣本）
+    uniq = lambda b: [p for (bk, _), p in first_pos.items() if bk == b]
     perf = {"generated": str(dt.date.today()), "positions": positions, "cohorts": cohorts, "summary": summarize(main_pos),
+            "summary_unique": {b: summarize(uniq(b)) for b in ("main", "emerging", "bargain")},
             "by_market": {m: summarize([p for p in main_pos if p["market"] == m]) for m in ("TW", "US")},
             "emerging": {"summary": summarize(emg_pos), "n": len(emg_pos)},
             "bargain": {"summary": summarize(bar_pos), "n": len(bar_pos)}, "macro": macro_eval}

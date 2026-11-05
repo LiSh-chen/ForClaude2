@@ -98,10 +98,10 @@ def test_end_to_end_with_feedback_loop():
     out = Path(run_review("monthly", tune=True, date="2026-09-30"))
     assert out.exists()
     # 樣本不足（僅 4 個推薦日）→ 不應調整任何參數
-    assert C.load_params()["version"] == 1
+    assert C.load_params()["version"] == P["version"]
     # 放寬門檻 → 會調整並留下稽核紀錄
     run_review("monthly", tune=True, date="2026-09-30", min_dates=2)
-    assert C.load_params()["version"] == 2 and C.load_json(C.history_path())[-1]["changes"]
+    assert C.load_params()["version"] == P["version"] + 1 and C.load_json(C.history_path())[-1]["changes"]
     w = C.load_params()["factor_weights"]
     assert abs(sum(w.values()) - 1) < 1e-9 and all(0.03 <= x <= 0.35 for x in w.values())
     from ijournal.site import build_site
@@ -648,3 +648,55 @@ def test_strategy_compare_uses_common_window_and_dedups_and_upside_hypothesis():
     many = [_pos("2026-10-06", f"H{i}", "s", "US", -0.1, -0.1, target_upside=0.6) for i in range(3)] + [_pos("2026-10-06", f"L{i}", "s", "US", 0.0, 0.01, target_upside=0.1) for i in range(3)]
     ub = upside_buckets({"positions": many})
     assert ub and ub["n_hi"] == 3 and ub["alpha_hi"] < ub["alpha_lo"] and upside_buckets({"positions": many[:4]}) is None   # 每組至少 3 檔才做假設追蹤
+
+
+def _srow(t, m, sec, comp, vol, **kw):
+    return {"ticker": t, "market": m, "sector": sec, "composite": comp, "dual_of": None, "scores": {"quality": 80.0, "leader": 100.0}, "val": {"spread": 0.1, "upside": 0.3},
+            "f": {"market_cap": 5e11, "eps_ttm_px": 3.0, "eps_fwd_px": 4.0}, "pf": {"turnover": 5e9, "vol_ann": vol}, "pick_pool": None, **kw}
+
+
+def test_sop_v2_vol_cap_risk_adjusted_rank_cooldown_and_cluster_cap():
+    from ijournal.selection import eligible, pick, risk_adjust
+    P = C.load_params()
+    s = P["selection"]
+    assert s["max_vol_ann"] == 0.70 and s["vol_penalty"] > 0 and s["max_per_cluster"] == 4 and "ai_chips" in s["clusters"]["ai_hardware"]
+    hot, calm = _srow("HOT", "US", "financials", 80.0, 0.60), _srow("CALM", "US", "financials", 75.0, 0.20)
+    rows = {"HOT": hot, "CALM": calm}
+    risk_adjust(rows, P)
+    assert calm["comp_adj"] > hot["comp_adj"] and hot["composite"] > calm["composite"]          # 波動高者在風險調整後排序下降，原綜合分保留
+    assert eligible(_srow("X", "US", "financials", 80.0, 0.85), P) == (False, "波動過高（年化 > 70%）")
+    ok, why = eligible(_srow("Y", "US", "financials", 80.0, 0.30), {**P, "_cooldown": {"Y": {"stop": 100}}})
+    assert not ok and "停損" in why and eligible(_srow("Y", "US", "financials", 80.0, 0.30), P)[0]
+    # 跨市場同題材上限：AI 硬體供應鏈每日最多 4 檔（台股優先、美股遞補），其他產業不受限
+    rs = {}
+    for i, m in enumerate(("TW",) * 3 + ("US",) * 3):
+        rs[f"A{i}"] = _srow(f"A{i}", m, ["ai_chips", "ai_servers", "networking_optics"][i % 3], 90.0 - i, 0.3, comp_adj=90.0 - i)
+    rs["F0"] = _srow("F0", "US", "financials", 50.0, 0.3, comp_adj=50.0)
+    secs = {m: {k: {"score": 80.0 - j} for j, k in enumerate(["ai_chips", "ai_servers", "networking_optics", "financials"])} for m in ("TW", "US")}
+    P2 = {**P, "selection": {**s, "max_per_sector": 5, "focus_sectors_per_market": 4, "picks_per_market": 5}}
+    got = pick(rs, secs, P2)
+    ai = [r["ticker"] for m in got["picks"] for r in got["picks"][m] if r["sector"] != "financials"]
+    assert len(ai) == 4 and any("題材" in k for k in got["stats"]["US"]["reasons"]) and any(r["ticker"] == "F0" for r in got["picks"]["US"])
+
+
+def test_sop_cooldown_blocks_names_below_first_recommendation_stop(tmp_path):
+    from ijournal.sop import cooldown
+    d = C.path("data") / "picks"
+    d.mkdir(exist_ok=True)
+    C.save_json(d / "2026-10-01.json", {"date": "2026-10-01", "picks": [{"ticker": "FALL", "stop": 90.0, "entry_price": 100.0}, {"ticker": "HOLD", "stop": 90.0, "entry_price": 100.0}]})
+    C.save_json(d / "2026-10-05.json", {"date": "2026-10-05", "picks": [{"ticker": "FALL", "stop": 80.0, "entry_price": 88.0}]})      # 後來的停損價較低，仍以『首次推薦』的停損為準
+    feats = {"FALL": {"last": 85.0}, "HOLD": {"last": 95.0}}
+    cd = cooldown(feats, "2026-10-10", C.load_params())
+    assert set(cd) == {"FALL"} and cd["FALL"]["stop"] == 90.0
+    assert cooldown(feats, "2027-03-01", C.load_params()) == {}                                  # 超過冷卻期（90 天）不再限制
+
+
+def test_tracker_entry_price_is_corrected_to_actual_close_on_recommendation_day():
+    from ijournal.tracker import _entry
+    df = _frame("2026-10-07", 100.0, 5)
+    df["Close"] = [100.0, 102.0, 105.0, 103.0, 104.0]                                          # 每天收盤不同，才分得出『前一天』與『當天』
+    c = df["Close"]
+    day = str(df.index[2].date())
+    assert _entry(df, day, float(c.iloc[2]))[1] is False                                       # 吻合（<0.3%）→ 不動
+    px, fixed = _entry(df, day, float(c.iloc[1]))                                              # 記錄成前一天收盤 → 校正為當天收盤並標記
+    assert fixed and abs(px - float(c.iloc[2])) < 1e-9

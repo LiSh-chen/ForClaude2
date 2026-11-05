@@ -9,7 +9,7 @@ from . import config as C
 from . import llm
 from . import bargain as B
 from . import emerging as E
-from . import datafix, macro as M, quality, sessions, snapshot
+from . import datafix, macro as M, quality, sessions, snapshot, sop
 from .features import norm_fundamentals, price_features
 from .journal import candidate_record, pick_record, write_journal
 from .news import scan
@@ -120,6 +120,10 @@ def run_daily(provider, force: bool = False, asof: str | None = None) -> str | N
     print(f"[quality] 資料品質：{q['level']}")
     if q["level"] == "bad":
         raise quality.DataQualityError(q)
+    cool = sop.cooldown(feats, date, params)
+    if cool:
+        params = {**params, "_cooldown": cool}
+        print(f"[daily] 停損記憶：{len(cool)} 檔已跌破前次推薦停損價，暫不推薦：{'、'.join(sorted(cool))}")
     sel = pick(rows, sec_scores, params)
     picks, notes, stats = sel["picks"], sel["notes"], sel["stats"]
     if not any(picks.values()):

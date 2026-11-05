@@ -60,6 +60,10 @@ def eligible(r: dict, p: dict) -> tuple[bool, str]:
     e, m = p["emerging"], r["market"]
     if r["val"] is None:
         return False, "資料不足，無法估值"
+    if r.get("ticker") in (p.get("_cooldown") or {}):
+        return False, "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
+    if isnum(r["pf"].get("vol_ann")) and r["pf"]["vol_ann"] > e.get("max_vol_ann", 9.0):
+        return False, f"波動過高（年化 > {e['max_vol_ann']:.0%}）"
     v = r["val"]
     if v["spread"] > e["max_method_spread"]:
         # 分歧 60%–80%：只有『最保守的方法仍高於現價』（方向一致、只是幅度分歧）才放行，並標示信心偏低
@@ -85,7 +89,7 @@ def pick_emerging(themes: list[dict], rows: dict, main_picked: set, p: dict) -> 
     chosen = set()
     for t in themes[: e["pick_themes"]]:
         cnt = {"TW": 0, "US": 0}
-        cands = sorted((rows[x] for x in t["members"] if x in rows and rows[x]["composite"] is not None), key=lambda r: -r["composite"])
+        cands = sorted((rows[x] for x in t["members"] if x in rows and rows[x]["composite"] is not None), key=lambda r: -r.get("comp_adj", r["composite"]))
         for r in cands:
             m = r["market"]
             if len(picked[m]) >= e["picks_per_market"] or cnt[m] >= e["max_per_theme"]:
