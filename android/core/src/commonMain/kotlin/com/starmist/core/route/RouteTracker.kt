@@ -22,6 +22,10 @@ sealed interface RouteEvent {
     data class CountyCompleted(val county: String, val towns: List<String>, val next: String?) : RouteEvent
     /** A task (see [Quest]) has just been completed; made by the app, which knows what has been collected. */
     data class QuestCompleted(val id: String, val title: String, val desc: String, val reward: String?) : RouteEvent
+    /** A traveler has been met (stage 1) or has become a friend (stage 2); made by the app, which keeps the record. */
+    data class TravelerMet(val travelerId: String, val stage: Int) : RouteEvent
+    /** A friend has written from [townKey] ("county|name"). */
+    data class PostcardArrived(val travelerId: String, val townKey: String) : RouteEvent
     data object Finished : RouteEvent
 }
 

@@ -158,7 +158,7 @@ private fun AppRoot(vm: AppViewModel = viewModel(factory = appViewModelFactory(L
     routeEvents.firstOrNull()?.let {
         RouteEventDialog(
             it, onDismiss = { vm.dismissRouteEvent() }, finish = if (it == com.starmist.core.route.RouteEvent.Finished) vm.finishStats() else null,
-            onPostcards = { vm.dismissRouteEvent(); celebrationPostcards = true },
+            onPostcards = { vm.dismissRouteEvent(); celebrationPostcards = true }, vm = vm,
         )
     }
     if (celebrationPostcards) PostcardsDialog(vm, vm.ledger.collectAsStateWithLifecycle().value) { celebrationPostcards = false }

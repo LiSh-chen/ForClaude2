@@ -34,6 +34,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.starmist.core.route.PostcardTowns
+import com.starmist.core.route.TownProfile
+import com.starmist.core.route.Traveler
+import com.starmist.core.route.Travelers
 import com.starmist.walker.data.Ledger
 import kotlin.math.PI
 import kotlin.math.cos
@@ -97,9 +101,11 @@ private fun outlineOf(t: TownArea): Outline {
     return Outline(rings, Bounds(xs.min(), xs.max(), ys.min(), ys.max()))
 }
 
-/** One postcard: the outline of the place, and either its name and figures or a riddle about it. */
+internal fun TownArea.profile() = TownProfile("$county|$name", county, name, highElevM, medianElevM, areaKm2, villages)
+
+/** One postcard: the outline of the place, and either its name and figures (in the sender's words if [sender] is given) or a riddle about it. */
 @Composable
-internal fun PostcardCard(t: TownArea, revealed: Boolean, modifier: Modifier = Modifier) {
+internal fun PostcardCard(t: TownArea, revealed: Boolean, modifier: Modifier = Modifier, sender: Traveler? = null) {
     val shape = RoundedCornerShape(4.dp)
     Row(
         modifier.fillMaxWidth().background(Vintage.parchmentLight, shape).border(1.dp, Vintage.edge, shape).padding(12.dp),
@@ -116,12 +122,14 @@ internal fun PostcardCard(t: TownArea, revealed: Boolean, modifier: Modifier = M
             if (revealed) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(t.name, fontFamily = QUILL, fontSize = 24.sp, fontWeight = FontWeight.Black, color = INK_RED, modifier = Modifier.weight(1f))
-                    Box(Modifier.border(1.dp, Vintage.brassDark, RoundedCornerShape(2.dp)).padding(horizontal = 5.dp, vertical = 2.dp)) {
+                    if (sender != null) TravelerAvatar(sender.id, 36.dp)
+                    else Box(Modifier.border(1.dp, Vintage.brassDark, RoundedCornerShape(2.dp)).padding(horizontal = 5.dp, vertical = 2.dp)) {
                         Text(tr("郵"), fontFamily = QUILL, fontSize = 12.sp, color = Vintage.brassDark)
                     }
                 }
                 Text(t.county, fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft)
-                postcardBody(t).forEach { Text(it, fontFamily = QUILL, fontSize = 13.sp, color = SEPIA) }
+                if (sender != null) PostcardTowns.lines(sender, t.profile()).forEach { Text(it, fontFamily = QUILL, fontSize = 13.sp, color = SEPIA) }
+                else postcardBody(t).forEach { Text(it, fontFamily = QUILL, fontSize = 13.sp, color = SEPIA) }
             } else {
                 Text("？？？", fontFamily = QUILL, fontSize = 24.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
                 Text(postcardHint(t), fontFamily = QUILL, fontSize = 14.sp, color = SEPIA)
@@ -136,25 +144,42 @@ private fun ParchmentSheet(content: @Composable () -> Unit) {
     Box(Modifier.fillMaxWidth().background(Vintage.parchment, shape).border(1.5.dp, Vintage.edge, shape).padding(16.dp)) { content() }
 }
 
-/** The postcard page: pick one of the offered mysteries (when a postcard is left), and look at the ones already collected. */
+/** One traveler in the list: 0 = not met yet, 1 = met, 2 = a friend. */
+internal class TravelerRow(val traveler: Traveler, val state: Int)
+
+/** The postcard page: the travelers (with a button to ask a friend to write when a quest postcard is left) and the postcards received. */
 @Composable
-internal fun PostcardsSheet(left: Int, offer: List<TownArea>, mine: List<TownArea>, onPick: (TownArea) -> Unit, onOpen: (TownArea) -> Unit, onClose: () -> Unit) {
+internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<Pair<TownArea, Traveler?>>, onAsk: (Traveler) -> Unit, onOpen: (TownArea) -> Unit, onClose: () -> Unit) {
     ParchmentSheet {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(tr("明信片"), fontFamily = QUILL, fontSize = 28.sp, fontWeight = FontWeight.Black, color = INK_RED)
-            LazyColumn(Modifier.heightIn(max = 480.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                if (offer.isNotEmpty()) {
-                    item { Text(trf("可以選 {0} 張。三選一，選了才揭曉是哪裡：", left), fontFamily = QUILL, fontSize = 15.sp, color = SEPIA) }
-                    items(offer, key = { "offer_${it.county}|${it.name}" }) { t -> PostcardCard(t, revealed = false, Modifier.clickable { onPick(t) }) }
-                } else {
-                    item { Text(tr("目前沒有可用的明信片。完成「任務與里程碑」就能獲得。"), fontFamily = QUILL, fontSize = 15.sp, color = SEPIA) }
+            Text(tr("旅人與明信片"), fontFamily = QUILL, fontSize = 28.sp, fontWeight = FontWeight.Black, color = INK_RED)
+            LazyColumn(Modifier.heightIn(max = 520.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                item {
+                    Text(
+                        if (left > 0) trf("任務換到 {0} 張請託：選一位朋友，請他寄一張明信片。", left) else tr("路上遇到的旅人，成為朋友後會寄明信片給你。"),
+                        fontFamily = QUILL, fontSize = 15.sp, color = SEPIA,
+                    )
+                }
+                items(travelers, key = { "t_${it.traveler.id}" }) { r ->
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        TravelerAvatar(r.traveler.id, 52.dp, dim = r.state == 0)
+                        Column(Modifier.weight(1f)) {
+                            Text(if (r.state == 0) "？？？" else r.traveler.name, fontFamily = QUILL, fontSize = 17.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
+                            Text(
+                                when (r.state) { 0 -> tr("還沒遇到"); 1 -> trf("認識・{0}", r.traveler.job); else -> trf("朋友・{0}", r.traveler.job) },
+                                fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft,
+                            )
+                        }
+                        if (r.state == 2 && left > 0) TextButton(onClick = { onAsk(r.traveler) }) { Text(tr("請他寄一張"), fontFamily = QUILL, fontSize = 15.sp, fontWeight = FontWeight.Black, color = INK_RED) }
+                    }
                 }
                 if (mine.isNotEmpty()) {
-                    item { Text(trf("已收集 {0} 張", mine.size), fontFamily = QUILL, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Vintage.ink) }
-                    items(mine, key = { "mine_${it.county}|${it.name}" }) { t ->
+                    item { Text(trf("收到的明信片 {0} 張", mine.size), fontFamily = QUILL, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Vintage.ink) }
+                    items(mine, key = { "mine_${it.first.county}|${it.first.name}" }) { (t, from) ->
                         Row(Modifier.fillMaxWidth().clickable { onOpen(t) }.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             TownShape(t, Vintage.moss.copy(alpha = 0.55f), Vintage.moss, Modifier.size(40.dp))
-                            Text("${t.county} ${t.name}", fontFamily = QUILL, fontSize = 16.sp, color = SEPIA)
+                            Text("${t.county} ${t.name}", fontFamily = QUILL, fontSize = 16.sp, color = SEPIA, modifier = Modifier.weight(1f))
+                            if (from != null) TravelerAvatar(from.id, 30.dp)
                         }
                     }
                 }
@@ -164,15 +189,31 @@ internal fun PostcardsSheet(left: Int, offer: List<TownArea>, mine: List<TownAre
     }
 }
 
-/** The postcard that has just been picked, or one opened again from the list. */
+/** A postcard that has just come, or one opened again from the list. */
 @Composable
-internal fun PostcardOpenedSheet(t: TownArea, onClose: () -> Unit) {
+internal fun PostcardOpenedSheet(t: TownArea, sender: Traveler?, onClose: () -> Unit) {
     ParchmentSheet {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(trf("來自{0}的明信片", t.name), fontFamily = QUILL, fontSize = 22.sp, fontWeight = FontWeight.Black, color = INK_RED)
-            PostcardCard(t, revealed = true)
-            Text(tr("這個地方不在你的環島路線上，是靠任務換來的一張明信片。"), fontFamily = QUILL, fontSize = 14.sp, color = Vintage.inkSoft)
+            Text(if (sender != null) trf("{0}寄來一張明信片", sender.name) else trf("來自{0}的明信片", t.name), fontFamily = QUILL, fontSize = 22.sp, fontWeight = FontWeight.Black, color = INK_RED)
+            PostcardCard(t, revealed = true, sender = sender)
+            Text(tr("這個地方不在你的環島路線上。"), fontFamily = QUILL, fontSize = 14.sp, color = Vintage.inkSoft)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { TextButton(onClick = onClose) { Text(tr("收下"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black) } }
+        }
+    }
+}
+
+/** What a traveler says when met (stage 1) or when they become a friend (stage 2). */
+@Composable
+internal fun TravelerMeetSheet(t: Traveler, stage: Int, onClose: () -> Unit) {
+    ParchmentSheet {
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(if (stage == 1) tr("路上遇到一位旅人") else tr("成為朋友"), fontFamily = QUILL, fontSize = 24.sp, fontWeight = FontWeight.Black, color = INK_RED)
+            TravelerAvatar(t.id, 104.dp)
+            Text(t.name, fontFamily = QUILL, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
+            Text(t.job, fontFamily = QUILL, fontSize = 14.sp, color = Vintage.inkSoft)
+            Text("「" + (if (stage == 1) t.hello else t.friend) + "」", fontFamily = QUILL, fontSize = 16.sp, color = SEPIA)
+            if (stage == 2) Text(tr("之後會收到他從路線外寄來的明信片。"), fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft)
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { TextButton(onClick = onClose) { Text(if (stage == 1) tr("你好") else tr("太好了"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black) } }
         }
     }
 }
@@ -180,15 +221,26 @@ internal fun PostcardOpenedSheet(t: TownArea, onClose: () -> Unit) {
 @Composable
 fun PostcardsDialog(vm: AppViewModel, ledger: Ledger, onDismiss: () -> Unit) {
     var opened by remember { mutableStateOf<TownArea?>(null) }
-    val offer = remember(ledger.unlocked, ledger.earned, ledger.towns) { vm.postcardOffer(ledger).mapNotNull { vm.townByKey(it) } }
-    val mine = remember(ledger.unlocked) { ledger.unlocked.sorted().mapNotNull { vm.townByKey(it) } }
+    val travelers = remember(ledger.met, ledger.friends) { Travelers.all.map { TravelerRow(it, if (it.id in ledger.friends) 2 else if (it.id in ledger.met) 1 else 0) } }
+    val mine = remember(ledger.unlocked, ledger.senders) {
+        ledger.unlocked.sorted().mapNotNull { k -> vm.townByKey(k)?.let { it to ledger.senders[k]?.let(Travelers::byId) } }
+    }
     val show = opened
     Dialog(onDismissRequest = { if (show != null) opened = null else onDismiss() }) {
-        if (show != null) PostcardOpenedSheet(show) { opened = null }
-        else PostcardsSheet(
-            ledger.postcardsLeft, offer, mine,
-            onPick = { t -> vm.unlockPostcard("${t.county}|${t.name}"); opened = t },
-            onOpen = { opened = it }, onClose = onDismiss,
-        )
+        if (show != null) PostcardOpenedSheet(show, ledger.senders["${show.county}|${show.name}"]?.let(Travelers::byId)) { opened = null }
+        else PostcardsSheet(ledger.postcardsLeft, travelers, mine, onAsk = { vm.requestPostcard(it.id); onDismiss() }, onOpen = { opened = it }, onClose = onDismiss)
     }
+}
+
+/** A postcard has arrived: shown over the map as soon as it is due. */
+@Composable
+fun PostcardArrivedDialog(vm: AppViewModel, travelerId: String, townKey: String, onDismiss: () -> Unit) {
+    val t = vm.townByKey(townKey) ?: run { onDismiss(); return }
+    Dialog(onDismissRequest = onDismiss) { PostcardOpenedSheet(t, Travelers.byId(travelerId), onDismiss) }
+}
+
+@Composable
+fun TravelerMetDialog(travelerId: String, stage: Int, onDismiss: () -> Unit) {
+    val t = Travelers.byId(travelerId) ?: run { onDismiss(); return }
+    Dialog(onDismissRequest = onDismiss) { TravelerMeetSheet(t, stage, onDismiss) }
 }

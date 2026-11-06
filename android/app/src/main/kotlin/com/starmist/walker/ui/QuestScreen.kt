@@ -86,7 +86,7 @@ internal fun QuestCelebrationSheet(title: String, desc: String, reward: String?,
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
                 TextButton(onClick = onDismiss) { Text(tr("太棒了"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black) }
-                if (onPostcards != null) TextButton(onClick = onPostcards) { Text(tr("去選明信片"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black, color = INK_RED) }
+                if (onPostcards != null) TextButton(onClick = onPostcards) { Text(tr("請朋友寄信"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black, color = INK_RED) }
             }
         }
     }

@@ -392,7 +392,7 @@ fun StationStamp(name: String, opened: String, modifier: Modifier = Modifier) {
 
 /** One thing that happened on the route, shown when it is reached. */
 @Composable
-fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishStats? = null, onPostcards: () -> Unit = {}) {
+fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishStats? = null, onPostcards: () -> Unit = {}, vm: AppViewModel? = null) {
     when (event) {
         is RouteEvent.CardCollected -> AlertDialog(
             onDismissRequest = onDismiss,
@@ -432,6 +432,8 @@ fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishSta
             confirmButton = { TextButton(onClick = onDismiss) { Text("上車") } },
         )
         is RouteEvent.QuestCompleted -> QuestCompletedDialog(event.title, event.desc, event.reward, onPostcards = onPostcards, onDismiss = onDismiss)
+        is RouteEvent.TravelerMet -> TravelerMetDialog(event.travelerId, event.stage, onDismiss)
+        is RouteEvent.PostcardArrived -> if (vm != null) PostcardArrivedDialog(vm, event.travelerId, event.townKey, onDismiss) else onDismiss()
         RouteEvent.Finished -> LetterDialog(
             title = "環島完成！",
             paragraphs = finish?.let {

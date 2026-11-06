@@ -251,14 +251,51 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
     val ledger: StateFlow<com.starmist.walker.data.Ledger> = container.collection.flow.stateIn(viewModelScope, SharingStarted.Eagerly, com.starmist.walker.data.Ledger())
     private var lastQuestKm = -1.0
 
-    private val townPoints by lazy { townAreas.towns.map { com.starmist.core.route.TownPoint("${it.county}|${it.name}", it.lat, it.lon) } }
+    /** The townships the route does not go through, with the figures a traveler's postcard may use. */
+    private val offRouteProfiles by lazy {
+        townAreas.towns.filter { "${it.county}|${it.name}" !in townTags.keys }
+            .map { com.starmist.core.route.TownProfile("${it.county}|${it.name}", it.county, it.name, it.highElevM, it.medianElevM, it.areaKm2, it.villages) }
+    }
 
-    /** The off-route townships the player can pick a postcard from now (empty when no postcard is left to use). */
-    fun postcardOffer(l: com.starmist.walker.data.Ledger): List<String> =
-        if (l.postcardsLeft <= 0) emptyList()
-        else com.starmist.core.route.PostcardPicker.offered(townPoints, townTags.keys, l.unlocked, l.towns, seed = l.unlocked.size)
+    private fun townFor(travelerId: String, unlocked: Set<String>, seed: Int): String? =
+        com.starmist.core.route.PostcardTowns.choose(travelerId, offRouteProfiles.filter { it.key !in unlocked }, seed)
 
-    fun unlockPostcard(key: String) { viewModelScope.launch { container.collection.unlock(key) } }
+    /** Uses a quest postcard to ask the friend [travelerId] to write from somewhere new. */
+    fun requestPostcard(travelerId: String) {
+        viewModelScope.launch {
+            val l = container.collection.current()
+            if (l.postcardsLeft <= 0 || travelerId !in l.friends) return@launch
+            val town = townFor(travelerId, l.unlocked, l.unlocked.size + l.used) ?: return@launch
+            if (container.collection.receive(travelerId, town, null)) _pendingRouteEvents.update { it + RouteEvent.PostcardArrived(travelerId, town) }
+        }
+    }
+
+    private var lastTravelerKm = -1.0
+
+    /**
+     * Meetings with the travelers and the postcards of the friends, up to [walkedKm]. The first time it runs for a player who is already
+     * far along, what lies well behind is recorded quietly so that a pile of old news does not appear at once.
+     */
+    private suspend fun recordTravelers(route: com.starmist.core.route.RouteDef, walkedKm: Double): List<RouteEvent> {
+        if (lastTravelerKm >= 0 && walkedKm >= lastTravelerKm && walkedKm - lastTravelerKm < 0.5 && walkedKm < route.totalKm - 1e-9) return emptyList()
+        lastTravelerKm = walkedKm
+        var l = container.collection.current()
+        val quietBelow = if (l.met.isEmpty() && l.friends.isEmpty()) walkedKm - 60.0 else -1.0
+        val out = ArrayList<RouteEvent>()
+        for (e in com.starmist.core.route.Travelers.due(route, walkedKm, l.met, l.friends, l.mailed)) {
+            val quiet = e.atKm < quietBelow
+            when (e) {
+                is com.starmist.core.route.TravelerEvent.Met -> { container.collection.meet(e.travelerId); if (!quiet) out += RouteEvent.TravelerMet(e.travelerId, 1) }
+                is com.starmist.core.route.TravelerEvent.BecameFriend -> { container.collection.befriend(e.travelerId); if (!quiet) out += RouteEvent.TravelerMet(e.travelerId, 2) }
+                is com.starmist.core.route.TravelerEvent.MailDue -> {
+                    l = container.collection.current()
+                    val town = townFor(e.travelerId, l.unlocked, l.unlocked.size + e.key.hashCode()) ?: continue
+                    if (container.collection.receive(e.travelerId, town, e.key) && !quiet) out += RouteEvent.PostcardArrived(e.travelerId, town)
+                }
+            }
+        }
+        return out
+    }
 
     fun townByKey(key: String): TownArea? = townAreas.towns.firstOrNull { "${it.county}|${it.name}" == key }
 
@@ -299,6 +336,8 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
         val route = Routes.byId(routeId) ?: return
         viewModelScope.launch {
             container.regions.newLap()
+            container.collection.newLapOn(routeId)
+            lastTravelerKm = -1.0
             container.routes.start(route, repository.allTimeTotal())
             settleRoute()
         }
@@ -307,6 +346,8 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
     fun restartRoute() {
         viewModelScope.launch {
             container.regions.newLap()
+            routeState.value?.let { container.collection.newLapOn(it.routeId) }
+            lastTravelerKm = -1.0
             container.routes.clear()
             _pendingRouteEvents.value = emptyList()
         }
@@ -320,7 +361,7 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
             val stride = BodyMetrics.strideMeters(container.settings.current().profile)
             val advance = container.routes.settle(route, repository.allTimeTotal(), stride) ?: return@launch
             collectRegionTags(route, advance.state.walkedKm)
-            val questEvents = recordQuests(route, advance.state.walkedKm)
+            val questEvents = recordQuests(route, advance.state.walkedKm) + recordTravelers(route, advance.state.walkedKm)
             // small sights earn their stamps here: the township and the nearest point both have to be reached
             val before = advance.state.walkedKm - advance.addedKm
             val sights = PoiStamps.of(route, townAreas).mapNotNull { (poi, km) ->
@@ -346,7 +387,7 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
                 }
             }
             val shown = (advance.events + sights + counties + questEvents).filter {
-                it is RouteEvent.CardCollected || it is RouteEvent.StampCollected || it is RouteEvent.PoiCollected || it is RouteEvent.Transit || it is RouteEvent.Finished || it is RouteEvent.CountyCompleted || it is RouteEvent.QuestCompleted
+                it is RouteEvent.CardCollected || it is RouteEvent.StampCollected || it is RouteEvent.PoiCollected || it is RouteEvent.Transit || it is RouteEvent.Finished || it is RouteEvent.CountyCompleted || it is RouteEvent.QuestCompleted || it is RouteEvent.TravelerMet || it is RouteEvent.PostcardArrived
             }
             if (shown.isNotEmpty()) _pendingRouteEvents.update { it + shown }
         }

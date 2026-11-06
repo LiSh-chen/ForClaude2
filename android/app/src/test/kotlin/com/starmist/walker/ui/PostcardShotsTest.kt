@@ -7,10 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
+import com.starmist.core.route.Travelers
 import com.starmist.walker.data.Ledger
 import org.junit.Test
 
-/** The quest and postcard screens with made-up data. */
+/** The quest, traveler and postcard screens with made-up data. */
 class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
     private fun TownAreas.pick(vararg names: String): List<TownArea> =
         names.mapNotNull { n -> towns.firstOrNull { it.name == n } }.ifEmpty { towns.take(names.size) }
@@ -20,19 +21,26 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
         Box(Modifier.fillMaxSize().padding(pad).padding(16.dp)) { content() }
     }
 
-    @Test fun postcards_pick() = paparazzi.snapshot {
+    private val rows get() = Travelers.all.mapIndexed { i, t -> TravelerRow(t, if (i < 2) 2 else if (i == 2) 1 else 0) }
+
+    @Test fun travelers_page() = paparazzi.snapshot {
         val areas = rememberTownAreas()
-        Frame { PostcardsSheet(2, areas.pick("阿里山鄉", "仁愛鄉", "尖石鄉"), areas.pick("桃源區", "信義鄉"), {}, {}, {}) }
+        val a = areas.pick("阿里山鄉", "桃源區")
+        Frame { PostcardsSheet(1, rows, listOf(a[0] to Travelers.byId("ahbo"), a.last() to Travelers.byId("xiaohe")), {}, {}, {}) }
     }
 
-    @Test fun postcards_empty() = paparazzi.snapshot {
+    @Test fun traveler_meet() = paparazzi.snapshot { Frame { TravelerMeetSheet(Travelers.byId("xipo")!!, 1) {} } }
+
+    @Test fun traveler_friend() = paparazzi.snapshot { Frame { TravelerMeetSheet(Travelers.byId("ahbo")!!, 2) {} } }
+
+    @Test fun postcard_from_friend() = paparazzi.snapshot {
         val areas = rememberTownAreas()
-        Frame { PostcardsSheet(0, emptyList(), areas.pick("桃源區", "信義鄉", "阿里山鄉"), {}, {}, {}) }
+        Frame { PostcardOpenedSheet(areas.pick("阿里山鄉").first(), Travelers.byId("ahbo")) {} }
     }
 
-    @Test fun postcard_opened() = paparazzi.snapshot {
+    @Test fun postcard_from_friend_plain() = paparazzi.snapshot {
         val areas = rememberTownAreas()
-        Frame { PostcardOpenedSheet(areas.pick("阿里山鄉").first()) {} }
+        Frame { PostcardOpenedSheet(areas.pick("桃源區").first(), Travelers.byId("xiaohe")) {} }
     }
 
     @Test fun quests_list() = paparazzi.snapshot {

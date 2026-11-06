@@ -354,4 +354,10 @@ internal val EN: Map<String, String> = mapOf(
     "明信片：可選 {0} 張" to "Postcards: {0} to pick", "明信片（已收集 {0} 張）" to "Postcards ({0} collected)", "明信片 ×{0}" to "Postcard ×{0}",
     "郵" to "Post", "明信片" to "Postcards", "可以選 {0} 張。三選一，選了才揭曉是哪裡：" to "You can pick {0}. One of three; the place is revealed when you choose:",
     "獎勵：明信片 ×{0}" to "Reward: postcard ×{0}", "任務完成！" to "Quest complete!", "去選明信片" to "Pick a postcard",
+    "旅人與明信片" to "Travelers and postcards", "任務換到 {0} 張請託：選一位朋友，請他寄一張明信片。" to "You have {0} request(s) from quests: pick a friend and ask them to send a postcard.",
+    "路上遇到的旅人，成為朋友後會寄明信片給你。" to "Travelers you meet on the road send you postcards once they are friends.",
+    "還沒遇到" to "Not met yet", "認識・{0}" to "Acquaintance · {0}", "朋友・{0}" to "Friend · {0}", "請他寄一張" to "Ask for a postcard",
+    "收到的明信片 {0} 張" to "{0} postcard(s) received", "{0}寄來一張明信片" to "A postcard from {0}", "這個地方不在你的環島路線上。" to "This place is off your route.",
+    "路上遇到一位旅人" to "You meet a fellow traveler", "成為朋友" to "Friends now", "之後會收到他從路線外寄來的明信片。" to "You will get postcards from places off your route.",
+    "你好" to "Hello", "太好了" to "Wonderful", "請朋友寄信" to "Ask a friend to write", "旅人與明信片（朋友 {0}・明信片 {1}）" to "Travelers and postcards (friends {0} · postcards {1})",
 )

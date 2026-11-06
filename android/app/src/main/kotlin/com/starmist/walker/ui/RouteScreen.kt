@@ -79,7 +79,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
         item { Text("收藏・真實世界", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold) }
         item {
             OutlinedButton(onClick = { showPostcards = true }, modifier = Modifier.fillMaxWidth()) {
-                Text(if (ledger.postcardsLeft > 0) trf("明信片：可選 {0} 張", ledger.postcardsLeft) else trf("明信片（已收集 {0} 張）", ledger.unlocked.size))
+                Text(trf("旅人與明信片（朋友 {0}・明信片 {1}）", ledger.friends.size, ledger.unlocked.size) + if (ledger.postcardsLeft > 0) " ✉" else "")
             }
         }
         item {
