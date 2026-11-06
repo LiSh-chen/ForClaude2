@@ -24,9 +24,10 @@ class TravelerTest {
 
     @Test fun meetingsComeInOrderAndMakeFriendsOnTheSecond() {
         val ev = Travelers.due(forward, 300.0, emptySet(), emptySet(), emptySet())
-        assertEquals(10, ev.count { it is TravelerEvent.Met || it is TravelerEvent.BecameFriend })
-        assertEquals(Travelers.meetingsOn(forward).first().first.id, ev.first().travelerId)
-        assertTrue(ev.first() is TravelerEvent.Met)
+        val shown = "events=" + ev.take(6) + " meetings=" + Travelers.meetingsOn(forward).take(6).map { "${it.first.id}@${it.third}" }
+        assertEquals(10, ev.count { it is TravelerEvent.Met || it is TravelerEvent.BecameFriend }, shown)
+        assertEquals(Travelers.meetingsOn(forward).first().first.id, ev.first().travelerId, shown)
+        assertTrue(ev.first() is TravelerEvent.Met, shown)
     }
 
     @Test fun nothingIsRepeatedOnceRecorded() {
