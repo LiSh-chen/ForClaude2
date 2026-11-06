@@ -392,7 +392,7 @@ fun StationStamp(name: String, opened: String, modifier: Modifier = Modifier) {
 
 /** One thing that happened on the route, shown when it is reached. */
 @Composable
-fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishStats? = null) {
+fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishStats? = null, onPostcards: () -> Unit = {}) {
     when (event) {
         is RouteEvent.CardCollected -> AlertDialog(
             onDismissRequest = onDismiss,
@@ -431,7 +431,7 @@ fun RouteEventDialog(event: RouteEvent, onDismiss: () -> Unit, finish: FinishSta
             text = { Text(trf("這一段不能步行，直接{0}抵達，不計步數。", event.by)) },
             confirmButton = { TextButton(onClick = onDismiss) { Text("上車") } },
         )
-        is RouteEvent.QuestCompleted -> QuestCompletedDialog(event.title, event.desc, event.reward, onDismiss)
+        is RouteEvent.QuestCompleted -> QuestCompletedDialog(event.title, event.desc, event.reward, onPostcards = onPostcards, onDismiss = onDismiss)
         RouteEvent.Finished -> LetterDialog(
             title = "環島完成！",
             paragraphs = finish?.let {

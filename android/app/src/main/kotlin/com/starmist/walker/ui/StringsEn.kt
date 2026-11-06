@@ -352,4 +352,6 @@ internal val EN: Map<String, String> = mapOf(
     "目前沒有可用的明信片。完成「任務與里程碑」就能獲得。" to "No postcard to use right now. Complete quests and milestones to earn them.",
     "已收集 {0} 張" to "{0} collected", "到「收藏」頁的「明信片」選一個路線以外的地方。" to "Open Postcards on the Collection page and pick a place off your route.",
     "明信片：可選 {0} 張" to "Postcards: {0} to pick", "明信片（已收集 {0} 張）" to "Postcards ({0} collected)", "明信片 ×{0}" to "Postcard ×{0}",
+    "郵" to "Post", "明信片" to "Postcards", "可以選 {0} 張。三選一，選了才揭曉是哪裡：" to "You can pick {0}. One of three; the place is revealed when you choose:",
+    "獎勵：明信片 ×{0}" to "Reward: postcard ×{0}", "任務完成！" to "Quest complete!", "去選明信片" to "Pick a postcard",
 )
