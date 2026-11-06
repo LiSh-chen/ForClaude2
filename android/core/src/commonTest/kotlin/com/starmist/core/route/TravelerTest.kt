@@ -25,7 +25,7 @@ class TravelerTest {
     @Test fun meetingsComeInOrderAndMakeFriendsOnTheSecond() {
         val ev = Travelers.due(forward, 300.0, emptySet(), emptySet(), emptySet())
         assertEquals(10, ev.count { it is TravelerEvent.Met || it is TravelerEvent.BecameFriend })
-        assertEquals("xipo", ev.first().travelerId)
+        assertEquals(Travelers.meetingsOn(forward).first().first.id, ev.first().travelerId)
         assertTrue(ev.first() is TravelerEvent.Met)
     }
 

@@ -27,7 +27,7 @@ object PostcardTowns {
 
     fun lines(t: Traveler, p: TownProfile): List<String> {
         val where = "${p.county}${p.name}"
-        val area = "%.0f".format(p.areaKm2)
+        val area = kotlin.math.round(p.areaKm2).toLong().toString()
         val body = when (t.id) {
             "ahbo" -> listOf(
                 "今天來到$where。最高的地方海拔約 ${p.highM} 公尺，我停下來拍了好多張。",
