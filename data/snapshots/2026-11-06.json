@@ -1,16 +1,17 @@
 {
  "date": "2026-11-06",
- "generated_at": "2026-11-06T06:32:32+00:00",
+ "generated_at": "2026-11-07T01:07:53+00:00",
  "basis": {
   "TW": "2026-11-06",
-  "US": "2026-11-05"
+  "US": "2026-11-06"
  },
  "data_notes": [
-  "台股：以證交所／櫃買中心官方收盤（2026-11-06）校正（與 Yahoo 一致）",
+  "台股：以證交所／櫃買中心官方收盤（2026-11-06）校正（加權指數取自證交所）",
+  "美股：108 檔 2026-11-06 收盤價為『暫定』（Yahoo 日線尚未定案，採正式收盤時的最後成交價；下次更新會換成正式資料）",
   "美股：1 檔無法取得最新收盤，使用前一日資料"
  ],
  "quality": {
-  "level": "warn",
+  "level": "ok",
   "checks": [
    {
     "code": "coverage_TW",
@@ -34,13 +35,13 @@
     "code": "fresh_US",
     "label": "美股行情新鮮度",
     "level": "ok",
-    "msg": "行情截至 2026-11-05，已是最新收盤"
+    "msg": "行情截至 2026-11-06，已是最新收盤"
    },
    {
     "code": "tw_cross",
     "label": "台股官方資料校正",
     "level": "ok",
-    "msg": "官方 2026-11-06：與 Yahoo 一致 80 檔、修正 0 檔（差異率 0%）、補缺 0 檔、官方查無 0 檔"
+    "msg": "官方 2026-11-06：與 Yahoo 一致 97 檔、修正 0 檔（差異率 0%）、補缺 0 檔、官方查無 0 檔"
    },
    {
     "code": "macro",
@@ -51,8 +52,8 @@
    {
     "code": "us_patch",
     "label": "美股最新收盤補值",
-    "level": "warn",
-    "msg": "暫定補上 0 檔、失敗 1 檔（失敗檔使用前一日價格）"
+    "level": "ok",
+    "msg": "暫定補上 108 檔、失敗 1 檔（失敗檔使用前一日價格）"
    },
    {
     "code": "jumps",
@@ -64,7 +65,7 @@
     "code": "valuation",
     "label": "財報可估值比例",
     "level": "ok",
-    "msg": "95% 的標的取得足夠財報與預估資料，可估算目標價"
+    "msg": "94% 的標的取得足夠財報與預估資料，可估算目標價"
    },
    {
     "code": "news",
@@ -73,14 +74,7 @@
     "msg": "22／22 個來源成功"
    }
   ],
-  "issues": [
-   {
-    "code": "us_patch",
-    "label": "美股最新收盤補值",
-    "level": "warn",
-    "msg": "暫定補上 0 檔、失敗 1 檔（失敗檔使用前一日價格）"
-   }
-  ]
+  "issues": []
  },
  "params_version": 2,
  "provider": "live",
@@ -89,15 +83,14 @@
  "news": {
   "ok": 22,
   "total": 22,
-  "items": 1474,
-  "used": 1426,
+  "items": 1453,
+  "used": 1402,
   "failed": []
  },
  "indices": [
   {
    "name": "S&P 500",
    "series": [
-    7798.99,
     7785.76,
     7745.06,
     7691.76,
@@ -156,17 +149,17 @@
     7541.4,
     7568.92,
     7688.62,
-    7353.73
+    7353.73,
+    7376.86
    ],
-   "last": 7353.72998046875,
-   "ret_1d": -0.0435565981430297,
-   "ret_1m": -0.05742799876705662,
-   "ret_3m": -0.05206611148900775
+   "last": 7376.85986328125,
+   "ret_1d": 0.003145326640212831,
+   "ret_1m": -0.05002987715186702,
+   "ret_3m": -0.048528913769418036
   },
   {
    "name": "Nasdaq 綜合",
    "series": [
-    26803.03,
     26729.16,
     26644.91,
     26289.71,
@@ -225,17 +218,17 @@
     25164.31,
     25372.01,
     25736.51,
-    24315.0
+    24315.0,
+    24579.42
    ],
-   "last": 24315.0,
-   "ret_1d": -0.05523319900679158,
-   "ret_1m": -0.1170603800377722,
-   "ret_3m": -0.08900577120780018
+   "last": 24579.423828125,
+   "ret_1d": 0.010874926100143956,
+   "ret_1m": -0.09612339016260152,
+   "ret_3m": -0.0761476482358171
   },
   {
    "name": "費城半導體",
    "series": [
-    12456.0,
     12417.05,
     12621.0,
     11992.46,
@@ -294,17 +287,17 @@
     10328.33,
     10600.4,
     10268.65,
-    9011.14
+    9011.14,
+    9390.25
    ],
-   "last": 9011.1396484375,
-   "ret_1d": -0.12246115062360807,
-   "ret_1m": -0.31034471676500686,
-   "ret_3m": -0.2707540048870841
+   "last": 9390.25,
+   "ret_1d": 0.04207129912011043,
+   "ret_1m": -0.2561418133768155,
+   "ret_3m": -0.21707859481816583
   },
   {
    "name": "VIX 恐慌指數",
    "series": [
-    14.25,
     15.19,
     15.84,
     14.89,
@@ -363,12 +356,13 @@
     21.15,
     20.83,
     16.61,
-    28.18
+    28.18,
+    25.64
    ],
-   "last": 28.18000030517578,
-   "ret_1d": 0.6965682883607871,
-   "ret_1m": 0.8687002949433886,
-   "ret_3m": 0.8227684499122045
+   "last": 25.639999389648438,
+   "ret_1d": -0.09013487892194327,
+   "ret_1m": 0.6638546167120378,
+   "ret_3m": 0.6780104605841342
   },
   {
    "name": "台灣加權指數",
@@ -434,10 +428,10 @@
     41574.72,
     39701.64
    ],
-   "last": 39701.640625,
-   "ret_1d": -0.045053296361746265,
-   "ret_1m": -0.20136768932198734,
-   "ret_3m": -0.0843856970365473
+   "last": 39701.64,
+   "ret_1d": -0.04505331139492075,
+   "ret_1m": -0.20136770189439457,
+   "ret_3m": -0.08438571145053453
   },
   {
    "name": "美元兌台幣",
@@ -501,12 +495,12 @@
     32.59,
     32.73,
     32.82,
-    32.84
+    33.11
    ],
-   "last": 32.840999603271484,
-   "ret_1d": 0.0006032161532685265,
-   "ret_1m": 0.031169595875643052,
-   "ret_3m": 0.019049161229671707
+   "last": 33.10929870605469,
+   "ret_1d": 0.008777782956319369,
+   "ret_1m": 0.03959387895876798,
+   "ret_3m": 0.027374424740306713
   }
  ],
  "picks": {
@@ -519,74 +513,74 @@
     "sector": "healthcare",
     "sector_name": "生技醫療與減重藥",
     "rank": 1,
-    "price": 288.24,
+    "price": 291.31,
     "ccy": "USD",
-    "asof": "2026-11-05",
-    "composite": 79.3,
+    "asof": "2026-11-06",
+    "composite": 78.1,
     "scores": {
-     "sector": 77.2,
+     "sector": 72.8,
      "leader": 80.0,
      "quality": 76.5,
      "growth": 71.9,
-     "valuation": 100.0,
-     "momentum": 94.5,
+     "valuation": 98.2,
+     "momentum": 94.4,
      "news": 40.0
     },
     "target": {
-     "base": 404.46,
-     "bull": 543.81,
-     "bear": 195.43,
-     "ev": 380.07,
-     "upside": 0.4032,
-     "ev_upside": 0.3186,
+     "base": 403.44,
+     "bull": 541.51,
+     "bear": 196.35,
+     "ev": 379.28,
+     "upside": 0.3849,
+     "ev_upside": 0.302,
      "confidence": "中",
      "capped": false,
-     "raw_upside": 0.4032,
-     "rr": 1.25,
-     "stop": 269.26,
-     "spread": 0.54,
-     "peer_pe": 27.2
+     "raw_upside": 0.3849,
+     "rr": 1.18,
+     "stop": 271.38,
+     "spread": 0.53,
+     "peer_pe": 26.9
     },
     "methods": [
      {
       "k": "pe",
       "label": "同業相對本益比",
-      "value": 364.13,
+      "value": 363.24,
       "weight": 0.4,
-      "upside": 0.2633,
-      "detail": "預估EPS 16.18 × 目標本益比 22.5（現行 17.8 向同業 27.2 靠攏 50%；同業中位數 27.2 × 成長調整 1.00）"
+      "upside": 0.2469,
+      "detail": "預估EPS 16.18 × 目標本益比 22.4（現行 18.0 向同業 26.9 靠攏 50%；同業中位數 26.9 × 成長調整 1.00）"
      },
      {
       "k": "peg",
       "label": "PEG 成長調整",
-      "value": 499.11,
+      "value": 498.23,
       "weight": 0.15,
-      "upside": 0.7316,
+      "upside": 0.7103,
       "detail": "預估EPS 16.18 × 合理本益比 30.8（成長率 25.0%（上限 25%）× PEG 1.3 × 利率調整 0.95）"
      },
      {
       "k": "dcf",
       "label": "兩階段 DCF",
-      "value": 536.67,
+      "value": 534.04,
       "weight": 0.2,
-      "upside": 0.8619,
-      "detail": "每股FCF 10.01，前期成長 25.0%→永續 2.5%，WACC 7.3%（無風險利率 4.84%，採即時殖利率）"
+      "upside": 0.8332,
+      "detail": "每股FCF 10.01，前期成長 25.0%→永續 2.5%，WACC 7.4%（無風險利率 4.86%，採即時殖利率）"
      },
      {
       "k": "consensus",
       "label": "券商共識目標價",
       "value": 306.42,
       "weight": 0.25,
-      "upside": 0.0631,
+      "upside": 0.0519,
       "detail": "26 位分析師平均（區間 237.0–350.0）"
      }
     ],
     "dropped": [],
     "fin": {
-     "market_cap": 509497704448,
-     "pe_fwd": 17.8127,
-     "pe_ttm": 50.6573,
-     "peg": 0.59,
+     "market_cap": 514924281856,
+     "pe_fwd": 18.0005,
+     "pe_ttm": 50.0533,
+     "peg": 0.58,
      "roe": null,
      "gross_margin": 0.7372,
      "op_margin": 0.3959,
@@ -600,21 +594,21 @@
      "n_analysts": 26
     },
     "tech": {
-     "ret_1m": 0.0687,
-     "ret_3m": 0.1787,
-     "rel_3m": 0.2308,
-     "rel_6m": 0.4386,
-     "dist200": 0.2222,
-     "from_high": -0.0226,
-     "vol_ann": 0.2186
+     "ret_1m": 0.0759,
+     "ret_3m": 0.182,
+     "rel_3m": 0.2305,
+     "rel_6m": 0.4676,
+     "dist200": 0.2332,
+     "from_high": -0.0121,
+     "vol_ann": 0.2189
     },
-    "thesis": "**產業面**：所屬「生技醫療與減重藥」在美股產業評分排名第 1（一般關注），近期相關新聞 8 則、情緒中性。\n\n**龍頭地位**：同產業美股標的中市值排名第 2／6（市值 5095億 USD）。\n\n**財務體質**（品質分 76）：ROE —、營業利益率 39.6%、毛利率 73.7%、營收年增 +10.3%。\n\n**股價結構**：近 3 個月相對大盤 +23.1%；距 200 日均線 +22.2%；距 52 週高 -2.3%。\n\n**估值**：預估本益比 17.8、同業中位數 27.2；base 目標價 404.46，隱含 +40.3%。",
+    "thesis": "**產業面**：所屬「生技醫療與減重藥」在美股產業評分排名第 1（一般關注），近期相關新聞 6 則、情緒中性。\n\n**龍頭地位**：同產業美股標的中市值排名第 2／6（市值 5149億 USD）。\n\n**財務體質**（品質分 76）：ROE —、營業利益率 39.6%、毛利率 73.7%、營收年增 +10.3%。\n\n**股價結構**：近 3 個月相對大盤 +23.1%；距 200 日均線 +23.3%；距 52 週高 -1.2%。\n\n**估值**：預估本益比 18.0、同業中位數 26.9；base 目標價 403.44，隱含 +38.5%。",
     "risks": [
      "臨床或審批失敗",
      "藥價政策改革（美國定價）",
      "專利懸崖"
     ],
-    "headline": "生技醫療與減重藥產業熱度第1、營收年增+10%、目標價上檔 +40%",
+    "headline": "生技醫療與減重藥產業熱度第1、營收年增+10%、目標價上檔 +38%",
     "highlights": [
      {
       "t": "產業熱度第1",
@@ -631,11 +625,11 @@
     ],
     "why": [
      {
-      "t": "產業熱度：「生技醫療與減重藥」為美股今日第 1 名產業（熱門），近期相關新聞 8 則、情緒中性",
+      "t": "產業熱度：「生技醫療與減重藥」為美股今日第 1 名產業（熱門），近期相關新聞 6 則、情緒中性",
       "tag": "產業"
      },
      {
-      "t": "龍頭地位：同產業美股標的中市值第 2／6（5095億 USD）",
+      "t": "龍頭地位：同產業美股標的中市值第 2／6（5149億 USD）",
       "tag": "龍頭"
      },
      {
@@ -647,13 +641,13 @@
       "tag": "品質"
      },
      {
-      "t": "估值：模型 base 目標價 404.46（上檔 +40.3%）；券商共識目標價 306.42（+6.3%）；預估本益比 17.8 低於同業中位數 27.2",
+      "t": "估值：模型 base 目標價 403.44（上檔 +38.5%）；券商共識目標價 306.42（+5.2%）；預估本益比 18.0 低於同業中位數 26.9",
       "tag": "估值"
      }
     ],
     "risks_now": [
      {
-      "t": "總經環境「警戒」（57 分），本次推薦的上檔門檻已因此提高。",
+      "t": "總經環境「警戒」（52 分），本次推薦的上檔門檻已因此提高。",
       "news": []
      }
     ],
@@ -671,7 +665,6 @@
     "news": [],
     "series": {
      "d": [
-      "260518",
       "260519",
       "260520",
       "260521",
@@ -790,10 +783,10 @@
       "261102",
       "261103",
       "261104",
-      "261105"
+      "261105",
+      "261106"
      ],
      "c": [
-      206.66,
       210.95,
       209.51,
       211.68,
@@ -912,7 +905,8 @@
       288.84,
       286.0,
       294.83,
-      288.24
+      288.24,
+      291.31
      ]
     },
     "macro": {
@@ -930,31 +924,31 @@
     "sector": "financials",
     "sector_name": "金融與支付",
     "rank": 2,
-    "price": 182.44,
+    "price": 181.44,
     "ccy": "USD",
-    "asof": "2026-11-05",
-    "composite": 54.7,
+    "asof": "2026-11-06",
+    "composite": 54.4,
     "scores": {
-     "sector": 73.1,
+     "sector": 70.9,
      "leader": 20.0,
      "quality": 66.7,
      "growth": 40.8,
-     "valuation": 62.6,
-     "momentum": 22.5,
-     "news": 65.9
+     "valuation": 65.0,
+     "momentum": 21.4,
+     "news": 64.0
     },
     "target": {
-     "base": 223.09,
-     "bull": 308.08,
-     "bear": 95.61,
-     "ev": 208.22,
-     "upside": 0.2228,
-     "ev_upside": 0.1413,
+     "base": 222.81,
+     "bull": 307.64,
+     "bear": 95.56,
+     "ev": 207.96,
+     "upside": 0.228,
+     "ev_upside": 0.1462,
      "confidence": "中",
      "capped": false,
-     "raw_upside": 0.2228,
-     "rr": 0.47,
-     "stop": 167.42,
+     "raw_upside": 0.228,
+     "rr": 0.48,
+     "stop": 166.39,
      "spread": 0.58,
      "peer_pe": 24.7
     },
@@ -962,17 +956,17 @@
      {
       "k": "pe",
       "label": "同業相對本益比",
-      "value": 260.83,
+      "value": 260.35,
       "weight": 0.5,
-      "upside": 0.4297,
-      "detail": "預估EPS 13.67 × 目標本益比 19.1（現行 13.3 向同業 24.8 靠攏 50%；同業中位數 24.7 × 成長調整 1.01）"
+      "upside": 0.4349,
+      "detail": "預估EPS 13.67 × 目標本益比 19.0（現行 13.3 向同業 24.8 靠攏 50%；同業中位數 24.7 × 成長調整 1.01）"
      },
      {
       "k": "peg",
       "label": "PEG 成長調整",
-      "value": 141.79,
+      "value": 141.53,
       "weight": 0.187,
-      "upside": -0.2228,
+      "upside": -0.22,
       "detail": "預估EPS 13.67 × 合理本益比 10.4（成長率 8.4%（上限 25%）× PEG 1.3 × 利率調整 0.95）"
      },
      {
@@ -980,16 +974,16 @@
       "label": "券商共識目標價",
       "value": 211.5,
       "weight": 0.312,
-      "upside": 0.1593,
+      "upside": 0.1657,
       "detail": "22 位分析師平均（區間 185.0–262.0）"
      }
     ],
     "dropped": [],
     "fin": {
-     "market_cap": 285518594048,
-     "pe_fwd": 13.3459,
-     "pe_ttm": 14.4679,
-     "peg": 1.69,
+     "market_cap": 283953594368,
+     "pe_fwd": 13.2727,
+     "pe_ttm": 14.3886,
+     "peg": 1.59,
      "roe": null,
      "gross_margin": 0.8731,
      "op_margin": 0.3989,
@@ -1003,22 +997,22 @@
      "n_analysts": 22
     },
     "tech": {
-     "ret_1m": -0.0325,
-     "ret_3m": -0.1515,
-     "rel_3m": -0.0995,
-     "rel_6m": -0.0318,
-     "dist200": -0.0507,
-     "from_high": -0.1925,
-     "vol_ann": 0.2808
+     "ret_1m": -0.0261,
+     "ret_3m": -0.1523,
+     "rel_3m": -0.1037,
+     "rel_6m": -0.0464,
+     "dist200": -0.0559,
+     "from_high": -0.1969,
+     "vol_ann": 0.2805
     },
-    "thesis": "**產業面**：所屬「金融與支付」在美股產業評分排名第 4（市場焦點），近期相關新聞 40 則、情緒中性。\n\n**龍頭地位**：同產業美股標的中市值排名第 5／6（市值 2855億 USD）。\n\n**財務體質**（品質分 67）：ROE —、營業利益率 39.9%、毛利率 87.3%、營收年增 +10.8%、負債權益比 5.17。\n\n**股價結構**：近 3 個月相對大盤 -9.9%；距 200 日均線 -5.1%；距 52 週高 -19.2%。\n\n**估值**：預估本益比 13.3、同業中位數 24.7；base 目標價 223.09，隱含 +22.3%。",
+    "thesis": "**產業面**：所屬「金融與支付」在美股產業評分排名第 3（市場焦點），近期相關新聞 39 則、情緒中性。\n\n**龍頭地位**：同產業美股標的中市值排名第 5／6（市值 2840億 USD）。\n\n**財務體質**（品質分 67）：ROE —、營業利益率 39.9%、毛利率 87.3%、營收年增 +10.8%、負債權益比 5.17。\n\n**股價結構**：近 3 個月相對大盤 -10.4%；距 200 日均線 -5.6%；距 52 週高 -19.7%。\n\n**估值**：預估本益比 13.3、同業中位數 24.7；base 目標價 222.81，隱含 +22.8%。",
     "risks": [
      "負債權益比 5.2 偏高，財務槓桿大",
      "利率與信用循環轉折",
      "監管資本要求提高",
      "權益市場波動影響投資收益"
     ],
-    "headline": "金融與支付產業熱度第4、營收年增+11%、目標價上檔 +22%",
+    "headline": "金融與支付產業熱度第3、營收年增+11%、目標價上檔 +23%",
     "highlights": [
      {
       "t": "本益比低於同業",
@@ -1027,7 +1021,7 @@
     ],
     "why": [
      {
-      "t": "產業熱度：「金融與支付」為美股今日第 4 名產業（市場焦點），近期相關新聞 40 則、情緒中性",
+      "t": "產業熱度：「金融與支付」為美股今日第 3 名產業（市場焦點），近期相關新聞 39 則、情緒中性",
       "tag": "產業"
      },
      {
@@ -1039,13 +1033,13 @@
       "tag": "品質"
      },
      {
-      "t": "估值：模型 base 目標價 223.09（上檔 +22.3%）；券商共識目標價 211.50（+15.9%）；預估本益比 13.3 低於同業中位數 24.7",
+      "t": "估值：模型 base 目標價 222.81（上檔 +22.8%）；券商共識目標價 211.50（+16.6%）；預估本益比 13.3 低於同業中位數 24.7",
       "tag": "估值"
      }
     ],
     "risks_now": [
      {
-      "t": "總經環境「警戒」（57 分），本次推薦的上檔門檻已因此提高。",
+      "t": "總經環境「警戒」（52 分），本次推薦的上檔門檻已因此提高。",
       "news": []
      },
      {
@@ -1065,21 +1059,20 @@
     ],
     "news": [
      {
-      "title": "Morgan Stanley downgrades Ebara stock rating on valuation concerns",
-      "link": "https://www.investing.com/news/analyst-ratings/morgan-stanley-downgrades-ebara-stock-rating-on-valuation-concerns-93CH-5006567",
-      "source": "Investing.com News",
+      "title": "Coinbase Bear Morgan Stanley Says Earnings Recovery Less Certain - Bloomberg.com",
+      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOTEdtZ3JKS00zVnFScmlIbmdQU3JGRVR3NXJ2eVdxMGpxcHA1OHJZWVN6Q0E5RUlyUEpmWWRsTVRTQ2x2SHpzTHgwYlVyZENqa2hRWUVBeEVtQmpEdXFjcWdiaFp0bHQ1emVIUUhCZG5MeDhIWFkxOFJaQnZHNXdQSUdqLW8wakpTN2RNYzkxQnNSd0d4ZExkTExHc3lVLTIyTExuMGl3Yk41UVVGVmkteklOdkJQQQ?oc=5",
+      "source": "Bloomberg Markets (via Google News)",
       "sent": 0.0
      },
      {
       "title": "Final Trades: CF Industries, Morgan Stanley, Chubb Limited and ConocoPhillips - CNBC",
       "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxOb2JSeW04ZUQxVVMzTmkzbEZIQW93T29QcDVsS0gzRFhXaDluUTdEZGJKTGJrRHpwd0FGYzJka0tmZ0dDVUFEV1RQWDdMNUN1M2tOZF9paE1abWp6S25kczNDOXNUTlBIaHMtbGVDcDlrdy02bTRjZWFBX2pIQ3NpZ1pWTml2dzNVbnQ5VEVoZEh3UlpiRTBzZWRlbWtzT3p5UmI5TnNrNHNNYmJSY3U1UHhncnlHSkZ6?oc=5",
-      "source": "CNBC Markets (via Google News)",
+      "source": "CNBC Technology (via Google News)",
       "sent": 0.0
      }
     ],
     "series": {
      "d": [
-      "260518",
       "260519",
       "260520",
       "260521",
@@ -1198,10 +1191,10 @@
       "261102",
       "261103",
       "261104",
-      "261105"
+      "261105",
+      "261106"
      ],
      "c": [
-      190.48,
       187.4,
       195.5,
       198.21,
@@ -1320,7 +1313,8 @@
       185.73,
       186.09,
       193.97,
-      182.44
+      182.44,
+      181.44
      ]
     },
     "macro": {
@@ -1338,87 +1332,87 @@
     "sector": "healthcare",
     "sector_name": "生技醫療與減重藥",
     "rank": 3,
-    "price": 40.3,
+    "price": 40.31,
     "ccy": "USD",
-    "asof": "2026-11-05",
-    "composite": 55.5,
+    "asof": "2026-11-06",
+    "composite": 52.3,
     "scores": {
-     "sector": 77.2,
+     "sector": 72.8,
      "leader": 60.0,
-     "quality": 69.6,
+     "quality": 70.3,
      "growth": 15.1,
-     "valuation": 49.1,
-     "momentum": 19.7,
-     "news": 67.8
+     "valuation": 48.1,
+     "momentum": 18.8,
+     "news": 40.0
     },
     "target": {
-     "base": 52.77,
-     "bull": 64.65,
-     "bear": 34.94,
-     "ev": 50.69,
-     "upside": 0.3094,
-     "ev_upside": 0.2578,
+     "base": 52.44,
+     "bull": 64.17,
+     "bear": 34.83,
+     "ev": 50.38,
+     "upside": 0.3008,
+     "ev_upside": 0.2499,
      "confidence": "中",
      "capped": false,
-     "raw_upside": 0.3094,
-     "rr": 2.33,
-     "stop": 37.85,
+     "raw_upside": 0.3008,
+     "rr": 2.21,
+     "stop": 37.76,
      "spread": 0.24,
-     "peer_pe": 27.2
+     "peer_pe": 26.9
     },
     "methods": [
      {
       "k": "pe",
       "label": "同業相對本益比",
-      "value": 57.56,
+      "value": 57.15,
       "weight": 0.615,
-      "upside": 0.4283,
-      "detail": "預估EPS 3.44 × 目標本益比 16.7（現行 11.7 向同業 21.8 靠攏 50%；同業中位數 27.2 × 成長調整 0.80）"
+      "upside": 0.4178,
+      "detail": "預估EPS 3.44 × 目標本益比 16.6（現行 11.7 向同業 21.5 靠攏 50%；同業中位數 26.9 × 成長調整 0.80）"
      },
      {
       "k": "consensus",
       "label": "券商共識目標價",
-      "value": 45.1,
+      "value": 44.89,
       "weight": 0.385,
-      "upside": 0.1191,
-      "detail": "12 位分析師平均（區間 39.750366–61.794167）"
+      "upside": 0.1136,
+      "detail": "12 位分析師平均（區間 39.56708–61.509243）"
      }
     ],
     "dropped": [],
     "fin": {
-     "market_cap": 177692573696,
-     "pe_fwd": 11.7166,
-     "pe_ttm": 10.1768,
-     "peg": 4.72,
+     "market_cap": 177736679424,
+     "pe_fwd": 11.7195,
+     "pe_ttm": 10.1793,
+     "peg": 4.48,
      "roe": 0.5838,
-     "gross_margin": 0.8109,
-     "op_margin": 0.2906,
+     "gross_margin": 0.8333,
+     "op_margin": 0.4005,
      "net_margin": 0.3392,
      "rev_growth": 0.056,
      "eps_growth": -0.158,
      "de": 0.6174,
-     "fcf_margin": 0.0959,
-     "beta": null,
-     "target_mean": 45.0988,
+     "fcf_margin": 0.0982,
+     "beta": 0.368,
+     "target_mean": 44.8909,
      "n_analysts": 12
     },
     "tech": {
-     "ret_1m": 0.0533,
-     "ret_3m": -0.1364,
-     "rel_3m": -0.0843,
-     "rel_6m": -0.1111,
-     "dist200": -0.0638,
-     "from_high": -0.3387,
-     "vol_ann": 0.3351
+     "ret_1m": 0.0558,
+     "ret_3m": -0.1447,
+     "rel_3m": -0.0961,
+     "rel_6m": -0.1109,
+     "dist200": -0.0615,
+     "from_high": -0.3385,
+     "vol_ann": 0.3346
     },
-    "thesis": "**產業面**：所屬「生技醫療與減重藥」在美股產業評分排名第 1（一般關注），近期相關新聞 8 則、情緒中性。\n\n**龍頭地位**：同產業美股標的中市值排名第 3／6（市值 1777億 USD）。\n\n**財務體質**（品質分 70）：ROE 58.4%、營業利益率 29.1%、毛利率 81.1%、營收年增 +5.6%、負債權益比 0.62。\n\n**股價結構**：近 3 個月相對大盤 -8.4%；距 200 日均線 -6.4%；距 52 週高 -33.9%。\n\n**估值**：預估本益比 11.7、同業中位數 27.2；base 目標價 52.77，隱含 +30.9%。",
+    "thesis": "**產業面**：所屬「生技醫療與減重藥」在美股產業評分排名第 1（一般關注），近期相關新聞 6 則、情緒中性。\n\n**龍頭地位**：同產業美股標的中市值排名第 3／6（市值 1777億 USD）。\n\n**財務體質**（品質分 70）：ROE 58.4%、營業利益率 40.1%、毛利率 83.3%、營收年增 +5.6%、負債權益比 0.62。\n\n**股價結構**：近 3 個月相對大盤 -9.6%；距 200 日均線 -6.2%；距 52 週高 -33.9%。\n\n**估值**：預估本益比 11.7、同業中位數 26.9；base 目標價 52.44，隱含 +30.1%。",
     "risks": [
      "可用估值方法少於 3 種，目標價可信度較低",
      "臨床或審批失敗",
      "藥價政策改革（美國定價）",
      "專利懸崖"
     ],
-    "headline": "生技醫療與減重藥產業熱度第1、ROE 58%、目標價上檔 +31%",
+    "headline": "生技醫療與減重藥產業熱度第1、ROE 58%、目標價上檔 +30%",
     "highlights": [
      {
       "t": "產業熱度第1",
@@ -1435,21 +1429,21 @@
     ],
     "why": [
      {
-      "t": "產業熱度：「生技醫療與減重藥」為美股今日第 1 名產業（熱門），近期相關新聞 8 則、情緒中性",
+      "t": "產業熱度：「生技醫療與減重藥」為美股今日第 1 名產業（熱門），近期相關新聞 6 則、情緒中性",
       "tag": "產業"
      },
      {
-      "t": "獲利體質：ROE 58.4%、營業利益率 29.1%、品質分 70",
+      "t": "獲利體質：ROE 58.4%、營業利益率 40.1%、品質分 70",
       "tag": "品質"
      },
      {
-      "t": "估值：模型 base 目標價 52.77（上檔 +30.9%）；券商共識目標價 45.10（+11.9%）；預估本益比 11.7 低於同業中位數 27.2",
+      "t": "估值：模型 base 目標價 52.44（上檔 +30.1%）；券商共識目標價 44.89（+11.4%）；預估本益比 11.7 低於同業中位數 26.9",
       "tag": "估值"
      }
     ],
     "risks_now": [
      {
-      "t": "總經環境「警戒」（57 分），本次推薦的上檔門檻已因此提高。",
+      "t": "總經環境「警戒」（52 分），本次推薦的上檔門檻已因此提高。",
       "news": []
      },
      {
@@ -1467,29 +1461,9 @@
       "t": "專利懸崖"
      }
     ],
-    "news": [
-     {
-      "title": "European shares jump over 1% after Democrats sweep US Congress, Novo Nordisk surges - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOVGNrVDZsZGxma1JtVUFad2pIVHFXeTM0N1VUU1k3XzVvcFlNbno3Y1JTZlVnd0gwTU1zVzBXT1VmOWhxSks0cFk1MklqLW5JazRKUWdPRHhYZ0I4NWpnejNwbV9ZaXVmM0FWdFFkc0RJb3ZYUE5iMWpVbUF6MGFZZFE3S2NSSEtvMlA2cGMxVUVYaGd0NTZpd0l6cXE2RjBDNFFLYkJQUndfeDdsX2c?oc=5",
-      "source": "Reuters Business (via Google News)",
-      "sent": 0.0
-     },
-     {
-      "title": "Novo Nordisk Lifts Guidance as Rollout of Wegovy Weight-Loss Pill Continues - WSJ",
-      "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOMnBqbVRFN0VnU0JKTlZobld4cEwtbUhkODFPU1FfdGdPdnZkQjE3U2FJQnpnN2FYcjgwSW5JR1RzQmNaaVlZejlZaE90aTgxVXlZZ3FpaG9OLVZ4UlM5X2JPdjhWajdyc1A5cHNQd1BpZWhsSlJBVk1sWDBQdVU0RXgyVEtSbmZEN0ZfN21QcXBic1NUWVdkOFRmWmY5WHVRSHZrNlRKWVBrYVJtdFg5M1VMZFZobXVuQXc?oc=5",
-      "source": "WSJ Markets (via Google News)",
-      "sent": 0.0
-     },
-     {
-      "title": "Stocks making the biggest moves premarket: Trump Media, Tesla, CoreWeave, Novo Nordisk and more - CNBC",
-      "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNbVRCTEpta2pxRWE4NkRKdlVFb3hOZmJReEp5MDRSRTRXVEZUdi1qMnlJT3o0aURDNFBaVy1Hc09JOWJ3ZW1uZWFNVzVxNGdWck80TW1VVG45MzJSQXkzcTBSaS1nYUZqRW1UOENuZnlTSkJESFJja3N3WE43NTZYcWVQcjJTTW95ckt5Z1M4WGhlQTJqOXhDcm12TG4?oc=5",
-      "source": "CNBC Markets (via Google News)",
-      "sent": 0.0
-     }
-    ],
+    "news": [],
     "series": {
      "d": [
-      "260518",
       "260519",
       "260520",
       "260521",
@@ -1608,10 +1582,10 @@
       "261102",
       "261103",
       "261104",
-      "261105"
+      "261105",
+      "261106"
      ],
      "c": [
-      43.72,
       43.72,
       44.5,
       43.83,
@@ -1730,7 +1704,8 @@
       40.45,
       40.19,
       42.18,
-      40.3
+      40.3,
+      40.31
      ]
     },
     "macro": {
@@ -1746,8 +1721,8 @@
  "macro": {
   "asof": "2026-11-06",
   "scores": {
-   "US": 57.2,
-   "TW": 73.4
+   "US": 51.8,
+   "TW": 71.1
   },
   "overlay": {
    "US": {
@@ -1767,51 +1742,51 @@
     "beta": 1.5
    }
   },
-  "headline": "美股環境「警戒」（57 分）、台股環境「高風險」（73 分）",
+  "headline": "美股環境「警戒」（52 分）、台股環境「高風險」（71 分）",
   "factors": [
    {
     "id": "rate_shock",
     "label": "殖利率衝擊",
     "group": "happened",
-    "score": 27.9,
+    "score": 28.6,
     "state": "ok",
-    "value": "10年期 4.84%（20日 -39bp）",
+    "value": "10年期 4.86%（20日 -38bp）",
     "detail": "美債殖利率快速上升或處於高檔，會壓縮成長股與高本益比股的評價，也增加企業融資成本。",
     "tw_only": false,
-    "short": "4.84% -39bp"
+    "short": "4.86% -38bp"
    },
    {
     "id": "vol",
     "label": "波動率（VIX）",
     "group": "happened",
-    "score": 93.2,
+    "score": 83.6,
     "state": "risk",
-    "value": "VIX 28.2（5日 +11.0）",
+    "value": "VIX 25.6（5日 +6.2）",
     "detail": "VIX 代表市場對未來一個月的避險需求；急升表示恐慌或避險買盤增加。",
     "tw_only": false,
-    "short": "28.2"
+    "short": "25.6"
    },
    {
     "id": "equity",
     "label": "美股走勢",
     "group": "happened",
-    "score": 79.7,
+    "score": 68.5,
     "state": "risk",
-    "value": "S&P 距60日高 −5.9%；Nasdaq 5日 -7.1%；費半 5日 -21.8%",
+    "value": "S&P 距60日高 −5.7%；Nasdaq 5日 -3.4%；費半 5日 -12.1%",
     "detail": "股市本身已經回檔的幅度；半導體走弱會直接影響本系統的 AI 晶片／伺服器相關持股與台股。",
     "tw_only": false,
-    "short": "費半 -21.8%"
+    "short": "費半 -12.1%"
    },
    {
     "id": "usd",
     "label": "美元強度",
     "group": "happened",
-    "score": 0.0,
+    "score": 1.7,
     "state": "ok",
-    "value": "美元指數 20日 -0.6%",
+    "value": "美元指數 20日 +0.1%",
     "detail": "美元急升通常伴隨全球流動性收緊，新興市場與台股資金可能流出。",
     "tw_only": false,
-    "short": "-0.6%"
+    "short": "+0.1%"
    },
    {
     "id": "oil",
@@ -1819,10 +1794,10 @@
     "group": "happened",
     "score": 0.0,
     "state": "ok",
-    "value": "原油 20日 -1.1%",
+    "value": "原油 20日 -1.6%",
     "detail": "油價上漲會推升通膨，使聯準會更難降息。",
     "tw_only": false,
-    "short": "-1.1%"
+    "short": "-1.6%"
    },
    {
     "id": "credit",
@@ -1839,12 +1814,12 @@
     "id": "fed",
     "label": "升息機率與利率路徑",
     "group": "ahead",
-    "score": 80.5,
+    "score": 84.5,
     "state": "risk",
-    "value": "下次 FOMC 12-09（33 天後）：升息機率約 68%；市場隱含 3 次會議內累計 +30bp",
+    "value": "下次 FOMC 12-09（33 天後）：升息機率約 80%；市場隱含 3 次會議內累計 +34bp",
     "detail": "由聯邦基金期貨推算的市場定價（非聯準會承諾）：升息預期升高，代表『更高、更久』的利率仍未結束。",
     "tw_only": false,
-    "short": "升息 68%（12/09）"
+    "short": "升息 80%（12/09）"
    },
    {
     "id": "inflation",
@@ -1861,23 +1836,23 @@
     "id": "growth",
     "label": "就業與景氣",
     "group": "ahead",
-    "score": 41.4,
-    "state": "watch",
-    "value": "失業率 4.2%（較12個月低點 +0.1）；非農近3月平均 +51 千人",
+    "score": 4.3,
+    "state": "ok",
+    "value": "失業率 4.1%（較12個月低點 +0.0）；非農近3月平均 +137 千人",
     "detail": "就業轉弱代表景氣降溫（利率壓力下降但獲利風險上升）；兩者都要看。",
     "tw_only": false,
-    "short": "失業 4.2%"
+    "short": "失業 4.1%"
    },
    {
     "id": "tw_fx",
     "label": "台幣貶值（資金面）",
     "group": "happened",
-    "score": 95.6,
+    "score": 100.0,
     "state": "risk",
-    "value": "美元兌台幣 20日 +2.9%",
+    "value": "美元兌台幣 20日 +3.7%",
     "detail": "台幣快速貶值常伴隨外資賣超。",
     "tw_only": true,
-    "short": "+2.9%"
+    "short": "+3.7%"
    },
    {
     "id": "tw_semi",
@@ -1885,10 +1860,10 @@
     "group": "happened",
     "score": 100.0,
     "state": "risk",
-    "value": "費半 5日 -21.8%；加權 5日 -12.2%",
+    "value": "費半 5日 -12.1%；加權 5日 -12.2%",
     "detail": "台股高度連動費半（AI 供應鏈）。",
     "tw_only": true,
-    "short": "費半 -21.8%"
+    "short": "費半 -12.1%"
    }
   ],
   "fed": {
@@ -1898,29 +1873,29 @@
     {
      "date": "2026-12-09",
      "days": 33,
-     "after": 4.05,
-     "delta_bp": 17.0,
-     "prob": 0.68,
+     "after": 4.08,
+     "delta_bp": 20.0,
+     "prob": 0.8,
      "dir": "hike",
-     "cum_bp": 17.0
+     "cum_bp": 20.0
     },
     {
      "date": "2027-01-27",
      "days": 82,
-     "after": 4.085,
-     "delta_bp": 3.5,
-     "prob": 0.14,
+     "after": 4.12,
+     "delta_bp": 4.0,
+     "prob": 0.16,
      "dir": "hike",
-     "cum_bp": 20.5
+     "cum_bp": 24.0
     },
     {
      "date": "2027-03-17",
      "days": 131,
-     "after": 4.185,
-     "delta_bp": 10.0,
-     "prob": 0.4,
+     "after": 4.225,
+     "delta_bp": 10.5,
+     "prob": 0.42,
      "dir": "hike",
-     "cum_bp": 30.5
+     "cum_bp": 34.5
     }
    ],
    "n_contracts": 9
@@ -1933,9 +1908,9 @@
     "batches": 4,
     "sens_mult": 0.5,
     "drivers": [
-     "波動率（VIX）（VIX 28.2（5日 +11.0））",
-     "升息機率與利率路徑（下次 FOMC 12-09（33 天後）：升息機率約 68%；市場隱含 3 次會議內累計 +30bp）",
-     "美股走勢（S&P 距60日高 −5.9%；Nasdaq 5日 -7.1%；費半 5日 -21.8%）"
+     "升息機率與利率路徑（下次 FOMC 12-09（33 天後）：升息機率約 80%；市場隱含 3 次會議內累計 +34bp）",
+     "波動率（VIX）（VIX 25.6（5日 +6.2））",
+     "美股走勢（S&P 距60日高 −5.7%；Nasdaq 5日 -3.4%；費半 5日 -12.1%）"
     ],
     "actions": [
      "整體持股水位建議在原計畫的 70% 以下（例如原計畫 10 成 → 7.0 成），其餘保留現金。",
@@ -1951,9 +1926,9 @@
     "batches": 5,
     "sens_mult": 0.25,
     "drivers": [
-     "費半與加權指數（費半 5日 -21.8%；加權 5日 -12.2%）",
-     "台幣貶值（資金面）（美元兌台幣 20日 +2.9%）",
-     "波動率（VIX）（VIX 28.2（5日 +11.0））"
+     "台幣貶值（資金面）（美元兌台幣 20日 +3.7%）",
+     "費半與加權指數（費半 5日 -12.1%；加權 5日 -12.2%）",
+     "升息機率與利率路徑（下次 FOMC 12-09（33 天後）：升息機率約 80%；市場隱含 3 次會議內累計 +34bp）"
     ],
     "actions": [
      "整體持股水位建議在原計畫的 50% 以下（例如原計畫 10 成 → 5.0 成），其餘保留現金。",
@@ -1967,16 +1942,16 @@
    "US": {
     "rf_base": 0.042,
     "disp_add": 0.02,
-    "rf": 0.04836999893188477,
-    "hurdle": 0.07836999893188476,
-    "peg_factor": 0.9490400085449219
+    "rf": 0.04859000205993652,
+    "hurdle": 0.07859000205993652,
+    "peg_factor": 0.9472799835205078
    },
    "TW": {
     "rf_base": 0.016,
     "disp_add": 0.04,
-    "rf": 0.019184999465942383,
-    "hurdle": 0.04918499946594238,
-    "peg_factor": 0.9745200042724609
+    "rf": 0.01929500102996826,
+    "hurdle": 0.049295001029968255,
+    "peg_factor": 0.973639991760254
    }
   },
   "events": [
@@ -1984,13 +1959,13 @@
     "date": "2026-12-09",
     "days": 33,
     "name": "FOMC 利率決議",
-    "note": "市場定價升息機率約 68%"
+    "note": "市場定價升息機率約 80%"
    },
    {
     "date": "2027-01-27",
     "days": 82,
     "name": "FOMC 利率決議",
-    "note": "市場定價升息機率約 14%"
+    "note": "市場定價升息機率約 16%"
    },
    {
     "date": "2026-11",
@@ -1999,60 +1974,60 @@
     "note": "2026-09 月資料已公布；下一筆（CPI 約在月中）預計 2026/11，確切日期請查勞工統計局行事曆"
    },
    {
-    "date": "2026-11",
+    "date": "2026-12",
     "days": null,
     "name": "下一次非農就業公布",
-    "note": "2026-09 月資料已公布；下一筆（非農通常在月初）預計 2026/11，確切日期請查勞工統計局行事曆"
+    "note": "2026-10 月資料已公布；下一筆（非農通常在月初）預計 2026/12，確切日期請查勞工統計局行事曆"
    }
   ],
   "headlines": [
    {
-    "theme": "殖利率／債市",
-    "title": "JGB yields plunge to July lows as Wall St tech tout sparks haven rush",
-    "link": "https://www.investing.com/news/forex-news/jgb-yields-plunge-to-july-lows-as-wall-st-tech-tout-sparks-haven-rush-5006590",
-    "source": "Investing.com News"
-   },
-   {
     "theme": "油價／美元",
-    "title": "單日83名股票多頭巨鯨止損清倉，121筆大額多單實現2360萬美元虧損 - 鉅亨網",
-    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBLbmJZNE9FTFItRGI5dnNiTDNYOTdpN0xJM1BmM0hMbm1JLWoyWkV5UFp5N0RjcTJqNllqS0Y1eTdPdjJnYkVVZURudmRLczA?oc=5",
-    "source": "鉅亨網 美股 (via Google News)"
-   },
-   {
-    "theme": "油價／美元",
-    "title": "期中選舉未撼全球霸主地位！外匯策略師：美元短線震盪 兩大支撐力量仍在 - 鉅亨網",
-    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBOT1l3WmZOSVp0OGpkUmExRUZVSEtKckdacExERmZLVUI1aWNscnZTYlVTOF84YWplcHNTeEVkbTd1ZkV1eUFXLVFCRmZQdjg?oc=5",
-    "source": "鉅亨網 美股 (via Google News)"
-   },
-   {
-    "theme": "關稅／地緣",
-    "title": "川普再喊300%關稅！親曝「這時間點」有大動作、高盛警告還有後招",
-    "link": "https://tw.news.yahoo.com/%E5%B7%9D%E6%99%AE%E5%86%8D%E5%96%8A300-%E9%97%9C%E7%A8%85-%E8%A6%AA%E6%9B%9D-%E9%80%99%E6%99%82%E9%96%93%E9%BB%9E-%E6%9C%89%E5%A4%A7%E5%8B%95%E4%BD%9C-055700491.html",
-    "source": "Yahoo奇摩股市 國際"
-   },
-   {
-    "theme": "油價／美元",
-    "title": "台灣219家企業參展AAPEX　促成逾6000萬美元商機 - 經濟日報",
-    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1odi16bVVMVncteHg4czNxNFZEVXJsd2dNUDA5YWlkSjU4Y09YdzUyMW8wdmRIQWswWm1DQWtqMVlnc3JlUHAxYnBMejNVSGRFM2xhTF9VcU1jZ9IBX0FVX3lxTE5QSnViaWNwTEZkYzd1RnpjNTI0dGNmMkpSem9tamhTdmtjNTFIOEswNkRYVk9yMkUyY2dxX0tyU3R1UzdaYjBzWGVPQjgtNklycnVuSFNRM3dNZ05VUjBJ?oc=5",
-    "source": "經濟日報 證券 (via Google News)"
-   },
-   {
-    "theme": "關稅／地緣",
-    "title": "亞洲銅價電子盤追低觸7月來低位，AI擴建與美關稅兩大支撐受考驗",
-    "link": "https://tw.stock.yahoo.com/news/%E4%BA%9E%E6%B4%B2%E9%8A%85%E5%83%B9%E9%9B%BB%E5%AD%90%E7%9B%A4%E8%BF%BD%E4%BD%8E%E8%A7%B87%E6%9C%88%E4%BE%86%E4%BD%8E%E4%BD%8D-ai%E6%93%B4%E5%BB%BA%E8%88%87%E7%BE%8E%E9%97%9C%E7%A8%85%E5%85%A9%E5%A4%A7%E6%94%AF%E6%92%90%E5%8F%97%E8%80%83%E9%A9%97-051337273.html",
-    "source": "Yahoo奇摩股市 國際"
-   },
-   {
-    "theme": "關稅／地緣",
-    "title": "美國共和黨期中選舉大敗後 關稅、AI 等產業政策會產生哪些變化？ | 日經中文網 | 國際 - 經濟日報",
-    "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9rZzAwalRjR01MN2N3aGtLZjQ2VGZzTFBKaW1zdlVsU3NMOWpyTG12Ty1RdzE2bmQxRVJTclVka3ZyZU9URVYzcVZCZHNHWGtPTnRsSEtYVVVrQ3lP?oc=5",
-    "source": "經濟日報 證券 (via Google News)"
+    "title": "Brent crude caps biggest weekly drop since pandemic as war premium begins to unwind",
+    "link": "https://seekingalpha.com/news/4668695-brent-crude-caps-biggest-weekly-drop-since-pandemic-as-war-premium-begins-to-unwind?utm_source=feed_news_all&utm_medium=referral&feed_item_type=news",
+    "source": "Seeking Alpha Market News"
    },
    {
     "theme": "聯準會／利率",
-    "title": "Federal Judge Temporarily Blocks Construction of Trump’s 250-Foot Arch - WSJ",
-    "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQNVhTdzlJWWhwSlpuREdzY3hpMEFzbFMtMWtEUTNmeGthSnNmTVRxZ2ptTFVGaVJPZFdUc3QtXzE0WV9kS195M09SSkQ3cElZVXpTT1Z4NU43bTVkaDkwNDI0a1F3SEtGbFM4SEFna3pEd3lUZnZkeHM4T2Z1N1U4cjZrWGFESHl5XzE0cC1fNHpxeEJPVklwZGVlcjRhTTJfZGtTeUxRZDZBS3VDWUJN?oc=5",
+    "title": "美國10月大增16萬5000名就業人口　添聯準會升息壓力",
+    "link": "https://tw.stock.yahoo.com/news/%E7%BE%8E%E5%9C%8B10%E6%9C%88%E5%A4%A7%E5%A2%9E16%E8%90%AC5000%E5%90%8D%E5%B0%B1%E6%A5%AD%E4%BA%BA%E5%8F%A3-%E6%B7%BB%E8%81%AF%E6%BA%96%E6%9C%83%E5%8D%87%E6%81%AF%E5%A3%93%E5%8A%9B-005312095.html",
+    "source": "Yahoo奇摩股市 國際"
+   },
+   {
+    "theme": "關稅／地緣",
+    "title": "ArcelorMittal Says Europe’s Steel Tariffs Are Boosting Profits - WSJ",
+    "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOT0xfNmtoVDFyN3lxWTAzZ3hRSWV0aVRENWJTWFdCWG9XcUd0V1BlelpOMTZFMG9zbEdEQVpPaTlNQ1BWYUZuWXZxVHVLRE91bVRjdkpIY0VNX2xkZFQ5R29RNUFhRUc5b3o2dlFZTFo1OEpoSjN5cWZ5Qk5NQ2ZKYUNiSE5ramJtYzliaTAwejB4a3RMa21sdV9WWTJEVEZpazFnTVVlVUd1VGVtbzQ0Q1I4OXBWZw?oc=5",
     "source": "WSJ Markets (via Google News)"
+   },
+   {
+    "theme": "聯準會／利率",
+    "title": "10月非農大超預期，升息預期為何保持穩定？ - 鉅亨號",
+    "link": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE9hT0JBWjlFaTROUUkzTUhlWDItRVhiVTNxS2M5dGhBWk1udlF4UFhhM3JLdW9oZjdLR2puQlJKVW8tSHJKbmhZUA?oc=5",
+    "source": "鉅亨網 美股 (via Google News)"
+   },
+   {
+    "theme": "聯準會／利率",
+    "title": "A Berkshire Hathaway Electric Utility Wants a Historic Rate Hike in California",
+    "link": "https://www.wsj.com/business/energy-oil/a-berkshire-hathaway-electric-utility-wants-a-historic-rate-hike-in-california-b7a0cc70?mod=rss_markets_main",
+    "source": "MarketWatch Markets"
+   },
+   {
+    "theme": "殖利率／債市",
+    "title": "Global X 3-10 Year U.S. Treasury Bond Index ETF Overview (TMTXUSD) - Barron's",
+    "link": "https://news.google.com/rss/articles/CBMickFVX3lxTFBzMi0wb2JRQktNYkNFUlhzVDJWX21zakZYdjJtZG9YaENWdW9RVzJFSF9mRm1DNWdqVVFKS2NNeW9Xa3g5My1nc2dXLTVMdVNsNFIwQTNDTmUzZ3o3YS1Zc21rSnFuN1hOT3I0YkJZbDFqdw?oc=5",
+    "source": "Barron's (via Google News)"
+   },
+   {
+    "theme": "油價／美元",
+    "title": "友達ADR6日上漲0.32美元漲幅4.12%折台股26.51元",
+    "link": "https://tw.stock.yahoo.com/news/%E5%8F%8B%E9%81%94adr6%E6%97%A5%E4%B8%8A%E6%BC%B20-32%E7%BE%8E%E5%85%83%E6%BC%B2%E5%B9%854-12-%E6%8A%98%E5%8F%B0%E8%82%A126-51%E5%85%83-231630551.html",
+    "source": "Yahoo奇摩股市 台股"
+   },
+   {
+    "theme": "油價／美元",
+    "title": "中華電信ADR6日上漲0.99美元漲幅2.03%折台股163.35元",
+    "link": "https://tw.stock.yahoo.com/news/%E4%B8%AD%E8%8F%AF%E9%9B%BB%E4%BF%A1adr6%E6%97%A5%E4%B8%8A%E6%BC%B20-99%E7%BE%8E%E5%85%83%E6%BC%B2%E5%B9%852-03-%E6%8A%98%E5%8F%B0%E8%82%A1163-35%E5%85%83-231626969.html",
+    "source": "Yahoo奇摩股市 台股"
    }
   ],
   "coverage": {
@@ -2064,7 +2039,6 @@
   },
   "series": {
    "^TNX": [
-    4.641,
     4.696,
     4.724,
     4.706,
@@ -2123,10 +2097,10 @@
     4.894,
     4.952,
     4.894,
-    4.837
+    4.837,
+    4.859
    ],
    "^IRX": [
-    3.705,
     3.697,
     3.703,
     3.705,
@@ -2185,10 +2159,10 @@
     3.982,
     4.025,
     4.025,
-    3.987
+    3.987,
+    4.0
    ],
    "DX-Y.NYB": [
-    99.96,
     99.67,
     99.64,
     99.65,
@@ -2247,10 +2221,10 @@
     101.75,
     101.87,
     101.51,
-    101.55
+    101.55,
+    102.279
    ],
    "CL=F": [
-    81.25,
     82.4,
     84.5,
     84.94,
@@ -2309,10 +2283,10 @@
     96.46,
     96.09,
     88.12,
-    90.52
+    90.52,
+    90.34
    ],
    "^VIX": [
-    14.25,
     15.19,
     15.84,
     14.89,
@@ -2371,10 +2345,10 @@
     21.15,
     20.83,
     16.61,
-    28.18
+    28.18,
+    25.64
    ],
    "^GSPC": [
-    7798.99,
     7785.76,
     7745.06,
     7691.76,
@@ -2433,10 +2407,10 @@
     7541.4,
     7568.92,
     7688.62,
-    7353.73
+    7353.73,
+    7376.86
    ],
    "^SOX": [
-    12456.0,
     12417.05,
     12621.0,
     11992.46,
@@ -2495,14 +2469,15 @@
     10328.33,
     10600.4,
     10268.65,
-    9011.14
+    9011.14,
+    9390.25
    ]
   },
   "levels": {
-   "us10y": 4.836999893188477,
-   "us3m": 3.986999988555908,
-   "us30y": 5.250999927520752,
-   "vix": 28.18000030517578
+   "us10y": 4.859000205993652,
+   "us3m": 4.0,
+   "us30y": 5.259999752044678,
+   "vix": 25.639999389648438
   },
   "inflation": {
    "headline": {
@@ -2520,34 +2495,33 @@
     "ann3m": 0.034124037788220596
    },
    "unrate": {
-    "date": "2026-09-01",
-    "value": 4.2,
-    "above_12m_low": 0.10000000000000053
+    "date": "2026-10-01",
+    "value": 4.1,
+    "above_12m_low": 0.0
    },
    "payrolls": {
-    "date": "2026-09-01",
-    "avg3m_k": 50.666666666666664,
-    "last_k": 29.0
+    "date": "2026-10-01",
+    "avg3m_k": 137.0,
+    "last_k": 165.0
    },
-   "breakeven": 2.24,
-   "us2y": 4.58
+   "breakeven": 2.23,
+   "us2y": 4.46
   }
  },
  "shortage": {
   "TW": {
    "n": 0,
    "N": 5,
-   "candidates": 22,
+   "candidates": 25,
    "reasons": {
-    "各估值方法分歧過大": 6,
-    "財務品質不足": 6,
-    "目標價上檔空間不足": 4,
+    "各估值方法分歧過大": 10,
+    "目標價上檔空間不足": 5,
+    "總經高風險：一般股需更大安全邊際": 3,
+    "已跌破前次推薦的停損價（論點失效），收復前不再推薦": 2,
+    "波動過高（年化 > 70%）": 2,
     "市值過小": 1,
-    "總經高風險：一般股需更大安全邊際": 1,
-    "已跌破前次推薦的停損價（論點失效），收復前不再推薦": 1,
-    "資料不足，無法估值": 1,
-    "流動性不足": 1,
-    "波動過高（年化 > 70%）": 1
+    "財務品質不足": 1,
+    "流動性不足": 1
    }
   },
   "US": {
@@ -2555,9 +2529,9 @@
    "N": 5,
    "candidates": 24,
    "reasons": {
-    "各估值方法分歧過大": 12,
-    "波動過高（年化 > 70%）": 4,
-    "上檔未達利率門檻（7.8%）": 3,
+    "各估值方法分歧過大": 11,
+    "波動過高（年化 > 70%）": 5,
+    "上檔未達利率門檻（7.9%）": 3,
     "已跌破前次推薦的停損價（論點失效），收復前不再推薦": 2
    }
   }
@@ -2576,8 +2550,8 @@
      "fund": 93.0
     },
     "ret_1m": 0.0286,
-    "n_news": 40,
-    "sent": -0.04,
+    "n_news": 39,
+    "sent": 0.02,
     "tags": [
      "市場焦點",
      "成長動能"
@@ -2585,39 +2559,33 @@
     "risk": "利率與信用循環、監管資本要求、權益市場波動影響投資收益",
     "heads": [
      {
-      "title": "AI禁令引恐慌！美股狂瀉「創4年最慘」延燒亞股崩跌｜巴拉圭總統宣布辭職！銀行倒閉爆金融危機｜2026/11/06 中央社全球午間快報 - 中央社 CNA",
-      "link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1CZExYdktqLVJOZ01XSjJtdDA1Q25vM1ppMVY5eDVxSHRsSFdHeUpqLWQ2bUN3dEhEMERKRlpKVVZiWEUtRzZSMXI5SE1ic0R0aVVidHBCTktTYjQ?oc=5",
-      "source": "中央社 財經 (via Google News)"
+      "title": "外資狠砍台股911億元、空單直逼10萬口 投信逆勢狂敲「7大金控」抗賣壓 - 鉅亨網",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1qcXBDckdkanc5cHdyZFpNY1lDUnVnb213bllzOWNub0tKb3lTeWg4SElEZE5JSDhsaTBVclRJd2JaQ0pET2QweVFkWGRtVlE?oc=5",
+      "source": "鉅亨網 台股 (via Google News)"
      },
      {
-      "title": "台股暴跌逾3700點！0050成交近38萬張、00878配息率近4％ ETF交易熱絡 - UDN",
-      "link": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE9tMmlIMkY1clhfbDFJRnRPaFBaMnd3QmJfQi1oMWwzb3p5Y2Q3eFdYV1RJSmM4MmV2bzJzcDc5NW5yYndTVWsxN1k4Z2g0cXVMTnVv0gFYQVVfeXFMT01XQjRYRDQ3Ml9Eejd5RU9XMkVDcGVYampJZHBmZTk2a1J3TUZPWi1VQTRfSER2cnJ2c3VzcU9aV1RDU0lVeEs1RkpZNVFIZTNQTXF5el9FMg?oc=5",
-      "source": "聯合新聞網 股市 (via Google News)"
+      "title": "中美晶:公告本公司董事會決議股利分派 - 鉅亨網",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9jbFJWYnVXNGRrREU3TWozR09sdGNfMXpyQjhQTXNwRE81NTRJcnFtdXU3V1BEd0ZxbWxfUGZMeVNpeVdZeHhSNU9oZ3BXR00?oc=5",
+      "source": "鉅亨網 台股 (via Google News)"
      },
      {
-      "title": "英國央行調升基準利率1碼至4% 逾3年來首度升息| 國際 - 中央社 CNA",
-      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE84NWhvbXdRNldPYkF1UVU1ZURZZElKODc3NTJnM1NyTDgtU25FTXVncWE0eDFsQXpnMU5jQWp6b0RXaEhXbk1jTm9VVW5sRHZjbXE4SjloaV9xdFFFdmZz?oc=5",
-      "source": "中央社 財經 (via Google News)"
+      "title": "美股開盤／費半狂飆逾5%　台積電ADR強彈近8%",
+      "link": "https://tw.news.yahoo.com/%E7%BE%8E%E8%82%A1%E9%96%8B%E7%9B%A4-%E8%B2%BB%E5%8D%8A%E7%8B%82%E9%A3%86%E9%80%BE5-%E5%8F%B0%E7%A9%8D%E9%9B%BBadr%E5%BC%B7%E5%BD%88%E8%BF%918-144700839.html",
+      "source": "Yahoo奇摩股市 台股"
      }
     ],
     "members": [
      {
       "t": "2881.TW",
       "n": "富邦金",
-      "c": 74.0,
+      "c": 73.2,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "2891.TW",
       "n": "中信金",
-      "c": 70.3,
+      "c": 70.2,
       "s": "目標價上檔空間不足"
-     },
-     {
-      "t": "2884.TW",
-      "n": "玉山金",
-      "c": 68.2,
-      "s": "各估值方法分歧過大"
      },
      {
       "t": "5880.TW",
@@ -2626,15 +2594,21 @@
       "s": "各估值方法分歧過大"
      },
      {
+      "t": "2884.TW",
+      "n": "玉山金",
+      "c": 66.5,
+      "s": "各估值方法分歧過大"
+     },
+     {
       "t": "2882.TW",
       "n": "國泰金",
-      "c": 65.6,
+      "c": 64.1,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "2886.TW",
       "n": "兆豐金",
-      "c": 59.0,
+      "c": 59.2,
       "s": "目標價上檔空間不足"
      }
     ]
@@ -2651,8 +2625,8 @@
      "fund": 87.0
     },
     "ret_1m": -0.0503,
-    "n_news": 22,
-    "sent": -0.04,
+    "n_news": 20,
+    "sent": -0.05,
     "tags": [
      "市場焦點",
      "成長動能"
@@ -2660,253 +2634,70 @@
     "risk": "商品價格波動、需求循環、地緣政治衝擊",
     "heads": [
      {
-      "title": "盤中速報 - 鋼鐵工業類股表現疲軟，跌幅4.09%，總成交額7.18億 - 鉅亨網",
-      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5kZnBlQi1MSGFYRS1Bal9HYUxXMkVWbUR4bHhEU2VpSUE3UGIxWnVkb0VudUpDbDVXSFNEMFhzeW1nb093ZklJbmUzcnpjTjg?oc=5",
-      "source": "鉅亨網 台股 (via Google News)"
-     },
-     {
-      "title": "盤中速報 - 水泥工業類股表現疲軟，跌幅4.12%，總成交額3.33億 - 鉅亨網",
-      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE8ydVZacDlfQ25QUEFuXzh0Skw0VnBHaU5GRHVwOWVBN01yT2lzN3U5ektMTWpLeTJaa05KSGN5dTJIMGxlc21Ka0RnOUlDU1U?oc=5",
-      "source": "鉅亨網 台股 (via Google News)"
-     },
-     {
-      "title": "台股波動帶動避險保值潮 SOGO周年慶黃金千萬大單進帳 - 經濟日報",
-      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5TamFvZEpCYWhlSjRMdmM5em5jcFpHODhId0lNaXROeWhBWWNGQkVXamk1cHhlUlBNRUtTdTVNNHlrM0pXSHlTZThsRDBVYlJ0MFpYQzU1TlZpSnZo0gFiQVVfeXFMUGs3SEFWTVhLSzBHUXg0VHlNSllhNGdNbkN5TmRPRllNelc2YmJpSlk5S045clczaVZQalNYMHRkR0VlTGE0LUJZeFdPbGtlWHFCMm9aOU1fNFFTUWgyTHA1VEE?oc=5",
+      "title": "台股重挫逾3千點 009832兆豐美國黃金礦業ETF盤中再創上市以來新高 | 財富管理 | 商情 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9mUFVtX0V6LUlRcGNyU2NUNHdfSXRiU0t0TzFCTF82eUNmRlJ0Sm5KWGxyV0VwbUt1cE5XZUhicVotS3dpVnY5VzY3eFhyUmhfYW1LMnJOYThzZw?oc=5",
       "source": "經濟日報 證券 (via Google News)"
+     },
+     {
+      "title": "《國際產業》油輪遭到攻擊、油價上揚 估本周仍大跌12% - 工商時報",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE94UEY2bFRQdnhSUEF6SC04Q1pBakVzZW5HY1RzZkFyclpsWkJYQWEyd2Z5aFVPMnJ4YndhTDI2dWxKaV9Va01FSE0ySTlRV3piT0NyUlVhZTQ4UUNEbHZr?oc=5",
+      "source": "工商時報 (via Google News)"
+     },
+     {
+      "title": "斷頭狂潮殺出1.24兆天量，長黑換手後，這是不是今年最後「黃金上車點」？ - 鉅亨網",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9xbjVpYzhtV2FSVXR2REQ2QWs1WXFsTXNQaUwwN1pFOXlfcHFjMlR3bGNrQTlFbmRaQ0ZfMG9KczRsRTlFOExta1I0WDVtbXc?oc=5",
+      "source": "鉅亨網 台股 (via Google News)"
      }
     ],
     "members": [
      {
       "t": "6505.TW",
       "n": "台塑化",
-      "c": 65.1,
+      "c": 63.2,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
-     },
-     {
-      "t": "1101.TW",
-      "n": "台泥",
-      "c": 55.0,
-      "s": "總經高風險：一般股需更大安全邊際"
      },
      {
       "t": "1301.TW",
       "n": "台塑",
-      "c": 54.5,
+      "c": 55.0,
       "s": "財務品質不足"
+     },
+     {
+      "t": "1101.TW",
+      "n": "台泥",
+      "c": 53.4,
+      "s": "總經高風險：一般股需更大安全邊際"
      },
      {
       "t": "2002.TW",
       "n": "中鋼",
-      "c": 34.9,
+      "c": 36.4,
       "s": "目標價上檔空間不足"
-     }
-    ]
-   },
-   {
-    "id": "internet_platforms",
-    "name": "網路平台、廣告與消費電子",
-    "rank": 3,
-    "focus": true,
-    "score": 72.7,
-    "parts": {
-     "news": 67.0,
-     "mom": 73.0,
-     "fund": 80.0
-    },
-    "ret_1m": -0.1412,
-    "n_news": 22,
-    "sent": -0.07,
-    "tags": [
-     "市場焦點",
-     "成長動能"
-    ],
-    "risk": "反壟斷與監管、廣告景氣、消費電子換機週期",
-    "heads": [
-     {
-      "title": "「超ㄅ一ㄤˋ世代之青春秘笈」走進朴子國中 陪伴學子化解情緒及社群壓力 - 中央社 CNA",
-      "link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE5aQ0VIdzlqVEM0NmcxVEllcWR3aGUtaUI4Njl3WlhVMFJYLVRVMG5OQ3pNNDZCNDhYcGo2T2xaRGxDX2M3QTU5d3AzNnZpTkRuaGlWQWV3?oc=5",
-      "source": "中央社 財經 (via Google News)"
-     },
-     {
-      "title": "新安東京海上產險鼓勵車主完善保障 網投抽iPhone Duo - 中央社 CNA",
-      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE4tTnB5Q0lZWmpCNVNhbWI3RzVMcUpON2RzMU5hbno1bkw4bGtCX0hDSndtaFN6T1lnLTRJRm1VZGdILWRtTXBEeUY1UGNoSG9SYmhuWUFYd044UQ?oc=5",
-      "source": "中央社 財經 (via Google News)"
-     },
-     {
-      "title": "台股大跌！瑀熙崩潰喊「把錢還我」　遭血洗兩次嘆：一整年做白工了",
-      "link": "https://tw.news.yahoo.com/%E5%8F%B0%E8%82%A1%E5%A4%A7%E8%B7%8C-%E7%91%80%E7%86%99%E5%B4%A9%E6%BD%B0%E5%96%8A-%E6%8A%8A%E9%8C%A2%E9%82%84%E6%88%91-%E9%81%AD%E8%A1%80%E6%B4%97%E5%85%A9%E6%AC%A1%E5%98%86-%E6%95%B4%E5%B9%B4%E5%81%9A%E7%99%BD%E5%B7%A5%E4%BA%86-052800673.html",
-      "source": "Yahoo奇摩股市 台股"
-     }
-    ],
-    "members": [
-     {
-      "t": "3008.TW",
-      "n": "大立光",
-      "c": 62.2,
-      "s": "波動過高（年化 > 70%）"
-     },
-     {
-      "t": "4938.TW",
-      "n": "和碩",
-      "c": 53.0,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "2474.TW",
-      "n": "可成",
-      "c": 31.3,
-      "s": "流動性不足"
-     }
-    ]
-   },
-   {
-    "id": "ai_servers",
-    "name": "AI 伺服器與組裝",
-    "rank": 4,
-    "focus": true,
-    "score": 63.0,
-    "parts": {
-     "news": 100.0,
-     "mom": 53.0,
-     "fund": 27.0
-    },
-    "ret_1m": -0.1745,
-    "n_news": 47,
-    "sent": 0.02,
-    "tags": [
-     "市場焦點",
-     "新聞升溫"
-    ],
-    "risk": "雲端大廠資本支出循環、毛利率偏低、客戶集中、庫存與零組件缺料",
-    "heads": [
-     {
-      "title": "AI資料中心排擠記憶體供給負面效應浮現- 產業 - 工商時報",
-      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBtNl9CVXhIWC1YVE5KdGMtYjVLWXJSZ1RYbEJfbkxzQU9DVzZycUFtb2xsdGRYd0ZzRVhPeWZwcnFZdHBuMDlOdktmZzRORHdOQXA0MlVJVndDZThUR2pZ?oc=5",
-      "source": "工商時報 (via Google News)"
-     },
-     {
-      "title": "美多州資料中心恐生變 費半大跌12.25% - 中央社 CNA",
-      "link": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE80UmlsM0UwWFhJaV8xeTRHMVN2aWlFNm9ncVF0ZzlfSmZuSjUzdUdmRExNWnN1Wk5sdmphVEY2V0pSakpkSW8wR0NwUERNbjFQNXRn?oc=5",
-      "source": "中央社 財經 (via Google News)"
-     },
-     {
-      "title": "大摩看超微財報：伺服器 CPU 強勁成長 看好八台股、不看好四台股 - 經濟日報",
-      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE12d1l6RFNkS1RCMWpRVTJQcnZZajhaUHRxWDFJUFBZWjEwWWZ1dHAxblIyeWNISGg3UmhwZVpQOVZPeElnTWlCdHpDc2VkaXZjWURlSkZUazNEUdIBX0FVX3lxTE1OZU9hOTVhZnp2TTBxeEF1Y3BsQ25xZFU3VWJxa255czJDeW9hUHJ4WEM2UTdwWTc1aFYtdUREU1BWdVF4Unk2LWZDeVNJMkpYZWZIbFBOQnRaRmpSQjc0?oc=5",
-      "source": "經濟日報 證券 (via Google News)"
-     }
-    ],
-    "members": [
-     {
-      "t": "2317.TW",
-      "n": "鴻海",
-      "c": 58.4,
-      "s": "財務品質不足"
-     },
-     {
-      "t": "3231.TW",
-      "n": "緯創",
-      "c": 54.5,
-      "s": "財務品質不足"
-     },
-     {
-      "t": "2382.TW",
-      "n": "廣達",
-      "c": 53.8,
-      "s": "財務品質不足"
-     },
-     {
-      "t": "2376.TW",
-      "n": "技嘉",
-      "c": 53.4,
-      "s": "財務品質不足"
-     },
-     {
-      "t": "6669.TW",
-      "n": "緯穎",
-      "c": 53.2,
-      "s": "財務品質不足"
-     },
-     {
-      "t": "2356.TW",
-      "n": "英業達",
-      "c": 47.6,
-      "s": "各估值方法分歧過大"
-     }
-    ]
-   },
-   {
-    "id": "healthcare",
-    "name": "生技醫療與減重藥",
-    "rank": 5,
-    "focus": true,
-    "score": 61.3,
-    "parts": {
-     "news": 60.0,
-     "mom": 80.0,
-     "fund": 33.0
-    },
-    "ret_1m": -0.0138,
-    "n_news": 8,
-    "sent": 0.05,
-    "tags": [
-     "新聞升溫"
-    ],
-    "risk": "臨床/審批失敗、藥價政策（美國定價改革）、專利懸崖",
-    "heads": [
-     {
-      "title": "中裕新藥獲國際生技創新獎 加速愛滋病長效抗體新藥開發 - 經濟日報",
-      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNcktNc0xOVlpCY0pMS0ZWRmN6VnpZQTdNU0JZeURtSVpiYUNmcm1IMU55V0Fkekp1dURTTkFFdVl1T0FwZmVucVVyc1R2SFNPcWc3YjJvdFFGdlpjXzRUQXdUbDk1NmUxV2VtQmYtWkdib25yWlJfaGlVNzhmaUx2TNIBX0FVX3lxTE9UV0xUQ00xLWlNSms0SDRlTU8zaFhCNUxEaEtVbmsyMU5lX3JkNGp4cmU5bkR3UGFrNUg4bXBsWnA0MU1DN3ZCWjEyT0VsNGpaQ3RyR2NCS0dNbHdWR0VV?oc=5",
-      "source": "經濟日報 證券 (via Google News)"
-     },
-     {
-      "title": "台股跌1,873點史上第四大 生技、資服留口氣這檔閃青紅燈- 證券 - 工商時報",
-      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1TcDgyZzVuZnZCeWFYTnBWX01oM09RVHgxTHZtT2I1eGU0UXFlRWNYSTZndXdCV243dGI1ZWNXeVFNNTdadjgwTnZHYTQ2NjB3ckhybXVqdXNwbURrbXJn?oc=5",
-      "source": "工商時報 (via Google News)"
-     },
-     {
-      "title": "〈焦點股〉生技股萬綠叢中一點紅 藥華藥成千金股唯一走揚 - 鉅亨網",
-      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5XaFlHb2RNbUhWbTA0SHZVSjRQR3luNTdHTDFpUzNiUGx6NEVGS0NhbmlNdVNXcU10QXVuUUx0Zm1MbGNaMHRwMWJNcFBzc3M?oc=5",
-      "source": "鉅亨網 台股 (via Google News)"
-     }
-    ],
-    "members": [
-     {
-      "t": "6446.TW",
-      "n": "藥華藥",
-      "c": 71.9,
-      "s": "目標價上檔空間不足"
-     },
-     {
-      "t": "1795.TW",
-      "n": "美時",
-      "c": 55.4,
-      "s": "市值過小"
-     },
-     {
-      "t": "4743.TWO",
-      "n": "合一",
-      "c": 46.7,
-      "s": "資料不足，無法估值"
      }
     ]
    },
    {
     "id": "shipping",
     "name": "航運與運輸",
-    "rank": 6,
-    "focus": false,
-    "score": 61.0,
+    "rank": 3,
+    "focus": true,
+    "score": 65.7,
     "parts": {
-     "news": 20.0,
+     "news": 33.0,
      "mom": 93.0,
      "fund": 67.0
     },
     "ret_1m": 0.015,
-    "n_news": 4,
-    "sent": -0.05,
+    "n_news": 5,
+    "sent": 0.0,
     "tags": [],
     "risk": "運價高度波動、運力供給過剩、地緣政治與關稅政策",
     "heads": [
+     {
+      "title": "SCFI運價指數終止連四漲 周跌1.46% - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBpRGxiR3ptbEZRZlFISGRWWnMyVmQwUm43ZllaWFdlb19hemFzUDlqY0xFS1N2S0pSbjdPeXphd2FzdEJOVkMtTzhTaW42Ujc1SWdMRFlBd2RhQdIBX0FVX3lxTE80aGtsdEk3QTJBUXVtYzBkd0NOUDlLdXNzMFFaSFpFUmxERk1ycHNqRVJpVEhxMW1iM20tX0txSkF4YVVMS1VMNzVBZ2w5anVTY3poTmZUdEkzbnVNR0g0?oc=5",
+      "source": "經濟日報 證券 (via Google News)"
+     },
      {
       "title": "台股近7成個股跌破年線！15檔逆勢抗跌股出列貨櫃三雄、川湖入列- 日報 - 工商時報",
       "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5HdERnRzh2MGdTTEtVREVsZ2hhVllNWnFPXzcwRmw1MUhZVFNWb3pXSWJFdnk0YzV0b3FiSGdZX2FnSXdObktOSDBZWkotTzE4YUhUYk1BNmtzOXVwRlNB?oc=5",
@@ -2917,137 +2708,240 @@
      {
       "t": "2615.TW",
       "n": "萬海",
-      "c": 67.8,
+      "c": 66.9,
       "s": "總經高風險：一般股需更大安全邊際"
      },
      {
       "t": "2603.TW",
       "n": "長榮",
-      "c": 65.6,
+      "c": 66.7,
       "s": "總經高風險：一般股需更大安全邊際"
      },
      {
       "t": "2609.TW",
       "n": "陽明",
-      "c": 50.5,
+      "c": 51.5,
       "s": "目標價上檔空間不足"
      },
      {
       "t": "2618.TW",
       "n": "長榮航",
-      "c": 49.5,
+      "c": 50.4,
       "s": "目標價上檔空間不足"
      },
      {
       "t": "2610.TW",
       "n": "華航",
-      "c": 44.7,
+      "c": 46.4,
       "s": "市值過小"
+     }
+    ]
+   },
+   {
+    "id": "internet_platforms",
+    "name": "網路平台、廣告與消費電子",
+    "rank": 4,
+    "focus": true,
+    "score": 63.3,
+    "parts": {
+     "news": 40.0,
+     "mom": 73.0,
+     "fund": 80.0
+    },
+    "ret_1m": -0.1412,
+    "n_news": 13,
+    "sent": 0.03,
+    "tags": [],
+    "risk": "反壟斷與監管、廣告景氣、消費電子換機週期",
+    "heads": [
+     {
+      "title": "Here are Friday's biggest analyst calls: Nvidia, SpaceX, Netflix, Apple, TripAdvisor, Molson Coors & more - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOTWh6OXZQZ1pTdi1rckhLY00yT3NvWUxxbTVnMm9lUkJHeVFvMzF5N1BZQ2hhTGJTS2RRbmkyY2ktR1I0c29CN0NrVHN1VDZNck1uYXY4eklZb0hRQ2xVZGRNS2QzdEc0a1N0a0UxQWxWMVFQdlRvNUg1cktEYTFPMm9GZGhQRFBiYzl1VXZGSVMzcTg?oc=5",
+      "source": "CNBC Technology (via Google News)"
+     },
+     {
+      "title": "Apple has been outperforming. But, the good times could soon end, Daiwa says - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPdEg5bHZON05Za2JOUDluSV90Tng2LWVydTVQVmVxT1RzYTBZR2ctUWJNUmhMOGZMMEF3LW5vTkZxcTR6WmdoVzlMN09nQnByenFiOGdya1lnWGFsUDNnQXg3bERWY2NTQzhPdTNDemNPUVBTVmwtVWhmQnAzYktkOGUxQl9SUXR1SDZqVkxzMHR6UDNfRnpmNEtCaW5pV2dhc0lmM0doNG8?oc=5",
+      "source": "CNBC Markets (via Google News)"
+     }
+    ],
+    "members": [
+     {
+      "t": "3008.TW",
+      "n": "大立光",
+      "c": 57.0,
+      "s": "波動過高（年化 > 70%）"
+     },
+     {
+      "t": "4938.TW",
+      "n": "和碩",
+      "c": 51.0,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "2474.TW",
+      "n": "可成",
+      "c": 31.2,
+      "s": "流動性不足"
      }
     ]
    },
    {
     "id": "ai_chips",
     "name": "AI 晶片與先進製程",
-    "rank": 7,
-    "focus": false,
-    "score": 57.7,
+    "rank": 5,
+    "focus": true,
+    "score": 62.3,
     "parts": {
-     "news": 87.0,
+     "news": 100.0,
      "mom": 60.0,
      "fund": 13.0
     },
     "ret_1m": -0.214,
-    "n_news": 39,
-    "sent": 0.02,
+    "n_news": 51,
+    "sent": -0.02,
     "tags": [
      "市場焦點"
     ],
     "risk": "美中出口管制、AI 資本支出放緩、地緣政治（台海）風險、估值已反映高成長預期",
     "heads": [
      {
-      "title": "輝達成竊賊目標逾3.7億元硬體與貨車在南加州離奇消失| 國際 - 中央社 CNA",
-      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5zZUYycGVhTWdlX0Via0tVWmVPckw5WG1SZUNGUGoteUZVRy12T25xSEUzeFNYSC1UdGJvTHd0NkRObF9vR0Y0LWxMLXpJN2txQnB3cVg2SkQtdkpQcERr?oc=5",
-      "source": "中央社 財經 (via Google News)"
+      "title": "台積電要做AI記憶體？傳應輝達要求研擬生產3D DRAM - 鉅亨網",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBPS2hUOVRDTjJKZ3JOR1FCdk5zcnB5QVJtc2tQMXl3UW9abXMtS05KWHpHREluZUVHdHJxMWJqQXBIT3ZxblZpaDFBQkNhVEE?oc=5",
+      "source": "鉅亨網 台股 (via Google News)"
      },
      {
-      "title": "先進封裝被AI逼著快速往前　聯發科侯上勇笑稱：做CoWoS從有趣變頭痛",
-      "link": "https://tw.news.yahoo.com/%E5%85%88%E9%80%B2%E5%B0%81%E8%A3%9D%E8%A2%ABai%E9%80%BC%E8%91%97%E5%BF%AB%E9%80%9F%E5%BE%80%E5%89%8D-%E8%81%AF%E7%99%BC%E7%A7%91%E4%BE%AF%E4%B8%8A%E5%8B%87%E7%AC%91%E7%A8%B1-%E5%81%9Acowos%E5%BE%9E%E6%9C%89%E8%B6%A3%E8%AE%8A%E9%A0%AD%E7%97%9B-054200610.html",
-      "source": "Yahoo奇摩股市 台股"
+      "title": "快訊／傳輝達找台積電生產3D DRAMAI記憶體供應鏈恐迎新變局 - 鉅亨網",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE02bloweVpTLUtPaDNra3VBYUh4ejVEeFFvaDhKaGZmbzVVSElLRUxpclBmSWI0MW9LdXpSczlsMzZydDhlOE85OTdyYzhQSVU?oc=5",
+      "source": "鉅亨網 台股 (via Google News)"
      },
      {
-      "title": "日月光大手筆擴產 AI 晶片接單增添動能 - 經濟日報",
-      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE91YTUyWGNURHR4bTNoS09fVUxWd044cWxQSVZKT0VjU083SFlYc00zSjlvMnh4bEswRnVkYWh2UzZ2Vmt4LXBKa015eWk1YV9yN2JRVmdrNEpRUdIBX0FVX3lxTE1EWHdYV292cGpkaE5ESi1QcjFfdTFFVmpDaWtrSEtMT3BqUUNaSWlTQ2I4cldrYTZqUTRyRFFlVnlkampLdXoyaWhCZTc2eUpnX29YMGdOWWY5Ui1UbENv?oc=5",
-      "source": "經濟日報 證券 (via Google News)"
+      "title": "就市論勢／先進製程、光通訊 可低接 - UDN",
+      "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE5SLWVfRlZsc1AzTldtU2ZqYWt2dDlkSlpvdjNCNmRjRXFwZThHRVFld2pOY0ZBRXRubll1MVhVZXJQUl9mdkdiYVB6RmJ6Y1F20gFWQVVfeXFMUGFfRURKSDN2WmtWRDg4VFJqaFN0LVVUS0JlUm9wZFNKdlVkc2lDd0d4TGZrMzhkYzBPMkpJeTYwWEd2cjFHN1NYTE1jbTlpZ0pGM3oxaWc?oc=5",
+      "source": "聯合新聞網 股市 (via Google News)"
      }
     ],
     "members": [
      {
       "t": "2330.TW",
       "n": "台積電",
-      "c": 80.2,
+      "c": 81.4,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "3034.TW",
+      "n": "聯詠",
+      "c": 65.0,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "2454.TW",
       "n": "聯發科",
-      "c": 63.5,
+      "c": 63.9,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
-     },
-     {
-      "t": "3034.TW",
-      "n": "聯詠",
-      "c": 63.4,
-      "s": "各估值方法分歧過大"
      },
      {
       "t": "3711.TW",
       "n": "日月光投控",
-      "c": 59.4,
+      "c": 60.3,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "3443.TW",
       "n": "創意",
-      "c": 59.4,
+      "c": 58.5,
       "s": "波動過高（年化 > 70%）"
      },
      {
       "t": "2379.TW",
       "n": "瑞昱",
-      "c": 56.3,
+      "c": 57.3,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "3661.TW",
       "n": "世芯-KY",
-      "c": 49.5,
+      "c": 50.4,
       "s": "各估值方法分歧過大"
+     }
+    ]
+   },
+   {
+    "id": "healthcare",
+    "name": "生技醫療與減重藥",
+    "rank": 6,
+    "focus": false,
+    "score": 59.0,
+    "parts": {
+     "news": 53.0,
+     "mom": 80.0,
+     "fund": 33.0
+    },
+    "ret_1m": -0.0138,
+    "n_news": 6,
+    "sent": 0.0,
+    "tags": [],
+    "risk": "臨床/審批失敗、藥價政策（美國定價改革）、專利懸崖",
+    "heads": [
+     {
+      "title": "台股失守4萬點 電信生技自行車成資金避風港 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5QLUktcTI1MDZ1d1NUeTZpOTBnQ1NjZW1CV3JxNVR2NS1PTkxDQjlUWXo0Ymc5RzdnMnNUQmpyb0lKSk43clktbDdYZWwzVDhZY014emM4cE00Z9IBX0FVX3lxTFBjLWlDUjFNbGtjcm5qUGdTeEh5bVFYWVFQZTRHdklrNkJpVnRvNnM2bC1JQ1RpQ2VXSV9SVUNZTTVHOWNnT3J2SWE0cDhldVZqR2JROVpsMi1fTXkybjhr?oc=5",
+      "source": "經濟日報 證券 (via Google News)"
+     },
+     {
+      "title": "台股跌1,873點史上第四大 生技、資服留口氣這檔閃青紅燈- 證券 - 工商時報",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1TcDgyZzVuZnZCeWFYTnBWX01oM09RVHgxTHZtT2I1eGU0UXFlRWNYSTZndXdCV243dGI1ZWNXeVFNNTdadjgwTnZHYTQ2NjB3ckhybXVqdXNwbURrbXJn?oc=5",
+      "source": "工商時報 (via Google News)"
+     },
+     {
+      "title": "順藥中風新藥雙臨床啟動收案- 產業 - 工商時報",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1SOTgzdGFXTk9zQWJFQ3NKQU1JY1dGSEQyaUVjTV9ZTXVWTjdXU2pTcTFyeC1GaDY1RGFNTTdmZl9xSGluaFFYQ1dkMVl5X1RzMG5xWGVpQTU5TmRBOWRB?oc=5",
+      "source": "工商時報 (via Google News)"
+     }
+    ],
+    "members": [
+     {
+      "t": "6446.TW",
+      "n": "藥華藥",
+      "c": 71.7,
+      "s": "目標價上檔空間不足"
+     },
+     {
+      "t": "1795.TW",
+      "n": "美時",
+      "c": 54.9,
+      "s": "市值過小"
+     },
+     {
+      "t": "4743.TWO",
+      "n": "合一",
+      "c": 46.2,
+      "s": "資料不足，無法估值"
      }
     ]
    },
    {
     "id": "consumer",
     "name": "消費與零售",
-    "rank": 8,
+    "rank": 7,
     "focus": false,
-    "score": 54.7,
+    "score": 57.0,
     "parts": {
-     "news": 80.0,
+     "news": 87.0,
      "mom": 67.0,
      "fund": 0.0
     },
     "ret_1m": -0.0144,
-    "n_news": 24,
-    "sent": -0.0,
+    "n_news": 36,
+    "sent": -0.02,
     "tags": [
      "市場焦點"
     ],
     "risk": "消費力與通膨、關稅成本轉嫁、庫存",
     "heads": [
      {
-      "title": "台股連日急殺 金融、電信、內需 躍避風港 - 經濟日報",
-      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE50UlZCcTJIOFdUekR3Mk50TFdIRk1GZm9OZWN3YUlkeFFpaUYtU0VIdWx6aGZzZEhWN1Exa1NPclpOMWF0T2t3aTFNamd4Tlk0NkFmOFlISXFCd9IBX0FVX3lxTE10TkRERm51SENUSjlSWHV6Yk8xN0laYUJxbXJVTDhoT0xmSzc1Z1I0dU1DRXVPZ0NQcHg4LUhkN09KRF9LMjVOa3VrSExfbG16ZzUweUgwNzduREpjOGNv?oc=5",
+      "title": "屏東熱帶農業特色產業園區完工 乖乖將設觀光工廠 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFB2UWZja3g2ZjZMU1FhdExxdGduQWtxUXNZUTZNTUpIdFUzX0RjQVBYN2drS3NVb3Nfd0xwdDIyLXRsSkFHNVZ2MDBCX25GU2hWY2RUUGtNNEhpSjRC0gFiQVVfeXFMTWVyRHFwMHNRWTdTclV2amtlUC1HZXpGSEkzQzA2VDZqVnVmS3hPNTluRXJkNzVpRzdGSFZ6WVhyM25rSkxtbDlnR2FHMkZLYlBJZUh1M016VUpNelA3eUg4UXc?oc=5",
       "source": "經濟日報 證券 (via Google News)"
      },
      {
@@ -3056,70 +2950,71 @@
       "source": "中央社 財經 (via Google News)"
      },
      {
-      "title": "盤中速報 - 貿易百貨類股表現疲軟，跌幅3.63%，總成交額1.42億 - 鉅亨網",
-      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE4tU1VCS2xiNnlCbWJUYjdyMEJSc1hYMXVIbFJlZXhqeUtXOURsMmtrYUlZd3BudzFrdGxtNTByNVYwX3picG5pRkNSOThWWlE?oc=5",
-      "source": "鉅亨網 台股 (via Google News)"
+      "title": "《產業》觀光雙輪驅動方案展成效平日國旅優惠延至年底- 產業 - 工商時報",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9JMkIxbW5MbHB0d3NkbE1GRWEzTEY3M3hVTzQtNlNyZl8tUUN0dHBOQ3p1Znp0b0JpcGkydHlqMmtsZnpST0JxcHFFZEQyaTlpQS01SVNBOGdpVDV5c3FV?oc=5",
+      "source": "工商時報 (via Google News)"
      }
     ],
     "members": [
      {
       "t": "2727.TW",
       "n": "王品",
-      "c": 50.4,
+      "c": 54.2,
       "s": "市值過小"
      },
      {
       "t": "2912.TW",
       "n": "統一超",
-      "c": 46.2,
+      "c": 47.9,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "9910.TW",
       "n": "豐泰",
-      "c": 45.9,
+      "c": 46.2,
       "s": "市值過小"
      },
      {
       "t": "8454.TW",
       "n": "富邦媒",
-      "c": 34.3,
-      "s": "市值過小"
+      "c": 34.8,
+      "s": "各估值方法分歧過大"
      }
     ]
    },
    {
     "id": "memory_storage",
     "name": "記憶體與儲存",
-    "rank": 9,
+    "rank": 8,
     "focus": false,
-    "score": 49.3,
+    "score": 56.3,
     "parts": {
-     "news": 47.0,
+     "news": 67.0,
      "mom": 20.0,
      "fund": 100.0
     },
     "ret_1m": -0.3287,
-    "n_news": 11,
-    "sent": -0.1,
+    "n_news": 13,
+    "sent": 0.03,
     "tags": [
+     "市場焦點",
      "潛力（基本面強、股價尚未過熱）"
     ],
     "risk": "景氣循環劇烈、供給擴張導致價格反轉、高度依賴報價",
     "heads": [
      {
-      "title": "AI資料中心排擠記憶體供給負面效應浮現- 產業 - 工商時報",
-      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBtNl9CVXhIWC1YVE5KdGMtYjVLWXJSZ1RYbEJfbkxzQU9DVzZycUFtb2xsdGRYd0ZzRVhPeWZwcnFZdHBuMDlOdktmZzRORHdOQXA0MlVJVndDZThUR2pZ?oc=5",
-      "source": "工商時報 (via Google News)"
+      "title": "台積傳攻先進記憶體晶片 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPZGpScWM4cGJpSW5rZEZqZTJNc0NLbGFXdXEzV3FMWFBqRkxjZHJXWFVpa01aT3NxSTFSNDRSaER2MXhjX0hmN25MbndkRUFDNHNLYXk1b3VMV0NnSUlmcHdGeGhRMGQ1aXR4d245eS12UUpoUGV2SGFlSDFrZlZrY1lRUWJqSHNfV2FEUkRRTGzSAV9BVV95cUxQT09yaENzN0I5eV84QU1oTUoxVmllSzR3dUg4UUFULWs0ZVBsdXdZc2VXVkJhNnV1ME1YWEVoaGpIN1pOWFhMbnVDZlhHZUtKV3RPbU54QkJpcXdaMHJJSQ?oc=5",
+      "source": "經濟日報 證券 (via Google News)"
      },
      {
-      "title": "【11/06 產業即時新聞】NAND FLASH 族群重挫殺跌停，記憶體市況雜音與法人調節引發多殺多 - CMoney投資網誌",
-      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxORzFkdE1tMWsyOTN0M3FaYkNPeDlqOUhjSlVZbzNIMFdQT1l4Tk5rd0pmYUwwREpoRklpb3FjOVhiSUsydGRscE1EVlRpNVcxUHpYbzNheWN5dDA0WE1rSWJ1QTI0Q3lrYW9iUm9UejFCbDNmdkhTdF9nZGFCVTMtWU1hUkFXQTdNTW5sVEJn?oc=5",
-      "source": "Google News 台股"
+      "title": "台積電要做AI記憶體？傳應輝達要求研擬生產3D DRAM - 鉅亨網",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBPS2hUOVRDTjJKZ3JOR1FCdk5zcnB5QVJtc2tQMXl3UW9abXMtS05KWHpHREluZUVHdHJxMWJqQXBIT3ZxblZpaDFBQkNhVEE?oc=5",
+      "source": "鉅亨網 台股 (via Google News)"
      },
      {
-      "title": "〈台股盤後〉台積領跌電子全倒重挫1374點失守4萬2 記憶體、PCB多檔跌停 - 鉅亨網",
-      "link": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE5vcHdwb3F5WmpBQ0VPampROHdnT1NSUENGOGVfRmkxNTR2dGlkdkgzUUItc0NkV21ZQmRLSEZrWnI1dFpNNE9xSHFrUQ?oc=5",
+      "title": "快訊／傳輝達找台積電生產3D DRAMAI記憶體供應鏈恐迎新變局 - 鉅亨網",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE02bloweVpTLUtPaDNra3VBYUh4ejVEeFFvaDhKaGZmbzVVSElLRUxpclBmSWI0MW9LdXpSczlsMzZydDhlOE85OTdyYzhQSVU?oc=5",
       "source": "鉅亨網 台股 (via Google News)"
      }
     ],
@@ -3127,26 +3022,101 @@
      {
       "t": "2408.TW",
       "n": "南亞科",
-      "c": 76.9,
+      "c": 80.1,
       "s": "合格未入選"
      },
      {
       "t": "2344.TW",
       "n": "華邦電",
-      "c": 71.5,
+      "c": 72.9,
       "s": "合格未入選"
      },
      {
       "t": "8299.TWO",
       "n": "群聯",
-      "c": 63.0,
+      "c": 67.0,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
       "t": "2337.TW",
       "n": "旺宏",
-      "c": 56.5,
+      "c": 58.1,
       "s": "資料不足，無法估值"
+     }
+    ]
+   },
+   {
+    "id": "ai_servers",
+    "name": "AI 伺服器與組裝",
+    "rank": 9,
+    "focus": false,
+    "score": 56.0,
+    "parts": {
+     "news": 80.0,
+     "mom": 53.0,
+     "fund": 27.0
+    },
+    "ret_1m": -0.1745,
+    "n_news": 33,
+    "sent": 0.02,
+    "tags": [
+     "市場焦點",
+     "新聞升溫"
+    ],
+    "risk": "雲端大廠資本支出循環、毛利率偏低、客戶集中、庫存與零組件缺料",
+    "heads": [
+     {
+      "title": "勤誠明年衝刺機櫃版圖 - UDN",
+      "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE5UbDhrTzN3UmxfOHoxV3QyRGVrRlptVFNvTVZydTBFWmRYd2wzaGpyWlpFbThHbkQwV1ZEMUE3N3RYSUZDR3lUWHE1SjRCN0k30gFWQVVfeXFMTVNuWWx5V2VhNjhUbWhfeTRLc2k5S1RzVlhDV0pmamdkZ3pVMTB1N2xuV2pkV1VFcUpLbnkyQ1RTRkVQcDd2MmVlNm1UVGlndUVKaWd4TVE?oc=5",
+      "source": "聯合新聞網 股市 (via Google News)"
+     },
+     {
+      "title": "AI資料中心排擠記憶體供給負面效應浮現- 產業 - 工商時報",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBtNl9CVXhIWC1YVE5KdGMtYjVLWXJSZ1RYbEJfbkxzQU9DVzZycUFtb2xsdGRYd0ZzRVhPeWZwcnFZdHBuMDlOdktmZzRORHdOQXA0MlVJVndDZThUR2pZ?oc=5",
+      "source": "工商時報 (via Google News)"
+     },
+     {
+      "title": "美多州資料中心恐生變 費半大跌12.25% - 中央社 CNA",
+      "link": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE80UmlsM0UwWFhJaV8xeTRHMVN2aWlFNm9ncVF0ZzlfSmZuSjUzdUdmRExNWnN1Wk5sdmphVEY2V0pSakpkSW8wR0NwUERNbjFQNXRn?oc=5",
+      "source": "中央社 財經 (via Google News)"
+     }
+    ],
+    "members": [
+     {
+      "t": "2317.TW",
+      "n": "鴻海",
+      "c": 57.0,
+      "s": "財務品質不足"
+     },
+     {
+      "t": "6669.TW",
+      "n": "緯穎",
+      "c": 55.1,
+      "s": "財務品質不足"
+     },
+     {
+      "t": "3231.TW",
+      "n": "緯創",
+      "c": 54.9,
+      "s": "財務品質不足"
+     },
+     {
+      "t": "2382.TW",
+      "n": "廣達",
+      "c": 52.4,
+      "s": "財務品質不足"
+     },
+     {
+      "t": "2376.TW",
+      "n": "技嘉",
+      "c": 51.1,
+      "s": "財務品質不足"
+     },
+     {
+      "t": "2356.TW",
+      "n": "英業達",
+      "c": 46.2,
+      "s": "各估值方法分歧過大"
      }
     ]
    },
@@ -3155,45 +3125,85 @@
     "name": "國防與航太",
     "rank": 10,
     "focus": false,
-    "score": 42.3,
+    "score": 44.7,
     "parts": {
-     "news": 53.0,
+     "news": 60.0,
      "mom": 47.0,
      "fund": 20.0
     },
     "ret_1m": -0.1738,
-    "n_news": 16,
-    "sent": -0.03,
+    "n_news": 13,
+    "sent": -0.05,
     "tags": [],
     "risk": "預算與政治週期、專案延遲、題材消退後評價回落",
     "heads": [
      {
-      "title": "切削刀具產業論壇登場 聚焦航太加工、刀具技術與AI智慧製造 | 產業動態 | 商情 - 經濟日報",
-      "link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1sZk83SkVlN0ZqLUswcXJsNmRGZEtkUnN3ODBya2VyQkgyeXdqQmxZY0ZkTE5HMFhXdmJfY2toZWg3bHJCenIzX3ZkMHNMLXFwcVYwYnJqaGk4SFk?oc=5",
-      "source": "經濟日報 證券 (via Google News)"
-     },
-     {
-      "title": "切削刀具產業論壇登場聚焦航太加工、刀具技術與AI智慧製造- 商情 - 工商時報",
-      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE00Tk9OR2x1ano1M1dpWlpCNnEzbGFiOFFNeXhRT2lLNDBkOTRzSW45WTk3c2VhU09yTHd1Y1JIejNBNkw2ZG1fa01lbGliNjRSbjVRWUwteEYwSHdYbFlV?oc=5",
-      "source": "工商時報 (via Google News)"
-     },
-     {
-      "title": "國防科研AI治理！資策會助中科院通過ISO/IEC 42001驗證 - 中央社 CNA",
-      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1lVl84RGpmcWNyMTdoMllGMFNCTTh1NkRPbXYzZHQzZWM0WFZ6RU1lU25LWlNRZ2JieEM0VW1xVVVpYW10WXdVVDdOZXVCeWlCRHpUZDNEQUpvZw?oc=5",
-      "source": "中央社 財經 (via Google News)"
+      "title": "〈熱門股〉東友無人機取得臺銀共同供應契約 周漲逾1成 - 鉅亨網",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFAzVVJlT2RfV0tzMVQ4OE9tS0dHakEwODBfOUlRcFMwQXg1TVZEbWRiZ3BlN0dYejI1ZU5JNDl4N3dFdm5LbVZ3S2VGNlI3M0k?oc=5",
+      "source": "鉅亨網 台股 (via Google News)"
      }
     ],
     "members": [
      {
       "t": "2645.TW",
       "n": "長榮航太",
-      "c": 62.3,
+      "c": 62.8,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "2634.TW",
       "n": "漢翔",
-      "c": 38.5,
+      "c": 40.5,
+      "s": "各估值方法分歧過大"
+     }
+    ]
+   },
+   {
+    "id": "cooling_power",
+    "name": "散熱、電源與資料中心基礎建設",
+    "rank": 11,
+    "focus": false,
+    "score": 33.7,
+    "parts": {
+     "news": 20.0,
+     "mom": 33.0,
+     "fund": 53.0
+    },
+    "ret_1m": -0.3767,
+    "n_news": 2,
+    "sent": 0.37,
+    "tags": [],
+    "risk": "客戶認證/規格變動、題材過熱導致評價偏高、同業價格競爭",
+    "heads": [
+     {
+      "title": "AI機房為什麼需要備援電池？AES、新盛力營收創高背後的BBU商機 - 口袋證券",
+      "link": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE52S1BJdlJBSU9LLVU3Qnd2VjRVbVlKc293bEJCSjJZblFnVGFzUDhGVVdzMGdMdmxVWEdaUkxnZFFvaGJlYy1ieUJGdE5JYU5OUWhQeFFpS1ZyMkNBY0daMk1tdjFpZw?oc=5",
+      "source": "Google News 台股"
+     }
+    ],
+    "members": [
+     {
+      "t": "3017.TW",
+      "n": "奇鋐",
+      "c": 63.2,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "2308.TW",
+      "n": "台達電",
+      "c": 60.4,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "3324.TWO",
+      "n": "雙鴻",
+      "c": 56.3,
+      "s": "波動過高（年化 > 70%）"
+     },
+     {
+      "t": "2301.TW",
+      "n": "光寶科",
+      "c": 53.3,
       "s": "各估值方法分歧過大"
      }
     ]
@@ -3201,26 +3211,26 @@
    {
     "id": "pcb_materials",
     "name": "PCB、載板與先進材料",
-    "rank": 11,
+    "rank": 12,
     "focus": false,
-    "score": 35.0,
+    "score": 30.3,
     "parts": {
-     "news": 40.0,
+     "news": 27.0,
      "mom": 7.0,
      "fund": 73.0
     },
     "ret_1m": -0.413,
-    "n_news": 7,
-    "sent": -0.12,
+    "n_news": 5,
+    "sent": -0.28,
     "tags": [
      "潛力（基本面強、股價尚未過熱）"
     ],
     "risk": "原物料（銅、玻纖）價格波動、高階規格認證不確定、價格競爭",
     "heads": [
      {
-      "title": "受惠高階 CCL 需求 法人點名看好這兩檔千金股 - UDN",
-      "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE80X2xTUUxVNnZPY0MyeVpvb3VqVHpfVUlrZGZId2FTOUdfZ0VzYWdpQkRDQTMzN1JBN0ZzXzFFTDNyVUEyZVBYcVlCQnpHdjhp0gFWQVVfeXFMTm1uU3hicFZTVmQ4cXc3d2RuZUxpeUtzMzlzUTQtZzZpOWNaaFRrNDJZTkRRVW5MQlJhc0FoLTV6bEtNMzA4OU9GX0NkQUR5UVREZE50SVE?oc=5",
-      "source": "聯合新聞網 股市 (via Google News)"
+      "title": "元太攜手台虹攻PTFE CCL材料 砸27.8億元買華紙觀音廠區 - 鉅亨網",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1nR1EwUjk1UC1LUVVWT3ZJYjBtQmVfck4zOTdJZHFfV1ZOTzNQb2J3dFd5bGtnTFNGWlIxTW9FZFdaNWh5VXQ0TmJUVElJOGc?oc=5",
+      "source": "鉅亨網 台股 (via Google News)"
      },
      {
       "title": "【11/06 產業即時新聞】CCL銅箔基板即時大跌亮燈，AI高階材料受美股科技股重挫拖累 - CMoney投資網誌",
@@ -3237,110 +3247,237 @@
      {
       "t": "2383.TW",
       "n": "台光電",
-      "c": 61.8,
+      "c": 62.4,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
       "t": "3037.TW",
       "n": "欣興",
-      "c": 58.6,
+      "c": 57.7,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
       "t": "2368.TW",
       "n": "金像電",
-      "c": 57.6,
+      "c": 56.2,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
       "t": "6274.TWO",
       "n": "台燿",
-      "c": 53.4,
+      "c": 54.7,
       "s": "波動過高（年化 > 70%）"
      },
      {
       "t": "8046.TW",
       "n": "南電",
-      "c": 52.8,
+      "c": 53.6,
       "s": "波動過高（年化 > 70%）"
+     }
+    ]
+   },
+   {
+    "id": "power_grid",
+    "name": "電力設備、電網與能源轉型",
+    "rank": 13,
+    "focus": false,
+    "score": 28.7,
+    "parts": {
+     "news": 47.0,
+     "mom": 27.0,
+     "fund": 7.0
+    },
+    "ret_1m": -0.2209,
+    "n_news": 6,
+    "sent": 0.26,
+    "tags": [],
+    "risk": "政策補貼變動、專案交期與成本、題材性評價偏高",
+    "heads": [
+     {
+      "title": "《國際產業》歐盟電網投資2030年持續成長荷蘭最強勁- 國際 - 工商時報",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5lTnRGa3hwUldOUFRwTnJXTlB0enpNUkVucEVCNld3b2pnbmFITXpRX0ZuaTVUamxFa29TNldoaWhRYkZjekVTNVZlb2htOFdhU3YyMlJJMkhXN0RKdVM4?oc=5",
+      "source": "工商時報 (via Google News)"
+     },
+     {
+      "title": "台化:公告本公司參與投資成立台化麥電再生能源股份有限公司 - 鉅亨網",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9UbmhCNDBRNzc2VEVacFB1dnhNVldpYXVjcmJReGNuaVV6Sy1yMFZ5V3JIMkhIdEJWcWt4Ri1qQV95aUxrRFIwR3FXbzdVSGc?oc=5",
+      "source": "鉅亨網 台股 (via Google News)"
+     },
+     {
+      "title": "美股開盤／費半狂飆逾5%　台積電ADR強彈近8%",
+      "link": "https://tw.news.yahoo.com/%E7%BE%8E%E8%82%A1%E9%96%8B%E7%9B%A4-%E8%B2%BB%E5%8D%8A%E7%8B%82%E9%A3%86%E9%80%BE5-%E5%8F%B0%E7%A9%8D%E9%9B%BBadr%E5%BC%B7%E5%BD%88%E8%BF%918-144700839.html",
+      "source": "Yahoo奇摩股市 台股"
+     }
+    ],
+    "members": [
+     {
+      "t": "1519.TW",
+      "n": "華城",
+      "c": 53.7,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "1504.TW",
+      "n": "東元",
+      "c": 53.4,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "1513.TW",
+      "n": "中興電",
+      "c": 50.2,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "1503.TW",
+      "n": "士電",
+      "c": 42.2,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "1514.TW",
+      "n": "亞力",
+      "c": 39.0,
+      "s": "各估值方法分歧過大"
      }
     ]
    },
    {
     "id": "robotics_auto",
     "name": "機器人、自動化與電動車",
-    "rank": 12,
+    "rank": 14,
     "focus": false,
-    "score": 32.3,
+    "score": 27.7,
     "parts": {
-     "news": 13.0,
+     "news": 0.0,
      "mom": 40.0,
      "fund": 47.0
     },
     "ret_1m": -0.2039,
-    "n_news": 3,
+    "n_news": 2,
     "sent": 0.0,
     "tags": [],
     "risk": "題材先行、獲利尚未驗證、電動車需求與價格戰",
     "heads": [
      {
-      "title": "南大應數系培訓人工智慧機器人種子教師 深化科技師資培育 - 中央社 CNA",
-      "link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE55VDhtT0U4UVZWYmZrT25EVVJXNEVfczRhbndDTTltVlJpak5RU29pbGU4QjJvMWNWaGlpNFh0c2tpUzhjYUxRMHdpU1dsbFRfeHprcml3?oc=5",
-      "source": "中央社 財經 (via Google News)"
+      "title": "ARK Invest CEO Cathie Wood: 'Robotaxi has hit escape velocity, delighting consumers' - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNdWJXTXpxaUhSLWxQQ3Q0MEM5ZHFaMVdacXFtaFdPRUxja19TUUNpMmw5a0lMbVJiNHBMLWJoRmtreERGc09oVlhlRXVSdjZxcjNUZ21WbDk3Mnhnci03TTgzNkFCU250ME1IRjB5MHpyX3RFQWlVeVMzOUYxbmRNdXFjUDgwaGZId3hjcEVNaTZqckJremE5N1ZDaDYzRzdQMWRwQnV4dGMyTU5KMmhsdVhkVlA5NE91ak5HQlMtb0Y?oc=5",
+      "source": "CNBC Markets (via Google News)"
      },
      {
-      "title": "王興興：2027機器人產業迎轉折- 日報 - 工商時報",
-      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9XYWRETG00TUdJb2dZMzFKUC1ITVVaSG9qUkRJOHplWXpwdzlLT3JBb01FeURMMWZSNmp4a0s1RGZ3a1Ruc1ZxREFRUDI4dG40YnVSYUh1SEJnOTZSZWpZ?oc=5",
-      "source": "工商時報 (via Google News)"
+      "title": "EV Truck Maker Harbinger Raises $240 Million for Expansion - Bloomberg.com",
+      "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOZ2xYc0RMSDE4enRqMkFFZng4VjNZUTFRMnFteTh0Qzd6Zm1KYUJyTUpBcFVPdHd0dUhqWExiWWhSUFQybm1sbXpUeTBWN3d5WFZLQ09hNThSWDA1OGVXTmdRVm1Bb0hDbVVwVDd4ZXQxSDRVTV8xYVNDTm9lQmNXay1lNFBrai1HSWhROTh6UVFSV2ZGd0gwSjN0X0Uxd0R0akF3U09xdzVMVy1tbFFKdVhR?oc=5",
+      "source": "Bloomberg Markets (via Google News)"
      }
     ],
     "members": [
      {
-      "t": "2360.TW",
-      "n": "致茂",
-      "c": 61.7,
-      "s": "波動過高（年化 > 70%）"
-     },
-     {
       "t": "1590.TW",
       "n": "亞德客-KY",
-      "c": 61.2,
+      "c": 60.3,
       "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "2360.TW",
+      "n": "致茂",
+      "c": 60.1,
+      "s": "波動過高（年化 > 70%）"
      },
      {
       "t": "2207.TW",
       "n": "和泰車",
-      "c": 52.4,
+      "c": 52.5,
       "s": "流動性不足"
      },
      {
       "t": "2049.TW",
       "n": "上銀",
-      "c": 41.5,
+      "c": 40.6,
       "s": "總經高風險：一般股需更大安全邊際"
      },
      {
       "t": "1536.TW",
       "n": "和大",
-      "c": 14.2,
+      "c": 13.2,
       "s": "市值過小"
+     }
+    ]
+   },
+   {
+    "id": "networking_optics",
+    "name": "網通與光通訊",
+    "rank": 15,
+    "focus": false,
+    "score": 19.7,
+    "parts": {
+     "news": 13.0,
+     "mom": 0.0,
+     "fund": 60.0
+    },
+    "ret_1m": -0.4109,
+    "n_news": 2,
+    "sent": -0.19,
+    "tags": [],
+    "risk": "技術路線變動（CPO 取代可插拔）、客戶集中、題材股波動大",
+    "heads": [
+     {
+      "title": "就市論勢／先進製程、光通訊 可低接 - UDN",
+      "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE5SLWVfRlZsc1AzTldtU2ZqYWt2dDlkSlpvdjNCNmRjRXFwZThHRVFld2pOY0ZBRXRubll1MVhVZXJQUl9mdkdiYVB6RmJ6Y1F20gFWQVVfeXFMUGFfRURKSDN2WmtWRDg4VFJqaFN0LVVUS0JlUm9wZFNKdlVkc2lDd0d4TGZrMzhkYzBPMkpJeTYwWEd2cjFHN1NYTE1jbTlpZ0pGM3oxaWc?oc=5",
+      "source": "聯合新聞網 股市 (via Google News)"
+     },
+     {
+      "title": "【11/06 產業即時新聞】網通設備族群殺聲隆隆重挫9.82%，高本益比AI概念股遭多頭全面棄守 - CMoney投資網誌",
+      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPRUdaNmxmYTBQOThxNDk0eGd6dGFnQnppa1QwWXJRYWVDS2hnOE5KemFWcFJBOHVKODBWN2JEbmV4WWJ4YXRVQTZmT216NGwtOXBsYjJUaWVaSXpWaEF5V0V1S1pSVWF5NU5sRE1tZUxaUVlRbGVKbDZJUXd6Sjgzbm0tcGZGeEV6WWlfaHZn?oc=5",
+      "source": "Google News 台股"
+     }
+    ],
+    "members": [
+     {
+      "t": "2345.TW",
+      "n": "智邦",
+      "c": 57.8,
+      "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
+     },
+     {
+      "t": "6442.TW",
+      "n": "光聖",
+      "c": 57.7,
+      "s": "資料不足，無法估值"
+     },
+     {
+      "t": "3081.TWO",
+      "n": "聯亞",
+      "c": 51.0,
+      "s": "波動過高（年化 > 70%）"
+     },
+     {
+      "t": "4979.TWO",
+      "n": "華星光",
+      "c": 48.6,
+      "s": "波動過高（年化 > 70%）"
+     },
+     {
+      "t": "3363.TWO",
+      "n": "上詮",
+      "c": 27.8,
+      "s": "波動過高（年化 > 70%）"
      }
     ]
    },
    {
     "id": "semi_equipment",
     "name": "半導體設備與材料",
-    "rank": 13,
+    "rank": 16,
     "focus": false,
-    "score": 27.0,
+    "score": 17.7,
     "parts": {
-     "news": 33.0,
+     "news": 7.0,
      "mom": 13.0,
      "fund": 40.0
     },
     "ret_1m": -0.3906,
-    "n_news": 4,
-    "sent": 0.13,
+    "n_news": 3,
+    "sent": -0.21,
     "tags": [],
     "risk": "出口管制（中國營收占比）、晶圓廠資本支出循環",
     "heads": [
@@ -3353,219 +3490,37 @@
       "title": "【11/06 產業即時新聞】半導體設備族群重挫大跌，高價指標股遭提款、盤面湧現停損賣壓 - CMoney投資網誌",
       "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNUTJMbVppZ3phSVJ1QUNMSDl0YThhbkJEbTVsT2VSMndhSWc3TXFtWm11NTBzc2VfNi1JZmVGMkl3VU5xMEV0d2hva1JQTXl3Ny10RE5FRFlGRHN2TmxTdC1uX3VnZnE1UHBQZXo3b0lzTkVtallGalBibnUzUEV5cVczaU5zMmtiTENkMTV3?oc=5",
       "source": "Google News 台股"
-     },
-     {
-      "title": "日月光砸1,237億擴產 衝刺高階封測產能 - 經濟日報",
-      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1INjN0MTJob3NLeEVjSG1wTEM0UElBZ1NCX1VHRndFdnVsM2hBTElnYlQ4anQzQncxVEJONXZPd1RTUjNXam8tZ01OQzl1c0UzY3pkV3NETllsZ9IBX0FVX3lxTE0xVVB0MGVDSVRTZkpyYm5kV0JUVVBFblJOdHJ3S19Ddm5sOTg5ZkhnYlRXQVk4dnZkUXZZRGV2aHQyTlNjOVl1M1NlOWdTODl1aG5WTVNnZTZXZVEza0sw?oc=5",
-      "source": "經濟日報 證券 (via Google News)"
      }
     ],
     "members": [
      {
       "t": "2404.TW",
       "n": "漢唐",
-      "c": 62.4,
+      "c": 60.5,
       "s": "合格未入選"
      },
      {
       "t": "6196.TW",
       "n": "帆宣",
-      "c": 55.3,
+      "c": 53.5,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "1560.TW",
       "n": "中砂",
-      "c": 49.3,
+      "c": 47.5,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "3131.TWO",
       "n": "弘塑",
-      "c": 48.8,
+      "c": 46.9,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "3583.TW",
       "n": "辛耘",
-      "c": 47.4,
-      "s": "各估值方法分歧過大"
-     }
-    ]
-   },
-   {
-    "id": "cooling_power",
-    "name": "散熱、電源與資料中心基礎建設",
-    "rank": 14,
-    "focus": false,
-    "score": 26.7,
-    "parts": {
-     "news": 0.0,
-     "mom": 33.0,
-     "fund": 53.0
-    },
-    "ret_1m": -0.3767,
-    "n_news": 2,
-    "sent": -0.4,
-    "tags": [],
-    "risk": "客戶認證/規格變動、題材過熱導致評價偏高、同業價格競爭",
-    "heads": [
-     {
-      "title": "【11/05 產業即時新聞】電子中游-散熱零組件盤中慘遭重挫，高價指標股健策跌停、雙鴻崩跌逾九成引發多殺多 - CMoney投資網誌",
-      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPRDF0c0V5M2JuWVdaRnIxbkI5b240ZFBqdTI2amNsN2JfVjZZYXFJRGtqa2hfSmZ0VnNsZlF3UEFqMnZ5c2NDelQyRElVR0FPRjlfRTZFWGtuWWhwOVNOek95Z1ZoTDFFVlFYZ2tXV2dqRS1kdFFVMzhId01tUVFDNV9QWkNmSU5CZGZHb3ZR?oc=5",
-      "source": "Google News 台股"
-     }
-    ],
-    "members": [
-     {
-      "t": "3017.TW",
-      "n": "奇鋐",
-      "c": 61.8,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "2308.TW",
-      "n": "台達電",
-      "c": 59.3,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "3324.TWO",
-      "n": "雙鴻",
-      "c": 53.3,
-      "s": "波動過高（年化 > 70%）"
-     },
-     {
-      "t": "2301.TW",
-      "n": "光寶科",
-      "c": 51.9,
-      "s": "各估值方法分歧過大"
-     }
-    ]
-   },
-   {
-    "id": "networking_optics",
-    "name": "網通與光通訊",
-    "rank": 15,
-    "focus": false,
-    "score": 24.3,
-    "parts": {
-     "news": 27.0,
-     "mom": 0.0,
-     "fund": 60.0
-    },
-    "ret_1m": -0.4109,
-    "n_news": 4,
-    "sent": -0.35,
-    "tags": [],
-    "risk": "技術路線變動（CPO 取代可插拔）、客戶集中、題材股波動大",
-    "heads": [
-     {
-      "title": "【11/06 產業即時新聞】網通設備族群殺聲隆隆重挫9.82%，高本益比AI概念股遭多頭全面棄守 - CMoney投資網誌",
-      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPRUdaNmxmYTBQOThxNDk0eGd6dGFnQnppa1QwWXJRYWVDS2hnOE5KemFWcFJBOHVKODBWN2JEbmV4WWJ4YXRVQTZmT216NGwtOXBsYjJUaWVaSXpWaEF5V0V1S1pSVWF5NU5sRE1tZUxaUVlRbGVKbDZJUXd6Sjgzbm0tcGZGeEV6WWlfaHZn?oc=5",
-      "source": "Google News 台股"
-     },
-     {
-      "title": "就市論勢／先進封測、光通訊可留意| 股市要聞| 股市 - UDN",
-      "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE5JWkRoekFLMWsxcDlFUUt5QUtOQTRZbmV4OU82XzJJZDRsZU9EVzRUNjc1ZkZfcVRZZ2xNY0psRDVGUmVEbFRSTF9rV0lkVC1K?oc=5",
-      "source": "聯合新聞網 股市 (via Google News)"
-     },
-     {
-      "title": "【11/05 產業即時新聞】網通設備族群重挫大跌，高價AI概念股與銅箔基板同步遭遇空方狙擊 - CMoney投資網誌",
-      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPM2NGVHdPOHM3Y09xUFNOM0Y1MWpWNmQwQ1dtSlVOR0JOYTBFenRBRlF2UHFKeTEyZ2kyYTM0YWZublVqYVp6bEo4SkpBNXNkTUhGbmwwRmtJM0Z1TEt6RWRVUHRacDNYbGlUT3hDMmR1UFh3UkFSb0pJeXJrUklRWGZiRWFhMmpVNTlTUWlB?oc=5",
-      "source": "Google News 台股"
-     }
-    ],
-    "members": [
-     {
-      "t": "2345.TW",
-      "n": "智邦",
-      "c": 57.0,
-      "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
-     },
-     {
-      "t": "6442.TW",
-      "n": "光聖",
-      "c": 56.9,
-      "s": "資料不足，無法估值"
-     },
-     {
-      "t": "3081.TWO",
-      "n": "聯亞",
-      "c": 51.9,
-      "s": "波動過高（年化 > 70%）"
-     },
-     {
-      "t": "4979.TWO",
-      "n": "華星光",
-      "c": 49.5,
-      "s": "波動過高（年化 > 70%）"
-     },
-     {
-      "t": "3363.TWO",
-      "n": "上詮",
-      "c": 28.7,
-      "s": "波動過高（年化 > 70%）"
-     }
-    ]
-   },
-   {
-    "id": "power_grid",
-    "name": "電力設備、電網與能源轉型",
-    "rank": 16,
-    "focus": false,
-    "score": 14.7,
-    "parts": {
-     "news": 7.0,
-     "mom": 27.0,
-     "fund": 7.0
-    },
-    "ret_1m": -0.2209,
-    "n_news": 5,
-    "sent": 0.0,
-    "tags": [],
-    "risk": "政策補貼變動、專案交期與成本、題材性評價偏高",
-    "heads": [
-     {
-      "title": "Energy & Utilities Roundup: Market Talk - WSJ",
-      "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBXeUxxbXExTzE4MXFITFBYNmhsbTRVUmRWSHcxVF85TnpnbFRpai1FRGZSS01jNVRsMVNqYW5QcWFJelM3bGdqMFpmU3VQY2s4M2VsYkVJOXVYUEYtYTN3bkEwTEtmNnp0MFpsc3laZld5TFJxRDZlMnFZWUdPcEU?oc=5",
-      "source": "WSJ Markets (via Google News)"
-     },
-     {
-      "title": "Energy & Utilities Roundup: Market Talk",
-      "link": "https://www.wsj.com/business/energy-utilities-roundup-market-talk-1d720229?mod=rss_markets_main",
-      "source": "MarketWatch Markets"
-     }
-    ],
-    "members": [
-     {
-      "t": "1519.TW",
-      "n": "華城",
-      "c": 50.9,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "1504.TW",
-      "n": "東元",
-      "c": 50.6,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "1513.TW",
-      "n": "中興電",
-      "c": 44.9,
-      "s": "市值過小"
-     },
-     {
-      "t": "1503.TW",
-      "n": "士電",
-      "c": 39.4,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "1514.TW",
-      "n": "亞力",
-      "c": 36.2,
+      "c": 45.5,
       "s": "各估值方法分歧過大"
      }
     ]
@@ -3577,59 +3532,64 @@
     "name": "生技醫療與減重藥",
     "rank": 1,
     "focus": true,
-    "score": 77.2,
+    "score": 72.8,
     "parts": {
-     "news": 44.0,
+     "news": 31.0,
      "mom": 100.0,
      "fund": 88.0
     },
-    "ret_1m": 0.115,
-    "n_news": 8,
-    "sent": 0.05,
+    "ret_1m": 0.1149,
+    "n_news": 6,
+    "sent": 0.0,
     "tags": [],
     "risk": "臨床/審批失敗、藥價政策（美國定價改革）、專利懸崖",
     "heads": [
      {
-      "title": "HP Inc. Stock Rises After Pharma Heavyweight Named CEO - Barron's",
-      "link": "https://news.google.com/rss/articles/CBMickFVX3lxTE1EVXdiaUltMzczYkt1aXU3Vm1SRWxPNFNfVzFSLUVmRmJPQjdfY1hjay1kZEEyTTNxcVdoYk9sSFJXdGN4blliSkh6SDZDUzNzVjZMdGRxTGlYaG1zMWRsalFxVDhXUkE1dThBbC1wa2RWUQ?oc=5",
-      "source": "Barron's (via Google News)"
+      "title": "台股失守4萬點 電信生技自行車成資金避風港 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5QLUktcTI1MDZ1d1NUeTZpOTBnQ1NjZW1CV3JxNVR2NS1PTkxDQjlUWXo0Ymc5RzdnMnNUQmpyb0lKSk43clktbDdYZWwzVDhZY014emM4cE00Z9IBX0FVX3lxTFBjLWlDUjFNbGtjcm5qUGdTeEh5bVFYWVFQZTRHdklrNkJpVnRvNnM2bC1JQ1RpQ2VXSV9SVUNZTTVHOWNnT3J2SWE0cDhldVZqR2JROVpsMi1fTXkybjhr?oc=5",
+      "source": "經濟日報 證券 (via Google News)"
+     },
+     {
+      "title": "台股跌1,873點史上第四大 生技、資服留口氣這檔閃青紅燈- 證券 - 工商時報",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1TcDgyZzVuZnZCeWFYTnBWX01oM09RVHgxTHZtT2I1eGU0UXFlRWNYSTZndXdCV243dGI1ZWNXeVFNNTdadjgwTnZHYTQ2NjB3ckhybXVqdXNwbURrbXJn?oc=5",
+      "source": "工商時報 (via Google News)"
      }
     ],
     "members": [
      {
       "t": "ABBV",
       "n": "AbbVie",
-      "c": 79.3,
+      "c": 78.1,
       "s": "入選"
      },
      {
       "t": "REGN",
       "n": "Regeneron",
-      "c": 72.7,
+      "c": 72.5,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "LLY",
       "n": "Eli Lilly",
-      "c": 71.7,
+      "c": 70.9,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "ISRG",
       "n": "Intuitive Surgical",
-      "c": 60.0,
+      "c": 58.5,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "VRTX",
       "n": "Vertex",
-      "c": 58.7,
-      "s": "上檔未達利率門檻（7.8%）"
+      "c": 57.2,
+      "s": "上檔未達利率門檻（7.9%）"
      },
      {
       "t": "NVO",
       "n": "Novo Nordisk",
-      "c": 55.5,
+      "c": 52.3,
       "s": "入選"
      }
     ]
@@ -3639,15 +3599,15 @@
     "name": "AI 伺服器與組裝",
     "rank": 2,
     "focus": true,
-    "score": 74.1,
+    "score": 71.9,
     "parts": {
-     "news": 88.0,
+     "news": 81.0,
      "mom": 50.0,
      "fund": 94.0
     },
-    "ret_1m": -0.4122,
-    "n_news": 47,
-    "sent": 0.0,
+    "ret_1m": -0.3748,
+    "n_news": 33,
+    "sent": -0.0,
     "tags": [
      "市場焦點",
      "潛力（基本面強、股價尚未過熱）",
@@ -3656,56 +3616,130 @@
     "risk": "雲端大廠資本支出循環、毛利率偏低、客戶集中、庫存與零組件缺料",
     "heads": [
      {
-      "title": "AI data center firm IREN delays Microsoft AI deliveries, plans $15 billion spending push - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPSnlxQ1JoQmdtMWZ4UzhHRWJacmNRTGNCeDJmTWRRV2xpdU9xUzY2MzhVSklqMkNxeG93QVNnRUZCYUxvVUNBaHVta2lPS2VxMDlxQnZvandHTXZQVk1LNmVTakZxTzJjcHFGbjBwUHd0ajBwdl9HUERfaEsyWGNicU9yeklKMldtNldLMk5rNWpRNnMyWXY1QUNVa3lLU21tcXEwbXUzMFUzTTZtNnRN?oc=5",
-      "source": "Reuters Business (via Google News)"
+      "title": "Cramer’s week ahead: AI data center stocks face another hurdle and so does the Fed - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTE5DRzNwcDZBTUtBbnFFZUZyZEJFQjRROGR1SjBkcEdPTGdpeUxMbWltUGN3VWJQV3JJelRCQ3o1emNWZHZZT2k0dUgwTFRyTkRhMGJ5ZXA0LW4zVkxSWTZGMURjR29OQ0V5TWlEUjUwbWRoZ3VHdVFweg?oc=5",
+      "source": "CNBC Markets (via Google News)"
      },
      {
-      "title": "SpaceX, Tesla extend losses as midterm results cloud data center, merger outlook - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMizwFBVV95cUxQaXI0TWJjeldpYmNUM0tQR3NKcEh6bGtsaWUzOV9XQnQyaFVnNlNuaEcxakNkdjd4MzBJR2NoMWdua1RaNEVfSzNjOGRCVU5vVmc3MXRYdlkzVEpYV3JZR2JMYVVSMTJ5ZmkxY2VYM2RSWm1nb005RENwSk93NTcxa0U5X1lrMUw1cHRFV3c4b3lhc2doNHFJM012TE1yN1N5ZEo2em9pSExVcHgtQ2h1cURZOE5taVF6aFVKZU5GWVpHX0FDSGpGYmppMFUtUXM?oc=5",
-      "source": "Reuters Business (via Google News)"
+      "title": "NEC Director Kevin Hassett: Any locality that doesn't want a data center doesn't have to allow it - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxOTEZMSHBldWNidUFJNTBkbExMVGdUZGoyZGJERE1YOVJ5aWxEQ1FiNE5tMTF4Z0VTZXNTZGdEalpYcGZGdGYyYjl1ZWZ5d1lGYTh3bXBGcThYeTVBdUMzWXFicTUwUlVxTFU0STBKMG5sRnFScGRMWER3S0htdU52bUFUcElsRXBYZThvZTZHbnR5TmV1N2k4bUwtVnJ2T0Y3Nng3ZkpVUmFrbURlZnA1SlN1bWxUcTAyVXU0WkdrRmJaQWhJeVpkaGswM3AzRngxTUE?oc=5",
+      "source": "CNBC Markets (via Google News)"
      },
      {
-      "title": "Microsoft tightens oversight of neocloud data center projects, Bloomberg News reports - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPc0lzRWp3SlczTDBjS2gyYnZPX194TnVxQVZCTWdaTTlScTVVT2dYZU55dGg1eGQ3LXNySlIzaDZ2NkNEMXktTVotakRNZ215bUwzS041X2k4dGFHaEw5VDVLYVpJb3JPYnBWVFNVTkxHTk5zZGhYd01CdmVPazM5X1I3X2xvTGg2Tk9HS3RMQUp4cFRZV2lvdXR6dVAtQVozaWgxMFRrV0N5NDFib3pydHhVdS1ZQWJ1cWc?oc=5",
-      "source": "Reuters Business (via Google News)"
+      "title": "Data center double-down: Hassett says blue wave won't stop AI build-out - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5MN2JaaE9uSE9UZnc4UEszM0tUUTd6TkZ0Yzh3MGx3NzEtMjhuLThkcWxuVm5HanF6OGtuN3FUV0RUREl5S05UWDhuQlh3b2xPOUJLNGpTMTNUaFBuR0FzYkk2SU5pVVBoSUJ5YjktU2twX2J2NWhEQnhn0gF_QVVfeXFMT2QxN01wcXB0ZU1iVFh6TU9HaHVfN0FVT2duWjRkc2l0MHVQNGJmd29QLV9aVk9iSk9kRHZKUF9xbUEtdUFISEhfcFQxa29va0d0dWx2amhsQ1g1UDB2TkNTcWFzRmZDejFSYUllazNSRE15MU1NR2FzcUZKWklwbw?oc=5",
+      "source": "CNBC Markets (via Google News)"
      }
     ],
     "members": [
      {
       "t": "HPE",
       "n": "Hewlett Packard Enterprise",
-      "c": 64.9,
+      "c": 65.1,
       "s": "波動過高（年化 > 70%）"
      },
      {
       "t": "DELL",
       "n": "Dell Technologies",
-      "c": 63.7,
+      "c": 62.9,
       "s": "波動過高（年化 > 70%）"
      },
      {
       "t": "SMCI",
       "n": "Super Micro",
-      "c": 59.8,
+      "c": 58.2,
       "s": "波動過高（年化 > 70%）"
+     }
+    ]
+   },
+   {
+    "id": "financials",
+    "name": "金融與支付",
+    "rank": 3,
+    "focus": true,
+    "score": 70.9,
+    "parts": {
+     "news": 94.0,
+     "mom": 88.0,
+     "fund": 12.0
+    },
+    "ret_1m": 0.0576,
+    "n_news": 39,
+    "sent": 0.03,
+    "tags": [
+     "市場焦點"
+    ],
+    "risk": "利率與信用循環、監管資本要求、權益市場波動影響投資收益",
+    "heads": [
+     {
+      "title": "Investors settle with KPMG over Silicon Valley Bank collapse - Reuters",
+      "link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxNVHJkSk1vUXVDR3RpLURrZU9IRXhhN2Y2ZEdpbnlGRjV6UnJoeXpwVTJqUDZMVHgzdmM4eXJUSnRVd05aMk5rbHltTEczcTVwZmw0RnhoaVVmcW5TWkktWm8tVUpNaXB0VGhUNURZSko0Y0ZkR2ppRHhBRHVadlVpUUVDVXJRa01TLWZlTkNoczUzUHVYcTRXVjRBQV9BeVZGMU54LWFJX2RYRmZBNHhpSGp2cVJnaXpYMHBWVVdSZTl4ODh6V2J2ZHVrYw?oc=5",
+      "source": "Reuters Business (via Google News)"
+     },
+     {
+      "title": "Meet the High-Yield Dividend Stock Quietly Crushing the S&P 500. Here's Why It Has Room to Run. - Yahoo Finance",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPeE1acV82cXpLOTYzZ0NyVjJRbHQyRjhIOU1IQWc2MnNnNVRERktuMVVfcnhvNHNRV0JMdktRbUF3MVN3aHo2WHJVWURjQVBlYWQzY3JuQzIzTks3T3VmVHZ4QkpqTjdKYlJXRlk2aHhCcVZGMFVRMlc0cVpacWZyTllHbzMwVldyTF82dmpsYm1EQWZMY2UzOUVkTQ?oc=5",
+      "source": "Yahoo Finance (via Google News)"
+     },
+     {
+      "title": "With Interest Rates Rising, 3 TSX Dividend Stocks Retirees Can Count On for Monthly Income - Yahoo! Finance Canada",
+      "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQVlV0VzVqcmJqNHJwc2tndVJaWS1RTlc3RE1MLXV3alhIVlI0WUQzdWhFWGhESGVlUGVudmJ6dy1MWFotY2gxN0xQbGo1NEVvcERkVVhKa1FBM2ZobWZRM2VVMU50dXlxZGpnS0g5bzVqQTBKX2h5MXJ4SVdzU1NXSDhn?oc=5",
+      "source": "Yahoo Finance (via Google News)"
+     }
+    ],
+    "members": [
+     {
+      "t": "BRK-B",
+      "n": "Berkshire Hathaway",
+      "c": 67.6,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "V",
+      "n": "Visa",
+      "c": 65.0,
+      "s": "上檔未達利率門檻（7.9%）"
+     },
+     {
+      "t": "GS",
+      "n": "Goldman Sachs",
+      "c": 60.8,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "JPM",
+      "n": "JPMorgan",
+      "c": 59.4,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "MA",
+      "n": "Mastercard",
+      "c": 59.2,
+      "s": "上檔未達利率門檻（7.9%）"
+     },
+     {
+      "t": "MS",
+      "n": "Morgan Stanley",
+      "c": 54.4,
+      "s": "入選"
      }
     ]
    },
    {
     "id": "energy_materials",
     "name": "傳統能源與原物料",
-    "rank": 3,
+    "rank": 4,
     "focus": true,
-    "score": 73.4,
+    "score": 70.9,
     "parts": {
      "news": 75.0,
-     "mom": 75.0,
+     "mom": 69.0,
      "fund": 69.0
     },
-    "ret_1m": -0.0232,
-    "n_news": 22,
-    "sent": -0.05,
+    "ret_1m": -0.0318,
+    "n_news": 20,
+    "sent": -0.0,
     "tags": [
      "市場焦點",
      "成長動能"
@@ -3713,119 +3747,45 @@
     "risk": "商品價格波動、需求循環、地緣政治衝擊",
     "heads": [
      {
-      "title": "As high oil prices curb demand, fresh signs of glut appear - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQem82aUU3S0NZWXNNcXlreW9xS3J0UnpIcDNCWVdqS3NyclRxSUtWenpmMEhoNmp6amtNSG5ZYmpuMzc1TElxODVYTmVSZURrYjJsbVliVXlVSzNtM3J5TDBMNl9sQ0JSTmxKQ2RxVzc4RnMxX2lIZGp3Y3kwTFdrUndLZkFMN0JkN2xLTi02dDZjT0x1Wk0ySTMxZlpNZWRmX1F6ZDhR?oc=5",
-      "source": "Reuters Business (via Google News)"
-     },
-     {
-      "title": "ConocoPhillips boosts dividend after beating estimates on higher oil prices - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPWmVXLVh5bHBBQWh5ZkFmckpmSkRNMVB2UGZwaDFuYVc1TE93TVZKcjl4c1lPSjVQb1doc1pJdm11S01RTGtwTDRUblRGVWp2M3hrb2ZLakV3R0poTGRjcmRyOEI2M2hNOEJFVllydTcyQ043WFVSRURkREJvZWxtaWJmaDJNRllnc3lPZllyM1JtMEhnY09NLWRpZzNuQWt0YU1jTFpCMlQ2UG1ZQVVtYVF5dUlZZw?oc=5",
+      "title": "Soaring freight rates give US refiners edge as crude discounts widen - Reuters",
+      "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPSW1NSjFpQTdNeUIyY2JFVE5yTm1MS3F2NmZSOGk4ZGR1ZzA0dFJROTVHMVc4QzJOYXlBUHBYOEZuMlZlOFBlVkZkLXE1OEplanMtYTIwVkFmXy1pSlhTcHZfQ3Zha3V0R1FqcUNTV2xIT2l6Tk10d1BVNDhPc1JvOVZHMEx6Sk9rcC1ORktnZzNVTW1FM21wc2pPVlFMaVdoVlhlT3pjd0E1cXg1R0VvU2ZfMjMxd2ZY?oc=5",
       "source": "Reuters Business (via Google News)"
      },
      {
       "title": "Copper Moves Lower as US Election Undermines AI and Tariff Trade - Bloomberg.com",
       "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPWnlsdF9sNDNwY0VTbjBVa1QwUmFYZXJQUWhfcEdtSF9NUWFlNS1KOTh5RW1EcXQ3NUpsVnFVazZsSmRBZ01pUkRkVFRRTXlvWkcxUjFzYVlMa2d3YmZqaWs0dXBzLTBWNE5MZ19wWW1LQldvbFJSNUM4MzBnUUZsYVlDczRmLWI3UnZ2WTFxT1VwWkFWZHBUdXYyUWlZeE9XSWVxTDhSSmxyUktGb0dIaXMyUnJqdw?oc=5",
       "source": "Bloomberg Markets (via Google News)"
+     },
+     {
+      "title": "U.S. Natural Gas Futures Settle Higher - WSJ",
+      "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxNUC1MU3pvdURGOUxkQ29QYkZ2ajh0NnZ2cjN4ay1lbi1nRUhwV21Zb3NFWmR4ZkhWY01CYTF6NHZTLW9kbWlZYXJIWVRJWTNfd1hIazVPcDBlY1JsNkdkUmViaFhhTkN5ZG5aSGl5YVZEVG5TWDhwdGdBTnBjLUU3QnpoWTZlaXY2cDk1LTBITDdSNWlzeU1fRmRyZWZpSXl5RW01cg?oc=5",
+      "source": "WSJ Markets (via Google News)"
      }
     ],
     "members": [
      {
       "t": "NEM",
       "n": "Newmont",
-      "c": 71.5,
+      "c": 70.7,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "CVX",
       "n": "Chevron",
-      "c": 71.2,
+      "c": 70.3,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "XOM",
       "n": "Exxon Mobil",
-      "c": 70.7,
+      "c": 70.2,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "FCX",
       "n": "Freeport-McMoRan",
-      "c": 51.2,
+      "c": 50.3,
       "s": "各估值方法分歧過大"
-     }
-    ]
-   },
-   {
-    "id": "financials",
-    "name": "金融與支付",
-    "rank": 4,
-    "focus": true,
-    "score": 73.1,
-    "parts": {
-     "news": 100.0,
-     "mom": 88.0,
-     "fund": 12.0
-    },
-    "ret_1m": 0.0648,
-    "n_news": 40,
-    "sent": -0.02,
-    "tags": [
-     "市場焦點"
-    ],
-    "risk": "利率與信用循環、監管資本要求、權益市場波動影響投資收益",
-    "heads": [
-     {
-      "title": "ConocoPhillips boosts dividend after beating estimates on higher oil prices - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPWmVXLVh5bHBBQWh5ZkFmckpmSkRNMVB2UGZwaDFuYVc1TE93TVZKcjl4c1lPSjVQb1doc1pJdm11S01RTGtwTDRUblRGVWp2M3hrb2ZLakV3R0poTGRjcmRyOEI2M2hNOEJFVllydTcyQ043WFVSRURkREJvZWxtaWJmaDJNRllnc3lPZllyM1JtMEhnY09NLWRpZzNuQWt0YU1jTFpCMlQ2UG1ZQVVtYVF5dUlZZw?oc=5",
-      "source": "Reuters Business (via Google News)"
-     },
-     {
-      "title": "Explainer: What is ueno bank and how did it trigger Paraguay's political crisis? - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxOTXhGQVB4TkhRLUdwZWF3MlJxV0k3VmpHNlRGQ0NpZEpDU2NsZFdpTnF5LVFZZFlYUkFSQU1BWThoSmsxVVV6MFV1RGxpRGwzR3Z2US04MDd4b05zaC1FMG9fcVUzREl1TXVZY2NSNjRCdklramgyaXhhZnJXYXctWXpWb21MNzdQUTlpWVh3N3dzdTF4TWRhUVhwWV8xamxEMkM5aThVaW5XdDZyMG4xZ3JkRVlhMWs?oc=5",
-      "source": "Reuters Business (via Google News)"
-     },
-     {
-      "title": "Carney, Bank of Canada Renew Framework to Focus on 2% Inflation Target - Bloomberg.com",
-      "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOczRHYVNTT0tlZ1NzMmpsTHJtdTY2ZkxLYlBRVmVjdGpZYW1lRElmeXVpZEhuZ3R6V0dhWGxBRUZsQXp5THZlbmExUG43T0gtX2dOSUJtMzFjWWE2bDlWSE1iV09LVlg3RmhhekwzSzQyVjFFV29ldThZS0RjbGc0emFOZ1lVVHBKQkJERkxKMjBPRks1OTM2QzU1bEZzSGFaRTV5ZXhLdDB0N1BwQ3RRMHdYaVBYalFHSmM4?oc=5",
-      "source": "Bloomberg Markets (via Google News)"
-     }
-    ],
-    "members": [
-     {
-      "t": "BRK-B",
-      "n": "Berkshire Hathaway",
-      "c": 68.4,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "V",
-      "n": "Visa",
-      "c": 66.8,
-      "s": "上檔未達利率門檻（7.8%）"
-     },
-     {
-      "t": "GS",
-      "n": "Goldman Sachs",
-      "c": 61.1,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "JPM",
-      "n": "JPMorgan",
-      "c": 60.9,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "MA",
-      "n": "Mastercard",
-      "c": 59.5,
-      "s": "上檔未達利率門檻（7.8%）"
-     },
-     {
-      "t": "MS",
-      "n": "Morgan Stanley",
-      "c": 54.7,
-      "s": "入選"
      }
     ]
    },
@@ -3834,15 +3794,15 @@
     "name": "AI 晶片與先進製程",
     "rank": 5,
     "focus": true,
-    "score": 66.6,
+    "score": 68.8,
     "parts": {
-     "news": 94.0,
+     "news": 100.0,
      "mom": 38.0,
      "fund": 75.0
     },
-    "ret_1m": -0.3236,
-    "n_news": 39,
-    "sent": -0.0,
+    "ret_1m": -0.2635,
+    "n_news": 51,
+    "sent": -0.02,
     "tags": [
      "市場焦點",
      "潛力（基本面強、股價尚未過熱）"
@@ -3850,50 +3810,50 @@
     "risk": "美中出口管制、AI 資本支出放緩、地緣政治（台海）風險、估值已反映高成長預期",
     "heads": [
      {
-      "title": "Nvidia's Huang is asked to brief Congress on reported Chinese spy relationship - CNBC",
-      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPVERlRnhFaUV4cmNBcG9zTUdqSFZ2eDYzd1J3MG5KbnFJWWtVUV9KZXp2WmZlVVc1Tk1VWW1rRExkWlJXNFl0Vk5iLXlOeVBZdmVWTnE2ZlpkV3NoVmtPVGJwUlB4STdINUczREd0SnUxMmk2c2ZkVmVCRmVlWlFJSNIBhgFBVV95cUxNQ1l5VVJhaHd3ZVhCcFhZdWJOUk1BLWNRSi1aT3M2UzU2RkxzQlFaRmpQUmNNS1VCQXlLcnpuakxjZFlnMUZ2eDFPbkpKUDd0d25YeVpyVy1qLURrRk9lZnRjYkNGbk1uUjc0REpCdVdzVDhlU2w2WTVfY2NydTFyMjVraGlMUQ?oc=5",
+      "title": "Stocks making the biggest moves midday: Nvidia, Moderna, IonQ, Airbnb, Firefly Aerospace & more - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPRU0zc2RENFJvOEhSUmhEY2VsNGpzbTEzU2dqWGFzWFQ5anlrd1Nxd2NxLWJIeDByWnhXbTdSVGdpR3ZDenp0NGpQZEotWGRIdjdNQ2VIQlpKOWM2d3dXWU9jQ3hxQlBoOXRzay1UTDZrSHdSNUFpb2FCdHBDSS1rNzNxTU5yZlRBR3VaeFRDVjJKQ09XdzkzTThVYldkd1JT?oc=5",
       "source": "CNBC Markets (via Google News)"
      },
      {
-      "title": "Nvidia Stock Is Below $200. What History Suggests Is the Floor. - Barron's",
-      "link": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9EQVhFU0ZMU1p3Yk13SUJ2NjdNTk1JeWcwTnNsZjI2d3V3Mi0wZEZIUUYzbEo5dTN1V2UtMy1PblNYa1Y0MXhjQVQzYXN6OGlTOUUxQmRCMDc3dFZmZlhrSjl1Slh1Q1BDVE1yN015Nk51Zkpq?oc=5",
-      "source": "Barron's (via Google News)"
+      "title": "Nvidia CEO Jensen Huang seen as target of Chinese spy plot, according to the New York Times - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxNRkFYeXcyTVdDV0VFRkxvUUk2VVAxZTdIdWVmRnEtako3WmxxRW9pc1J6N29zR05DR0s2WDlmZmJVb2RWOFRzZ1NsLUs4N2Zna1M0c2c3TjluNmlSRHJWWDNkdkcyNXk4QmdEUDlnMFpOT0FySmFSSktRY21CczdmaHpCLS1uMkQ2UHc4SUt4NjJOQlBjRUNtWG5iUUxvNmRrMTJzUVBvcGh2Ny1ZcHVuWDNISVFnUnRwS2c2NExtRW5lMWZNOW1vZ056dlI3Zw?oc=5",
+      "source": "CNBC Markets (via Google News)"
      },
      {
-      "title": "Nvidia, Micron, Intel, Sandisk, Palantir, AppLovin, Qualcomm, and More Stocks That Explain Today’s Market - Barron's",
-      "link": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFB2RFIzSjN6TkxHa19nekswVTh5TDlSRGJQYU41TUJGcEVFT0p3V1hMblppRDZFNUxqMWl6RzByOFRXRHNZX21EajJPMDR5Yi11T1o5eGRRdlJkMk1wNW0zTWl3YVM?oc=5",
-      "source": "Barron's (via Google News)"
+      "title": "Here are Friday's biggest analyst calls: Nvidia, SpaceX, Netflix, Apple, TripAdvisor, Molson Coors & more - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOTWh6OXZQZ1pTdi1rckhLY00yT3NvWUxxbTVnMm9lUkJHeVFvMzF5N1BZQ2hhTGJTS2RRbmkyY2ktR1I0c29CN0NrVHN1VDZNck1uYXY4eklZb0hRQ2xVZGRNS2QzdEc0a1N0a0UxQWxWMVFQdlRvNUg1cktEYTFPMm9GZGhQRFBiYzl1VXZGSVMzcTg?oc=5",
+      "source": "CNBC Technology (via Google News)"
      }
     ],
     "members": [
      {
       "t": "NVDA",
       "n": "NVIDIA",
-      "c": 79.9,
+      "c": 80.8,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
       "t": "TSM",
       "n": "台積電 ADR",
-      "c": 77.5,
+      "c": 78.6,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
       "t": "AVGO",
       "n": "Broadcom",
-      "c": 70.6,
+      "c": 72.1,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "AMD",
       "n": "AMD",
-      "c": 66.0,
-      "s": "各估值方法分歧過大"
+      "c": 65.8,
+      "s": "波動過高（年化 > 70%）"
      },
      {
       "t": "MRVL",
       "n": "Marvell",
-      "c": 63.5,
+      "c": 62.7,
       "s": "波動過高（年化 > 70%）"
      }
     ]
@@ -3903,47 +3863,47 @@
     "name": "消費與零售",
     "rank": 6,
     "focus": false,
-    "score": 65.9,
+    "score": 68.1,
     "parts": {
-     "news": 81.0,
+     "news": 88.0,
      "mom": 94.0,
      "fund": 0.0
     },
-    "ret_1m": 0.1787,
-    "n_news": 24,
-    "sent": -0.0,
+    "ret_1m": 0.1378,
+    "n_news": 36,
+    "sent": -0.02,
     "tags": [
      "市場焦點"
     ],
     "risk": "消費力與通膨、關稅成本轉嫁、庫存",
     "heads": [
      {
-      "title": "Fed's Hammack, Barkin favor gradual rate-hike path to lower inflation - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPTDI4cDU1ODdtRUFrTlZiTjZUbUlKNjZicWpjOHp0YnhONENvNEhMemJ3bWNyR1Rpd0d5akp3Yk1FVElzaDlBenRLRkttdjFvOXFZaGt6dm05WWdZZXpqcU5vazJSY2p3UEx6dkFtM18tNU5nVFZEb0dFY3NHUkRGZlAxS2xJVHZPWWFYOWNUd1lsU2VnbEliTXZDYnp1Um5aX2M1a3Fn?oc=5",
+      "title": "Wall St Week Ahead As tech swoon roils market, US inflation data on tap - Reuters",
+      "link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPYWlPMS1sdHZxcTUxa3RDeUkwRFNDMFhEeGVNRktDVW9xeTNnMTFXbWMxQjlOTkttTkx5b19EVlVZOThRRGNCX0FrR2dIVTZpUHQzblctejRubG4yTWNyajJVaU8yV3JoYjZ1T19HY1U2dHBlMVE2a2oyUHpBZFZtb2g0T3FtSWRaT0hscHhkdGMwNktlb092R2g4cUFWWE9QS2RCOHh6d1QteW5pcWc?oc=5",
       "source": "Reuters Business (via Google News)"
      },
      {
-      "title": "Copper Moves Lower as US Election Undermines AI and Tariff Trade - Bloomberg.com",
-      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPWnlsdF9sNDNwY0VTbjBVa1QwUmFYZXJQUWhfcEdtSF9NUWFlNS1KOTh5RW1EcXQ3NUpsVnFVazZsSmRBZ01pUkRkVFRRTXlvWkcxUjFzYVlMa2d3YmZqaWs0dXBzLTBWNE5MZ19wWW1LQldvbFJSNUM4MzBnUUZsYVlDczRmLWI3UnZ2WTFxT1VwWkFWZHBUdXYyUWlZeE9XSWVxTDhSSmxyUktGb0dIaXMyUnJqdw?oc=5",
-      "source": "Bloomberg Markets (via Google News)"
+      "title": "Trader angst pivots from inflation to growth as tech rout deepens - Reuters",
+      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQYm13UzNKRG9XaWdpdHV5SGo2UHJKSFlrRW5NUXVNR21LcnpYM01JaHZvY2dTVnN4aTZIbnYxMjI1RUdDWmN6UjBaZTNOdFVNWnpPOTNtWlQ0c2RCMlFDY0VKX0lUZ0JUZHRtSVlHb2k1VENabjhMWkdncTBBUTQyaHMtWGVpaUlZcEFqVzZaVnJId2pJXzdpcm9QaU93QkRhYlZ5eFZQUFZlYmpnREhMUXU1cnE0Zw?oc=5",
+      "source": "Reuters Business (via Google News)"
      },
      {
-      "title": "Carney, Bank of Canada Renew Framework to Focus on 2% Inflation Target - Bloomberg.com",
-      "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOczRHYVNTT0tlZ1NzMmpsTHJtdTY2ZkxLYlBRVmVjdGpZYW1lRElmeXVpZEhuZ3R6V0dhWGxBRUZsQXp5THZlbmExUG43T0gtX2dOSUJtMzFjWWE2bDlWSE1iV09LVlg3RmhhekwzSzQyVjFFV29ldThZS0RjbGc0emFOZ1lVVHBKQkJERkxKMjBPRks1OTM2QzU1bEZzSGFaRTV5ZXhLdDB0N1BwQ3RRMHdYaVBYalFHSmM4?oc=5",
-      "source": "Bloomberg Markets (via Google News)"
+      "title": "BOJ chief Ueda sees 'some upside risks' to inflation - Reuters",
+      "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQNE9OOEdkZXV1VkxiQTllZGVwRFFnazBCZEhxMm8ybDdrZXM2RzVVVXlZLVY3enZtRk1KRlBHSVNLcVZNQ3dxTm1qNVNLU3kwNVZ6dXVIeVpUbHE0aWdTdUdvcUk4eHBXOTM5SmlPNXNhVHZHNGQwbi1EbEFDZnpTTXpHLW5oc1J0bHNyYldYSnpZeGluWExDLVZNdkVZbGlUNjJQbA?oc=5",
+      "source": "Reuters Business (via Google News)"
      }
     ],
     "members": [
      {
       "t": "COST",
       "n": "Costco",
-      "c": 48.9,
+      "c": 48.5,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "HD",
       "n": "Home Depot",
-      "c": 45.2,
+      "c": 45.8,
       "s": "各估值方法分歧過大"
      },
      {
@@ -3955,82 +3915,106 @@
      {
       "t": "MCD",
       "n": "McDonald's",
-      "c": 42.3,
+      "c": 41.4,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "NKE",
       "n": "Nike",
-      "c": 38.4,
+      "c": 38.2,
       "s": "各估值方法分歧過大"
      }
     ]
    },
    {
-    "id": "internet_platforms",
-    "name": "網路平台、廣告與消費電子",
+    "id": "cloud_software",
+    "name": "雲端、AI 軟體與資安",
     "rank": 7,
     "focus": false,
-    "score": 52.8,
+    "score": 55.3,
     "parts": {
      "news": 69.0,
-     "mom": 56.0,
+     "mom": 62.0,
      "fund": 25.0
     },
-    "ret_1m": -0.0782,
-    "n_news": 22,
-    "sent": -0.09,
+    "ret_1m": -0.1786,
+    "n_news": 16,
+    "sent": 0.09,
     "tags": [
      "市場焦點"
     ],
-    "risk": "反壟斷與監管、廣告景氣、消費電子換機週期",
+    "risk": "AI 變現速度不如預期、高估值對利率敏感、開源/價格競爭",
     "heads": [
      {
-      "title": "Apple raises $7.5 billion from bond sale, term sheet seen by Reuters shows - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPdlhUUFluWi1GY01oNEdScGpmXzdDU2FaWVdtR1ctcjg3UVJZczlVUmxUenAxVWZ2eUVza1RJUE5iMU1fUk1MYlZnOHFVakFIZ2gxaThXb0Nya283XzJsdEhidEptZV83Rl9ab0RqZ1Z4WlVGOHZpU1lkYnlfeXIyQkRvSG9tQzFTam96WUtqWUR1MmN0VzhIRHlPN0p3RmdEWVFPUElzY1psLUtRX1hIR0IxUQ?oc=5",
-      "source": "Reuters Business (via Google News)"
+      "title": "Microsoft to reportedly wind down Oracle deal to rent AI cloud capacity - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPNUszVVVJNmVIQ0ZFYWhEVmRQSnlJR2lBNmR0c1BRV0xpQUtJN1d3WWw0VW03bTFmaHBSZjE5amFvckFMTWJ6QTZSQ3lGWXI2V193MDFQa0ZjSGVmSWtxTmZZTWhEZWhUTUZjMkFQYnJfSXA2eHRHbkRFUjB4cjhPQmZNRXZfOTYzanhKVmFRbVJGUm83ZnZBWEEtaXkwZ0lSVThmalhwQXFZZC1rOFItU1g4UWY?oc=5",
+      "source": "CNBC Markets (via Google News)"
      },
      {
-      "title": "美股百年只有12家股王 輝達讓位蘋果 晨星：但寬護城河可撐20年超額獲利 - 鉅亨網",
-      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1UR1ZoejlXblJRQnVzYWtOZUtrdFlkOTlpYjhObDFtMmpEaUEyelFrYnF5bkFHdGhLN285OHd0SFRFTmZ4aEN1QVhjRzB6ZE0?oc=5",
-      "source": "鉅亨網 美股 (via Google News)"
+      "title": "IREN Stock Surges and Akamai Gains. Cloud Earnings Defy Political Fears. - Barron's",
+      "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5zVzBhZHg2bXp3MnZSTm1QanJWNnR2SS1zbDU5dllsUWg1SGJwbnpYV1QtZUpZY2ZGdFBoMjVJbmM2M2JiczFKNElVNEJvbm9iZHNVZGZMRHlZMnlrOXFSZFk4RjFXa0FOa1R4enAyVjhTbTNzR0xLOFBPbFRrdlE?oc=5",
+      "source": "Barron's (via Google News)"
      },
      {
-      "title": "川普拋售BTC、蘋果警告AI、美股暴跌,市場還扛得住嗎？ - 鉅亨網",
-      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE16QlcwT2xwa1ZpdTdteEtDZE1QeU1NcTRrcXpQTkxaVVltOFdFTExWTUh0YXNhSFNtUTE4UE11ZDRPMnlUWDRMandHTlZRS1U?oc=5",
-      "source": "鉅亨網 美股 (via Google News)"
+      "title": "Microsoft Won’t Renew Deal for Renting AI Cloud Capacity From Oracle: Report - Barron's",
+      "link": "https://news.google.com/rss/articles/CBMifkFVX3lxTE9VMldqNUtPTEN1N2JuNFB3OGwwV0k2bnNtbVJObWhoSDRMOUg2ZGh6d0hsUlB4WFF3bDJobDUxNEQ3cEN3dDhBaEl1WUlCRG1mTlNvbkJ6RVNMZ2JNTkhjSVRpckYxRnN0dkVhb3ZBQ1JsM1ZpWFdKNnNQcHdldw?oc=5",
+      "source": "Barron's (via Google News)"
      }
     ],
     "members": [
      {
-      "t": "META",
-      "n": "Meta Platforms",
-      "c": 66.2,
+      "t": "MSFT",
+      "n": "Microsoft",
+      "c": 71.8,
       "s": "合格未入選"
      },
      {
-      "t": "AAPL",
-      "n": "Apple",
-      "c": 60.7,
-      "s": "上檔未達利率門檻（7.8%）"
+      "t": "PLTR",
+      "n": "Palantir",
+      "c": 68.7,
+      "s": "各估值方法分歧過大"
      },
      {
-      "t": "GOOGL",
-      "n": "Alphabet",
-      "c": 59.1,
+      "t": "ORCL",
+      "n": "Oracle",
+      "c": 64.7,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
-      "t": "NFLX",
-      "n": "Netflix",
-      "c": 53.6,
-      "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
+      "t": "CRM",
+      "n": "Salesforce",
+      "c": 63.0,
+      "s": "各估值方法分歧過大"
      },
      {
-      "t": "AMZN",
-      "n": "Amazon",
-      "c": 50.4,
-      "s": "上檔未達利率門檻（7.8%）"
+      "t": "CRWD",
+      "n": "CrowdStrike",
+      "c": 61.4,
+      "s": "資料不足，無法估值"
+     },
+     {
+      "t": "NOW",
+      "n": "ServiceNow",
+      "c": 54.1,
+      "s": "波動過高（年化 > 70%）"
+     },
+     {
+      "t": "FTNT",
+      "n": "Fortinet",
+      "c": 53.1,
+      "s": "上檔未達利率門檻（7.9%）"
+     },
+     {
+      "t": "PANW",
+      "n": "Palo Alto Networks",
+      "c": 52.1,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "SNOW",
+      "n": "Snowflake",
+      "c": 40.8,
+      "s": "各估值方法分歧過大"
      }
     ]
    },
@@ -4039,141 +4023,51 @@
     "name": "航運與運輸",
     "rank": 8,
     "focus": false,
-    "score": 52.8,
+    "score": 53.4,
     "parts": {
-     "news": 31.0,
+     "news": 38.0,
      "mom": 81.0,
-     "fund": 38.0
+     "fund": 31.0
     },
-    "ret_1m": 0.0263,
-    "n_news": 4,
-    "sent": -0.09,
+    "ret_1m": 0.0021,
+    "n_news": 5,
+    "sent": 0.0,
     "tags": [],
     "risk": "運價高度波動、運力供給過剩、地緣政治與關稅政策",
     "heads": [
      {
-      "title": "盤中速報 - Old Dominion Freight Line公司(ODFL-US)大跌5%，報170.42美元 - 鉅亨網",
-      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9kUnNLUkIyVl9odlBndEdORkk1MnZxMXluRHhnUkN4VTZ2MWR6Y01zSTUwaEtQc19laWc3UmxseUw1Yzg3NXVlYTJrZjRKT3M?oc=5",
-      "source": "鉅亨網 美股 (via Google News)"
-     },
-     {
-      "title": "Maersk raises outlook again as AI buildout, port congestion keep freight rates high - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxPRXFETjFSN1BoSl93eHE3S1V1b0tkWGpNWjhNcG1lWWVfN1dlSW12NnJYbjJRUDUwd3RBWWJHLTJTMTQ0eUpweFpnUXRiOHJFclUxOG1iRVpNR3VBM1RHQjd3QWJDd3hvZW54X3pFYVBjWnpVM3lqZmVxdU1PaERxcnVVeUNwMzBrRTFwZ2JiU3ZsbkNRalVuTXBDdkJkZw?oc=5",
+      "title": "Soaring freight rates give US refiners edge as crude discounts widen - Reuters",
+      "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPSW1NSjFpQTdNeUIyY2JFVE5yTm1MS3F2NmZSOGk4ZGR1ZzA0dFJROTVHMVc4QzJOYXlBUHBYOEZuMlZlOFBlVkZkLXE1OEplanMtYTIwVkFmXy1pSlhTcHZfQ3Zha3V0R1FqcUNTV2xIT2l6Tk10d1BVNDhPc1JvOVZHMEx6Sk9rcC1ORktnZzNVTW1FM21wc2pPVlFMaVdoVlhlT3pjd0E1cXg1R0VvU2ZfMjMxd2ZY?oc=5",
       "source": "Reuters Business (via Google News)"
      },
      {
-      "title": "MercadoLibre profit misses on logistics spending; shares fall - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQdzhBWW84MDBIWHJlekhTMV9ZSlQ1UVFPbjdvc0swVkJzNHhGZEYyLS1ZdW5Xam1YeG5sSHJrdXlFNWVqMmVVN2lCSUIwMzh1bGRrazk0YU9Ka2FQc0VvWWxUZXJ6TEI2MHh1VEd0X2IyV3Jybld2UEdBakkwMmJGcWFEUVUzTTZMdVA5azA3ZTEweXQtS3RSSnU0SmxxS0Q4WGRwanBHMVppdGpzOFRUYk5Jcw?oc=5",
-      "source": "Reuters Business (via Google News)"
+      "title": "Oil Futures Post Big Weekly Losses",
+      "link": "https://www.wsj.com/finance/commodities-futures/oil-holds-gains-after-selloff-ad231914?mod=rss_markets_main",
+      "source": "MarketWatch Markets"
+     },
+     {
+      "title": "Air France-KLM to Deepen Dutch Airline Overhaul Amid High Costs - Bloomberg.com",
+      "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOc2gzZ3Rzc2c2Z1lLRUE1SDU5ZmdkNXFqT1RueTg1TUdVVWw2TmRETjRuaS1GbGt4aDgwcGxCLVU5WHZPRzdFWERCMlQ0MHQxQVh3U1RvRmU0N19LRGtwS0ViWXV0N3E1dXk4cmtXdWdMUWUyRU15UVF1UXRjdmY2NjZNMnhKbXp5SmIxV2FOc1pqMlR3RFhySXowUXVYYmRET1lBQ3ROZnhFQVVuLTFEUTRkQW4?oc=5",
+      "source": "Bloomberg Markets (via Google News)"
      }
     ],
     "members": [
      {
       "t": "UPS",
       "n": "UPS",
-      "c": 54.2,
+      "c": 54.3,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "MATX",
       "n": "Matson",
-      "c": 51.0,
+      "c": 51.7,
       "s": "市值過小"
      },
      {
       "t": "ZIM",
       "n": "ZIM Integrated Shipping",
-      "c": 50.1,
-      "s": "各估值方法分歧過大"
-     }
-    ]
-   },
-   {
-    "id": "cloud_software",
-    "name": "雲端、AI 軟體與資安",
-    "rank": 9,
-    "focus": false,
-    "score": 52.5,
-    "parts": {
-     "news": 56.0,
-     "mom": 62.0,
-     "fund": 31.0
-    },
-    "ret_1m": -0.1779,
-    "n_news": 11,
-    "sent": 0.04,
-    "tags": [],
-    "risk": "AI 變現速度不如預期、高估值對利率敏感、開源/價格競爭",
-    "heads": [
-     {
-      "title": "SpaceX, Tesla extend losses as midterm results cloud data center, merger outlook - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMizwFBVV95cUxQaXI0TWJjeldpYmNUM0tQR3NKcEh6bGtsaWUzOV9XQnQyaFVnNlNuaEcxakNkdjd4MzBJR2NoMWdua1RaNEVfSzNjOGRCVU5vVmc3MXRYdlkzVEpYV3JZR2JMYVVSMTJ5ZmkxY2VYM2RSWm1nb005RENwSk93NTcxa0U5X1lrMUw1cHRFV3c4b3lhc2doNHFJM012TE1yN1N5ZEo2em9pSExVcHgtQ2h1cURZOE5taVF6aFVKZU5GWVpHX0FDSGpGYmppMFUtUXM?oc=5",
-      "source": "Reuters Business (via Google News)"
-     },
-     {
-      "title": "EXCLUSIVE: Silver Lake, PIF have held recent talks to buy gaming software provider Unity, sources say - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOQzh5VFo3VUxBWThyeHFLSjIxcVU2RmJraW5QMTV4YWd4ckczTnZXTHQ1ZUxmMzduaDlpVjhwTnR5RUZsNEd6U2NtdTYwTHppZkJNYVdxNjlMMkoySHN4S0V5ZEJtRUVkLWNwLUVrMmxiREQzbTYzeTJHTTB3d0tXVHpYSkdmR0VXbERFV0NOUkJOR29YbmZHUDBQckpuU2x3WTJleW53VmUxcklIZFRSTV9Mb2VZdw?oc=5",
-      "source": "Reuters Business (via Google News)"
-     },
-     {
-      "title": "Palantir and CrowdStrike stocks tumble as Wall Street dumps software's AI winners - Yahoo Finance",
-      "link": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxOUkNPc01zaWpNQmY2Q3E2dE0ybVRLdUQ4UFZKajdzT2FHU0VDZllram1kZW5JdWptVWJrbGVQaG5GQWplZEFYVTA5WVk3SHVxU3FCcENaSmhjRnVlU3dMWWo1SVd0Smh1RmFmdE1TZ25zYUFpc2c4N3JzeXpxaHNVOWszelZLVlZSMlhPTUNFSVljcUd5NEpyMGtudzNVbjJzbURyUm00a3VHUHJ6U0Yzcm9CbURsZnZoajcyMV94eDNjUkc1ZFk5LWxlMTF6UUFJS19v?oc=5",
-      "source": "Yahoo Finance (via Google News)"
-     }
-    ],
-    "members": [
-     {
-      "t": "MSFT",
-      "n": "Microsoft",
-      "c": 71.4,
-      "s": "合格未入選"
-     },
-     {
-      "t": "PLTR",
-      "n": "Palantir",
-      "c": 67.5,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "CRM",
-      "n": "Salesforce",
-      "c": 63.2,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "ORCL",
-      "n": "Oracle",
-      "c": 63.0,
-      "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
-     },
-     {
-      "t": "CRWD",
-      "n": "CrowdStrike",
-      "c": 60.6,
-      "s": "資料不足，無法估值"
-     },
-     {
-      "t": "NOW",
-      "n": "ServiceNow",
-      "c": 53.4,
-      "s": "波動過高（年化 > 70%）"
-     },
-     {
-      "t": "FTNT",
-      "n": "Fortinet",
-      "c": 52.6,
-      "s": "上檔未達利率門檻（7.8%）"
-     },
-     {
-      "t": "PANW",
-      "n": "Palo Alto Networks",
-      "c": 51.6,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "SNOW",
-      "n": "Snowflake",
-      "c": 40.2,
+      "c": 51.1,
       "s": "各估值方法分歧過大"
      }
     ]
@@ -4181,134 +4075,200 @@
    {
     "id": "defense_aero",
     "name": "國防與航太",
-    "rank": 10,
+    "rank": 9,
     "focus": false,
-    "score": 50.9,
+    "score": 53.4,
     "parts": {
      "news": 62.0,
-     "mom": 69.0,
+     "mom": 75.0,
      "fund": 6.0
     },
-    "ret_1m": 0.0605,
-    "n_news": 16,
-    "sent": -0.04,
+    "ret_1m": 0.0482,
+    "n_news": 13,
+    "sent": -0.06,
     "tags": [],
     "risk": "預算與政治週期、專案延遲、題材消退後評價回落",
     "heads": [
      {
-      "title": "This Defense Tech Stock Had a Blowout Earnings Debut. One Analyst Sees 166% Upside. - Barron's",
-      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTFBXZlJlOFZDOTBySnFZMW01V1R6M2FfdUdpNHFxeFZGdVkxd3BmTV8wT1lmdDFDSWE4d2hkWl9meDZPTXppNEpLeF9yQ2wxQ2RBa0NjRVMxT05KUndBb3RLNmZkZlJjcFM1NS1JNkVBaXdPRFRhRG1rZVZR?oc=5",
+      "title": "GE Aerospace says it signs record $12.9 billion deals at China expo - Reuters",
+      "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQUllMM1FiXzA2aGxRdlFGeElIa0FsWS0xLXdMS2NXUGlrUGR6X29xcGgxdnh0cXRKSlI1LVFKbXFtN1FpMzRMWWwwLVZ2Y3dXUzRob2txLVBtc3VWNE5ZNVNhSDR5bUVTN2lyZFZ4Y29yTjFkbVd0alh6bFFRN1dscjVRV1phQ2dKOVhnNXVkMHkzVzU5dndxWE8zNWd1eEpncm1Sdl9rakZtazRFNWFOOFFGd2N2REhF?oc=5",
+      "source": "Reuters Business (via Google News)"
+     },
+     {
+      "title": "Stocks making the biggest moves midday: Nvidia, Moderna, IonQ, Airbnb, Firefly Aerospace & more - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPRU0zc2RENFJvOEhSUmhEY2VsNGpzbTEzU2dqWGFzWFQ5anlrd1Nxd2NxLWJIeDByWnhXbTdSVGdpR3ZDenp0NGpQZEotWGRIdjdNQ2VIQlpKOWM2d3dXWU9jQ3hxQlBoOXRzay1UTDZrSHdSNUFpb2FCdHBDSS1rNzNxTU5yZlRBR3VaeFRDVjJKQ09XdzkzTThVYldkd1JT?oc=5",
+      "source": "CNBC Markets (via Google News)"
+     },
+     {
+      "title": "Axon Stock Plunges as Delayed Drone Deals Hit Revenue - Barron's",
+      "link": "https://news.google.com/rss/articles/CBMihAFBVV95cUxPcHFyMzRFZzU5RXJxOGMxVktHOXR0OGU0WUVMQy1EVFV1aldDWXZfbTZSbnpPWGNhNVc4cjltLXBKZ2dCOXJEOVVtWHVicC1ZTVlJWDVIM2dsMnBlcWZSYmtWZnd3REZvU3J3Yk5qR21DRHZnSGRqdENiejdTYU5nQllYdm8?oc=5",
       "source": "Barron's (via Google News)"
-     },
-     {
-      "title": "China-Laos military cooperation should contribute to regional stability, Vietnam says - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQVGtxUndJTUFHMGFLYk8tSFFDLVIzY2lrT2p6ekZxN0M5NlpVSUoxRDFrS1F4Ui1XZjU1T1RzQmdGTFlDMzREOENiUDhhZ2o1cVo0Z3JkczBpQ1Nuci13U1BteERROVduV2pCRl9SZEpRbG1IeFBGYVZRZFlvWWUwYzdXUG05UzkyRUlxWjhsRG90MkZCQksxbnhyV3lZUzJGVGRRLUF5VkVMbHZrMDE0NG5BaE9MRWxVWUFLak1SRmVxdw?oc=5",
-      "source": "Reuters Business (via Google News)"
-     },
-     {
-      "title": "India in final-stage talks to expand missile sale to Philippines, sources say - Reuters",
-      "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNV000QWU5a0lPSXVaZDVhb0pJOXkzUjN0MWVXMVNZemNfS2E3SFhXMEdwNzVyLWw5UGU4dlFaYzVlUzkwQ0RGUlgxZUg1ZEJQTWd0aDdLWlpza2hZR1NMZzRJTEV5U1U2cjZ3bnVpZUtjc3lKdzZKd3dDY2VscFk1ejhiTHNJYWIxdm01SV85YzBxU0dnWHB6c1ROd01wZURpSE5MQnVLVThUbnlRSXNHR0dDZWIzSmRjRXRjZWFuTQ?oc=5",
-      "source": "Reuters Business (via Google News)"
      }
     ],
     "members": [
      {
+      "t": "RTX",
+      "n": "RTX",
+      "c": 53.5,
+      "s": "各估值方法分歧過大"
+     },
+     {
       "t": "HWM",
       "n": "Howmet",
-      "c": 52.2,
+      "c": 52.4,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "LMT",
       "n": "Lockheed Martin",
-      "c": 51.9,
+      "c": 52.3,
       "s": "財務品質不足"
-     },
-     {
-      "t": "RTX",
-      "n": "RTX",
-      "c": 50.5,
-      "s": "各估值方法分歧過大"
-     },
-     {
-      "t": "GD",
-      "n": "General Dynamics",
-      "c": 46.2,
-      "s": "各估值方法分歧過大"
      },
      {
       "t": "GE",
       "n": "GE Aerospace",
-      "c": 45.3,
-      "s": "上檔未達利率門檻（7.8%）"
+      "c": 50.0,
+      "s": "上檔未達利率門檻（7.9%）"
+     },
+     {
+      "t": "GD",
+      "n": "General Dynamics",
+      "c": 46.7,
+      "s": "各估值方法分歧過大"
      },
      {
       "t": "NOC",
       "n": "Northrop Grumman",
-      "c": 35.7,
-      "s": "上檔未達利率門檻（7.8%）"
+      "c": 36.1,
+      "s": "上檔未達利率門檻（7.9%）"
      }
     ]
    },
    {
     "id": "memory_storage",
     "name": "記憶體與儲存",
-    "rank": 11,
+    "rank": 10,
     "focus": false,
-    "score": 45.0,
+    "score": 47.2,
     "parts": {
-     "news": 50.0,
+     "news": 56.0,
      "mom": 6.0,
      "fund": 100.0
     },
-    "ret_1m": -0.4206,
-    "n_news": 11,
-    "sent": -0.09,
+    "ret_1m": -0.3873,
+    "n_news": 13,
+    "sent": 0.01,
     "tags": [
      "潛力（基本面強、股價尚未過熱）"
     ],
     "risk": "景氣循環劇烈、供給擴張導致價格反轉、高度依賴報價",
     "heads": [
      {
-      "title": "U.S. Natural Gas Futures Slip as Storage Continues to Build",
-      "link": "https://www.wsj.com/finance/commodities-futures/european-ttf-gas-slides-mirroring-oil-in-aftermath-of-democratic-sweep-70661a9a?mod=rss_markets_main",
-      "source": "MarketWatch Markets"
+      "title": "TSMC considers making advanced memory chips, The Information reports - Reuters",
+      "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPR3VDQTJfT19xV0p2UGZRSUVERlJKVE8xb0VENzVOMEM2UjhPd0ZUM1JISzRGbjJ5aEs0TmZnLVZVQVZlTUZyTEhfUnRJaFJyNmxwbFRhcXdHTExjQURvckJ3bUtTTUtYMmlzektZbGRQemdVMDFrNDhsMUtMdjMzREpIbm90ZjkwNWYyR3lyY2p6RW51cGNvc2czWEo2ampYSVhBaW5ZQm15TWQ0ZGFyOGFESlBEMzBKd2c?oc=5",
+      "source": "Reuters Business (via Google News)"
      },
      {
-      "title": "HudBay Minerals (HBM) Suffers a Larger Drop Than the General Market: Key Insights - Yahoo Finance",
-      "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQenBueXlnWUFsVDBfYmNXdnRtQVVOa3hfZkV5NHh2NUQzUXNGLVRJTGx5RGZWWDBXdTVWdWtWS2VIM0hkcU5TM25ueHdsZFJkSGFNVmxpczlnS09ZTnpIdFNPNWhZTEJOR1plTkFEZS1xcllDTjE2TFdEczRJMzQ4dktiU3B1djh5WlQ2XzZLYmMxVHFoWnA4RTRZZ19yNEJ2?oc=5",
-      "source": "Google News 美股"
+      "title": "輝達傳找台積電操刀3D DRAM　韓媒曝「兩大技術專利」早有跡象",
+      "link": "https://tw.news.yahoo.com/%E8%BC%9D%E9%81%94%E5%82%B3%E6%89%BE%E5%8F%B0%E7%A9%8D%E9%9B%BB%E6%93%8D%E5%88%803d-dram-%E9%9F%93%E5%AA%92%E6%9B%9D-%E5%85%A9%E5%A4%A7%E6%8A%80%E8%A1%93%E5%B0%88%E5%88%A9-%E6%97%A9%E6%9C%89%E8%B7%A1%E8%B1%A1-003300808.html",
+      "source": "Yahoo奇摩股市 國際"
      },
      {
-      "title": "Nintendo Switch 2 sales plunge 41% as price hikes and memory crunch bite - CNBC",
-      "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1DMzUteWR1Y3BZNWdaV29ENVMyelZfZHQtLUZsanRHSVQxNWhWTFpjMUdCWDRhS3c4ZWV4bjZEbkxIVklFMDFUZkktV2g5S3QzVHZqSWtndXIyeUNoQW8xNEJUX0JINHV3Njc4aEpPQzAyb2FZZlVySNIBfkFVX3lxTE1VTkdxNGotWTU3RzhEZFI0ekpuek9jX1l0Zi02VWF4Ml82eUlNX29aTmpELXRrZ2dyRFdJaDhvaGVTMGdjZF9UTzJRZmQ3MjVKV1dEOXhuUkVYQkJsZExoenVqLWxCZnNGd0NBNGZIemNmbW1Wdi0yd29aaF91Zw?oc=5",
-      "source": "CNBC Markets (via Google News)"
+      "title": "傳台積電進軍「先進記憶體」！為輝達生產「3D DRAM」",
+      "link": "https://tw.stock.yahoo.com/news/%E5%82%B3%E5%8F%B0%E7%A9%8D%E9%9B%BB%E9%80%B2%E8%BB%8D-%E5%85%88%E9%80%B2%E8%A8%98%E6%86%B6%E9%AB%94-%E7%82%BA%E8%BC%9D%E9%81%94%E7%94%9F%E7%94%A2-3d-dram-002117866.html",
+      "source": "Yahoo奇摩股市 國際"
      }
     ],
     "members": [
      {
       "t": "MU",
       "n": "Micron",
-      "c": 77.4,
+      "c": 78.0,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "SNDK",
       "n": "Sandisk",
-      "c": 72.2,
+      "c": 72.3,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
       "t": "STX",
       "n": "Seagate",
-      "c": 62.5,
+      "c": 62.9,
       "s": "波動過高（年化 > 70%）"
      },
      {
       "t": "WDC",
       "n": "Western Digital",
-      "c": 59.9,
+      "c": 60.3,
       "s": "波動過高（年化 > 70%）"
+     }
+    ]
+   },
+   {
+    "id": "internet_platforms",
+    "name": "網路平台、廣告與消費電子",
+    "rank": 11,
+    "focus": false,
+    "score": 44.7,
+    "parts": {
+     "news": 50.0,
+     "mom": 56.0,
+     "fund": 19.0
+    },
+    "ret_1m": -0.0847,
+    "n_news": 13,
+    "sent": 0.03,
+    "tags": [],
+    "risk": "反壟斷與監管、廣告景氣、消費電子換機週期",
+    "heads": [
+     {
+      "title": "Here are Friday's biggest analyst calls: Nvidia, SpaceX, Netflix, Apple, TripAdvisor, Molson Coors & more - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOTWh6OXZQZ1pTdi1rckhLY00yT3NvWUxxbTVnMm9lUkJHeVFvMzF5N1BZQ2hhTGJTS2RRbmkyY2ktR1I0c29CN0NrVHN1VDZNck1uYXY4eklZb0hRQ2xVZGRNS2QzdEc0a1N0a0UxQWxWMVFQdlRvNUg1cktEYTFPMm9GZGhQRFBiYzl1VXZGSVMzcTg?oc=5",
+      "source": "CNBC Technology (via Google News)"
+     },
+     {
+      "title": "Apple has been outperforming. But, the good times could soon end, Daiwa says - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPdEg5bHZON05Za2JOUDluSV90Tng2LWVydTVQVmVxT1RzYTBZR2ctUWJNUmhMOGZMMEF3LW5vTkZxcTR6WmdoVzlMN09nQnByenFiOGdya1lnWGFsUDNnQXg3bERWY2NTQzhPdTNDemNPUVBTVmwtVWhmQnAzYktkOGUxQl9SUXR1SDZqVkxzMHR6UDNfRnpmNEtCaW5pV2dhc0lmM0doNG8?oc=5",
+      "source": "CNBC Markets (via Google News)"
+     },
+     {
+      "title": "Technology Select Sector SPDR (XLK) Adds Oracle, Trims Apple on Nov. 4 - Yahoo Finance",
+      "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPUGdjQnNJTmVCd1E5T1g4U3o4MTJEdkNYUzBDREp0MHVaNEFvZHRFZjB5c2xTNDVYOFd0cWxrcnBFM2gzMEhlS29CM2RJbmlWQWxwb05IbGFwcFRQZkRJZGhjcTg4SDB3MTBVS2tHYzZ6Z1JsVzZsTmMySGhQY0xUYnk2dGRhM1ZNakxBdXVrNW9lcHphRzAwSFNhNE56bW8?oc=5",
+      "source": "Google News 美股"
+     }
+    ],
+    "members": [
+     {
+      "t": "META",
+      "n": "Meta Platforms",
+      "c": 65.1,
+      "s": "合格未入選"
+     },
+     {
+      "t": "AAPL",
+      "n": "Apple",
+      "c": 58.9,
+      "s": "上檔未達利率門檻（7.9%）"
+     },
+     {
+      "t": "GOOGL",
+      "n": "Alphabet",
+      "c": 58.7,
+      "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
+     },
+     {
+      "t": "NFLX",
+      "n": "Netflix",
+      "c": 52.6,
+      "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
+     },
+     {
+      "t": "AMZN",
+      "n": "Amazon",
+      "c": 48.0,
+      "s": "上檔未達利率門檻（7.9%）"
      }
     ]
    },
@@ -4317,27 +4277,27 @@
     "name": "電力設備、電網與能源轉型",
     "rank": 12,
     "focus": false,
-    "score": 41.6,
+    "score": 42.2,
     "parts": {
-     "news": 38.0,
+     "news": 44.0,
      "mom": 44.0,
-     "fund": 44.0
+     "fund": 38.0
     },
-    "ret_1m": -0.1757,
-    "n_news": 5,
-    "sent": 0.0,
+    "ret_1m": -0.1272,
+    "n_news": 6,
+    "sent": 0.27,
     "tags": [],
     "risk": "政策補貼變動、專案交期與成本、題材性評價偏高",
     "heads": [
      {
+      "title": "Oklo Stock Jumps on Promising Updates on Its Novel Nuclear Reactors - Barron's",
+      "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBrRmJJWUcxdzBUQUVOYURmaFFJWVhNUTl2cnVhb0hEQlp0cE5sdXJkVkl3MzE5ekZyMXpnNDd5VW1WVWExLWZhRXp5cy1weUFZU0N3NGg5dDNSTWpqb0oxRmc4WEhVenBIR01zdW44XzNxWUE3OGc?oc=5",
+      "source": "Barron's (via Google News)"
+     },
+     {
       "title": "Energy & Utilities Roundup: Market Talk - WSJ",
       "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBXeUxxbXExTzE4MXFITFBYNmhsbTRVUmRWSHcxVF85TnpnbFRpai1FRGZSS01jNVRsMVNqYW5QcWFJelM3bGdqMFpmU3VQY2s4M2VsYkVJOXVYUEYtYTN3bkEwTEtmNnp0MFpsc3laZld5TFJxRDZlMnFZWUdPcEU?oc=5",
       "source": "WSJ Markets (via Google News)"
-     },
-     {
-      "title": "Energy & Utilities Roundup: Market Talk",
-      "link": "https://www.wsj.com/business/energy-utilities-roundup-market-talk-1d720229?mod=rss_markets_main",
-      "source": "MarketWatch Markets"
      },
      {
       "title": "Energy Stocks And Industry News: Oil, Gas, Solar, Coal And Nuclear Energy - Investor's Business Daily",
@@ -4349,20 +4309,20 @@
      {
       "t": "GEV",
       "n": "GE Vernova",
-      "c": 55.8,
+      "c": 54.9,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "NEE",
       "n": "NextEra Energy",
-      "c": 46.8,
-      "s": "上檔未達利率門檻（7.8%）"
+      "c": 47.1,
+      "s": "上檔未達利率門檻（7.9%）"
      },
      {
       "t": "PWR",
       "n": "Quanta Services",
       "c": 45.6,
-      "s": "財務品質不足"
+      "s": "總經警戒：一般股需更大安全邊際"
      },
      {
       "t": "CEG",
@@ -4373,62 +4333,62 @@
      {
       "t": "VST",
       "n": "Vistra",
-      "c": 37.2,
+      "c": 38.3,
       "s": "財務品質不足"
      }
     ]
    },
    {
-    "id": "semi_equipment",
-    "name": "半導體設備與材料",
+    "id": "robotics_auto",
+    "name": "機器人、自動化與電動車",
     "rank": 13,
     "focus": false,
-    "score": 32.2,
+    "score": 35.3,
     "parts": {
-     "news": 19.0,
-     "mom": 25.0,
-     "fund": 62.0
+     "news": 25.0,
+     "mom": 31.0,
+     "fund": 56.0
     },
-    "ret_1m": -0.3532,
-    "n_news": 4,
-    "sent": 0.13,
+    "ret_1m": -0.1891,
+    "n_news": 2,
+    "sent": 0.0,
     "tags": [],
-    "risk": "出口管制（中國營收占比）、晶圓廠資本支出循環",
+    "risk": "題材先行、獲利尚未驗證、電動車需求與價格戰",
     "heads": [
      {
-      "title": "【11/06 產業即時新聞】半導體設備族群災情慘重，多檔亮燈跌停、高價股成提款機 - CMoney投資網誌",
-      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOU0luYW1fWVRSZXZ0eDRsb0lQaUlnYmRhbzNpZEdiOGNUQ1NqUWkzcDB5aUpTQ3VLbDQwbmxhUFRjcVdPZzNFQ1FiWjItZ0dwTGVmbjB4ZjJWaEJ3S0RIbmpIeEFveWJ2YmZONXRpSGk0cXZKNmJYV19LZEU3M3BiVU5ZdFVxSU5HTlpvSDdn?oc=5",
-      "source": "Google News 台股"
+      "title": "ARK Invest CEO Cathie Wood: 'Robotaxi has hit escape velocity, delighting consumers' - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNdWJXTXpxaUhSLWxQQ3Q0MEM5ZHFaMVdacXFtaFdPRUxja19TUUNpMmw5a0lMbVJiNHBMLWJoRmtreERGc09oVlhlRXVSdjZxcjNUZ21WbDk3Mnhnci03TTgzNkFCU250ME1IRjB5MHpyX3RFQWlVeVMzOUYxbmRNdXFjUDgwaGZId3hjcEVNaTZqckJremE5N1ZDaDYzRzdQMWRwQnV4dGMyTU5KMmhsdVhkVlA5NE91ak5HQlMtb0Y?oc=5",
+      "source": "CNBC Markets (via Google News)"
      },
      {
-      "title": "【11/06 產業即時新聞】半導體設備族群重挫大跌，高價指標股遭提款、盤面湧現停損賣壓 - CMoney投資網誌",
-      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNUTJMbVppZ3phSVJ1QUNMSDl0YThhbkJEbTVsT2VSMndhSWc3TXFtWm11NTBzc2VfNi1JZmVGMkl3VU5xMEV0d2hva1JQTXl3Ny10RE5FRFlGRHN2TmxTdC1uX3VnZnE1UHBQZXo3b0lzTkVtallGalBibnUzUEV5cVczaU5zMmtiTENkMTV3?oc=5",
-      "source": "Google News 台股"
+      "title": "EV Truck Maker Harbinger Raises $240 Million for Expansion - Bloomberg.com",
+      "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOZ2xYc0RMSDE4enRqMkFFZng4VjNZUTFRMnFteTh0Qzd6Zm1KYUJyTUpBcFVPdHd0dUhqWExiWWhSUFQybm1sbXpUeTBWN3d5WFZLQ09hNThSWDA1OGVXTmdRVm1Bb0hDbVVwVDd4ZXQxSDRVTV8xYVNDTm9lQmNXay1lNFBrai1HSWhROTh6UVFSV2ZGd0gwSjN0X0Uxd0R0akF3U09xdzVMVy1tbFFKdVhR?oc=5",
+      "source": "Bloomberg Markets (via Google News)"
      }
     ],
     "members": [
      {
-      "t": "ASML",
-      "n": "ASML",
-      "c": 65.5,
-      "s": "合格未入選"
+      "t": "TER",
+      "n": "Teradyne",
+      "c": 59.4,
+      "s": "波動過高（年化 > 70%）"
      },
      {
-      "t": "AMAT",
-      "n": "Applied Materials",
-      "c": 62.7,
-      "s": "合格未入選"
+      "t": "ROK",
+      "n": "Rockwell Automation",
+      "c": 47.9,
+      "s": "總經警戒：高估值／高Beta股需更大安全邊際"
      },
      {
-      "t": "LRCX",
-      "n": "Lam Research",
-      "c": 60.1,
-      "s": "各估值方法分歧過大"
+      "t": "TSLA",
+      "n": "Tesla",
+      "c": 45.5,
+      "s": "資料不足，無法估值"
      },
      {
-      "t": "KLAC",
-      "n": "KLA",
-      "c": 52.0,
+      "t": "SYM",
+      "n": "Symbotic",
+      "c": 39.9,
       "s": "各估值方法分歧過大"
      }
     ]
@@ -4438,80 +4398,178 @@
     "name": "網通與光通訊",
     "rank": 14,
     "focus": false,
-    "score": 30.0,
+    "score": 27.8,
     "parts": {
-     "news": 6.0,
+     "news": 0.0,
      "mom": 19.0,
      "fund": 81.0
     },
-    "ret_1m": -0.3824,
-    "n_news": 4,
-    "sent": -0.4,
+    "ret_1m": -0.3191,
+    "n_news": 2,
+    "sent": -0.19,
     "tags": [
      "潛力（基本面強、股價尚未過熱）"
     ],
     "risk": "技術路線變動（CPO 取代可插拔）、客戶集中、題材股波動大",
     "heads": [
      {
-      "title": "Nintendo Switch 2 sales plunge 41% as price hikes and memory crunch bite - CNBC",
-      "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1DMzUteWR1Y3BZNWdaV29ENVMyelZfZHQtLUZsanRHSVQxNWhWTFpjMUdCWDRhS3c4ZWV4bjZEbkxIVklFMDFUZkktV2g5S3QzVHZqSWtndXIyeUNoQW8xNEJUX0JINHV3Njc4aEpPQzAyb2FZZlVySNIBfkFVX3lxTE1VTkdxNGotWTU3RzhEZFI0ekpuek9jX1l0Zi02VWF4Ml82eUlNX29aTmpELXRrZ2dyRFdJaDhvaGVTMGdjZF9UTzJRZmQ3MjVKV1dEOXhuUkVYQkJsZExoenVqLWxCZnNGd0NBNGZIemNmbW1Wdi0yd29aaF91Zw?oc=5",
-      "source": "CNBC Markets (via Google News)"
+      "title": "就市論勢／先進製程、光通訊 可低接 - UDN",
+      "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE5SLWVfRlZsc1AzTldtU2ZqYWt2dDlkSlpvdjNCNmRjRXFwZThHRVFld2pOY0ZBRXRubll1MVhVZXJQUl9mdkdiYVB6RmJ6Y1F20gFWQVVfeXFMUGFfRURKSDN2WmtWRDg4VFJqaFN0LVVUS0JlUm9wZFNKdlVkc2lDd0d4TGZrMzhkYzBPMkpJeTYwWEd2cjFHN1NYTE1jbTlpZ0pGM3oxaWc?oc=5",
+      "source": "聯合新聞網 股市 (via Google News)"
+     },
+     {
+      "title": "【11/06 產業即時新聞】網通設備族群殺聲隆隆重挫9.82%，高本益比AI概念股遭多頭全面棄守 - CMoney投資網誌",
+      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPRUdaNmxmYTBQOThxNDk0eGd6dGFnQnppa1QwWXJRYWVDS2hnOE5KemFWcFJBOHVKODBWN2JEbmV4WWJ4YXRVQTZmT216NGwtOXBsYjJUaWVaSXpWaEF5V0V1S1pSVWF5NU5sRE1tZUxaUVlRbGVKbDZJUXd6Sjgzbm0tcGZGeEV6WWlfaHZn?oc=5",
+      "source": "Google News 台股"
      }
     ],
     "members": [
      {
       "t": "ANET",
       "n": "Arista Networks",
-      "c": 62.6,
+      "c": 62.9,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "CSCO",
       "n": "Cisco",
-      "c": 61.9,
+      "c": 61.4,
       "s": "各估值方法分歧過大"
      },
      {
       "t": "CRDO",
       "n": "Credo",
-      "c": 58.3,
+      "c": 57.9,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
       "t": "COHR",
       "n": "Coherent",
-      "c": 54.2,
+      "c": 56.0,
       "s": "波動過高（年化 > 70%）"
      },
      {
       "t": "CIEN",
       "n": "Ciena",
-      "c": 53.5,
+      "c": 50.7,
       "s": "波動過高（年化 > 70%）"
+     }
+    ]
+   },
+   {
+    "id": "semi_equipment",
+    "name": "半導體設備與材料",
+    "rank": 15,
+    "focus": false,
+    "score": 27.8,
+    "parts": {
+     "news": 6.0,
+     "mom": 25.0,
+     "fund": 62.0
+    },
+    "ret_1m": -0.3029,
+    "n_news": 3,
+    "sent": -0.15,
+    "tags": [],
+    "risk": "出口管制（中國營收占比）、晶圓廠資本支出循環",
+    "heads": [
+     {
+      "title": "台積電要做AI記憶體？傳應輝達要求研擬生產3D DRAM",
+      "link": "https://tw.stock.yahoo.com/news/%E5%8F%B0%E7%A9%8D%E9%9B%BB%E8%A6%81%E5%81%9Aai%E8%A8%98%E6%86%B6%E9%AB%94-%E5%82%B3%E6%87%89%E8%BC%9D%E9%81%94%E8%A6%81%E6%B1%82%E7%A0%94%E6%93%AC%E7%94%9F%E7%94%A23d-dram-151333681.html",
+      "source": "Yahoo奇摩股市 國際"
+     }
+    ],
+    "members": [
+     {
+      "t": "AMAT",
+      "n": "Applied Materials",
+      "c": 64.5,
+      "s": "合格未入選"
+     },
+     {
+      "t": "ASML",
+      "n": "ASML",
+      "c": 64.3,
+      "s": "合格未入選"
+     },
+     {
+      "t": "LRCX",
+      "n": "Lam Research",
+      "c": 60.7,
+      "s": "各估值方法分歧過大"
+     },
+     {
+      "t": "KLAC",
+      "n": "KLA",
+      "c": 50.6,
+      "s": "各估值方法分歧過大"
+     }
+    ]
+   },
+   {
+    "id": "cooling_power",
+    "name": "散熱、電源與資料中心基礎建設",
+    "rank": 16,
+    "focus": false,
+    "score": 22.5,
+    "parts": {
+     "news": 19.0,
+     "mom": 12.0,
+     "fund": 44.0
+    },
+    "ret_1m": -0.2224,
+    "n_news": 2,
+    "sent": 0.21,
+    "tags": [],
+    "risk": "客戶認證/規格變動、題材過熱導致評價偏高、同業價格競爭",
+    "heads": [
+     {
+      "title": "一台20萬搶破頭　輝達RTX Spark打破PC傳統界線",
+      "link": "https://tw.stock.yahoo.com/news/%E5%8F%B020%E8%90%AC%E6%90%B6%E7%A0%B4%E9%A0%AD-%E8%BC%9D%E9%81%94rtx-spark%E6%89%93%E7%A0%B4pc%E5%82%B3%E7%B5%B1%E7%95%8C%E7%B7%9A-005157312.html",
+      "source": "Yahoo奇摩股市 國際"
+     }
+    ],
+    "members": [
+     {
+      "t": "VRT",
+      "n": "Vertiv",
+      "c": 50.6,
+      "s": "波動過高（年化 > 70%）"
+     },
+     {
+      "t": "ETN",
+      "n": "Eaton",
+      "c": 44.9,
+      "s": "各估值方法分歧過大"
      }
     ]
    },
    {
     "id": "pcb_materials",
     "name": "PCB、載板與先進材料",
-    "rank": 15,
+    "rank": 17,
     "focus": false,
-    "score": 22.8,
+    "score": 16.9,
     "parts": {
-     "news": 25.0,
+     "news": 12.0,
      "mom": 0.0,
-     "fund": 56.0
+     "fund": 50.0
     },
-    "ret_1m": -0.4405,
-    "n_news": 7,
-    "sent": -0.09,
+    "ret_1m": -0.3698,
+    "n_news": 5,
+    "sent": -0.28,
     "tags": [],
     "risk": "原物料（銅、玻纖）價格波動、高階規格認證不確定、價格競爭",
     "heads": [
      {
-      "title": "輝達掀PTFE無玻纖布革命！材料商搶布局、PCB廠審慎評估　良率、成本成量產關鍵",
-      "link": "https://tw.stock.yahoo.com/news/%E8%BC%9D%E9%81%94%E6%8E%80ptfe%E7%84%A1%E7%8E%BB%E7%BA%96%E5%B8%83%E9%9D%A9%E5%91%BD%EF%BC%81%E6%9D%90%E6%96%99%E5%95%86%E6%90%B6%E5%B8%83%E5%B1%80%E3%80%81pcb%E5%BB%A0%E5%AF%A9%E6%85%8E%E8%A9%95%E4%BC%B0-%E8%89%AF%E7%8E%87%E3%80%81%E6%88%90%E6%9C%AC%E6%88%90%E9%87%8F%E7%94%A2%E9%97%9C%E9%8D%B5-031614618.html",
-      "source": "Yahoo奇摩股市 國際"
+      "title": "元太攜手台虹攻PTFE CCL材料 砸27.8億元買華紙觀音廠區 - 鉅亨網",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1nR1EwUjk1UC1LUVVWT3ZJYjBtQmVfck4zOTdJZHFfV1ZOTzNQb2J3dFd5bGtnTFNGWlIxTW9FZFdaNWh5VXQ0TmJUVElJOGc?oc=5",
+      "source": "鉅亨網 台股 (via Google News)"
+     },
+     {
+      "title": "【11/06 產業即時新聞】CCL銅箔基板即時大跌亮燈，AI高階材料受美股科技股重挫拖累 - CMoney投資網誌",
+      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQSXBCWjVubmVHczhxMTI0NkJMb2tDV1ZCU0JFZGdCM1VzaF9rLV8zN19WTVE1UGpLMERlTjN3UVRpME1QaUdyRGpBX3Fwc2k1VV9BSW5Oc1ZBVnl0bkRYTnRuRU1vZHdHRjBGa2VYNjZjZW1hSHowb283Zlkxb1Q5YUs4MDlhbUkyRTBZaUd3?oc=5",
+      "source": "Google News 台股"
      }
     ],
     "members": [
@@ -4524,96 +4582,8 @@
      {
       "t": "TTMI",
       "n": "TTM Technologies",
-      "c": 44.3,
+      "c": 43.1,
       "s": "波動過高（年化 > 70%）"
-     }
-    ]
-   },
-   {
-    "id": "robotics_auto",
-    "name": "機器人、自動化與電動車",
-    "rank": 16,
-    "focus": false,
-    "score": 21.6,
-    "parts": {
-     "news": 12.0,
-     "mom": 31.0,
-     "fund": 19.0
-    },
-    "ret_1m": -0.2256,
-    "n_news": 3,
-    "sent": 0.0,
-    "tags": [],
-    "risk": "題材先行、獲利尚未驗證、電動車需求與價格戰",
-    "heads": [
-     {
-      "title": "EV Truck Maker Harbinger Raises $240 Million for Expansion - Bloomberg.com",
-      "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOZ2xYc0RMSDE4enRqMkFFZng4VjNZUTFRMnFteTh0Qzd6Zm1KYUJyTUpBcFVPdHd0dUhqWExiWWhSUFQybm1sbXpUeTBWN3d5WFZLQ09hNThSWDA1OGVXTmdRVm1Bb0hDbVVwVDd4ZXQxSDRVTV8xYVNDTm9lQmNXay1lNFBrai1HSWhROTh6UVFSV2ZGd0gwSjN0X0Uxd0R0akF3U09xdzVMVy1tbFFKdVhR?oc=5",
-      "source": "Bloomberg Markets (via Google News)"
-     }
-    ],
-    "members": [
-     {
-      "t": "TER",
-      "n": "Teradyne",
-      "c": 57.0,
-      "s": "波動過高（年化 > 70%）"
-     },
-     {
-      "t": "ROK",
-      "n": "Rockwell Automation",
-      "c": 44.6,
-      "s": "上檔未達利率門檻（7.8%）"
-     },
-     {
-      "t": "TSLA",
-      "n": "Tesla",
-      "c": 41.5,
-      "s": "資料不足，無法估值"
-     },
-     {
-      "t": "SYM",
-      "n": "Symbotic",
-      "c": 37.7,
-      "s": "各估值方法分歧過大"
-     }
-    ]
-   },
-   {
-    "id": "cooling_power",
-    "name": "散熱、電源與資料中心基礎建設",
-    "rank": 17,
-    "focus": false,
-    "score": 17.5,
-    "parts": {
-     "news": 0.0,
-     "mom": 12.0,
-     "fund": 50.0
-    },
-    "ret_1m": -0.2624,
-    "n_news": 2,
-    "sent": -0.18,
-    "tags": [],
-    "risk": "客戶認證/規格變動、題材過熱導致評價偏高、同業價格競爭",
-    "heads": [
-     {
-      "title": "Yardeni Sees Inflation Cooling, Says US Yields Attractive at 5% - Bloomberg.com",
-      "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbXk2ejJpa2VabHBjbzdnU05wSXVIVlNwaURLQ3J6X1IyR1p1WWxzV2JLUVIxaVFTZXdWaGU5ZzQwUDYwVkxJSWpETmRybmhsNXh3a0RENER0OUZlYm9pOE1NN2gtel9HOFVJYmJnRDVHc3o1TVNqODlES051NXB0ZWlSM0luM3ZqVHdyWHhiVUlLanA1cFdHV2tIbWxrd1FDTTYtenJBYmpVR19Fb3piOVR3?oc=5",
-      "source": "Bloomberg Markets (via Google News)"
-     }
-    ],
-    "members": [
-     {
-      "t": "VRT",
-      "n": "Vertiv",
-      "c": 50.1,
-      "s": "波動過高（年化 > 70%）"
-     },
-     {
-      "t": "ETN",
-      "n": "Eaton",
-      "c": 43.8,
-      "s": "各估值方法分歧過大"
      }
     ]
    }
@@ -4628,17 +4598,17 @@
     "short": "抗量子密碼",
     "tier": "A",
     "rank": 1,
-    "score": 86.0,
+    "score": 85.3,
     "parts": {
      "evidence": 100,
      "low_coverage": 100.0,
-     "fundamental": 77.0,
-     "not_crowded": 58.0
+     "fundamental": 78.0,
+     "not_crowded": 55.0
     },
     "coverage": 0.0,
     "n_headlines": 0,
     "status": "尚未被充分報導",
-    "rel_6m": 0.1818,
+    "rel_6m": 0.2207,
     "above200": 0.67,
     "thesis": "各國政府與標準機構已訂出『現行公鑰密碼要被淘汰』的遷移時程，企業與雲端供應商必須在期限前更換密碼架構與硬體信任根；需求由法規時程驅動，而非景氣。",
     "evidence": [
@@ -4654,37 +4624,37 @@
      {
       "t": "IBM",
       "n": "IBM",
-      "c": 53.9,
+      "c": 56.4,
       "s": "目標價低於現價"
      },
      {
       "t": "NET",
       "n": "Cloudflare",
-      "c": 54.8,
+      "c": 57.2,
       "s": "資料不足，無法估值"
      },
      {
       "t": "AKAM",
       "n": "Akamai",
-      "c": 43.1,
+      "c": 42.7,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
       "t": "PANW",
       "n": "Palo Alto Networks",
-      "c": 51.6,
+      "c": 52.1,
       "s": "估值方法分歧過大"
      },
      {
       "t": "6214.TW",
       "n": "精誠",
-      "c": 59.0,
-      "s": "目標價低於現價"
+      "c": 71.8,
+      "s": "資料不足，無法估值"
      },
      {
       "t": "6690.TWO",
       "n": "安碁資訊",
-      "c": 47.4,
+      "c": 46.9,
       "s": "市值過小"
      }
     ],
@@ -4696,17 +4666,17 @@
     "short": "先進封裝介面",
     "tier": "B",
     "rank": 2,
-    "score": 85.4,
+    "score": 85.1,
     "parts": {
      "evidence": 75,
      "low_coverage": 100.0,
      "fundamental": 96.0,
-     "not_crowded": 70.0
+     "not_crowded": 68.0
     },
     "coverage": 0.0,
     "n_headlines": 0,
     "status": "尚未被充分報導",
-    "rel_6m": -0.1003,
+    "rel_6m": -0.0834,
     "above200": 0.25,
     "thesis": "AI 加速器的瓶頸已從晶圓製造延伸到封裝與測試；探針卡、測試座、先進封裝材料與載板的單位價值隨 chiplet 與大尺寸封裝上升。",
     "evidence": [
@@ -4722,25 +4692,25 @@
      {
       "t": "AMKR",
       "n": "Amkor",
-      "c": 53.6,
+      "c": 57.0,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
       "t": "ENTG",
       "n": "Entegris",
-      "c": 61.9,
+      "c": 63.1,
       "s": "估值方法分歧過大"
      },
      {
       "t": "FORM",
       "n": "FormFactor",
-      "c": 64.3,
+      "c": 61.7,
       "s": "波動過高（年化 > 75%）"
      },
      {
       "t": "COHU",
       "n": "Cohu",
-      "c": 52.6,
+      "c": 52.7,
       "s": "波動過高（年化 > 75%）"
      },
      {
@@ -4752,7 +4722,7 @@
      {
       "t": "6510.TWO",
       "n": "精測",
-      "c": 63.5,
+      "c": 61.3,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
@@ -4764,7 +4734,7 @@
      {
       "t": "3189.TW",
       "n": "景碩",
-      "c": 70.4,
+      "c": 72.3,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      }
     ],
@@ -4786,7 +4756,7 @@
     "coverage": 0.0,
     "n_headlines": 0,
     "status": "尚未被充分報導",
-    "rel_6m": -0.1473,
+    "rel_6m": -0.1383,
     "above200": 0.0,
     "thesis": "電網互連排隊、輸電線路老化汰換與再生能源併網需要大量高壓電纜、開關設備與配電硬體，專案以多年期合約與監管核准推進，能見度高。",
     "evidence": [
@@ -4802,13 +4772,13 @@
      {
       "t": "HUBB",
       "n": "Hubbell",
-      "c": 54.6,
+      "c": 55.0,
       "s": "入選"
      },
      {
       "t": "POWL",
       "n": "Powell Industries",
-      "c": 51.2,
+      "c": 50.9,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
@@ -4820,7 +4790,7 @@
      {
       "t": "1605.TW",
       "n": "華新",
-      "c": 49.7,
+      "c": 54.8,
       "s": "財務品質不足"
      },
      {
@@ -4844,17 +4814,17 @@
     "short": "高齡照護",
     "tier": "A",
     "rank": 4,
-    "score": 82.8,
+    "score": 82.9,
     "parts": {
      "evidence": 100,
      "low_coverage": 100.0,
-     "fundamental": 65.0,
-     "not_crowded": 58.0
+     "fundamental": 64.0,
+     "not_crowded": 59.0
     },
     "coverage": 0.0,
     "n_headlines": 0,
     "status": "尚未被充分報導",
-    "rel_6m": 0.1529,
+    "rel_6m": 0.1394,
     "above200": 0.57,
     "thesis": "人口老化是已知且不可逆的人口結構；糖尿病、睡眠呼吸中止、洗腎與視力矯正等慢性病的長期照護需求持續增加，且多為經常性耗材收入。",
     "evidence": [
@@ -4870,25 +4840,25 @@
      {
       "t": "RMD",
       "n": "ResMed",
-      "c": 75.3,
+      "c": 74.2,
       "s": "入選"
      },
      {
       "t": "DXCM",
       "n": "Dexcom",
-      "c": 53.2,
-      "s": "目標價低於現價"
+      "c": 54.9,
+      "s": "估值方法分歧過大"
      },
      {
       "t": "PODD",
       "n": "Insulet",
-      "c": 56.0,
+      "c": 54.0,
       "s": "估值方法分歧過大"
      },
      {
       "t": "SYK",
       "n": "Stryker",
-      "c": 61.2,
+      "c": 61.0,
       "s": "入選"
      },
      {
@@ -4900,7 +4870,7 @@
      {
       "t": "6491.TW",
       "n": "晶碩",
-      "c": 71.9,
+      "c": 72.0,
       "s": "估值方法分歧過大"
      },
      {
@@ -4928,7 +4898,7 @@
     "coverage": 0.0,
     "n_headlines": 0,
     "status": "尚未被充分報導",
-    "rel_6m": -0.2479,
+    "rel_6m": -0.2437,
     "above200": 0.0,
     "thesis": "資料中心高壓直流供電、電動車與工業電源朝更高電壓與效率發展，碳化矽與氮化鎵元件的採用率隨成本下降而擴大。",
     "evidence": [
@@ -4944,7 +4914,7 @@
      {
       "t": "ON",
       "n": "onsemi",
-      "c": 62.5,
+      "c": 62.7,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
@@ -4956,7 +4926,7 @@
      {
       "t": "MPWR",
       "n": "Monolithic Power",
-      "c": 73.2,
+      "c": 76.4,
       "s": "入選"
      },
      {
@@ -4974,7 +4944,7 @@
      {
       "t": "6415.TW",
       "n": "矽力-KY",
-      "c": 55.6,
+      "c": 55.8,
       "s": "入選"
      },
      {
@@ -4998,17 +4968,17 @@
     "short": "邊緣AI",
     "tier": "B",
     "rank": 6,
-    "score": 81.0,
+    "score": 76.9,
     "parts": {
      "evidence": 75,
-     "low_coverage": 100.0,
-     "fundamental": 87.0,
+     "low_coverage": 88.0,
+     "fundamental": 83.0,
      "not_crowded": 59.0
     },
-    "coverage": 0.0,
-    "n_headlines": 0,
+    "coverage": 0.12,
+    "n_headlines": 1,
     "status": "尚未被充分報導",
-    "rel_6m": -0.0416,
+    "rel_6m": -0.0371,
     "above200": 0.12,
     "thesis": "AI 推論從雲端下沉到工廠、零售與車輛等邊緣場景，需要低功耗、可長期供貨且通過工規認證的嵌入式運算與感測平台。",
     "evidence": [
@@ -5024,32 +4994,32 @@
      {
       "t": "QCOM",
       "n": "Qualcomm",
-      "c": 54.5,
-      "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
+      "c": 57.2,
+      "s": "估值方法分歧過大"
      },
      {
       "t": "ARM",
       "n": "Arm Holdings",
-      "c": 60.5,
+      "c": 55.8,
       "s": "波動過高（年化 > 75%）"
      },
      {
       "t": "LSCC",
       "n": "Lattice",
-      "c": 55.7,
+      "c": 55.0,
       "s": "入選"
      },
      {
       "t": "ADI",
       "n": "Analog Devices",
-      "c": 64.7,
+      "c": 62.8,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
       "t": "2395.TW",
       "n": "研華",
-      "c": 70.5,
-      "s": "目標價低於現價"
+      "c": 68.8,
+      "s": "入選"
      },
      {
       "t": "6166.TW",
@@ -5060,7 +5030,7 @@
      {
       "t": "3088.TWO",
       "n": "艾訊",
-      "c": 49.2,
+      "c": 49.1,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
@@ -5070,7 +5040,13 @@
       "s": "資料不足，無法估值"
      }
     ],
-    "heads": []
+    "heads": [
+     {
+      "title": "擷發科技開拓日本佈局 AI車載與Edge AI系統獲日企青睞 - 中央社 CNA",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFB3QnJfeGs4RzdlVDI4bzNwWW11Yk5xbmItaUpwZlZyRjRnWlNnY0VIcElkTVk3TnhjaHNKOEtBT2szeVdOaGR4Y09rN2tMMW54YTh2WVozbDNNdw?oc=5",
+      "source": "中央社 財經 (via Google News)"
+     }
+    ]
    },
    {
     "id": "water_infra",
@@ -5078,17 +5054,17 @@
     "short": "水資源",
     "tier": "B",
     "rank": 7,
-    "score": 71.6,
+    "score": 72.3,
     "parts": {
      "evidence": 75,
      "low_coverage": 100.0,
-     "fundamental": 43.0,
+     "fundamental": 46.0,
      "not_crowded": 67.0
     },
     "coverage": 0.0,
     "n_headlines": 0,
     "status": "尚未被充分報導",
-    "rel_6m": 0.1005,
+    "rel_6m": 0.0988,
     "above200": 0.67,
     "thesis": "半導體晶圓廠與資料中心用水量大，缺水與水質法規收緊使水處理、回收與管網更新成為剛性支出。",
     "evidence": [
@@ -5104,37 +5080,37 @@
      {
       "t": "XYL",
       "n": "Xylem",
-      "c": 57.3,
+      "c": 56.4,
       "s": "合格未入選"
      },
      {
       "t": "ECL",
       "n": "Ecolab",
-      "c": 49.9,
+      "c": 49.8,
       "s": "目標價低於現價"
      },
      {
       "t": "PNR",
       "n": "Pentair",
-      "c": 48.8,
+      "c": 49.1,
       "s": "估值方法分歧過大"
      },
      {
       "t": "WTS",
       "n": "Watts Water",
-      "c": 45.2,
-      "s": "目標價低於現價"
+      "c": 48.5,
+      "s": "估值方法分歧過大"
      },
      {
       "t": "AWK",
       "n": "American Water Works",
-      "c": 44.5,
+      "c": 44.1,
       "s": "目標價低於現價"
      },
      {
       "t": "WTRG",
       "n": "Essential Utilities",
-      "c": 46.1,
+      "c": 43.4,
       "s": "目標價低於現價"
      }
     ],
@@ -5146,17 +5122,17 @@
     "short": "量測檢測",
     "tier": "B",
     "rank": 8,
-    "score": 71.6,
+    "score": 66.5,
     "parts": {
      "evidence": 75,
-     "low_coverage": 79.0,
+     "low_coverage": 59.0,
      "fundamental": 69.0,
      "not_crowded": 60.0
     },
-    "coverage": 0.21,
-    "n_headlines": 2,
+    "coverage": 0.41,
+    "n_headlines": 3,
     "status": "尚未被充分報導",
-    "rel_6m": -0.4238,
+    "rel_6m": -0.4085,
     "above200": 0.0,
     "thesis": "製程微縮（GAA、背面供電）與 HBM/先進封裝的 3D 堆疊讓每片晶圓的量測、檢測與驗證步驟數增加，且良率成本隨複雜度上升，量測檢測支出占比結構性提高。",
     "evidence": [
@@ -5172,31 +5148,31 @@
      {
       "t": "ONTO",
       "n": "Onto Innovation",
-      "c": 65.7,
+      "c": 69.1,
       "s": "波動過高（年化 > 75%）"
      },
      {
       "t": "CAMT",
       "n": "Camtek",
-      "c": 59.1,
+      "c": 58.1,
       "s": "合格未入選"
      },
      {
       "t": "NVMI",
       "n": "Nova",
-      "c": 62.4,
-      "s": "估值方法分歧過大"
+      "c": 60.7,
+      "s": "合格未入選"
      },
      {
       "t": "KLAC",
       "n": "KLA",
-      "c": 52.0,
+      "c": 50.6,
       "s": "估值方法分歧過大"
      },
      {
       "t": "3587.TWO",
       "n": "閎康",
-      "c": 55.4,
+      "c": 57.3,
       "s": "已跌破前次推薦的停損價（論點失效），收復前不再推薦"
      },
      {
@@ -5214,13 +5190,18 @@
     ],
     "heads": [
      {
-      "title": "輝達掀PTFE無玻纖布革命！材料商搶布局、PCB廠審慎評估　良率、成本成量產關鍵",
-      "link": "https://tw.stock.yahoo.com/news/%E8%BC%9D%E9%81%94%E6%8E%80ptfe%E7%84%A1%E7%8E%BB%E7%BA%96%E5%B8%83%E9%9D%A9%E5%91%BD%EF%BC%81%E6%9D%90%E6%96%99%E5%95%86%E6%90%B6%E5%B8%83%E5%B1%80%E3%80%81pcb%E5%BB%A0%E5%AF%A9%E6%85%8E%E8%A9%95%E4%BC%B0-%E8%89%AF%E7%8E%87%E3%80%81%E6%88%90%E6%9C%AC%E6%88%90%E9%87%8F%E7%94%A2%E9%97%9C%E9%8D%B5-031614618.html",
-      "source": "Yahoo奇摩股市 國際"
+      "title": "The AI ‘credit card’ is getting costlier as CoreWeave bond yield tops 16% - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQZmJ2R19jOTVNbkRoM3U5RWlNUXVuZzdFaWFwR1FEUFBsaTlxZmF4dkdFYjZ1aV9UNzJ3WE54MTFlNnpiR0pXbUZ6ZnYtVG1UdmVSUVNEd1dpbU9zVHdqVlBtOWdZN0pTUjhXdEpya1ZyY2FvTkd6VWZlczhEWVM4R2VONkRGWTdfNmVzV0otYTNIMUVCRXdxemk4QmNjVjjSAaQBQVVfeXFMTjR1MnllbFk3RW1NZ0N4b3ZZR09VV0lrTmpuOTdKclVwMlpsbThLXzRPQy1EUHdBX1NZclJrQ25IWmI5V2RUbDg3SHozeUJmbUZXSXdSWnVlbTZZeGNmemNnY3BsZWJ5c1U0bE00MTJ1U292Qnp1Z1M5S1RjUEpWNDFEZnpNMzN2RG9EMXVOeGRYNk0wa0JmVl9Od2dxUjhkcmF0ZGE?oc=5",
+      "source": "CNBC Markets (via Google News)"
      },
      {
-      "title": "10-year Treasury yield falls as traders exit tech stocks, look ahead to jobs data - CNBC",
-      "link": "https://news.google.com/rss/articles/CBMifkFVX3lxTFBwRFU3SzVLNDJOd1p3SDRNMkE0QjBMRms2d1RJaDZEMlZaSGQzUUN1Qjc4eW90Z2NDTmZITmh0QnZIbU1uc3hlUFRZV2NvYTRkQ2I1eHZ3dGpJSVFQRUpWZ1YycWJZYy1iZnZzdTNiQ0x2Wi1WQ2RkNmpuUm1vd9IBgwFBVV95cUxNNHdYYnNDYV9CX1JxUEl4bGJBSmtGSXNGTWN0NURsdkpHRHZqcVBmUGhHWUxlZ19ab0VfdjFiTjIwZkpCX3ZZaWVSNXdLUWY3eU43ekw1N0Z2WC1qWVYxUHFKZ3Z1Y01ON1B6N1Y5RlVoNUJWbmZ6YjZQN1B0ZTk1RjNhQQ?oc=5",
+      "title": "Meet the High-Yield Dividend Stock Quietly Crushing the S&P 500. Here's Why It Has Room to Run. - Yahoo Finance",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPeE1acV82cXpLOTYzZ0NyVjJRbHQyRjhIOU1IQWc2MnNnNVRERktuMVVfcnhvNHNRV0JMdktRbUF3MVN3aHo2WHJVWURjQVBlYWQzY3JuQzIzTks3T3VmVHZ4QkpqTjdKYlJXRlk2aHhCcVZGMFVRMlc0cVpacWZyTllHbzMwVldyTF82dmpsYm1EQWZMY2UzOUVkTQ?oc=5",
+      "source": "Yahoo Finance (via Google News)"
+     },
+     {
+      "title": "10-year Treasury yield is little changed after stronger-than-expected October jobs report - CNBC",
+      "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxOWEd4MDlaNjAwRjlYdFp0aDhKVDFsVHZNUnBCWXU1aHhPWGMtQ2hmTVJnZmpoMWo3cnJNbEZwRWJHRVp0UjI1SU9ELURwYjctRnRUS19MUVhrdVlvTWswem9xR0dRT2V0ZHJxUm5pZFE5cnpxTmR5Wm1lR1pYRk9xYXh4dGtiVWQtNWJfcVBzQmVSS1VRR1F6UDRpWnhjVlJsSF9iazlCRUrSAa4BQVVfeXFMTXFRWnBSVk1BYjJrMzR4N0VZOXZIa2U2MXZnWFZVS0t3amRvOTdSVC1PaEpLQ3NMS08wamNTeFlmRk5PUWNRZWp6VTZnUHozNVNvWXpLTko3UHNOOUhCQWhpS2xqQmdEd08zVkRDTHBCUU9Gc1drd2NwWWlNMlc1SHVUeUVSZUVwNEhNRDU2d0xCMERmWkdXbWI4QW1UaWhRR3U3MHhQSWlFR1ptT0Fn?oc=5",
       "source": "CNBC Markets (via Google News)"
      }
     ]
@@ -5238,47 +5219,47 @@
      "price": 389.0,
      "ccy": "TWD",
      "asof": "2026-11-06",
-     "composite": 55.6,
+     "composite": 55.8,
      "scores": {
       "sector": null,
       "leader": 66.7,
       "quality": 59.3,
       "growth": 100.0,
-      "valuation": 44.4,
+      "valuation": 45.7,
       "momentum": 25.9,
       "news": 40.0
      },
      "target": {
-      "base": 436.41,
-      "bull": 610.97,
-      "bear": 174.56,
-      "ev": 405.86,
-      "upside": 0.1219,
-      "ev_upside": 0.0433,
+      "base": 438.9,
+      "bull": 614.46,
+      "bear": 175.56,
+      "ev": 408.18,
+      "upside": 0.1283,
+      "ev_upside": 0.0493,
       "confidence": "中",
       "capped": false,
-      "raw_upside": 0.1219,
-      "rr": 0.22,
+      "raw_upside": 0.1283,
+      "rr": 0.23,
       "stop": 318.98,
-      "spread": 0.51,
-      "peer_pe": 15.4
+      "spread": 0.49,
+      "peer_pe": 16.0
      },
      "methods": [
       {
        "k": "pe",
        "label": "同業相對本益比",
-       "value": 323.35,
+       "value": 328.51,
        "weight": 0.5,
-       "upside": -0.1688,
-       "detail": "預估EPS 16.71 × 目標本益比 19.3（現行 23.3 向同業 15.4 靠攏 50%；同業中位數 15.4 × 成長調整 1.00）"
+       "upside": -0.1555,
+       "detail": "預估EPS 16.71 × 目標本益比 19.7（現行 23.3 向同業 16.0 靠攏 50%；同業中位數 16.0 × 成長調整 1.00）"
       },
       {
        "k": "peg",
        "label": "PEG 成長調整",
-       "value": 529.3,
+       "value": 528.83,
        "weight": 0.187,
-       "upside": 0.3607,
-       "detail": "預估EPS 16.71 × 合理本益比 31.7（成長率 25.0%（上限 25%）× PEG 1.3 × 利率調整 0.97）"
+       "upside": 0.3595,
+       "detail": "預估EPS 16.71 × 合理本益比 31.6（成長率 25.0%（上限 25%）× PEG 1.3 × 利率調整 0.97）"
       },
       {
        "k": "consensus",
@@ -5293,7 +5274,7 @@
      "fin": {
       "market_cap": 151069310976,
       "pe_fwd": 23.2765,
-      "pe_ttm": 40.1031,
+      "pe_ttm": 42.4672,
       "peg": null,
       "roe": 0.1047,
       "gross_margin": 0.4911,
@@ -5316,13 +5297,13 @@
       "from_high": -0.422,
       "vol_ann": 0.6133
      },
-     "thesis": "**龍頭地位**：同產業台股標的中市值排名第 2／4（市值 1511億 TWD）。\n\n**財務體質**（品質分 59）：ROE 10.5%、營業利益率 12.4%、毛利率 49.1%、營收年增 +31.5%、負債權益比 0.11。\n\n**股價結構**：近 3 個月相對大盤 -4.1%；距 200 日均線 -6.1%；距 52 週高 -42.2%。\n\n**估值**：預估本益比 23.3、同業中位數 15.4；base 目標價 436.41，隱含 +12.2%。",
+     "thesis": "**龍頭地位**：同產業台股標的中市值排名第 2／4（市值 1511億 TWD）。\n\n**財務體質**（品質分 59）：ROE 10.5%、營業利益率 12.4%、毛利率 49.1%、營收年增 +31.5%、負債權益比 0.11。\n\n**股價結構**：近 3 個月相對大盤 -4.1%；距 200 日均線 -6.1%；距 52 週高 -42.2%。\n\n**估值**：預估本益比 23.3、同業中位數 16.0；base 目標價 438.90，隱含 +12.8%。",
      "risks": [
       "Beta 1.8：大盤回檔時此股波動會放大（特性，不是事件）",
       "若出現就代表論點不成立：矽基元件以更低成本達到同等效率",
       "若出現就代表論點不成立：電動車與資料中心功率升級速度大幅放緩"
      ],
-     "headline": "高壓功率半導體（SiC / GaN）、營收年增+32%、目標價上檔 +12%",
+     "headline": "高壓功率半導體（SiC / GaN）、營收年增+32%、目標價上檔 +13%",
      "highlights": [
       {
        "t": "SiC/GaN",
@@ -5351,7 +5332,7 @@
        "tag": "成長"
       },
       {
-       "t": "估值：模型 base 目標價 436.41（上檔 +12.2%）；券商共識目標價 561.56（+44.4%）",
+       "t": "估值：模型 base 目標價 438.90（上檔 +12.8%）；券商共識目標價 561.56（+44.4%）",
        "tag": "估值"
       }
      ],
@@ -5620,6 +5601,400 @@
      "theme_short": "SiC/GaN",
      "also_main": false,
      "relaxed": false
+    },
+    {
+     "ticker": "2395.TW",
+     "name": "研華",
+     "market": "TW",
+     "sector": "edge_ai_industrial",
+     "sector_name": "工業邊緣 AI 與嵌入式運算",
+     "rank": 2,
+     "price": 552.0,
+     "ccy": "TWD",
+     "asof": "2026-11-06",
+     "composite": 68.8,
+     "scores": {
+      "sector": null,
+      "leader": 100.0,
+      "quality": 70.7,
+      "growth": 100.0,
+      "valuation": 55.6,
+      "momentum": 48.5,
+      "news": 40.0
+     },
+     "target": {
+      "base": 615.41,
+      "bull": 844.49,
+      "bear": 271.8,
+      "ev": 575.33,
+      "upside": 0.1149,
+      "ev_upside": 0.0423,
+      "confidence": "中",
+      "capped": false,
+      "raw_upside": 0.1149,
+      "rr": 0.23,
+      "stop": 479.14,
+      "spread": 0.47,
+      "peer_pe": 13.2
+     },
+     "methods": [
+      {
+       "k": "pe",
+       "label": "同業相對本益比",
+       "value": 476.33,
+       "weight": 0.5,
+       "upside": -0.1371,
+       "detail": "預估EPS 24.89 × 目標本益比 19.1（現行 22.2 向同業 16.1 靠攏 50%；同業中位數 13.2 × 成長調整 1.21）"
+      },
+      {
+       "k": "peg",
+       "label": "PEG 成長調整",
+       "value": 787.59,
+       "weight": 0.187,
+       "upside": 0.4268,
+       "detail": "預估EPS 24.89 × 合理本益比 31.6（成長率 25.0%（上限 25%）× PEG 1.3 × 利率調整 0.97）"
+      },
+      {
+       "k": "consensus",
+       "label": "券商共識目標價",
+       "value": 734.65,
+       "weight": 0.312,
+       "upside": 0.3309,
+       "detail": "17 位分析師平均（區間 405.0–870.0）"
+      }
+     ],
+     "dropped": [
+      "兩階段 DCF"
+     ],
+     "fin": {
+      "market_cap": 481389019136,
+      "pe_fwd": 22.178,
+      "pe_ttm": 30.3297,
+      "peg": 1.36,
+      "roe": 0.2996,
+      "gross_margin": 0.3804,
+      "op_margin": 0.2095,
+      "net_margin": 0.1773,
+      "rev_growth": 0.825,
+      "eps_growth": 1.24,
+      "de": 0.1142,
+      "fcf_margin": 0.0168,
+      "beta": 0.782,
+      "target_mean": 734.647,
+      "n_analysts": 17
+     },
+     "tech": {
+      "ret_1m": -0.252,
+      "ret_3m": -0.128,
+      "rel_3m": -0.0436,
+      "rel_6m": 0.4032,
+      "dist200": 0.1239,
+      "from_high": -0.2541,
+      "vol_ann": 0.3945
+     },
+     "thesis": "**龍頭地位**：同產業台股標的中市值排名第 1／4（市值 4814億 TWD）。\n\n**財務體質**（品質分 71）：ROE 30.0%、營業利益率 20.9%、毛利率 38.0%、營收年增 +82.5%、負債權益比 0.11。\n\n**股價結構**：近 3 個月相對大盤 -4.4%；距 200 日均線 +12.4%；距 52 週高 -25.4%。\n\n**估值**：預估本益比 22.2、同業中位數 13.2；base 目標價 615.41，隱含 +11.5%。",
+     "risks": [
+      "若出現就代表論點不成立：邊緣推論需求被雲端 API 完全取代",
+      "若出現就代表論點不成立：工業資本支出長期低迷"
+     ],
+     "headline": "工業邊緣 AI 與嵌入式運算、營收年增+82%、目標價上檔 +11%",
+     "highlights": [
+      {
+       "t": "邊緣AI",
+       "k": "theme"
+      },
+      {
+       "t": "營收年增+82%",
+       "k": "growth"
+      },
+      {
+       "t": "ROE 30%",
+       "k": "quality"
+      }
+     ],
+     "why": [
+      {
+       "t": "屬於「工業邊緣 AI 與嵌入式運算」趨勢：AI 推論從雲端下沉到工廠與裝置端",
+       "tag": "趨勢"
+      },
+      {
+       "t": "龍頭地位：同產業台股標的中市值第 1／4（4814億 TWD）",
+       "tag": "龍頭"
+      },
+      {
+       "t": "成長：營收年增 +82.5%、獲利年增 +124.0%",
+       "tag": "成長"
+      },
+      {
+       "t": "獲利體質：ROE 30.0%、營業利益率 20.9%、品質分 71",
+       "tag": "品質"
+      },
+      {
+       "t": "估值：模型 base 目標價 615.41（上檔 +11.5%）；券商共識目標價 734.65（+33.1%）",
+       "tag": "估值"
+      }
+     ],
+     "risks_now": [],
+     "risks_watch": [
+      {
+       "t": "若出現就代表論點不成立：邊緣推論需求被雲端 API 完全取代"
+      },
+      {
+       "t": "若出現就代表論點不成立：工業資本支出長期低迷"
+      }
+     ],
+     "news": [],
+     "series": {
+      "d": [
+       "260515",
+       "260518",
+       "260519",
+       "260520",
+       "260521",
+       "260522",
+       "260525",
+       "260526",
+       "260527",
+       "260528",
+       "260529",
+       "260601",
+       "260602",
+       "260603",
+       "260604",
+       "260605",
+       "260608",
+       "260609",
+       "260610",
+       "260611",
+       "260612",
+       "260615",
+       "260616",
+       "260617",
+       "260618",
+       "260622",
+       "260623",
+       "260624",
+       "260625",
+       "260626",
+       "260629",
+       "260630",
+       "260701",
+       "260702",
+       "260703",
+       "260706",
+       "260707",
+       "260708",
+       "260709",
+       "260713",
+       "260714",
+       "260715",
+       "260716",
+       "260717",
+       "260720",
+       "260721",
+       "260722",
+       "260723",
+       "260724",
+       "260727",
+       "260728",
+       "260729",
+       "260730",
+       "260731",
+       "260803",
+       "260804",
+       "260805",
+       "260806",
+       "260807",
+       "260810",
+       "260811",
+       "260812",
+       "260813",
+       "260814",
+       "260817",
+       "260818",
+       "260819",
+       "260820",
+       "260821",
+       "260824",
+       "260825",
+       "260826",
+       "260827",
+       "260828",
+       "260831",
+       "260901",
+       "260902",
+       "260903",
+       "260904",
+       "260907",
+       "260908",
+       "260909",
+       "260910",
+       "260911",
+       "260914",
+       "260915",
+       "260916",
+       "260917",
+       "260918",
+       "260921",
+       "260922",
+       "260923",
+       "260924",
+       "260929",
+       "260930",
+       "261001",
+       "261002",
+       "261005",
+       "261006",
+       "261007",
+       "261008",
+       "261012",
+       "261013",
+       "261014",
+       "261015",
+       "261016",
+       "261019",
+       "261020",
+       "261021",
+       "261022",
+       "261023",
+       "261027",
+       "261028",
+       "261029",
+       "261030",
+       "261102",
+       "261103",
+       "261104",
+       "261105",
+       "261106"
+      ],
+      "c": [
+       449.83,
+       447.87,
+       451.78,
+       455.21,
+       453.74,
+       459.13,
+       488.0,
+       499.26,
+       498.28,
+       480.17,
+       484.58,
+       506.12,
+       504.16,
+       502.2,
+       511.01,
+       485.56,
+       461.08,
+       479.19,
+       455.7,
+       454.23,
+       463.04,
+       474.79,
+       469.89,
+       478.22,
+       483.6,
+       488.98,
+       477.24,
+       463.53,
+       469.89,
+       445.91,
+       462.55,
+       481.64,
+       492.41,
+       499.26,
+       510.03,
+       504.16,
+       486.05,
+       534.5,
+       528.63,
+       524.72,
+       517.86,
+       521.78,
+       518.84,
+       513.0,
+       516.0,
+       567.0,
+       596.0,
+       600.0,
+       581.0,
+       577.0,
+       556.0,
+       550.0,
+       547.0,
+       563.0,
+       576.0,
+       576.0,
+       633.0,
+       622.0,
+       634.0,
+       667.0,
+       661.0,
+       686.0,
+       698.0,
+       683.0,
+       674.0,
+       679.0,
+       694.0,
+       673.0,
+       649.0,
+       658.0,
+       670.0,
+       688.0,
+       675.0,
+       669.0,
+       677.0,
+       711.0,
+       692.0,
+       674.0,
+       711.0,
+       680.0,
+       657.0,
+       653.0,
+       659.0,
+       674.0,
+       670.0,
+       685.0,
+       695.0,
+       686.0,
+       690.0,
+       706.0,
+       703.0,
+       701.0,
+       722.0,
+       730.0,
+       726.0,
+       723.0,
+       716.0,
+       740.0,
+       738.0,
+       733.0,
+       727.0,
+       721.0,
+       718.0,
+       714.0,
+       698.0,
+       685.0,
+       679.0,
+       684.0,
+       683.0,
+       670.0,
+       670.0,
+       687.0,
+       689.0,
+       673.0,
+       680.0,
+       655.0,
+       620.0,
+       629.0,
+       596.0,
+       552.0
+      ]
+     },
+     "theme": "edge_ai_industrial",
+     "theme_name": "工業邊緣 AI 與嵌入式運算",
+     "theme_short": "邊緣AI",
+     "also_main": false,
+     "relaxed": false
     }
    ],
    "US": [
@@ -5630,74 +6005,74 @@
      "sector": "grid_hardware",
      "sector_name": "高壓電纜與電網互連硬體",
      "rank": 1,
-     "price": 418.79,
+     "price": 429.45,
      "ccy": "USD",
-     "asof": "2026-11-05",
-     "composite": 54.6,
+     "asof": "2026-11-06",
+     "composite": 55.0,
      "scores": {
       "sector": null,
       "leader": 100.0,
       "quality": 58.4,
       "growth": 55.9,
-      "valuation": 57.0,
-      "momentum": 14.2,
+      "valuation": 56.1,
+      "momentum": 18.1,
       "news": 40.0
      },
      "target": {
-      "base": 487.79,
-      "bull": 678.69,
-      "bear": 201.44,
-      "ev": 454.38,
-      "upside": 0.1648,
-      "ev_upside": 0.085,
+      "base": 492.38,
+      "bull": 685.11,
+      "bear": 203.3,
+      "ev": 458.66,
+      "upside": 0.1465,
+      "ev_upside": 0.068,
       "confidence": "中",
       "capped": false,
-      "raw_upside": 0.1648,
-      "rr": 0.32,
-      "stop": 373.54,
+      "raw_upside": 0.1465,
+      "rr": 0.28,
+      "stop": 383.98,
       "spread": 0.59,
-      "peer_pe": 18.2
+      "peer_pe": 18.8
      },
      "methods": [
       {
        "k": "pe",
        "label": "同業相對本益比",
-       "value": 413.75,
+       "value": 426.49,
        "weight": 0.4,
-       "upside": -0.012,
-       "detail": "預估EPS 23.05 × 目標本益比 17.9（現行 18.2 向同業 17.7 靠攏 50%；同業中位數 18.2 × 成長調整 0.98）"
+       "upside": -0.0069,
+       "detail": "預估EPS 23.05 × 目標本益比 18.5（現行 18.6 向同業 18.4 靠攏 50%；同業中位數 18.8 × 成長調整 0.98）"
       },
       {
        "k": "peg",
        "label": "PEG 成長調整",
-       "value": 711.05,
+       "value": 709.73,
        "weight": 0.15,
-       "upside": 0.6979,
+       "upside": 0.6526,
        "detail": "預估EPS 23.05 × 合理本益比 30.8（成長率 25.0%（上限 25%）× PEG 1.3 × 利率調整 0.95）"
       },
       {
        "k": "dcf",
        "label": "兩階段 DCF",
-       "value": 404.59,
+       "value": 403.08,
        "weight": 0.2,
-       "upside": -0.0339,
-       "detail": "每股FCF 10.46，前期成長 25.0%→永續 2.5%，WACC 9.0%（無風險利率 4.84%，採即時殖利率）"
+       "upside": -0.0614,
+       "detail": "每股FCF 10.46，前期成長 25.0%→永續 2.5%，WACC 9.0%（無風險利率 4.86%，採即時殖利率）"
       },
       {
        "k": "consensus",
        "label": "券商共識目標價",
        "value": 538.85,
        "weight": 0.25,
-       "upside": 0.2867,
+       "upside": 0.2547,
        "detail": "13 位分析師平均（區間 486.0–600.0）"
       }
      ],
      "dropped": [],
      "fin": {
-      "market_cap": 22126784512,
-      "pe_fwd": 18.1662,
-      "pe_ttm": 24.5625,
-      "peg": 1.61,
+      "market_cap": 22690007040,
+      "pe_fwd": 18.6286,
+      "pe_ttm": 25.1877,
+      "peg": 1.54,
       "roe": 0.2343,
       "gross_margin": 0.3502,
       "op_margin": 0.2052,
@@ -5711,27 +6086,27 @@
       "n_analysts": 13
      },
      "tech": {
-      "ret_1m": -0.1191,
-      "ret_3m": -0.1827,
-      "rel_3m": -0.1306,
-      "rel_6m": -0.1477,
-      "dist200": -0.1369,
-      "from_high": -0.2447,
-      "vol_ann": 0.3
+      "ret_1m": -0.0967,
+      "ret_3m": -0.1468,
+      "rel_3m": -0.0983,
+      "rel_6m": -0.1198,
+      "dist200": -0.1145,
+      "from_high": -0.2255,
+      "vol_ann": 0.3052
      },
-     "thesis": "**龍頭地位**：同產業美股標的中市值排名第 1／2（市值 221億 USD）。\n\n**財務體質**（品質分 58）：ROE 23.4%、營業利益率 20.5%、毛利率 35.0%、營收年增 +24.6%、負債權益比 1.29。\n\n**股價結構**：近 3 個月相對大盤 -13.1%；距 200 日均線 -13.7%；距 52 週高 -24.5%。\n\n**估值**：預估本益比 18.2、同業中位數 18.2；base 目標價 487.79，隱含 +16.5%。",
+     "thesis": "**龍頭地位**：同產業美股標的中市值排名第 1／2（市值 227億 USD）。\n\n**財務體質**（品質分 58）：ROE 23.4%、營業利益率 20.5%、毛利率 35.0%、營收年增 +24.6%、負債權益比 1.29。\n\n**股價結構**：近 3 個月相對大盤 -9.8%；距 200 日均線 -11.4%；距 52 週高 -22.5%。\n\n**估值**：預估本益比 18.6、同業中位數 18.8；base 目標價 492.38，隱含 +14.7%。",
      "risks": [
       "若出現就代表論點不成立：監管核准或費率案被大幅否決",
       "若出現就代表論點不成立：電力需求預測被大幅下修"
      ],
-     "headline": "高壓電纜與電網互連硬體、營收年增+25%、目標價上檔 +16%",
+     "headline": "高壓電纜與電網互連硬體、營收年增+25%、目標價上檔 +15%",
      "highlights": [
       {
        "t": "電網硬體",
        "k": "theme"
       },
       {
-       "t": "券商共識+29%",
+       "t": "券商共識+25%",
        "k": "consensus"
       }
      ],
@@ -5749,7 +6124,7 @@
        "tag": "品質"
       },
       {
-       "t": "估值：模型 base 目標價 487.79（上檔 +16.5%）；券商共識目標價 538.85（+28.7%）",
+       "t": "估值：模型 base 目標價 492.38（上檔 +14.7%）；券商共識目標價 538.85（+25.5%）",
        "tag": "估值"
       }
      ],
@@ -5765,7 +6140,6 @@
      "news": [],
      "series": {
       "d": [
-       "260518",
        "260519",
        "260520",
        "260521",
@@ -5884,10 +6258,10 @@
        "261102",
        "261103",
        "261104",
-       "261105"
+       "261105",
+       "261106"
       ],
       "c": [
-       468.01,
        458.7,
        460.5,
        458.18,
@@ -6006,7 +6380,8 @@
        433.74,
        449.27,
        438.26,
-       418.79
+       418.79,
+       429.45
       ]
      },
      "theme": "grid_hardware",
@@ -6022,74 +6397,74 @@
      "sector": "aging_care",
      "sector_name": "高齡化與慢性病照護設備",
      "rank": 2,
-     "price": 239.31,
+     "price": 235.3,
      "ccy": "USD",
-     "asof": "2026-11-05",
-     "composite": 75.3,
+     "asof": "2026-11-06",
+     "composite": 74.2,
      "scores": {
       "sector": null,
       "leader": 66.7,
       "quality": 99.1,
       "growth": 48.8,
-      "valuation": 64.6,
-      "momentum": 78.8,
-      "news": 59.3
+      "valuation": 64.9,
+      "momentum": 73.1,
+      "news": 56.3
      },
      "target": {
-      "base": 282.22,
-      "bull": 352.16,
-      "bear": 177.31,
-      "ev": 269.98,
-      "upside": 0.1793,
-      "ev_upside": 0.1282,
+      "base": 277.79,
+      "bull": 348.07,
+      "bear": 172.38,
+      "ev": 265.49,
+      "upside": 0.1806,
+      "ev_upside": 0.1283,
       "confidence": "高",
       "capped": false,
-      "raw_upside": 0.1793,
-      "rr": 0.69,
-      "stop": 217.31,
-      "spread": 0.29,
-      "peer_pe": 20.5
+      "raw_upside": 0.1806,
+      "rr": 0.68,
+      "stop": 212.85,
+      "spread": 0.3,
+      "peer_pe": 20.0
      },
      "methods": [
       {
        "k": "pe",
        "label": "同業相對本益比",
-       "value": 252.06,
+       "value": 245.47,
        "weight": 0.4,
-       "upside": 0.0533,
-       "detail": "預估EPS 13.25 × 目標本益比 19.0（現行 18.1 向同業 20.0 靠攏 50%；同業中位數 20.5 × 成長調整 0.97）"
+       "upside": 0.0432,
+       "detail": "預估EPS 13.23 × 目標本益比 18.6（現行 17.8 向同業 19.3 靠攏 50%；同業中位數 20.0 × 成長調整 0.97）"
       },
       {
        "k": "peg",
        "label": "PEG 成長調整",
-       "value": 338.33,
+       "value": 333.22,
        "weight": 0.15,
-       "upside": 0.4138,
-       "detail": "預估EPS 13.25 × 合理本益比 25.5（成長率 20.7%（上限 25%）× PEG 1.3 × 利率調整 0.95）"
+       "upside": 0.4161,
+       "detail": "預估EPS 13.23 × 合理本益比 25.2（成長率 20.5%（上限 25%）× PEG 1.3 × 利率調整 0.95）"
       },
       {
        "k": "dcf",
        "label": "兩階段 DCF",
-       "value": 321.85,
+       "value": 317.67,
        "weight": 0.2,
-       "upside": 0.3449,
-       "detail": "每股FCF 9.23，前期成長 20.7%→永續 2.5%，WACC 8.7%（無風險利率 4.84%，採即時殖利率）"
+       "upside": 0.3501,
+       "detail": "每股FCF 9.23，前期成長 20.5%→永續 2.5%，WACC 8.7%（無風險利率 4.86%，採即時殖利率）"
       },
       {
        "k": "consensus",
        "label": "券商共識目標價",
-       "value": 265.11,
+       "value": 264.33,
        "weight": 0.25,
-       "upside": 0.1078,
+       "upside": 0.1234,
        "detail": "17 位分析師平均（區間 210.0–320.0）"
       }
      ],
      "dropped": [],
      "fin": {
-      "market_cap": 33660643328,
-      "pe_fwd": 18.0582,
-      "pe_ttm": 21.7951,
-      "peg": 1.29,
+      "market_cap": 33096609792,
+      "pe_fwd": 17.7903,
+      "pe_ttm": 21.4299,
+      "peg": 1.28,
       "roe": 0.264,
       "gross_margin": 0.6177,
       "op_margin": 0.3482,
@@ -6099,19 +6474,19 @@
       "de": 0.1027,
       "fcf_margin": 0.2264,
       "beta": 0.763,
-      "target_mean": 265.1053,
+      "target_mean": 264.3347,
       "n_analysts": 17
      },
      "tech": {
-      "ret_1m": 0.059,
-      "ret_3m": 0.1324,
-      "rel_3m": 0.1844,
-      "rel_6m": 0.1612,
-      "dist200": 0.07,
-      "from_high": -0.1257,
-      "vol_ann": 0.3251
+      "ret_1m": 0.0378,
+      "ret_3m": 0.0724,
+      "rel_3m": 0.1209,
+      "rel_6m": 0.1477,
+      "dist200": 0.0525,
+      "from_high": -0.1404,
+      "vol_ann": 0.3272
      },
-     "thesis": "**龍頭地位**：同產業美股標的中市值排名第 2／4（市值 337億 USD）。\n\n**財務體質**（品質分 99）：ROE 26.4%、營業利益率 34.8%、毛利率 61.8%、營收年增 +5.9%、負債權益比 0.10。\n\n**股價結構**：近 3 個月相對大盤 +18.4%；距 200 日均線 +7.0%；距 52 週高 -12.6%。\n\n**估值**：預估本益比 18.1、同業中位數 20.5；base 目標價 282.22，隱含 +17.9%。",
+     "thesis": "**龍頭地位**：同產業美股標的中市值排名第 2／4（市值 331億 USD）。\n\n**財務體質**（品質分 99）：ROE 26.4%、營業利益率 34.8%、毛利率 61.8%、營收年增 +5.9%、負債權益比 0.10。\n\n**股價結構**：近 3 個月相對大盤 +12.1%；距 200 日均線 +5.3%；距 52 週高 -14.0%。\n\n**估值**：預估本益比 17.8、同業中位數 20.0；base 目標價 277.79，隱含 +18.1%。",
      "risks": [
       "若出現就代表論點不成立：給付制度或藥價改革大幅壓縮設備與耗材報酬",
       "若出現就代表論點不成立：替代療法（如新藥）顯著降低器材需求"
@@ -6125,10 +6500,6 @@
       {
        "t": "ROE 26%",
        "k": "quality"
-      },
-      {
-       "t": "動能強",
-       "k": "momentum"
       }
      ],
      "why": [
@@ -6137,7 +6508,7 @@
        "tag": "趨勢"
       },
       {
-       "t": "龍頭地位：同產業美股標的中市值第 2／4（337億 USD）",
+       "t": "龍頭地位：同產業美股標的中市值第 2／4（331億 USD）",
        "tag": "龍頭"
       },
       {
@@ -6145,11 +6516,11 @@
        "tag": "品質"
       },
       {
-       "t": "估值：模型 base 目標價 282.22（上檔 +17.9%）；券商共識目標價 265.11（+10.8%）；預估本益比 18.1 低於同業中位數 20.5",
+       "t": "估值：模型 base 目標價 277.79（上檔 +18.1%）；券商共識目標價 264.33（+12.3%）；預估本益比 17.8 低於同業中位數 20.0",
        "tag": "估值"
       },
       {
-       "t": "動能：近 3 個月股價強於大盤 +18.4%",
+       "t": "動能：近 3 個月股價強於大盤 +12.1%",
        "tag": "動能"
       }
      ],
@@ -6172,7 +6543,6 @@
      ],
      "series": {
       "d": [
-       "260518",
        "260519",
        "260520",
        "260521",
@@ -6291,10 +6661,10 @@
        "261102",
        "261103",
        "261104",
-       "261105"
+       "261105",
+       "261106"
       ],
       "c": [
-       203.57,
        207.19,
        209.26,
        208.38,
@@ -6413,7 +6783,8 @@
        232.94,
        227.08,
        240.51,
-       239.31
+       239.31,
+       235.3
       ]
      },
      "theme": "aging_care",
@@ -6429,74 +6800,74 @@
      "sector": "aging_care",
      "sector_name": "高齡化與慢性病照護設備",
      "rank": 3,
-     "price": 335.08,
+     "price": 325.87,
      "ccy": "USD",
-     "asof": "2026-11-05",
-     "composite": 61.2,
+     "asof": "2026-11-06",
+     "composite": 61.0,
      "scores": {
       "sector": null,
       "leader": 100.0,
       "quality": 79.7,
       "growth": 18.0,
-      "valuation": 52.2,
-      "momentum": 51.6,
+      "valuation": 54.0,
+      "momentum": 48.1,
       "news": 40.0
      },
      "target": {
-      "base": 378.37,
-      "bull": 502.25,
-      "bear": 192.55,
-      "ev": 356.69,
-      "upside": 0.1292,
-      "ev_upside": 0.0645,
+      "base": 371.26,
+      "bull": 498.76,
+      "bear": 180.0,
+      "ev": 348.94,
+      "upside": 0.1393,
+      "ev_upside": 0.0708,
       "confidence": "中",
       "capped": false,
-      "raw_upside": 0.1292,
-      "rr": 0.3,
-      "stop": 302.96,
-      "spread": 0.41,
-      "peer_pe": 20.2
+      "raw_upside": 0.1393,
+      "rr": 0.31,
+      "stop": 293.5,
+      "spread": 0.44,
+      "peer_pe": 18.9
      },
      "methods": [
       {
        "k": "pe",
        "label": "同業相對本益比",
-       "value": 346.06,
+       "value": 329.4,
        "weight": 0.4,
-       "upside": 0.0328,
-       "detail": "預估EPS 16.31 × 目標本益比 21.2（現行 20.5 向同業 21.9 靠攏 50%；同業中位數 20.2 × 成長調整 1.08）"
+       "upside": 0.0108,
+       "detail": "預估EPS 16.31 × 目標本益比 20.2（現行 20.0 向同業 20.4 靠攏 50%；同業中位數 18.9 × 成長調整 1.08）"
       },
       {
        "k": "peg",
        "label": "PEG 成長調整",
-       "value": 503.02,
+       "value": 502.09,
        "weight": 0.15,
-       "upside": 0.5012,
+       "upside": 0.5408,
        "detail": "預估EPS 16.31 × 合理本益比 30.8（成長率 25.0%（上限 25%）× PEG 1.3 × 利率調整 0.95）"
       },
       {
        "k": "dcf",
        "label": "兩階段 DCF",
-       "value": 396.86,
+       "value": 395.32,
        "weight": 0.2,
-       "upside": 0.1844,
-       "detail": "每股FCF 9.72，前期成長 25.0%→永續 2.5%，WACC 8.7%（無風險利率 4.84%，採即時殖利率）"
+       "upside": 0.2131,
+       "detail": "每股FCF 9.72，前期成長 25.0%→永續 2.5%，WACC 8.7%（無風險利率 4.86%，採即時殖利率）"
       },
       {
        "k": "consensus",
        "label": "券商共識目標價",
        "value": 340.48,
        "weight": 0.25,
-       "upside": 0.0161,
+       "upside": 0.0448,
        "detail": "27 位分析師平均（區間 275.0–465.0）"
       }
      ],
      "dropped": [],
      "fin": {
-      "market_cap": 127561940992,
-      "pe_fwd": 20.5462,
-      "pe_ttm": 35.6848,
-      "peg": 1.64,
+      "market_cap": 124055773184,
+      "pe_fwd": 19.9814,
+      "pe_ttm": 34.7039,
+      "peg": 1.61,
       "roe": 0.1602,
       "gross_margin": 0.657,
       "op_margin": 0.2296,
@@ -6510,20 +6881,20 @@
       "n_analysts": 27
      },
      "tech": {
-      "ret_1m": 0.2167,
-      "ret_3m": -0.0085,
-      "rel_3m": 0.0435,
-      "rel_6m": 0.1432,
-      "dist200": 0.0425,
-      "from_high": -0.1278,
-      "vol_ann": 0.41
+      "ret_1m": 0.1766,
+      "ret_3m": -0.0547,
+      "rel_3m": -0.0061,
+      "rel_6m": 0.1512,
+      "dist200": 0.0143,
+      "from_high": -0.1518,
+      "vol_ann": 0.4123
      },
-     "thesis": "**龍頭地位**：同產業美股標的中市值排名第 1／4（市值 1276億 USD）。\n\n**財務體質**（品質分 80）：ROE 16.0%、營業利益率 23.0%、毛利率 65.7%、營收年增 +7.6%、負債權益比 0.66。\n\n**股價結構**：近 3 個月相對大盤 +4.4%；距 200 日均線 +4.2%；距 52 週高 -12.8%。\n\n**估值**：預估本益比 20.5、同業中位數 20.2；base 目標價 378.37，隱含 +12.9%。",
+     "thesis": "**龍頭地位**：同產業美股標的中市值排名第 1／4（市值 1241億 USD）。\n\n**財務體質**（品質分 80）：ROE 16.0%、營業利益率 23.0%、毛利率 65.7%、營收年增 +7.6%、負債權益比 0.66。\n\n**股價結構**：近 3 個月相對大盤 -0.6%；距 200 日均線 +1.4%；距 52 週高 -15.2%。\n\n**估值**：預估本益比 20.0、同業中位數 18.9；base 目標價 371.26，隱含 +13.9%。",
      "risks": [
       "若出現就代表論點不成立：給付制度或藥價改革大幅壓縮設備與耗材報酬",
       "若出現就代表論點不成立：替代療法（如新藥）顯著降低器材需求"
      ],
-     "headline": "高齡化與慢性病照護設備、ROE 16%、目標價上檔 +13%",
+     "headline": "高齡化與慢性病照護設備、ROE 16%、目標價上檔 +14%",
      "highlights": [
       {
        "t": "高齡照護",
@@ -6540,7 +6911,7 @@
        "tag": "趨勢"
       },
       {
-       "t": "龍頭地位：同產業美股標的中市值第 1／4（1276億 USD）",
+       "t": "龍頭地位：同產業美股標的中市值第 1／4（1241億 USD）",
        "tag": "龍頭"
       },
       {
@@ -6548,7 +6919,7 @@
        "tag": "品質"
       },
       {
-       "t": "估值：模型 base 目標價 378.37（上檔 +12.9%）；券商共識目標價 340.48（+1.6%）",
+       "t": "估值：模型 base 目標價 371.26（上檔 +13.9%）；券商共識目標價 340.48（+4.5%）",
        "tag": "估值"
       }
      ],
@@ -6564,7 +6935,6 @@
      "news": [],
      "series": {
       "d": [
-       "260518",
        "260519",
        "260520",
        "260521",
@@ -6683,10 +7053,10 @@
        "261102",
        "261103",
        "261104",
-       "261105"
+       "261105",
+       "261106"
       ],
       "c": [
-       311.4,
        315.9,
        319.62,
        311.68,
@@ -6805,7 +7175,8 @@
        306.81,
        310.55,
        339.65,
-       335.08
+       335.08,
+       325.87
       ]
      },
      "theme": "aging_care",
@@ -6821,49 +7192,49 @@
      "sector": "power_semis",
      "sector_name": "高壓功率半導體（SiC / GaN）",
      "rank": 4,
-     "price": 1131.43,
+     "price": 1190.44,
      "ccy": "USD",
-     "asof": "2026-11-05",
-     "composite": 73.2,
+     "asof": "2026-11-06",
+     "composite": 76.4,
      "scores": {
       "sector": null,
       "leader": 100.0,
       "quality": 92.5,
       "growth": 100.0,
-      "valuation": 73.1,
-      "momentum": 10.8,
-      "news": 40.0
+      "valuation": 68.2,
+      "momentum": 14.9,
+      "news": 74.4
      },
      "target": {
-      "base": 1330.16,
-      "bull": 1862.22,
-      "bear": 532.06,
-      "ev": 1237.04,
-      "upside": 0.1756,
-      "ev_upside": 0.0933,
+      "base": 1350.87,
+      "bull": 1891.22,
+      "bear": 540.35,
+      "ev": 1256.31,
+      "upside": 0.1348,
+      "ev_upside": 0.0553,
       "confidence": "中",
       "capped": false,
-      "raw_upside": 0.1756,
-      "rr": 0.33,
-      "stop": 934.56,
-      "spread": 0.59,
-      "peer_pe": 18.2
+      "raw_upside": 0.1348,
+      "rr": 0.25,
+      "stop": 991.23,
+      "spread": 0.56,
+      "peer_pe": 18.7
      },
      "methods": [
       {
        "k": "pe",
        "label": "同業相對本益比",
-       "value": 986.37,
+       "value": 1028.8,
        "weight": 0.5,
-       "upside": -0.1282,
-       "detail": "預估EPS 46.34 × 目標本益比 21.3（現行 24.4 向同業 18.2 靠攏 50%；同業中位數 18.2 × 成長調整 1.00）"
+       "upside": -0.1358,
+       "detail": "預估EPS 46.34 × 目標本益比 22.2（現行 25.7 向同業 18.7 靠攏 50%；同業中位數 18.7 × 成長調整 1.00）"
       },
       {
        "k": "peg",
        "label": "PEG 成長調整",
-       "value": 1429.45,
+       "value": 1426.79,
        "weight": 0.187,
-       "upside": 0.2634,
+       "upside": 0.1985,
        "detail": "預估EPS 46.34 × 合理本益比 30.8（成長率 25.0%（上限 25%）× PEG 1.3 × 利率調整 0.95）"
       },
       {
@@ -6871,7 +7242,7 @@
        "label": "券商共識目標價",
        "value": 1820.64,
        "weight": 0.312,
-       "upside": 0.6092,
+       "upside": 0.5294,
        "detail": "14 位分析師平均（區間 1500.0–2100.0）"
       }
      ],
@@ -6879,10 +7250,10 @@
       "兩階段 DCF"
      ],
      "fin": {
-      "market_cap": 55177580544,
-      "pe_fwd": 24.4134,
-      "pe_ttm": 62.0302,
-      "peg": 0.72,
+      "market_cap": 58055376896,
+      "pe_fwd": 25.6867,
+      "pe_ttm": 65.2653,
+      "peg": 0.65,
       "roe": 0.2447,
       "gross_margin": 0.5526,
       "op_margin": 0.2975,
@@ -6896,21 +7267,21 @@
       "n_analysts": 14
      },
      "tech": {
-      "ret_1m": -0.2066,
-      "ret_3m": -0.1915,
-      "rel_3m": -0.1395,
-      "rel_6m": -0.2822,
-      "dist200": -0.1409,
-      "from_high": -0.3285,
-      "vol_ann": 0.5662
+      "ret_1m": -0.1309,
+      "ret_3m": -0.1368,
+      "rel_3m": -0.0882,
+      "rel_6m": -0.2511,
+      "dist200": -0.0965,
+      "from_high": -0.2934,
+      "vol_ann": 0.5709
      },
-     "thesis": "**龍頭地位**：同產業美股標的中市值排名第 1／4（市值 552億 USD）。\n\n**財務體質**（品質分 92）：ROE 24.5%、營業利益率 29.7%、毛利率 55.3%、營收年增 +63.1%、負債權益比 0.01。\n\n**股價結構**：近 3 個月相對大盤 -13.9%；距 200 日均線 -14.1%；距 52 週高 -32.8%。\n\n**估值**：預估本益比 24.4、同業中位數 18.2；base 目標價 1,330.16，隱含 +17.6%。",
+     "thesis": "**龍頭地位**：同產業美股標的中市值排名第 1／4（市值 581億 USD）。\n\n**財務體質**（品質分 92）：ROE 24.5%、營業利益率 29.7%、毛利率 55.3%、營收年增 +63.1%、負債權益比 0.01。\n\n**股價結構**：近 3 個月相對大盤 -8.8%；距 200 日均線 -9.6%；距 52 週高 -29.3%。\n\n**估值**：預估本益比 25.7、同業中位數 18.7；base 目標價 1,350.87，隱含 +13.5%。",
      "risks": [
       "Beta 1.7：大盤回檔時此股波動會放大（特性，不是事件）",
       "若出現就代表論點不成立：矽基元件以更低成本達到同等效率",
       "若出現就代表論點不成立：電動車與資料中心功率升級速度大幅放緩"
      ],
-     "headline": "高壓功率半導體（SiC / GaN）、營收年增+63%、目標價上檔 +18%",
+     "headline": "高壓功率半導體（SiC / GaN）、營收年增+63%、目標價上檔 +13%",
      "highlights": [
       {
        "t": "SiC/GaN",
@@ -6931,10 +7302,6 @@
        "tag": "趨勢"
       },
       {
-       "t": "龍頭地位：同產業美股標的中市值第 1／4（552億 USD）",
-       "tag": "龍頭"
-      },
-      {
        "t": "成長：營收年增 +63.1%、獲利年增 +47.3%",
        "tag": "成長"
       },
@@ -6943,8 +7310,17 @@
        "tag": "品質"
       },
       {
-       "t": "估值：模型 base 目標價 1,330.16（上檔 +17.6%）；券商共識目標價 1,820.64（+60.9%）",
+       "t": "估值：模型 base 目標價 1,350.87（上檔 +13.5%）；券商共識目標價 1,820.64（+52.9%）",
        "tag": "估值"
+      },
+      {
+       "t": "近期利多報導：盤中速報 - 芯源系統(MPWR-US)大漲5.41%，報1192.63美元 - 鉅亨網（關鍵字判斷）",
+       "tag": "新聞",
+       "news": {
+        "title": "盤中速報 - 芯源系統(MPWR-US)大漲5.41%，報1192.63美元 - 鉅亨網",
+        "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1weVdRb0lnV1VNQllneDdmejF0bnpIM19BV1JpcmdrTTFWeUFiY2lxUm02Uk1iTEFMQVBIc2pnOWxrVDRWZktGamltc29qbkE?oc=5",
+        "source": "鉅亨網 美股 (via Google News)"
+       }
       }
      ],
      "risks_now": [
@@ -6960,10 +7336,22 @@
        "t": "若出現就代表論點不成立：電動車與資料中心功率升級速度大幅放緩"
       }
      ],
-     "news": [],
+     "news": [
+      {
+       "title": "盤中速報 - 芯源系統(MPWR-US)大漲5.41%，報1192.63美元 - 鉅亨網",
+       "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1weVdRb0lnV1VNQllneDdmejF0bnpIM19BV1JpcmdrTTFWeUFiY2lxUm02Uk1iTEFMQVBIc2pnOWxrVDRWZktGamltc29qbkE?oc=5",
+       "source": "鉅亨網 美股 (via Google News)",
+       "sent": 0.5
+      },
+      {
+       "title": "《強勢美股特報》HUM,MPWR,TSLA,ECHO等4檔",
+       "link": "https://tw.stock.yahoo.com/news/%E5%BC%B7%E5%8B%A2%E7%BE%8E%E8%82%A1%E7%89%B9%E5%A0%B1-hum-mpwr-tsla-echo%E7%AD%894%E6%AA%94-180300987.html",
+       "source": "Yahoo奇摩股市 國際",
+       "sent": 0.0
+      }
+     ],
      "series": {
       "d": [
-       "260518",
        "260519",
        "260520",
        "260521",
@@ -7082,10 +7470,10 @@
        "261102",
        "261103",
        "261104",
-       "261105"
+       "261105",
+       "261106"
       ],
       "c": [
-       1481.88,
        1463.71,
        1548.62,
        1556.57,
@@ -7204,7 +7592,8 @@
        1243.95,
        1328.3,
        1261.08,
-       1131.43
+       1131.43,
+       1190.44
       ]
      },
      "theme": "power_semis",
@@ -7220,49 +7609,49 @@
      "sector": "edge_ai_industrial",
      "sector_name": "工業邊緣 AI 與嵌入式運算",
      "rank": 5,
-     "price": 98.03,
+     "price": 105.02,
      "ccy": "USD",
-     "asof": "2026-11-05",
-     "composite": 55.7,
+     "asof": "2026-11-06",
+     "composite": 55.0,
      "scores": {
       "sector": null,
       "leader": 0.0,
       "quality": 72.5,
       "growth": 100.0,
-      "valuation": 82.2,
-      "momentum": 7.2,
+      "valuation": 74.3,
+      "momentum": 12.8,
       "news": 40.0
      },
      "target": {
-      "base": 122.7,
-      "bull": 171.79,
-      "bear": 49.08,
-      "ev": 114.11,
-      "upside": 0.2517,
-      "ev_upside": 0.1641,
+      "base": 124.57,
+      "bull": 174.28,
+      "bear": 50.02,
+      "ev": 115.88,
+      "upside": 0.1862,
+      "ev_upside": 0.1034,
       "confidence": "中",
       "capped": false,
-      "raw_upside": 0.2517,
-      "rr": 0.5,
-      "stop": 80.38,
-      "spread": 0.46,
-      "peer_pe": 21.9
+      "raw_upside": 0.1862,
+      "rr": 0.36,
+      "stop": 86.12,
+      "spread": 0.42,
+      "peer_pe": 22.0
      },
      "methods": [
       {
        "k": "pe",
        "label": "同業相對本益比",
-       "value": 97.03,
+       "value": 100.86,
        "weight": 0.5,
-       "upside": -0.0102,
-       "detail": "預估EPS 4.39 × 目標本益比 22.1（現行 22.3 向同業 21.9 靠攏 50%；同業中位數 21.9 × 成長調整 1.00）"
+       "upside": -0.0396,
+       "detail": "預估EPS 4.39 × 目標本益比 23.0（現行 23.9 向同業 22.0 靠攏 50%；同業中位數 22.0 × 成長調整 1.00）"
       },
       {
        "k": "peg",
        "label": "PEG 成長調整",
-       "value": 135.37,
+       "value": 135.12,
        "weight": 0.187,
-       "upside": 0.3809,
+       "upside": 0.2866,
        "detail": "預估EPS 4.39 × 合理本益比 30.8（成長率 25.0%（上限 25%）× PEG 1.3 × 利率調整 0.95）"
       },
       {
@@ -7270,7 +7659,7 @@
        "label": "券商共識目標價",
        "value": 156.19,
        "weight": 0.312,
-       "upside": 0.5933,
+       "upside": 0.4872,
        "detail": "13 位分析師平均（區間 95.44–200.0）"
       }
      ],
@@ -7278,9 +7667,9 @@
       "兩階段 DCF"
      ],
      "fin": {
-      "market_cap": 13942384640,
-      "pe_fwd": 22.3357,
-      "pe_ttm": 316.2258,
+      "market_cap": 14936542208,
+      "pe_fwd": 23.9284,
+      "pe_ttm": 338.7742,
       "peg": 0.59,
       "roe": 0.0421,
       "gross_margin": 0.6949,
@@ -7295,22 +7684,21 @@
       "n_analysts": 13
      },
      "tech": {
-      "ret_1m": -0.2516,
-      "ret_3m": -0.2461,
-      "rel_3m": -0.194,
-      "rel_6m": -0.1848,
-      "dist200": -0.1556,
-      "from_high": -0.3686,
-      "vol_ann": 0.6517
+      "ret_1m": -0.1597,
+      "ret_3m": -0.1816,
+      "rel_3m": -0.133,
+      "rel_6m": -0.1713,
+      "dist200": -0.0962,
+      "from_high": -0.3236,
+      "vol_ann": 0.6695
      },
-     "thesis": "**龍頭地位**：同產業美股標的中市值排名第 4／4（市值 139億 USD）。\n\n**財務體質**（品質分 73）：ROE 4.2%、營業利益率 17.1%、毛利率 69.5%、營收年增 +118.3%、負債權益比 0.65。\n\n**股價結構**：近 3 個月相對大盤 -19.4%；距 200 日均線 -15.6%；距 52 週高 -36.9%。\n\n**估值**：預估本益比 22.3、同業中位數 21.9；base 目標價 122.70，隱含 +25.2%。",
+     "thesis": "**龍頭地位**：同產業美股標的中市值排名第 4／4（市值 149億 USD）。\n\n**財務體質**（品質分 73）：ROE 4.2%、營業利益率 17.1%、毛利率 69.5%、營收年增 +118.3%、負債權益比 0.65。\n\n**股價結構**：近 3 個月相對大盤 -13.3%；距 200 日均線 -9.6%；距 52 週高 -32.4%。\n\n**估值**：預估本益比 23.9、同業中位數 22.0；base 目標價 124.57，隱含 +18.6%。",
      "risks": [
       "Beta 1.9：大盤回檔時此股波動會放大（特性，不是事件）",
-      "近 3 個月落後大盤 19%：市場目前並不買單，可能已在反映疑慮",
       "若出現就代表論點不成立：邊緣推論需求被雲端 API 完全取代",
       "若出現就代表論點不成立：工業資本支出長期低迷"
      ],
-     "headline": "工業邊緣 AI 與嵌入式運算、營收年增+118%、目標價上檔 +25%",
+     "headline": "工業邊緣 AI 與嵌入式運算、營收年增+118%、目標價上檔 +19%",
      "highlights": [
       {
        "t": "邊緣AI",
@@ -7321,7 +7709,7 @@
        "k": "growth"
       },
       {
-       "t": "券商共識+59%",
+       "t": "券商共識+49%",
        "k": "consensus"
       }
      ],
@@ -7335,16 +7723,13 @@
        "tag": "成長"
       },
       {
-       "t": "估值：模型 base 目標價 122.70（上檔 +25.2%）；券商共識目標價 156.19（+59.3%）",
+       "t": "估值：模型 base 目標價 124.57（上檔 +18.6%）；券商共識目標價 156.19（+48.7%）",
        "tag": "估值"
       }
      ],
      "risks_now": [
       {
        "t": "Beta 1.9：大盤回檔時此股波動會放大（特性，不是事件）"
-      },
-      {
-       "t": "近 3 個月落後大盤 19%：市場目前並不買單，可能已在反映疑慮"
       }
      ],
      "risks_watch": [
@@ -7358,7 +7743,6 @@
      "news": [],
      "series": {
       "d": [
-       "260518",
        "260519",
        "260520",
        "260521",
@@ -7477,10 +7861,10 @@
        "261102",
        "261103",
        "261104",
-       "261105"
+       "261105",
+       "261106"
       ],
       "c": [
-       123.15,
        124.24,
        138.74,
        139.35,
@@ -7599,7 +7983,8 @@
        95.44,
        105.92,
        107.25,
-       98.03
+       98.03,
+       105.02
       ]
      },
      "theme": "edge_ai_industrial",
@@ -7612,37 +7997,37 @@
   },
   "shortage": {
    "TW": {
-    "n": 1,
+    "n": 2,
     "N": 5,
     "candidates": 24,
     "reasons": {
      "已跌破前次推薦的停損價（論點失效），收復前不再推薦": 6,
-     "目標價低於現價": 4,
-     "資料不足，無法估值": 4,
+     "資料不足，無法估值": 5,
      "市值過小": 3,
      "估值方法分歧過大": 2,
      "波動過高（年化 > 75%）": 2,
+     "目標價低於現價": 2,
      "財務品質不足": 1,
      "流動性不足": 1
     },
-    "qualified": 1
+    "qualified": 2
    },
    "US": {
     "n": 5,
     "N": 5,
     "candidates": 32,
     "reasons": {
-     "已跌破前次推薦的停損價（論點失效），收復前不再推薦": 7,
-     "目標價低於現價": 6,
-     "估值方法分歧過大": 6,
+     "估值方法分歧過大": 8,
+     "已跌破前次推薦的停損價（論點失效），收復前不再推薦": 6,
+     "目標價低於現價": 4,
      "波動過高（年化 > 75%）": 4,
      "資料不足，無法估值": 2
     },
-    "qualified": 7
+    "qualified": 8
    }
   },
   "clues": [],
-  "n_scanned": 1426
+  "n_scanned": 1402
  },
  "bargain": {
   "picks": {
@@ -7656,10 +8041,10 @@
     "candidates": 97,
     "reasons": {
      "股價不在低基期": 35,
-     "市值過小": 22,
+     "市值過小": 21,
      "已跌破前次推薦的停損價（論點失效），收復前不再推薦": 13,
      "各估值方法分歧過大": 11,
-     "資料不足，無法估值": 7,
+     "資料不足，無法估值": 8,
      "財務品質不足（疑似價值陷阱）": 3,
      "流動性不足": 3,
      "總經高風險：上檔需更大安全邊際": 2,
@@ -7672,11 +8057,11 @@
     "N": 5,
     "candidates": 108,
     "reasons": {
-     "股價不在低基期": 43,
-     "各估值方法分歧過大": 18,
-     "已跌破前次推薦的停損價（論點失效），收復前不再推薦": 14,
+     "股價不在低基期": 45,
+     "各估值方法分歧過大": 19,
+     "已跌破前次推薦的停損價（論點失效），收復前不再推薦": 13,
      "市值過小": 13,
-     "總經警戒：上檔需更大安全邊際": 8,
+     "總經警戒：上檔需更大安全邊際": 6,
      "資料不足，無法估值": 4,
      "仍在加速下跌（不接落下的刀）": 3,
      "成長性不足，缺乏爆發條件": 2,
