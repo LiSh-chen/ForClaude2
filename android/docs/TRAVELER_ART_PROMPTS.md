@@ -22,6 +22,7 @@ Gemini 畫「亞洲人」容易偏日系。要讓人一眼覺得是台灣，用�
 - **平安符**：紅色小布包的護身符、紅線，掛在脖子或背包上（媽祖信仰）。
 - **台鐵便當盒**：鋁製便當盒，圓角長方形，上面有蓋。
 - **日常裝扮**：運動外套、拉鍊薄外套、夾腳拖、雨鞋、帆布側背包。
+- **平安符、便當盒、袋子上不要有字**（AI 畫的中文字會亂碼）。
 - **避免**：水手領（像日本制服）、和服、和風圖案、櫻花、鳥居。
 
 另外加一句：`Everyday Taiwanese look: warm sun-tanned skin, practical clothes, retro Taiwanese floral cloth and a towel around the neck where it fits. Avoid anything that looks Japanese or Korean (no sailor collar, no kimono-like styling).`
@@ -32,7 +33,7 @@ A series of five character portraits for a mobile walking-adventure game set in 
 
 Style: a loose travel-sketchbook illustration in the same style as the attached reference images. Thin sepia-brown pencil and fine pen lines with varying thickness, a little hatching on the clothes, soft faded watercolour washes in muted, greyed colours (dusty blue, sage green, faded brass, brick red, dusty rose), the colour not quite filling the outlines. Simplified and gently stylised features: small dot eyes, a small nose, a simple mouth, only a few lines for wrinkles or hair, minimal detail. It must NOT look like clean vector art, NOT like flat saturated cartoon colour, and NOT like a detailed realistic painting.
 
-Composition: SQUARE 1:1 aspect ratio, 1024 x 1024 pixels. One character, head and shoulders, slightly turned, centered, filling about 70% of the frame. Background: no flat colour block and no scenery. The painted area fades out irregularly into blank, slightly grainy old paper, like a sketch on a notebook page with a soft vignette edge. Visible paper texture. No border, no frame, no text, no watermark.
+Composition: SQUARE 1:1 aspect ratio, 1024 x 1024 pixels. One character, head and shoulders, slightly turned, centered, filling about 70% of the frame. Background: no flat colour block and no scenery. The painted area fades out irregularly into blank, slightly grainy old paper, like a sketch on a notebook page with a soft vignette edge. Visible paper texture. No border, no frame, no watermark. IMPORTANT: no text, letters or Chinese characters anywhere in the image, including on charms, lunch boxes, bags and clothing (AI-drawn characters come out garbled); leave such surfaces blank.
 
 The characters are ordinary Taiwanese people in everyday travel clothes (see the Taiwan details per character). Keep all five consistent with each other in line weight, level of detail and head proportions. Confirm you understand and wait for the first character.
 ```
@@ -40,7 +41,7 @@ The characters are ordinary Taiwanese people in everyday travel clothes (see the
 ## 一、汐婆（先畫這位）
 退休的船長，年長女性，閱歷豐富、說話直爽。
 ```
-Character 1, "Xi Po": a retired fishing-boat captain from a Taiwanese fishing port, a cheerful elderly Taiwanese grandmother with warm sun-tanned skin and a few simple wrinkle lines. Grey hair tied back in a small low bun, covered by a retro Taiwanese floral-cloth headscarf in faded blue (large peony pattern). A white towel around her neck. A plain navy work shirt (no sailor collar). Around her neck a brass compass and a small red amulet pouch (Mazu protection charm) on a red string. Warm, teasing smile. Sketchbook style as described, very few details.
+Character 1, "Xi Po": a retired fishing-boat captain from a Taiwanese fishing port, a cheerful elderly Taiwanese grandmother with warm sun-tanned skin and a few simple wrinkle lines. Grey hair tied back in a small low bun, covered by a retro Taiwanese floral-cloth headscarf in faded blue (large peony pattern). A white towel around her neck. A plain navy work shirt (no sailor collar). Around her neck, on the same red string, a small brass compass and a small plain red cloth amulet pouch with no writing on it. Warm, teasing smile. Sketchbook style as described, very few details.
 ```
 
 ## 二、阿柏
