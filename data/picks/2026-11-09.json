@@ -1,0 +1,245 @@
+{
+ "date": "2026-11-09",
+ "params_version": 2,
+ "provider": "live",
+ "llm": false,
+ "picks": [
+  {
+   "ticker": "3034.TW",
+   "name": "NOVATEK MICROELECTRONICS",
+   "zh_name": "聯詠",
+   "market": "TW",
+   "sector": "ai_chips",
+   "rank": 1,
+   "entry_price": 486.5,
+   "entry_date": "2026-11-09",
+   "composite": 62.58,
+   "scores": {
+    "sector": 65.0,
+    "leader": 16.7,
+    "quality": 79.6,
+    "growth": 94.3,
+    "valuation": 75.1,
+    "momentum": 34.4,
+    "news": 40.0
+   },
+   "target": {
+    "base": 602.99,
+    "bull": 844.19,
+    "bear": 241.2,
+    "ev": 560.79,
+    "confidence": "中",
+    "upside": 0.2395,
+    "ev_upside": 0.1527,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 516.57,
+      "weight": 0.4,
+      "upside": 0.0618
+     },
+     "peg": {
+      "value": 878.93,
+      "weight": 0.15,
+      "upside": 0.8066
+     },
+     "dcf": {
+      "value": 675.08,
+      "weight": 0.2,
+      "upside": 0.3876
+     },
+     "consensus": {
+      "value": 518.06,
+      "weight": 0.25,
+      "upside": 0.0649
+     }
+    }
+   },
+   "stop": 421.32,
+   "fundamentals": {
+    "market_cap": 297500573696,
+    "pe_ttm": 16.9927,
+    "pe_fwd": 14.1392,
+    "peg": 1.11,
+    "roe": 0.2863,
+    "gross_margin": 0.4032,
+    "op_margin": 0.2288,
+    "net_margin": 0.1881,
+    "rev_growth": 0.26,
+    "eps_growth": 0.663,
+    "de": 0.0073,
+    "beta": 0.733,
+    "target_mean": 518.0555,
+    "n_analysts": 18,
+    "fcf_margin": 0.0817
+   },
+   "tech": {
+    "ret_1m": -0.08034026465028354,
+    "ret_3m": -0.10405156537753224,
+    "rel_3m": -0.03792747524893092,
+    "dist200": 0.048532750707328765,
+    "vol_ann": 0.33612471387567383
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "name": "AbbVie Inc.",
+   "zh_name": "AbbVie",
+   "market": "US",
+   "sector": "healthcare",
+   "rank": 1,
+   "entry_price": 291.31,
+   "entry_date": "2026-11-06",
+   "composite": 77.83,
+   "scores": {
+    "sector": 70.6,
+    "leader": 80.0,
+    "quality": 76.5,
+    "growth": 71.9,
+    "valuation": 99.2,
+    "momentum": 94.4,
+    "news": 40.0
+   },
+   "target": {
+    "base": 405.8,
+    "bull": 542.26,
+    "bear": 201.11,
+    "ev": 381.92,
+    "confidence": "中",
+    "upside": 0.393,
+    "ev_upside": 0.311,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 367.21,
+      "weight": 0.4,
+      "upside": 0.2605
+     },
+     "peg": {
+      "value": 496.28,
+      "weight": 0.15,
+      "upside": 0.7036
+     },
+     "dcf": {
+      "value": 534.04,
+      "weight": 0.2,
+      "upside": 0.8332
+     },
+     "consensus": {
+      "value": 310.65,
+      "weight": 0.25,
+      "upside": 0.0664
+     }
+    }
+   },
+   "stop": 271.38,
+   "fundamentals": {
+    "market_cap": 517063081984,
+    "pe_ttm": 50.2612,
+    "pe_fwd": 18.0713,
+    "peg": 0.59,
+    "roe": null,
+    "gross_margin": 0.7372,
+    "op_margin": 0.3959,
+    "net_margin": 0.1567,
+    "rev_growth": 0.103,
+    "eps_growth": 22.821,
+    "de": null,
+    "beta": 0.192,
+    "target_mean": 310.6538,
+    "n_analysts": 26,
+    "fcf_margin": 0.268
+   },
+   "tech": {
+    "ret_1m": 0.07590736979922186,
+    "ret_3m": 0.18199255599395903,
+    "rel_3m": 0.23052146976337706,
+    "dist200": 0.23321133616177225,
+    "vol_ann": 0.21892926207359165
+   }
+  },
+  {
+   "ticker": "NVO",
+   "name": "Novo Nordisk A/S",
+   "zh_name": "Novo Nordisk",
+   "market": "US",
+   "sector": "healthcare",
+   "rank": 2,
+   "entry_price": 40.31,
+   "entry_date": "2026-11-06",
+   "composite": 51.94,
+   "scores": {
+    "sector": 70.6,
+    "leader": 60.0,
+    "quality": 70.3,
+    "growth": 15.1,
+    "valuation": 48.4,
+    "momentum": 18.8,
+    "news": 40.0
+   },
+   "target": {
+    "base": 52.55,
+    "bull": 63.49,
+    "bear": 36.15,
+    "ev": 50.64,
+    "confidence": "中",
+    "upside": 0.3037,
+    "ev_upside": 0.2562,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 56.68,
+      "weight": 0.615,
+      "upside": 0.406
+     },
+     "consensus": {
+      "value": 45.95,
+      "weight": 0.385,
+      "upside": 0.14
+     }
+    }
+   },
+   "stop": 37.76,
+   "fundamentals": {
+    "market_cap": 181109751808,
+    "pe_ttm": 10.3725,
+    "pe_fwd": 12.1353,
+    "peg": 4.48,
+    "roe": 0.5838,
+    "gross_margin": 0.8333,
+    "op_margin": 0.4005,
+    "net_margin": 0.3392,
+    "rev_growth": 0.056,
+    "eps_growth": -0.158,
+    "de": 0.6174,
+    "beta": 0.368,
+    "target_mean": 45.9541,
+    "n_analysts": 12,
+    "fcf_margin": 0.0982
+   },
+   "tech": {
+    "ret_1m": 0.05578839840466121,
+    "ret_3m": -0.14466589921246642,
+    "rel_3m": -0.09613698544304838,
+    "dist200": -0.06152970045584272,
+    "vol_ann": 0.3346309560243516
+   }
+  }
+ ],
+ "focus_sectors": {
+  "US": [
+   "energy_materials",
+   "healthcare",
+   "consumer",
+   "ai_chips",
+   "ai_servers"
+  ],
+  "TW": [
+   "financials",
+   "energy_materials",
+   "internet_platforms",
+   "ai_chips",
+   "consumer"
+  ]
+ }
+}
