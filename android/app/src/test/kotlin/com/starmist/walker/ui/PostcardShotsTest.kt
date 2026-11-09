@@ -29,6 +29,16 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
         Frame { PostcardsSheet(1, rows, listOf(a[0] to Travelers.byId("ahbo"), a.last() to Travelers.byId("xiaohe")), {}, {}, {}) }
     }
 
+    @Test fun travelers_all() = paparazzi.snapshot {
+        Frame {
+            androidx.compose.foundation.layout.Column(verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
+                androidx.compose.foundation.layout.Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) { Travelers.all.forEach { TravelerAvatar(it.id, 64.dp) } }
+                androidx.compose.foundation.layout.Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) { Travelers.all.forEach { TravelerAvatar(it.id, 52.dp, dim = true) } }
+                androidx.compose.foundation.layout.Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) { Travelers.all.forEach { TravelerAvatar(it.id, 30.dp) } }
+            }
+        }
+    }
+
     @Test fun traveler_meet() = paparazzi.snapshot { Frame { TravelerMeetSheet(Travelers.byId("xipo")!!, 1) {} } }
 
     @Test fun traveler_friend() = paparazzi.snapshot { Frame { TravelerMeetSheet(Travelers.byId("ahbo")!!, 2) {} } }

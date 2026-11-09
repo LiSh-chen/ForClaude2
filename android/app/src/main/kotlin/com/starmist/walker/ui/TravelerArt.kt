@@ -3,6 +3,17 @@ package com.starmist.walker.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -17,6 +28,10 @@ private val DARK = Color(0xFF3B2A1A)
 /** A small round portrait of a traveler, drawn from a few shapes in the notebook's colours. */
 @Composable
 internal fun TravelerAvatar(id: String, size: Dp, modifier: Modifier = Modifier, dim: Boolean = false) {
+    // the painted portrait (res/drawable-nodpi/traveler_<id>.webp) when there is one; the shapes below are the fallback
+    val context = LocalContext.current
+    val resId = remember(id) { context.resources.getIdentifier("traveler_$id", "drawable", context.packageName) }
+    if (resId != 0) { PortraitAvatar(resId, size, modifier, dim); return }
     Canvas(modifier.size(size)) {
         val w = this.size.minDimension
         val shirt = when (id) {
@@ -65,5 +80,25 @@ private fun DrawScope.accessory(id: String, w: Float, c: Offset) {
             drawCircle(Color(0xFFB3202A), radius = w * 0.02f, center = Offset(c.x + w * 0.02f, c.y - w * 0.29f))
             drawRoundRect(Color(0xFF7C5A1B), Offset(w * 0.55f, w * 0.74f), Size(w * 0.2f, w * 0.17f), CornerRadius(w * 0.02f))
         }
+    }
+}
+
+/** The painted portrait cropped to a circle on the notebook's paper: the sheet's own paper colour is multiplied away. */
+@Composable
+private fun PortraitAvatar(resId: Int, size: Dp, modifier: Modifier, dim: Boolean) {
+    val bmp: ImageBitmap = ImageBitmap.imageResource(resId)
+    Canvas(modifier.size(size)) {
+        val w = this.size.minDimension
+        val circle = Path().apply { addOval(Rect(0f, 0f, w, w)) }
+        clipPath(circle) {
+            drawRect(Vintage.parchment)
+            val side = (bmp.width * 0.84f).toInt()
+            drawImage(
+                bmp, srcOffset = IntOffset((bmp.width * 0.08f).toInt(), (bmp.width * 0.04f).toInt()), srcSize = IntSize(side, side),
+                dstSize = IntSize(w.toInt(), w.toInt()), blendMode = BlendMode.Multiply,
+            )
+            if (dim) drawRect(Vintage.parchment.copy(alpha = 0.72f))
+        }
+        drawCircle(Vintage.edge, radius = w / 2f - 0.75.dp.toPx(), style = Stroke(1.5.dp.toPx()))
     }
 }
