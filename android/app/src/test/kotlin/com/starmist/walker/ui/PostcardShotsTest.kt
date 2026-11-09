@@ -81,4 +81,17 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
     @Test fun quest_celebration() = paparazzi.snapshot {
         Frame { QuestCelebrationSheet("北台灣經典", "集齊：台北101、基隆廟口、九份、福隆", "明信片 ×2", onPostcards = {}, onDismiss = {}) }
     }
+
+    private fun factShot(townName: String, travelerId: String) = paparazzi.snapshot {
+        val areas = rememberTownAreas()
+        val facts = com.starmist.core.route.ContentPack.parsePostcards(java.io.File("src/main/res/raw/postcard_facts.txt").readLines())
+        val t = areas.towns.first { it.name == townName }
+        Frame { PostcardOpenedSheet(t, Travelers.byId(travelerId), facts["${t.county}|${t.name}"]?.get(travelerId)) {} }
+    }
+
+    @Test fun voice_ahbo() = factShot("仁愛鄉", "ahbo")
+    @Test fun voice_xiaohe() = factShot("口湖鄉", "xiaohe")
+    @Test fun voice_xipo() = factShot("萬里區", "xipo")
+    @Test fun voice_atie() = factShot("平溪區", "atie")
+    @Test fun voice_momo() = factShot("三峽區", "momo")
 }
