@@ -27,14 +27,28 @@ object PostcardTowns {
         return best[((seed % best.size) + best.size) % best.size].key
     }
 
-    /** The postcard text: [fact] (researched, in the traveler's voice) with the township's figures, or the general voice when there is none. */
+    /** A closing line with the township's figures, in each traveler's own way of talking. */
+    private fun figures(t: Traveler, p: TownProfile, area: String): String = when (t.id) {
+        "ahbo" -> "約 $area 平方公里，${p.villages} 個村里。我慢慢走。"
+        "xiaohe" -> "這裡有 ${p.villages} 個村里，約 $area 平方公里，我要一個一個騎過去！"
+        "xipo" -> "約 $area 平方公里，${p.villages} 個村里，你自己看地圖吧。"
+        "atie" -> "約 $area 平方公里，${p.villages} 個村里，我的筆記本又多了一頁！"
+        "momo" -> "約 $area 平方公里，${p.villages} 個村里，我想把它們都畫下來。"
+        else -> "約 $area 平方公里，${p.villages} 個村里。"
+    }
+
+    /**
+     * The postcard text: [fact] (researched, told in the traveler's own words) with the township's figures, or the traveler's
+     * general voice when there is none. Each traveler talks differently: ahbo calm and short, xiaohe bright, xipo plain and teasing,
+     * atie talkative and excited, momo soft and observing.
+     */
     fun lines(t: Traveler, p: TownProfile, fact: String? = null): List<String> {
         val where = "${p.county}${p.name}"
         val area = kotlin.math.round(p.areaKm2).toLong().toString()
-        if (fact != null) return listOf(fact, "這裡約 $area 平方公里，有 ${p.villages} 個村里。", "—— ${t.name}")
+        if (fact != null) return listOf(fact, figures(t, p, area), "—— ${t.name}")
         val body = when (t.id) {
             "ahbo" -> listOf(
-                "今天來到$where。最高的地方海拔約 ${p.highM} 公尺，我停下來拍了好多張。",
+                "今天走到$where，最高的地方海拔約 ${p.highM} 公尺。我停下來，等了一下光。",
                 when {
                     p.highM >= 2500 -> "這個高度，連呼吸都變得很認真。"
                     p.highM >= 1000 -> "山路一直往上，背包越來越重了。"
@@ -42,19 +56,19 @@ object PostcardTowns {
                 },
             )
             "xiaohe" -> listOf(
-                "我騎到$where 啦！這裡有 ${p.villages} 個村里，面積約 $area 平方公里。",
-                if (p.medianM <= 30) "地勢平緩，單車騎起來很輕鬆。" else "有些坡度，單車得用力踩。",
+                "欸！我騎到$where 了！這裡有 ${p.villages} 個村里，面積約 $area 平方公里。",
+                if (p.medianM <= 30) "地勢平緩，騎起來超輕鬆～" else "有點坡度，我整個人都在冒汗啦。",
             )
             "xipo" -> listOf(
-                "我到了$where。面積約 $area 平方公里，共 ${p.villages} 個村里。",
-                "年輕人，除了看地圖，也要記得看看人。",
+                "少年仔，我到$where 了。面積約 $area 平方公里，共 ${p.villages} 個村里。",
+                "出門在外，有空就看看地圖，也看看人。",
             )
             "atie" -> listOf(
-                "今天走到$where，海拔中位數約 ${p.medianM} 公尺。",
-                "不知道這附近有沒有火車，我先豎起耳朵聽聽。",
+                "你聽我說！我走到$where 了，海拔中位數約 ${p.medianM} 公尺。",
+                "不知道附近有沒有火車，我先把耳朵豎起來聽聽！",
             )
             "momo" -> listOf(
-                "我在$where 翻開速寫本。這裡有 ${p.villages} 個村里，面積約 $area 平方公里。",
+                "我在$where 翻開了新的一頁。這裡有 ${p.villages} 個村里，面積約 $area 平方公里。",
                 "我想把每一個村里都畫下來。",
             )
             else -> listOf("我到了$where。")

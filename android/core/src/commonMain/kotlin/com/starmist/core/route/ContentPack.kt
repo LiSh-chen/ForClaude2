@@ -121,7 +121,7 @@ object ContentPack {
 
     private val datingWords = Regex("目前|現在|最近|如今|至今|今年|近年|日前")
 
-    /** `county|name|travelerId|sentence`: what a traveler writes about a township the route does not pass (20 to 120 characters). */
+    /** `county|name|travelerId|sentence`: what a traveler writes about a township the route does not pass (20 to 160 characters). */
     fun validatePostcards(lines: List<String>): List<String> {
         val errors = ArrayList<String>()
         val seen = HashSet<String>()
@@ -133,7 +133,7 @@ object ContentPack {
             if (!seen.add(key)) errors += "duplicate $key"
             if (f[2] !in travelers) errors += "${f[1]}: unknown traveler ${f[2]}"
             val s = f[3].trim()
-            if (s.trimEnd(CHECKED).length !in 20..120) errors += "${f[1]}/${f[2]}: sentence must be 20 to 120 characters"
+            if (s.trimEnd(CHECKED).length !in 20..160) errors += "${f[1]}/${f[2]}: sentence must be 20 to 160 characters"
             if (!s.endsWith(CHECKED) && superlatives.containsMatchIn(s)) errors += "${f[1]}/${f[2]}: no superlatives"
             if (datingWords.containsMatchIn(s)) errors += "${f[1]}/${f[2]}: no words that date"
             if (editorNote.containsMatchIn(s)) errors += "${f[1]}/${f[2]}: editor's note left in the sentence"

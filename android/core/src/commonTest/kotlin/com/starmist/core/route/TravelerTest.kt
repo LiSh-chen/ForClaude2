@@ -87,7 +87,13 @@ class PostcardFactsTest {
         val l = PostcardTowns.lines(Travelers.byId("atie")!!, towns[0], "我搭上了一列火車，窗外很安靜地過去了。")
         assertEquals(3, l.size)
         assertTrue(l[0].startsWith("我搭上"))
+        assertTrue(l[1].contains("5 個村里"))
         assertTrue(l.last().endsWith("阿鐵"))
+    }
+
+    @Test fun eachTravelerTalksInTheirOwnWay() {
+        val voices = Travelers.all.map { PostcardTowns.lines(it, towns[0], "這裡有一個很有意思的地方，值得你專程來看一看。")[1] }
+        assertEquals(Travelers.all.size, voices.toSet().size)
     }
 
     @Test fun postcardLinesAreParsedAndChecked() {
