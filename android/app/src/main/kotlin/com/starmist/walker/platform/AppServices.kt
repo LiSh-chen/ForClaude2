@@ -20,4 +20,7 @@ interface AppServices {
     /** The township outlines and their features, read once from the app's files. */
     val townAreas: TownAreas
     val townBlurbs: Map<String, List<TownTag>>
+
+    /** What each traveler writes about a township the route does not pass: township key to traveler id to sentence. */
+    val postcardFacts: Map<String, Map<String, String>>
 }

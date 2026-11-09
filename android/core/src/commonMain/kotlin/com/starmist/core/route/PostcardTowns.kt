@@ -19,15 +19,19 @@ object PostcardTowns {
     }
 
     /** One of the places [travelerId] likes best among [candidates] (townships not yet written from); [seed] varies the pick. */
-    fun choose(travelerId: String, candidates: List<TownProfile>, seed: Int): String? {
+    fun choose(travelerId: String, candidates: List<TownProfile>, seed: Int, preferred: Set<String> = emptySet()): String? {
         if (candidates.isEmpty()) return null
-        val best = candidates.sortedWith(compareBy({ score(travelerId, it) }, { it.key })).take(6)
+        // a place the traveler has something researched to say about comes first
+        val pool = candidates.filter { it.key in preferred }.ifEmpty { candidates }
+        val best = pool.sortedWith(compareBy({ score(travelerId, it) }, { it.key })).take(6)
         return best[((seed % best.size) + best.size) % best.size].key
     }
 
-    fun lines(t: Traveler, p: TownProfile): List<String> {
+    /** The postcard text: [fact] (researched, in the traveler's voice) with the township's figures, or the general voice when there is none. */
+    fun lines(t: Traveler, p: TownProfile, fact: String? = null): List<String> {
         val where = "${p.county}${p.name}"
         val area = kotlin.math.round(p.areaKm2).toLong().toString()
+        if (fact != null) return listOf(fact, "這裡約 $area 平方公里，有 ${p.villages} 個村里。", "—— ${t.name}")
         val body = when (t.id) {
             "ahbo" -> listOf(
                 "今天來到$where。最高的地方海拔約 ${p.highM} 公尺，我停下來拍了好多張。",

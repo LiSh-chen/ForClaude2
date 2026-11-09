@@ -48,6 +48,20 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
         Frame { PostcardOpenedSheet(areas.pick("阿里山鄉").first(), Travelers.byId("ahbo")) {} }
     }
 
+    @Test fun postcard_with_fact() = paparazzi.snapshot {
+        val areas = rememberTownAreas()
+        val facts = com.starmist.core.route.ContentPack.parsePostcards(java.io.File("src/main/res/raw/postcard_facts.txt").readLines())
+        val t = areas.towns.first { it.name == "平溪區" }
+        Frame { PostcardOpenedSheet(t, Travelers.byId("atie"), facts["${t.county}|${t.name}"]?.get("atie")) {} }
+    }
+
+    @Test fun postcard_with_fact_long() = paparazzi.snapshot {
+        val areas = rememberTownAreas()
+        val facts = com.starmist.core.route.ContentPack.parsePostcards(java.io.File("src/main/res/raw/postcard_facts.txt").readLines())
+        val t = areas.towns.first { it.name == "口湖鄉" }
+        Frame { PostcardOpenedSheet(t, Travelers.byId("xiaohe"), facts["${t.county}|${t.name}"]?.get("xiaohe")) {} }
+    }
+
     @Test fun postcard_from_friend_plain() = paparazzi.snapshot {
         val areas = rememberTownAreas()
         Frame { PostcardOpenedSheet(areas.pick("桃源區").first(), Travelers.byId("xiaohe")) {} }

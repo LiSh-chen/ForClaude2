@@ -257,8 +257,13 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
             .map { com.starmist.core.route.TownProfile("${it.county}|${it.name}", it.county, it.name, it.highElevM, it.medianElevM, it.areaKm2, it.villages) }
     }
 
-    private fun townFor(travelerId: String, unlocked: Set<String>, seed: Int): String? =
-        com.starmist.core.route.PostcardTowns.choose(travelerId, offRouteProfiles.filter { it.key !in unlocked }, seed)
+    private fun townFor(travelerId: String, unlocked: Set<String>, seed: Int): String? {
+        val withFacts = container.postcardFacts.filterValues { travelerId in it }.keys
+        return com.starmist.core.route.PostcardTowns.choose(travelerId, offRouteProfiles.filter { it.key !in unlocked }, seed, withFacts)
+    }
+
+    /** What [travelerId] wrote about the township [townKey], when it has been researched. */
+    fun postcardFact(townKey: String, travelerId: String): String? = container.postcardFacts[townKey]?.get(travelerId)
 
     /** Uses a quest postcard to ask the friend [travelerId] to write from somewhere new. */
     fun requestPostcard(travelerId: String) {

@@ -105,7 +105,7 @@ internal fun TownArea.profile() = TownProfile("$county|$name", county, name, hig
 
 /** One postcard: the outline of the place, and either its name and figures (in the sender's words if [sender] is given) or a riddle about it. */
 @Composable
-internal fun PostcardCard(t: TownArea, revealed: Boolean, modifier: Modifier = Modifier, sender: Traveler? = null) {
+internal fun PostcardCard(t: TownArea, revealed: Boolean, modifier: Modifier = Modifier, sender: Traveler? = null, fact: String? = null) {
     val shape = RoundedCornerShape(4.dp)
     Row(
         modifier.fillMaxWidth().background(Vintage.parchmentLight, shape).border(1.dp, Vintage.edge, shape).padding(12.dp),
@@ -128,7 +128,7 @@ internal fun PostcardCard(t: TownArea, revealed: Boolean, modifier: Modifier = M
                     }
                 }
                 Text(t.county, fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft)
-                if (sender != null) PostcardTowns.lines(sender, t.profile()).forEach { Text(it, fontFamily = QUILL, fontSize = 13.sp, color = SEPIA) }
+                if (sender != null) PostcardTowns.lines(sender, t.profile(), fact).forEach { Text(it, fontFamily = QUILL, fontSize = 13.sp, color = SEPIA) }
                 else postcardBody(t).forEach { Text(it, fontFamily = QUILL, fontSize = 13.sp, color = SEPIA) }
             } else {
                 Text("？？？", fontFamily = QUILL, fontSize = 24.sp, fontWeight = FontWeight.Black, color = Vintage.inkSoft)
@@ -191,11 +191,11 @@ internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<
 
 /** A postcard that has just come, or one opened again from the list. */
 @Composable
-internal fun PostcardOpenedSheet(t: TownArea, sender: Traveler?, onClose: () -> Unit) {
+internal fun PostcardOpenedSheet(t: TownArea, sender: Traveler?, fact: String? = null, onClose: () -> Unit) {
     ParchmentSheet {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(if (sender != null) trf("{0}寄來一張明信片", sender.name) else trf("來自{0}的明信片", t.name), fontFamily = QUILL, fontSize = 22.sp, fontWeight = FontWeight.Black, color = INK_RED)
-            PostcardCard(t, revealed = true, sender = sender)
+            PostcardCard(t, revealed = true, sender = sender, fact = fact)
             Text(tr("這個地方不在你的環島路線上。"), fontFamily = QUILL, fontSize = 14.sp, color = Vintage.inkSoft)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { TextButton(onClick = onClose) { Text(tr("收下"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black) } }
         }
@@ -227,7 +227,10 @@ fun PostcardsDialog(vm: AppViewModel, ledger: Ledger, onDismiss: () -> Unit) {
     }
     val show = opened
     Dialog(onDismissRequest = { if (show != null) opened = null else onDismiss() }) {
-        if (show != null) PostcardOpenedSheet(show, ledger.senders["${show.county}|${show.name}"]?.let(Travelers::byId)) { opened = null }
+        if (show != null) {
+            val from = ledger.senders["${show.county}|${show.name}"]
+            PostcardOpenedSheet(show, from?.let(Travelers::byId), from?.let { vm.postcardFact("${show.county}|${show.name}", it) }) { opened = null }
+        }
         else PostcardsSheet(ledger.postcardsLeft, travelers, mine, onAsk = { vm.requestPostcard(it.id); onDismiss() }, onOpen = { opened = it }, onClose = onDismiss)
     }
 }
@@ -236,7 +239,7 @@ fun PostcardsDialog(vm: AppViewModel, ledger: Ledger, onDismiss: () -> Unit) {
 @Composable
 fun PostcardArrivedDialog(vm: AppViewModel, travelerId: String, townKey: String, onDismiss: () -> Unit) {
     val t = vm.townByKey(townKey) ?: run { onDismiss(); return }
-    Dialog(onDismissRequest = onDismiss) { PostcardOpenedSheet(t, Travelers.byId(travelerId), onDismiss) }
+    Dialog(onDismissRequest = onDismiss) { PostcardOpenedSheet(t, Travelers.byId(travelerId), vm.postcardFact(townKey, travelerId), onDismiss) }
 }
 
 @Composable

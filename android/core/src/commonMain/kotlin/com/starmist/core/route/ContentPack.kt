@@ -16,7 +16,8 @@ object ContentPack {
     const val FACTS = "landmark_facts.txt"
     const val TOWNS = "town_blurbs.txt"
     const val POIS = "poi_intros.txt"
-    val FILES = listOf(CARDS, FACTS, TOWNS, POIS)
+    const val POSTCARDS = "postcard_facts.txt"
+    val FILES = listOf(CARDS, FACTS, TOWNS, POIS, POSTCARDS)
 
     private val superlatives = Regex("最|唯一|第一|全台|全國|僅存")
 
@@ -118,12 +119,40 @@ object ContentPack {
         return errors
     }
 
+    private val datingWords = Regex("目前|現在|最近|如今|至今|今年|近年|日前")
+
+    /** `county|name|travelerId|sentence`: what a traveler writes about a township the route does not pass (20 to 120 characters). */
+    fun validatePostcards(lines: List<String>): List<String> {
+        val errors = ArrayList<String>()
+        val seen = HashSet<String>()
+        val travelers = Travelers.all.map { it.id }.toSet()
+        data(lines).forEach { l ->
+            val f = l.split('|')
+            if (f.size != 4) { errors += "bad line: $l"; return@forEach }
+            val key = f[0] + "|" + f[1] + "|" + f[2]
+            if (!seen.add(key)) errors += "duplicate $key"
+            if (f[2] !in travelers) errors += "${f[1]}: unknown traveler ${f[2]}"
+            val s = f[3].trim()
+            if (s.trimEnd(CHECKED).length !in 20..120) errors += "${f[1]}/${f[2]}: sentence must be 20 to 120 characters"
+            if (!s.endsWith(CHECKED) && superlatives.containsMatchIn(s)) errors += "${f[1]}/${f[2]}: no superlatives"
+            if (datingWords.containsMatchIn(s)) errors += "${f[1]}/${f[2]}: no words that date"
+            if (editorNote.containsMatchIn(s)) errors += "${f[1]}/${f[2]}: editor's note left in the sentence"
+        }
+        return errors
+    }
+
+    /** Township key ("county|name") to what each traveler writes about it. */
+    fun parsePostcards(lines: List<String>): Map<String, Map<String, String>> =
+        data(lines).mapNotNull { l -> l.split('|').takeIf { it.size == 4 }?.let { Triple(it[0] + "|" + it[1], it[2], it[3].trim().trimEnd(CHECKED)) } }
+            .groupBy({ it.first }, { it.second to it.third }).mapValues { it.value.toMap() }
+
     /** Checks one file by name; an unknown name is an error. */
     fun validate(name: String, lines: List<String>, knownIds: Set<String>): List<String> = when (name) {
         CARDS -> validateCards(lines, knownIds)
         FACTS -> validateFacts(lines, knownIds)
         TOWNS -> validateTowns(lines)
         POIS -> validatePois(lines, knownIds)
+        POSTCARDS -> validatePostcards(lines)
         else -> listOf("unknown file $name")
     }
 }
