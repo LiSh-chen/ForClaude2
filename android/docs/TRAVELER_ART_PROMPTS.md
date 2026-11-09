@@ -11,42 +11,52 @@
 
 ## 共同風格（先貼這段）
 ```
-A series of five character portraits for a mobile walking-adventure game set in Taiwan. Art style: hand-drawn ink and watercolour illustration, like a page from an old botanist's field notebook. Soft sepia ink outlines with a slightly uneven hand-drawn line, gentle watercolour washes, subtle paper grain. Muted warm palette: parchment cream (#F1E3BE), dark brown ink (#3B2A1A), moss green (#5F8A52), brass gold (#B8892D), faded sea blue, dusty rose. Framing for every portrait: head and shoulders, slightly turned three-quarter view, friendly relaxed expression, centered, filling about 80% of the frame. Background: plain flat parchment colour (#E6D3A5) with no scenery, no border, no frame, no text, no watermark. The characters are ordinary Taiwanese people in everyday travel clothes. Keep all five consistent with each other. Confirm you understand and wait for the first character.
+A series of five character portraits for a mobile walking-adventure game set in Taiwan.
+
+Art style: a simple cartoon doodle drawn by hand in a travel notebook, like a quick pen sketch with a few colour washes added. NOT realistic, NOT detailed. Bold, slightly wobbly dark-brown pen outlines of even thickness. Big simple shapes, flat colour fills with only a touch of watercolour texture, almost no shading. Cute stylised proportions: a rounded head that is a bit large, small simple dot eyes, a tiny nose, a simple curved line for the mouth, only one or two lines for wrinkles or hair detail. Leave small gaps in the colouring and let the pen lines overshoot, like a real notebook doodle.
+
+Palette: muted and warm. Parchment cream, dark brown ink (#3B2A1A), moss green (#5F8A52), brass gold (#B8892D), faded sea blue, dusty rose, brick red.
+
+Composition for every image: SQUARE 1:1 aspect ratio, 1024 x 1024 pixels. One character, head and shoulders, slightly turned, centered, filling about 75% of the frame with a margin all around. Background: plain flat parchment colour (#E6D3A5), no paper texture, no scenery, no border, no frame, no text, no watermark.
+
+The characters are ordinary Taiwanese people in everyday travel clothes. Keep all five consistent with each other in line weight, level of detail and head proportions. Confirm you understand and wait for the first character.
 ```
 
 ## 一、汐婆（先畫這位）
 退休的船長，年長女性，閱歷豐富、說話直爽。
 ```
-Character 1, "Xi Po": a retired ship captain, an elderly Taiwanese woman in her late sixties, weathered tanned skin, kind sharp eyes, short grey-streaked hair mostly covered by a faded blue headscarf knotted at the side. She wears a worn navy sailor-style jacket over a light shirt. A small brass compass hangs on a cord around her neck. Warm, wise, slightly teasing smile.
+Character 1, "Xi Po": a retired ship captain, a cheerful elderly Taiwanese grandmother. Round face with a few simple wrinkle lines, short grey hair peeking out from a blue headscarf knotted at the side, a warm teasing smile. A simple navy sailor jacket with a white stripe on the collar, and a small brass compass hanging on a cord around her neck. Doodle style as described, very few details.
 ```
 
 ## 二、阿柏
 攝影師，愛山和雲，安靜、有耐心。
 ```
-Character 2, "Ah Bo": a mountain and landscape photographer, a Taiwanese man or woman in their early thirties (choose the look that fits), wearing a moss-green baseball cap and a simple outdoor jacket. A camera hangs on a strap on the chest, one hand resting on it. Calm, patient, slightly dreamy expression, as if waiting for the right light.
+Character 2, "Ah Bo": a mountain photographer in their early thirties (man or woman), wearing a moss-green baseball cap and a simple jacket. A chunky camera hangs on a strap on the chest, one hand resting on it. Calm, patient, slightly dreamy small smile. Doodle style as described, very few details.
 ```
 
 ## 三、小禾
 騎單車的農學系學生，活潑、好奇。
 ```
-Character 3, "Xiao He": a cheerful agriculture student travelling by bicycle, a Taiwanese young person around twenty-two, wearing a wide straw hat with a red band, a cream-coloured shirt with rolled sleeves, a small notebook tucked in the pocket. A bicycle handlebar and a bell are partly visible at the edge of the frame. Bright curious smile, sun-kissed cheeks.
+Character 3, "Xiao He": a cheerful agriculture student around twenty-two travelling by bicycle, wearing a wide straw hat with a red band and a cream shirt with rolled sleeves, a small notebook in the pocket. A bicycle handlebar and bell peek in at the edge. Big happy smile. Doodle style as described, very few details.
 ```
 
 ## 四、阿鐵
 鐵道迷，健談、愛分享。
 ```
-Character 4, "Ah Tie": a railway enthusiast, a Taiwanese man or woman in their late twenties, wearing a navy railway-style cap with a small brass badge and a plain shirt. A silver rectangular lunch box (like a Taiwan railway bento box) is held against the chest or hangs from a strap. Enthusiastic, talkative expression, head slightly tilted as if listening to a distant train.
+Character 4, "Ah Tie": a railway enthusiast in their late twenties (man or woman), wearing a navy railway-style cap with a small brass badge. A silver rectangular lunch box (like a Taiwan railway bento box) is hugged against the chest. Excited, talkative expression, head tilted as if listening to a distant train. Doodle style as described, very few details.
 ```
 
 ## 五、墨墨
 拿速寫本的畫家，敏感、愛觀察。
 ```
-Character 5, "Mo Mo": a travelling sketch artist, a Taiwanese young person around twenty-five, wearing a tilted red beret and a dusty-rose scarf, a brown sketchbook held against the chest and a pencil tucked behind the ear. Slightly ink-stained fingers. Thoughtful, observant expression with a small smile.
+Character 5, "Mo Mo": a travelling sketch artist around twenty-five, wearing a tilted red beret and a dusty-rose scarf, a brown sketchbook held against the chest and a pencil behind the ear. Thoughtful look with a small smile. Doodle style as described, very few details.
 ```
 
 ## 常用的調整句（逐項改）
 - 「改：臉再圓一點、年紀再小一點。」
-- 「改：線條再粗一點，水彩暈染再淡一點。」
+- 「改：更簡單、更卡通，細節再少一半。」
+- 「改：線條再粗一點，顏色用平塗，水彩質感再淡一點。」
+- 「改：請輸出正方形 1:1，1024×1024。」（Gemini 常會輸出橫圖）
 - 「改：背景只要純色，不要任何紋理或景物。」
 - 「改：表情更開心／更安靜。」
 - 「改：配件要更清楚，但不要變大。」
@@ -56,6 +66,7 @@ Character 5, "Mo Mo": a travelling sketch artist, a Taiwanese young person aroun
 - 背景是單純的羊皮紙色，可以乾淨地裁成圓形。
 - 頭像縮到 52 像素時仍能分出誰是誰：看帽子和配件。
 - 沒有文字、簽名、浮水印。
+- 畫面是簡單的塗鴉風，不是寫實或精細的水彩。
 - 長相與年齡符合角色。
 
 ## 待你決定
