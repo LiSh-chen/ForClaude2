@@ -26,12 +26,19 @@ import androidx.compose.ui.unit.dp
 private val SKIN = Color(0xFFE8C39E)
 private val DARK = Color(0xFF3B2A1A)
 
+/** The id of the drawable called [name], or 0 when there is none (the preview tool answers any name with an id, so the id is tried out). */
+internal fun drawableId(context: android.content.Context, name: String): Int {
+    val id = context.resources.getIdentifier(name, "drawable", context.packageName)
+    if (id == 0) return 0
+    return runCatching { context.resources.getValue(id, android.util.TypedValue(), true); id }.getOrDefault(0)
+}
+
 /** A small round portrait of a traveler, drawn from a few shapes in the notebook's colours. */
 @Composable
 internal fun TravelerAvatar(id: String, size: Dp, modifier: Modifier = Modifier, dim: Boolean = false) {
     // the painted portrait (res/drawable-nodpi/traveler_<id>.webp) when there is one; the shapes below are the fallback
     val context = LocalContext.current
-    val resId = remember(id) { context.resources.getIdentifier("traveler_$id", "drawable", context.packageName) }
+    val resId = remember(id) { drawableId(context, "traveler_$id") }
     if (resId != 0) { PortraitAvatar(resId, size, modifier, dim); return }
     Canvas(modifier.size(size)) {
         val w = this.size.minDimension

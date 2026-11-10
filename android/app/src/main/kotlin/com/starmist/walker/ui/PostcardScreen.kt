@@ -92,7 +92,7 @@ private fun outlineOf(t: TownArea): Outline {
 @Composable
 internal fun PostcardPicture(t: TownArea, art: String?, modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val resId = remember(art) { if (art == null) 0 else context.resources.getIdentifier("postcard_$art", "drawable", context.packageName) }
+    val resId = remember(art) { if (art == null) 0 else drawableId(context, "postcard_$art") }
     val shape = RoundedCornerShape(3.dp)
     if (resId != 0) {
         Image(painterResource(resId), contentDescription = null, contentScale = ContentScale.Crop, modifier = modifier.clip(shape).border(1.dp, Vintage.edge, shape))
