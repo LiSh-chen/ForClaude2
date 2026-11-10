@@ -41,7 +41,7 @@ class AppContainer(context: Context) : AppServices {
     override val repository = StepRepository(platform, database, transaction, settings, reader)
     override val townAreas: TownAreas by lazy { TownAreas.load(appContext) }
     override val townBlurbs: Map<String, List<TownTag>> by lazy { loadTownBlurbs(appContext) }
-    override val postcardFacts: Map<String, Map<String, String>> by lazy { com.starmist.core.route.ContentPack.parsePostcards(content.lines(com.starmist.core.route.ContentPack.POSTCARDS)) }
+    override val postcardFacts: Map<String, Map<String, com.starmist.core.route.PostcardFact>> by lazy { com.starmist.core.route.ContentPack.parsePostcards(content.lines(com.starmist.core.route.ContentPack.POSTCARDS)) }
 }
 
 class StarMistApp : Application() {

@@ -257,20 +257,22 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
             .map { com.starmist.core.route.TownProfile("${it.county}|${it.name}", it.county, it.name, it.highElevM, it.medianElevM, it.areaKm2, it.villages) }
     }
 
+    /** A township [travelerId] has researched words for and has not written from yet; null when there is none (then nothing is sent). */
     private fun townFor(travelerId: String, unlocked: Set<String>, seed: Int): String? {
         val withFacts = container.postcardFacts.filterValues { travelerId in it }.keys
-        return com.starmist.core.route.PostcardTowns.choose(travelerId, offRouteProfiles.filter { it.key !in unlocked }, seed, withFacts)
+        return com.starmist.core.route.PostcardTowns.choose(travelerId, offRouteProfiles.filter { it.key in withFacts && it.key !in unlocked }, seed, withFacts)
     }
 
-    /** What [travelerId] wrote about the township [townKey], when it has been researched. */
-    fun postcardFact(townKey: String, travelerId: String): String? = container.postcardFacts[townKey]?.get(travelerId)
+    /** What [travelerId] wrote about the township [townKey] and its picture, when it has been researched. */
+    fun postcardFact(townKey: String, travelerId: String): com.starmist.core.route.PostcardFact? = container.postcardFacts[townKey]?.get(travelerId)
 
     /** Uses a quest postcard to ask the friend [travelerId] to write from somewhere new. */
     fun requestPostcard(travelerId: String) {
         viewModelScope.launch {
             val l = container.collection.current()
             if (l.postcardsLeft <= 0 || travelerId !in l.friends) return@launch
-            val town = townFor(travelerId, l.unlocked, l.unlocked.size + l.used) ?: return@launch
+            val town = townFor(travelerId, l.unlocked, l.unlocked.size + l.used)
+                ?: run { _message.value = I18n.tr("他還沒有新的地方可以寄，之後再請他吧。"); return@launch }
             if (container.collection.receive(travelerId, town, null)) _pendingRouteEvents.update { it + RouteEvent.PostcardArrived(travelerId, town) }
         }
     }

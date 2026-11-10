@@ -22,5 +22,5 @@ interface AppServices {
     val townBlurbs: Map<String, List<TownTag>>
 
     /** What each traveler writes about a township the route does not pass: township key to traveler id to sentence. */
-    val postcardFacts: Map<String, Map<String, String>>
+    val postcardFacts: Map<String, Map<String, com.starmist.core.route.PostcardFact>>
 }

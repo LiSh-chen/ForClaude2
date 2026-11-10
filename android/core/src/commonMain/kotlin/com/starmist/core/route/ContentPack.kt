@@ -121,18 +121,19 @@ object ContentPack {
 
     private val datingWords = Regex("目前|現在|最近|如今|至今|今年|近年|日前")
 
-    /** `county|name|travelerId|sentence`: what a traveler writes about a township the route does not pass (20 to 160 characters). */
+    /** `county|name|travelerId|picture|sentence`: what a traveler writes about a township the route does not pass (20 to 160 characters). */
     fun validatePostcards(lines: List<String>): List<String> {
         val errors = ArrayList<String>()
         val seen = HashSet<String>()
         val travelers = Travelers.all.map { it.id }.toSet()
         data(lines).forEach { l ->
             val f = l.split('|')
-            if (f.size != 4) { errors += "bad line: $l"; return@forEach }
+            if (f.size != 5) { errors += "bad line: $l"; return@forEach }
             val key = f[0] + "|" + f[1] + "|" + f[2]
             if (!seen.add(key)) errors += "duplicate $key"
             if (f[2] !in travelers) errors += "${f[1]}: unknown traveler ${f[2]}"
-            val s = f[3].trim()
+            if (!Regex("[a-z0-9_]+").matches(f[3])) errors += "${f[1]}: picture name must be lower-case letters, digits or _: ${f[3]}"
+            val s = f[4].trim()
             if (s.trimEnd(CHECKED).length !in 20..160) errors += "${f[1]}/${f[2]}: sentence must be 20 to 160 characters"
             if (!s.endsWith(CHECKED) && superlatives.containsMatchIn(s)) errors += "${f[1]}/${f[2]}: no superlatives"
             if (datingWords.containsMatchIn(s)) errors += "${f[1]}/${f[2]}: no words that date"
@@ -141,9 +142,9 @@ object ContentPack {
         return errors
     }
 
-    /** Township key ("county|name") to what each traveler writes about it. */
-    fun parsePostcards(lines: List<String>): Map<String, Map<String, String>> =
-        data(lines).mapNotNull { l -> l.split('|').takeIf { it.size == 4 }?.let { Triple(it[0] + "|" + it[1], it[2], it[3].trim().trimEnd(CHECKED)) } }
+    /** Township key ("county|name") to what each traveler writes about it, with the name of the picture. */
+    fun parsePostcards(lines: List<String>): Map<String, Map<String, PostcardFact>> =
+        data(lines).mapNotNull { l -> l.split('|').takeIf { it.size == 5 }?.let { Triple(it[0] + "|" + it[1], it[2], PostcardFact(it[3], it[4].trim().trimEnd(CHECKED))) } }
             .groupBy({ it.first }, { it.second to it.third }).mapValues { it.value.toMap() }
 
     /** Checks one file by name; an unknown name is an error. */
@@ -156,6 +157,9 @@ object ContentPack {
         else -> listOf("unknown file $name")
     }
 }
+
+/** What a traveler writes about a township and the name of its picture (res/drawable-nodpi/postcard_<art>.webp). */
+data class PostcardFact(val art: String, val text: String)
 
 /** The route with card names replaced by [texts]; a card without an entry is left as it is. */
 fun RouteDef.withCardTexts(texts: Map<String, CardText>): RouteDef =

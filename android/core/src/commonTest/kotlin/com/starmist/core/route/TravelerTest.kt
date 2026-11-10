@@ -63,44 +63,27 @@ class PostcardTownsTest {
 
     @Test fun noCandidatesGivesNothing() { assertEquals(null, PostcardTowns.choose("ahbo", emptyList(), 3)) }
 
-    @Test fun everyTravelerWritesWithTheirNameAndOnlyFigures() {
-        for (t in Travelers.all) {
-            val l = PostcardTowns.lines(t, towns[0])
-            assertTrue(l.last().endsWith(t.name))
-            assertTrue(l.any { it.contains("A高山") })
-        }
-    }
-}
-
-class PostcardFactsTest {
-    private val towns = listOf(
-        TownProfile("A|高山", "A", "高山", 3000, 1500, 400.0, 5),
-        TownProfile("A|平原", "A", "平原", 20, 5, 30.0, 12),
-    )
-
     @Test fun aPlaceWithAFactIsChosenFirst() {
         assertEquals("A|平原", PostcardTowns.choose("ahbo", towns, 0, preferred = setOf("A|平原")))
         assertEquals("A|高山", PostcardTowns.choose("ahbo", towns, 0, preferred = setOf("A|沒有這區")))
     }
 
-    @Test fun theFactIsShownWithTheFiguresAndTheSignature() {
-        val l = PostcardTowns.lines(Travelers.byId("atie")!!, towns[0], "我搭上了一列火車，窗外很安靜地過去了。")
-        assertEquals(3, l.size)
-        assertTrue(l[0].startsWith("我搭上"))
-        assertTrue(l[1].contains("5 個村里"))
-        assertTrue(l.last().endsWith("阿鐵"))
-    }
-
-    @Test fun eachTravelerTalksInTheirOwnWay() {
-        val voices = Travelers.all.map { PostcardTowns.lines(it, towns[0], "這裡有一個很有意思的地方，值得你專程來看一看。")[1] }
-        assertEquals(Travelers.all.size, voices.toSet().size)
+    @Test fun theCardIsTheFactAndTheSignature() {
+        for (t in Travelers.all) {
+            val l = PostcardTowns.lines(t, "這裡有一個很有意思的地方，值得你專程來看一看。")
+            assertEquals(2, l.size)
+            assertTrue(l.last().endsWith(t.name))
+        }
     }
 
     @Test fun postcardLinesAreParsedAndChecked() {
-        val good = listOf("# c", "新北市|平溪區|atie|我搭上平溪線。這條鐵路原本是煤礦公司為了運煤才修的，沿線還留著不少礦場的遺跡。")
+        val good = listOf("# c", "新北市|平溪區|atie|pingxi|我搭上平溪線。這條鐵路原本是煤礦公司為了運煤才修的，沿線還留著不少礦場的遺跡。")
         assertTrue(ContentPack.validatePostcards(good).isEmpty())
-        assertEquals("atie", ContentPack.parsePostcards(good)["新北市|平溪區"]!!.keys.single())
-        assertEquals(1, ContentPack.validatePostcards(listOf("新北市|平溪區|nobody|我搭上平溪線。這條鐵路原本是煤礦公司為了運煤才修的，沿線還留著不少礦場的遺跡。")).size)
-        assertTrue(ContentPack.validatePostcards(listOf("新北市|平溪區|atie|這是最美的一條鐵路，目前還有很多人搭乘它去旅行，真的很棒。")).size >= 2)
+        val parsed = ContentPack.parsePostcards(good)["新北市|平溪區"]!!["atie"]!!
+        assertEquals("pingxi", parsed.art)
+        assertTrue(parsed.text.startsWith("我搭上"))
+        assertEquals(1, ContentPack.validatePostcards(listOf("新北市|平溪區|nobody|pingxi|我搭上平溪線。這條鐵路原本是煤礦公司為了運煤才修的，沿線還留著不少礦場的遺跡。")).size)
+        assertEquals(1, ContentPack.validatePostcards(listOf("新北市|平溪區|atie|Ping Xi|我搭上平溪線。這條鐵路原本是煤礦公司為了運煤才修的，沿線還留著不少礦場的遺跡。")).size)
+        assertTrue(ContentPack.validatePostcards(listOf("新北市|平溪區|atie|pingxi|這是最美的一條鐵路，目前還有很多人搭乘它去旅行，真的很棒。")).size >= 2)
     }
 }

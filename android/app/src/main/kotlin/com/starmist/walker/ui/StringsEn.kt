@@ -360,4 +360,5 @@ internal val EN: Map<String, String> = mapOf(
     "收到的明信片 {0} 張" to "{0} postcard(s) received", "{0}寄來一張明信片" to "A postcard from {0}", "這個地方不在你的環島路線上。" to "This place is off your route.",
     "路上遇到一位旅人" to "You meet a fellow traveler", "成為朋友" to "Friends now", "之後會收到他從路線外寄來的明信片。" to "You will get postcards from places off your route.",
     "你好" to "Hello", "太好了" to "Wonderful", "請朋友寄信" to "Ask a friend to write", "旅人與明信片（朋友 {0}・明信片 {1}）" to "Travelers and postcards (friends {0} · postcards {1})",
+    "他還沒有新的地方可以寄，之後再請他吧。" to "He has nowhere new to write from yet; ask again later.",
 )

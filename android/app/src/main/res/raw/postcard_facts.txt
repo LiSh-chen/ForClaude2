@@ -1,9 +1,10 @@
-# county|name|traveler|what the traveler writes about the place (first person, 20 to 160 characters)
+# county|name|traveler|picture|what the traveler writes about the place (first person, 20 to 160 characters)
+# The picture is res/drawable-nodpi/postcard_<picture>.webp: a view of the place, in the style of the sight cards (prompts: docs/POSTCARD_ART_PROMPTS.md).
 # One sourced fact per line, told in the traveler's own voice; the voice is invented, the fact is not. Sources: docs/research/postcards_batch1.md
 # Rules: no superlatives (最, 唯一, 第一...) unless the sentence ends with ※; no words that date (目前, 現在, 最近, 至今); no shops; no unsourced claims.
 # Voices: ahbo calm and short, waits for the light; xiaohe bright and curious; xipo plain-spoken and teasing; atie talkative and excited; momo soft and observing.
-新北市|平溪區|atie|你聽我說！我坐上平溪線了，這條鐵軌以前載的是煤！它原本是煤礦公司為了運煤才修的，一開始叫石底線，後來才開放載客。沿線還留著礦場的遺跡，我下車拍了一整排，見面再給你看！
-新北市|三峽區|momo|我坐在三峽祖師廟前，把速寫本翻到新的一頁。這座廟是畫家李梅樹主持重建的，石雕和木雕刻得好細好細，人家說它是「東方藝術殿堂」。我畫了好久，只畫得下柱子的一小角……下次換你來，我們一起慢慢看。
-新北市|萬里區|xipo|少年仔，我來野柳看石頭啦。那些岩石像一朵一朵的香菇，是海浪、風跟風化慢慢磨出來的。其中一塊側面像婦人的頭，大家叫她女王頭。我看了看，嗯，是有幾分像我年輕的時候啦，哈哈！
-雲林縣|口湖鄉|xiaohe|欸，我騎到口湖了。這裡有一段很沉重的往事：一八四五年一場大水，沿海有好幾千人不在了。後來每年農曆六月，大家都會辦牽水狀，轉動紙糊的水狀，說是要把他們從水裡帶出來。我在海邊站了好一陣子，沒有說話。
-南投縣|仁愛鄉|ahbo|今天在高山上等雲，等了很久。清境這一帶，住著從滇緬邊境來的雲南籍居民，還有他們的後代。晚餐我吃到雲南料理，味道很特別，像把遠方的家煮進了碗裡。雲散開的時候，我按下了快門。
+新北市|平溪區|atie|pingxi|你聽我說！我坐上平溪線了，這條鐵軌以前載的是煤！它原本是煤礦公司為了運煤才修的，一開始叫石底線，後來才開放載客。沿線還留著礦場的遺跡，我下車拍了一整排，見面再給你看！
+新北市|三峽區|momo|sanxia|我坐在三峽祖師廟前，把速寫本翻到新的一頁。這座廟是畫家李梅樹主持重建的，石雕和木雕刻得好細好細，人家說它是「東方藝術殿堂」。我畫了好久，只畫得下柱子的一小角……下次換你來，我們一起慢慢看。
+新北市|萬里區|xipo|yehliu|少年仔，我來野柳看石頭啦。那些岩石像一朵一朵的香菇，是海浪、風跟風化慢慢磨出來的。其中一塊側面像婦人的頭，大家叫她女王頭。我看了看，嗯，是有幾分像我年輕的時候啦，哈哈！
+雲林縣|口湖鄉|xiaohe|kouhu|欸，我騎到口湖了。這裡有一段很沉重的往事：一八四五年一場大水，沿海有好幾千人不在了。後來每年農曆六月，大家都會辦牽水狀，轉動紙糊的水狀，說是要把他們從水裡帶出來。我在海邊站了好一陣子，沒有說話。
+南投縣|仁愛鄉|ahbo|qingjing|今天在高山上等雲，等了很久。清境這一帶，住著從滇緬邊境來的雲南籍居民，還有他們的後代。晚餐我吃到雲南料理，味道很特別，像把遠方的家煮進了碗裡。雲散開的時候，我按下了快門。
