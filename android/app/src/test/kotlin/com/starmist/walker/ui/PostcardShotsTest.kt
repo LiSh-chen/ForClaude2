@@ -18,7 +18,10 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
 
     @Composable
     private fun Frame(content: @Composable () -> Unit) = Page(tab = 3, bar = false) { pad ->
-        Box(Modifier.fillMaxSize().padding(pad).padding(16.dp)) { content() }
+        // the scenery pictures are not in the project yet: show the placeholders (the preview tool would answer any name with an id)
+        androidx.compose.runtime.CompositionLocalProvider(LocalPostcardArt provides false) {
+            Box(Modifier.fillMaxSize().padding(pad).padding(16.dp)) { content() }
+        }
     }
 
     private val rows get() = Travelers.all.mapIndexed { i, t -> TravelerRow(t, if (i < 2) 2 else if (i == 2) 1 else 0) }

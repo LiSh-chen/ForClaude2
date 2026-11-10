@@ -88,11 +88,15 @@ private fun outlineOf(t: TownArea): Outline {
     return Outline(rings, Bounds(xs.min(), xs.max(), ys.min(), ys.max()))
 }
 
+/** False in the screenshot tests while a picture is not in the project yet (the preview tool answers any picture name with a made-up id). */
+internal val LocalPostcardArt = androidx.compose.runtime.staticCompositionLocalOf { true }
+
 /** The picture of a postcard (res/drawable-nodpi/postcard_<art>.webp); when it is not there yet, the outline of the place on paper. */
 @Composable
 internal fun PostcardPicture(t: TownArea, art: String?, modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val resId = remember(art) { if (art == null) 0 else drawableId(context, "postcard_$art") }
+    val enabled = LocalPostcardArt.current
+    val resId = remember(art, enabled) { if (art == null || !enabled) 0 else drawableId(context, "postcard_$art") }
     val shape = RoundedCornerShape(3.dp)
     if (resId != 0) {
         Image(painterResource(resId), contentDescription = null, contentScale = ContentScale.Crop, modifier = modifier.clip(shape).border(1.dp, Vintage.edge, shape))
