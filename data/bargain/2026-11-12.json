@@ -1,0 +1,183 @@
+{
+ "date": "2026-11-12",
+ "params_version": 2,
+ "picks": [
+  {
+   "ticker": "ORCL",
+   "name": "Oracle Corporation",
+   "zh_name": "Oracle",
+   "market": "US",
+   "sector": "cloud_software",
+   "rank": 1,
+   "entry_price": 128.38,
+   "entry_date": "2026-11-11",
+   "composite": 64.49,
+   "scores": {
+    "sector": 57.8,
+    "leader": 75.0,
+    "quality": 55.2,
+    "growth": 99.4,
+    "valuation": 100.0,
+    "momentum": 9.8,
+    "news": 69.0
+   },
+   "target": {
+    "base": 205.41,
+    "bull": 275.12,
+    "bear": 100.84,
+    "ev": 193.21,
+    "confidence": "中",
+    "upside": 0.6,
+    "ev_upside": 0.505,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 245.74,
+      "weight": 0.5,
+      "upside": 0.9142
+     },
+     "peg": {
+      "value": 336.47,
+      "weight": 0.187,
+      "upside": 1.6209
+     },
+     "consensus": {
+      "value": 236.18,
+      "weight": 0.312,
+      "upside": 0.8397
+     }
+    }
+   },
+   "stop": 105.47,
+   "fundamentals": {
+    "market_cap": 400251387904,
+    "pe_ttm": 20.1223,
+    "pe_fwd": 11.6088,
+    "peg": 0.64,
+    "roe": 0.4119,
+    "gross_margin": 0.6396,
+    "op_margin": 0.3427,
+    "net_margin": 0.2636,
+    "rev_growth": 0.296,
+    "eps_growth": 0.545,
+    "de": 2.5172,
+    "beta": 1.778,
+    "target_mean": 236.184,
+    "n_analysts": 40,
+    "fcf_margin": -0.6388
+   },
+   "tech": {
+    "ret_1m": -0.10349156690824646,
+    "ret_3m": -0.1751707889604902,
+    "rel_3m": -0.1521408394202477,
+    "dist200": -0.164164133800209,
+    "vol_ann": 0.6222714326421717
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 76.7,
+   "facts": {
+    "from_high": -0.4789,
+    "pos52": 0.1048,
+    "bounce20": 0.1148,
+    "ret_1m": -0.1035,
+    "dist200": -0.1642,
+    "pe_discount": 0.6464,
+    "eps_up": 0.7334,
+    "rev_growth": 0.296,
+    "upside": 0.6
+   }
+  },
+  {
+   "ticker": "ON",
+   "name": "ON Semiconductor Corporation",
+   "zh_name": "onsemi",
+   "market": "US",
+   "sector": "power_semis",
+   "rank": 2,
+   "entry_price": 73.62,
+   "entry_date": "2026-11-11",
+   "composite": 61.76,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 72.1,
+    "growth": 59.1,
+    "valuation": 91.3,
+    "momentum": 16.1,
+    "news": 40.0
+   },
+   "target": {
+    "base": 97.7,
+    "bull": 136.79,
+    "bear": 39.08,
+    "ev": 90.87,
+    "confidence": "中",
+    "upside": 0.3271,
+    "ev_upside": 0.2342,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 83.35,
+      "weight": 0.4,
+      "upside": 0.1321
+     },
+     "peg": {
+      "value": 144.08,
+      "weight": 0.15,
+      "upside": 0.9571
+     },
+     "dcf": {
+      "value": 93.57,
+      "weight": 0.2,
+      "upside": 0.271
+     },
+     "consensus": {
+      "value": 96.16,
+      "weight": 0.25,
+      "upside": 0.3062
+     }
+    }
+   },
+   "stop": 62.2,
+   "fundamentals": {
+    "market_cap": 28659124224,
+    "pe_ttm": 43.0526,
+    "pe_fwd": 15.546,
+    "peg": 0.15,
+    "roe": 0.0891,
+    "gross_margin": 0.399,
+    "op_margin": 0.2041,
+    "net_margin": 0.1082,
+    "rev_growth": 0.111,
+    "eps_growth": 0.261,
+    "de": 0.621,
+    "beta": 2.151,
+    "target_mean": 96.16,
+    "n_analysts": 25,
+    "fcf_margin": 0.2534
+   },
+   "tech": {
+    "ret_1m": -0.04003128956958635,
+    "ret_3m": -0.0973515822668769,
+    "rel_3m": -0.07432163272663439,
+    "dist200": -0.1096932079430818,
+    "vol_ann": 0.6040162861628511
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 68.3,
+   "facts": {
+    "from_high": -0.4503,
+    "pos52": 0.3226,
+    "bounce20": 0.1684,
+    "ret_1m": -0.04,
+    "dist200": -0.1097,
+    "pe_discount": 0.209,
+    "eps_up": 1.7694,
+    "rev_growth": 0.111,
+    "upside": 0.3271
+   }
+  }
+ ]
+}
