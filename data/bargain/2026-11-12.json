@@ -9,51 +9,51 @@
    "market": "US",
    "sector": "cloud_software",
    "rank": 1,
-   "entry_price": 128.38,
-   "entry_date": "2026-11-11",
-   "composite": 64.49,
+   "entry_price": 127.11,
+   "entry_date": "2026-11-12",
+   "composite": 64.94,
    "scores": {
-    "sector": 57.8,
+    "sector": 57.5,
     "leader": 75.0,
     "quality": 55.2,
     "growth": 99.4,
     "valuation": 100.0,
-    "momentum": 9.8,
-    "news": 69.0
+    "momentum": 11.8,
+    "news": 72.4
    },
    "target": {
-    "base": 205.41,
-    "bull": 275.12,
-    "bear": 100.84,
-    "ev": 193.21,
+    "base": 203.38,
+    "bull": 271.34,
+    "bear": 101.42,
+    "ev": 191.48,
     "confidence": "中",
     "upside": 0.6,
-    "ev_upside": 0.505,
+    "ev_upside": 0.5064,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 245.74,
+      "value": 247.15,
       "weight": 0.5,
-      "upside": 0.9142
+      "upside": 0.9444
      },
      "peg": {
-      "value": 336.47,
+      "value": 333.45,
       "weight": 0.187,
-      "upside": 1.6209
+      "upside": 1.6233
      },
      "consensus": {
       "value": 236.18,
       "weight": 0.312,
-      "upside": 0.8397
+      "upside": 0.8581
      }
     }
    },
-   "stop": 105.47,
+   "stop": 104.23,
    "fundamentals": {
-    "market_cap": 400251387904,
-    "pe_ttm": 20.1223,
-    "pe_fwd": 11.6088,
-    "peg": 0.64,
+    "market_cap": 396291866624,
+    "pe_ttm": 19.9232,
+    "pe_fwd": 11.494,
+    "peg": 0.7,
     "roe": 0.4119,
     "gross_margin": 0.6396,
     "op_margin": 0.3427,
@@ -67,25 +67,111 @@
     "fcf_margin": -0.6388
    },
    "tech": {
-    "ret_1m": -0.10349156690824646,
-    "ret_3m": -0.1751707889604902,
-    "rel_3m": -0.1521408394202477,
-    "dist200": -0.164164133800209,
-    "vol_ann": 0.6222714326421717
+    "ret_1m": -0.0263500802094504,
+    "ret_3m": -0.1524042762967116,
+    "rel_3m": -0.12756920957207984,
+    "dist200": -0.17124942156987477,
+    "vol_ann": 0.6223039637532606
    },
    "book": "bargain",
    "also_main": false,
-   "bargain_score": 76.7,
+   "bargain_score": 79.2,
    "facts": {
-    "from_high": -0.4789,
-    "pos52": 0.1048,
-    "bounce20": 0.1148,
-    "ret_1m": -0.1035,
-    "dist200": -0.1642,
-    "pe_discount": 0.6464,
+    "from_high": -0.4841,
+    "pos52": 0.0952,
+    "bounce20": 0.1038,
+    "ret_1m": -0.0264,
+    "dist200": -0.1712,
+    "pe_discount": 0.6538,
     "eps_up": 0.7334,
     "rev_growth": 0.296,
     "upside": 0.6
+   }
+  },
+  {
+   "ticker": "COHR",
+   "name": "Coherent Corp.",
+   "zh_name": "Coherent",
+   "market": "US",
+   "sector": "networking_optics",
+   "rank": 2,
+   "entry_price": 232.08,
+   "entry_date": "2026-11-12",
+   "composite": 57.21,
+   "scores": {
+    "sector": 36.9,
+    "leader": 50.0,
+    "quality": 53.6,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 6.0,
+    "news": 71.3
+   },
+   "target": {
+    "base": 348.22,
+    "bull": 487.5,
+    "bear": 139.29,
+    "ev": 323.84,
+    "confidence": "中",
+    "upside": 0.5004,
+    "ev_upside": 0.3954,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 285.46,
+      "weight": 0.5,
+      "upside": 0.23
+     },
+     "peg": {
+      "value": 476.07,
+      "weight": 0.187,
+      "upside": 1.0513
+     },
+     "consensus": {
+      "value": 371.92,
+      "weight": 0.312,
+      "upside": 0.6025
+     }
+    }
+   },
+   "stop": 190.31,
+   "fundamentals": {
+    "market_cap": 45710168064,
+    "pe_ttm": 48.0497,
+    "pe_fwd": 14.699,
+    "peg": 0.49,
+    "roe": 0.0927,
+    "gross_margin": 0.3816,
+    "op_margin": 0.1411,
+    "net_margin": 0.1218,
+    "rev_growth": 0.499,
+    "eps_growth": 0.601,
+    "de": 0.3728,
+    "beta": 2.234,
+    "target_mean": 371.9185,
+    "n_analysts": 25,
+    "fcf_margin": -0.213
+   },
+   "tech": {
+    "ret_1m": -0.11863894294121669,
+    "ret_3m": -0.2877266993087908,
+    "rel_3m": -0.26289163258415904,
+    "dist200": -0.2180650970218494,
+    "vol_ann": 0.9737156930052179
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 77.9,
+   "facts": {
+    "from_high": -0.4563,
+    "pos52": 0.3312,
+    "bounce20": 0.3671,
+    "ret_1m": -0.1186,
+    "dist200": -0.2181,
+    "pe_discount": 0.3151,
+    "eps_up": 2.2689,
+    "rev_growth": 0.499,
+    "upside": 0.5004
    }
   },
   {
@@ -94,56 +180,56 @@
    "zh_name": "onsemi",
    "market": "US",
    "sector": "power_semis",
-   "rank": 2,
-   "entry_price": 73.62,
-   "entry_date": "2026-11-11",
-   "composite": 61.76,
+   "rank": 3,
+   "entry_price": 73.73,
+   "entry_date": "2026-11-12",
+   "composite": 61.47,
    "scores": {
     "sector": null,
     "leader": 66.7,
     "quality": 72.1,
     "growth": 59.1,
-    "valuation": 91.3,
-    "momentum": 16.1,
+    "valuation": 90.3,
+    "momentum": 15.3,
     "news": 40.0
    },
    "target": {
-    "base": 97.7,
-    "bull": 136.79,
-    "bear": 39.08,
-    "ev": 90.87,
+    "base": 97.25,
+    "bull": 136.15,
+    "bear": 38.9,
+    "ev": 90.44,
     "confidence": "中",
-    "upside": 0.3271,
-    "ev_upside": 0.2342,
+    "upside": 0.319,
+    "ev_upside": 0.2266,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 83.35,
+      "value": 82.69,
       "weight": 0.4,
-      "upside": 0.1321
+      "upside": 0.1215
      },
      "peg": {
-      "value": 144.08,
+      "value": 142.79,
       "weight": 0.15,
-      "upside": 0.9571
+      "upside": 0.9366
      },
      "dcf": {
       "value": 93.57,
       "weight": 0.2,
-      "upside": 0.271
+      "upside": 0.2691
      },
      "consensus": {
       "value": 96.16,
       "weight": 0.25,
-      "upside": 0.3062
+      "upside": 0.3042
      }
     }
    },
-   "stop": 62.2,
+   "stop": 61.94,
    "fundamentals": {
-    "market_cap": 28659124224,
-    "pe_ttm": 43.0526,
-    "pe_fwd": 15.546,
+    "market_cap": 28701945856,
+    "pe_ttm": 43.117,
+    "pe_fwd": 15.5693,
     "peg": 0.15,
     "roe": 0.0891,
     "gross_margin": 0.399,
@@ -158,25 +244,25 @@
     "fcf_margin": 0.2534
    },
    "tech": {
-    "ret_1m": -0.04003128956958635,
-    "ret_3m": -0.0973515822668769,
-    "rel_3m": -0.07432163272663439,
-    "dist200": -0.1096932079430818,
-    "vol_ann": 0.6040162861628511
+    "ret_1m": 0.0050436121397228195,
+    "ret_3m": -0.10803294539657526,
+    "rel_3m": -0.0831978786719435,
+    "dist200": -0.10883717242714097,
+    "vol_ann": 0.599548515533564
    },
    "book": "bargain",
    "also_main": false,
-   "bargain_score": 68.3,
+   "bargain_score": 69.5,
    "facts": {
-    "from_high": -0.4503,
-    "pos52": 0.3226,
-    "bounce20": 0.1684,
-    "ret_1m": -0.04,
-    "dist200": -0.1097,
-    "pe_discount": 0.209,
+    "from_high": -0.4495,
+    "pos52": 0.3238,
+    "bounce20": 0.1701,
+    "ret_1m": 0.005,
+    "dist200": -0.1088,
+    "pe_discount": 0.1955,
     "eps_up": 1.7694,
     "rev_growth": 0.111,
-    "upside": 0.3271
+    "upside": 0.319
    }
   }
  ]
