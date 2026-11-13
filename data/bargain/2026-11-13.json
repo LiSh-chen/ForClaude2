@@ -1,0 +1,269 @@
+{
+ "date": "2026-11-13",
+ "params_version": 2,
+ "picks": [
+  {
+   "ticker": "ORCL",
+   "name": "Oracle Corporation",
+   "zh_name": "Oracle",
+   "market": "US",
+   "sector": "cloud_software",
+   "rank": 1,
+   "entry_price": 127.11,
+   "entry_date": "2026-11-12",
+   "composite": 64.5,
+   "scores": {
+    "sector": 55.3,
+    "leader": 75.0,
+    "quality": 55.2,
+    "growth": 99.4,
+    "valuation": 100.0,
+    "momentum": 11.8,
+    "news": 72.4
+   },
+   "target": {
+    "base": 203.38,
+    "bull": 271.34,
+    "bear": 101.42,
+    "ev": 191.48,
+    "confidence": "中",
+    "upside": 0.6,
+    "ev_upside": 0.5064,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 247.15,
+      "weight": 0.5,
+      "upside": 0.9444
+     },
+     "peg": {
+      "value": 333.45,
+      "weight": 0.187,
+      "upside": 1.6233
+     },
+     "consensus": {
+      "value": 236.18,
+      "weight": 0.312,
+      "upside": 0.8581
+     }
+    }
+   },
+   "stop": 104.23,
+   "fundamentals": {
+    "market_cap": 396291866624,
+    "pe_ttm": 19.9232,
+    "pe_fwd": 11.494,
+    "peg": 0.7,
+    "roe": 0.4119,
+    "gross_margin": 0.6396,
+    "op_margin": 0.3427,
+    "net_margin": 0.2636,
+    "rev_growth": 0.296,
+    "eps_growth": 0.545,
+    "de": 2.5172,
+    "beta": 1.778,
+    "target_mean": 236.184,
+    "n_analysts": 40,
+    "fcf_margin": -0.6388
+   },
+   "tech": {
+    "ret_1m": -0.02635007553421831,
+    "ret_3m": -0.15240427222676134,
+    "rel_3m": -0.12756920550212958,
+    "dist200": -0.1712494171946567,
+    "vol_ann": 0.6223039634708658
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 79.2,
+   "facts": {
+    "from_high": -0.4841,
+    "pos52": 0.0952,
+    "bounce20": 0.1038,
+    "ret_1m": -0.0264,
+    "dist200": -0.1712,
+    "pe_discount": 0.6538,
+    "eps_up": 0.7334,
+    "rev_growth": 0.296,
+    "upside": 0.6
+   }
+  },
+  {
+   "ticker": "COHR",
+   "name": "Coherent Corp.",
+   "zh_name": "Coherent",
+   "market": "US",
+   "sector": "networking_optics",
+   "rank": 2,
+   "entry_price": 232.08,
+   "entry_date": "2026-11-12",
+   "composite": 54.27,
+   "scores": {
+    "sector": 34.7,
+    "leader": 50.0,
+    "quality": 53.6,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 6.0,
+    "news": 40.0
+   },
+   "target": {
+    "base": 347.67,
+    "bull": 486.74,
+    "bear": 139.07,
+    "ev": 323.33,
+    "confidence": "中",
+    "upside": 0.4981,
+    "ev_upside": 0.3932,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 284.37,
+      "weight": 0.5,
+      "upside": 0.2253
+     },
+     "peg": {
+      "value": 476.07,
+      "weight": 0.187,
+      "upside": 1.0513
+     },
+     "consensus": {
+      "value": 371.92,
+      "weight": 0.312,
+      "upside": 0.6025
+     }
+    }
+   },
+   "stop": 190.31,
+   "fundamentals": {
+    "market_cap": 45710168064,
+    "pe_ttm": 48.0497,
+    "pe_fwd": 14.699,
+    "peg": 0.49,
+    "roe": 0.0927,
+    "gross_margin": 0.3816,
+    "op_margin": 0.1411,
+    "net_margin": 0.1218,
+    "rev_growth": 0.499,
+    "eps_growth": 0.601,
+    "de": 0.3728,
+    "beta": 2.234,
+    "target_mean": 371.9185,
+    "n_analysts": 25,
+    "fcf_margin": -0.213
+   },
+   "tech": {
+    "ret_1m": -0.11863893598749253,
+    "ret_3m": -0.28772669368912795,
+    "rel_3m": -0.2628916269644962,
+    "dist200": -0.21806509087669323,
+    "vol_ann": 0.9737156927087877
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 77.7,
+   "facts": {
+    "from_high": -0.4563,
+    "pos52": 0.3312,
+    "bounce20": 0.3671,
+    "ret_1m": -0.1186,
+    "dist200": -0.2181,
+    "pe_discount": 0.3106,
+    "eps_up": 2.2689,
+    "rev_growth": 0.499,
+    "upside": 0.4981
+   }
+  },
+  {
+   "ticker": "ON",
+   "name": "ON Semiconductor Corporation",
+   "zh_name": "onsemi",
+   "market": "US",
+   "sector": "power_semis",
+   "rank": 3,
+   "entry_price": 73.73,
+   "entry_date": "2026-11-12",
+   "composite": 61.47,
+   "scores": {
+    "sector": null,
+    "leader": 66.7,
+    "quality": 72.1,
+    "growth": 59.1,
+    "valuation": 90.3,
+    "momentum": 15.3,
+    "news": 40.0
+   },
+   "target": {
+    "base": 97.25,
+    "bull": 136.15,
+    "bear": 38.9,
+    "ev": 90.44,
+    "confidence": "中",
+    "upside": 0.319,
+    "ev_upside": 0.2266,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 82.69,
+      "weight": 0.4,
+      "upside": 0.1215
+     },
+     "peg": {
+      "value": 142.79,
+      "weight": 0.15,
+      "upside": 0.9366
+     },
+     "dcf": {
+      "value": 93.57,
+      "weight": 0.2,
+      "upside": 0.2691
+     },
+     "consensus": {
+      "value": 96.16,
+      "weight": 0.25,
+      "upside": 0.3042
+     }
+    }
+   },
+   "stop": 61.94,
+   "fundamentals": {
+    "market_cap": 28701945856,
+    "pe_ttm": 43.117,
+    "pe_fwd": 15.5693,
+    "peg": 0.15,
+    "roe": 0.0891,
+    "gross_margin": 0.399,
+    "op_margin": 0.2041,
+    "net_margin": 0.1082,
+    "rev_growth": 0.111,
+    "eps_growth": 0.261,
+    "de": 0.621,
+    "beta": 2.151,
+    "target_mean": 96.16,
+    "n_analysts": 25,
+    "fcf_margin": 0.2534
+   },
+   "tech": {
+    "ret_1m": 0.005043657899449716,
+    "ret_3m": -0.10803290478523431,
+    "rel_3m": -0.08319783806060255,
+    "dist200": -0.10883713203321,
+    "vol_ann": 0.5995485159945031
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 69.5,
+   "facts": {
+    "from_high": -0.4495,
+    "pos52": 0.3238,
+    "bounce20": 0.1701,
+    "ret_1m": 0.005,
+    "dist200": -0.1088,
+    "pe_discount": 0.1955,
+    "eps_up": 1.7694,
+    "rev_growth": 0.111,
+    "upside": 0.319
+   }
+  }
+ ]
+}
