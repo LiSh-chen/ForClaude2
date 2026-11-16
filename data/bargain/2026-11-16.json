@@ -1,0 +1,92 @@
+{
+ "date": "2026-11-16",
+ "params_version": 2,
+ "picks": [
+  {
+   "ticker": "1590.TW",
+   "name": "AIRTAC INTERNATIONAL GROUP",
+   "zh_name": "亞德客-KY",
+   "market": "TW",
+   "sector": "robotics_auto",
+   "rank": 1,
+   "entry_price": 1055.0,
+   "entry_date": "2026-11-16",
+   "composite": 57.08,
+   "scores": {
+    "sector": 24.3,
+    "leader": 50.0,
+    "quality": 76.9,
+    "growth": 95.6,
+    "valuation": 95.6,
+    "momentum": 7.3,
+    "news": 40.0
+   },
+   "target": {
+    "base": 1540.11,
+    "bull": 2087.85,
+    "bear": 718.51,
+    "ev": 1444.26,
+    "confidence": "中",
+    "upside": 0.4598,
+    "ev_upside": 0.369,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 1259.16,
+      "weight": 0.5,
+      "upside": 0.1935
+     },
+     "peg": {
+      "value": 2163.81,
+      "weight": 0.187,
+      "upside": 1.051
+     },
+     "consensus": {
+      "value": 1615.42,
+      "weight": 0.312,
+      "upside": 0.5312
+     }
+    }
+   },
+   "stop": 905.71,
+   "fundamentals": {
+    "market_cap": 211000000512,
+    "pe_ttm": 20.2768,
+    "pe_fwd": 15.2412,
+    "peg": 1.04,
+    "roe": 0.2106,
+    "gross_margin": 0.4874,
+    "op_margin": 0.3351,
+    "net_margin": 0.2611,
+    "rev_growth": 0.396,
+    "eps_growth": 0.356,
+    "de": 0.0042,
+    "beta": 1.249,
+    "target_mean": 1615.421,
+    "n_analysts": 19,
+    "fcf_margin": -0.0225
+   },
+   "tech": {
+    "ret_1m": -0.08658008658008653,
+    "ret_3m": -0.282312925170068,
+    "rel_3m": -0.18393462657883208,
+    "dist200": -0.15060187521720203,
+    "vol_ann": 0.345268369654242
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 66.4,
+   "facts": {
+    "from_high": -0.3386,
+    "pos52": 0.2687,
+    "bounce20": 0.0446,
+    "ret_1m": -0.0866,
+    "dist200": -0.1506,
+    "pe_discount": 0.2468,
+    "eps_up": 0.3304,
+    "rev_growth": 0.396,
+    "upside": 0.4598
+   }
+  }
+ ]
+}
