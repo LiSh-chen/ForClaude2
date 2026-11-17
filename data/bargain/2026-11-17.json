@@ -1,0 +1,178 @@
+{
+ "date": "2026-11-17",
+ "params_version": 2,
+ "picks": [
+  {
+   "ticker": "3661.TW",
+   "name": "ALCHIP TECHNOLOGIES LIMITD",
+   "zh_name": "世芯-KY",
+   "market": "TW",
+   "sector": "ai_chips",
+   "rank": 1,
+   "entry_price": 3595.0,
+   "entry_date": "2026-11-17",
+   "composite": 60.03,
+   "scores": {
+    "sector": 76.7,
+    "leader": 16.7,
+    "quality": 59.4,
+    "growth": 100.0,
+    "valuation": 81.9,
+    "momentum": 22.5,
+    "news": 40.0
+   },
+   "target": {
+    "base": 4706.86,
+    "bull": 6589.6,
+    "bear": 1882.74,
+    "ev": 4377.38,
+    "confidence": "中",
+    "upside": 0.3093,
+    "ev_upside": 0.2176,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 3536.76,
+      "weight": 0.5,
+      "upside": -0.0162
+     },
+     "peg": {
+      "value": 6514.38,
+      "weight": 0.187,
+      "upside": 0.8121
+     },
+     "consensus": {
+      "value": 5494.5,
+      "weight": 0.312,
+      "upside": 0.5284
+     }
+    }
+   },
+   "stop": 2947.9,
+   "fundamentals": {
+    "market_cap": 310428237824,
+    "pe_ttm": 39.9889,
+    "pe_fwd": 17.2746,
+    "peg": null,
+    "roe": 0.1534,
+    "gross_margin": 0.269,
+    "op_margin": 0.1845,
+    "net_margin": 0.1831,
+    "rev_growth": 2.965,
+    "eps_growth": 1.318,
+    "de": 0.0047,
+    "beta": 1.37,
+    "target_mean": 5494.5,
+    "n_analysts": 16,
+    "fcf_margin": -0.4929
+   },
+   "tech": {
+    "ret_1m": -0.024423337856173677,
+    "ret_3m": -0.13940648110181253,
+    "rel_3m": -0.010567273119874043,
+    "dist200": -0.03717454826635569,
+    "vol_ann": 0.7358801461458536
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 64.6,
+   "facts": {
+    "from_high": -0.3259,
+    "pos52": 0.3938,
+    "bounce20": 0.2703,
+    "ret_1m": -0.0244,
+    "dist200": -0.0372,
+    "pe_discount": -0.0335,
+    "eps_up": 1.3149,
+    "rev_growth": 2.965,
+    "upside": 0.3093
+   }
+  },
+  {
+   "ticker": "1590.TW",
+   "name": "AIRTAC INTERNATIONAL GROUP",
+   "zh_name": "亞德客-KY",
+   "market": "TW",
+   "sector": "robotics_auto",
+   "rank": 2,
+   "entry_price": 1045.0,
+   "entry_date": "2026-11-17",
+   "composite": 61.83,
+   "scores": {
+    "sector": 46.3,
+    "leader": 50.0,
+    "quality": 76.9,
+    "growth": 95.6,
+    "valuation": 96.2,
+    "momentum": 9.6,
+    "news": 40.0
+   },
+   "target": {
+    "base": 1490.61,
+    "bull": 2033.64,
+    "bear": 676.08,
+    "ev": 1395.58,
+    "confidence": "中",
+    "upside": 0.4264,
+    "ev_upside": 0.3355,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 1186.28,
+      "weight": 0.5,
+      "upside": 0.1352
+     },
+     "peg": {
+      "value": 2094.16,
+      "weight": 0.187,
+      "upside": 1.004
+     },
+     "consensus": {
+      "value": 1615.42,
+      "weight": 0.312,
+      "upside": 0.5459
+     }
+    }
+   },
+   "stop": 888.57,
+   "fundamentals": {
+    "market_cap": 209000005632,
+    "pe_ttm": 18.7444,
+    "pe_fwd": 15.0967,
+    "peg": 1.01,
+    "roe": 0.2106,
+    "gross_margin": 0.4874,
+    "op_margin": 0.3351,
+    "net_margin": 0.2611,
+    "rev_growth": 0.396,
+    "eps_growth": 0.356,
+    "de": 0.0042,
+    "beta": 1.249,
+    "target_mean": 1615.421,
+    "n_analysts": 19,
+    "fcf_margin": -0.0225
+   },
+   "tech": {
+    "ret_1m": -0.09523809523809523,
+    "ret_3m": -0.2842465753424658,
+    "rel_3m": -0.1554073673605273,
+    "dist200": -0.1588101882728884,
+    "vol_ann": 0.3445471965822277
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 62.2,
+   "facts": {
+    "from_high": -0.3448,
+    "pos52": 0.2551,
+    "bounce20": 0.0347,
+    "ret_1m": -0.0952,
+    "dist200": -0.1588,
+    "pe_discount": 0.2125,
+    "eps_up": 0.2416,
+    "rev_growth": 0.396,
+    "upside": 0.4264
+   }
+  }
+ ]
+}
