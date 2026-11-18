@@ -41,12 +41,23 @@ import com.starmist.walker.data.UserSettings
 /** The privacy policy as the app states it. The same words are in docs/PRIVACY.md for the store page. */
 internal val PRIVACY_PARAGRAPHS: List<Pair<String, String>> = listOf(
     "這個 App 做什麼" to "來台灣走走把你每天走的步數，換算成沿著環島路線前進的距離。",
-    "用到哪些資料" to "步數：向手機的「動作與健身」權限讀取手機內建的計步器。\n你填的身高、體重、性別和每日目標：只用來估算步長、距離與熱量。\n你的進度：走到哪裡、收集了哪些卡片、印章和鄉鎮特色。",
+    "用到哪些資料" to "步數：向手機的「動作與健身」權限讀取手機內建的計步器。\n你填的身高、體重、性別和每日目標：只用來估算步長、距離與熱量。\n你的進度：走到哪裡、收集了哪些卡片、印章和鄉鎮特色，完成的任務，遇到的旅人和收到的明信片。",
     "資料放在哪裡" to "全部只存在你的手機裡。App 沒有帳號、沒有伺服器，也沒有申請網路權限，所以這些資料不會被傳出去，我們也看不到。",
     "我們不做的事" to "不蒐集位置、聯絡人、相機、麥克風或廣告識別碼；不放廣告；不使用第三方分析工具；不賣、不分享任何資料。",
     "通知" to "計步用的常駐通知和每日目標通知，只在你的手機上顯示。",
     "備份與刪除" to "匯出的備份檔由你自己決定放在哪裡、給誰。解除安裝 App，或在系統設定裡清除 App 的儲存空間，就會刪除 App 裡所有的資料。",
-    "最後更新" to "2026 年 11 月 1 日。若有改變會寫在這裡。",
+    "最後更新" to "2026 年 11 月 18 日。若有改變會寫在這裡。",
+)
+
+/** Where the data, the font, the pictures and the code come from, and under which licences. The same words are in docs/CREDITS.md. */
+internal val CREDITS_PARAGRAPHS: List<Pair<String, String>> = listOf(
+    "行政區與底圖" to "鄉鎮市區與村里的範圍、歸屬使用 Overture Maps Foundation 的行政區資料與 © OpenStreetMap contributors，依 Open Database License (ODbL) 1.0 授權。底圖的繪製參考 Overture Maps 與 OpenStreetMap 的道路、水域與土地覆蓋資料。",
+    "地形" to "各區的海拔來自 NASA SRTM 地形資料。",
+    "海岸線" to "台灣本島的輪廓簡化自 GSHHG 海岸線資料（Wessel & Smith），依 GNU LGPL 授權。",
+    "字體" to "內文使用霞鶩文楷 繁體（LXGW WenKai TC），SIL Open Font License 1.1，© The LXGW WenKai Project Authors。",
+    "插圖" to "景點卡、地圖和旅人的插圖由 Google Gemini 生成圖像，再經人工挑選與整理。",
+    "文字內容" to "鄉鎮、景點與明信片中的事實，整理自維基百科（CC BY-SA 4.0）、政府機關與新聞媒體的公開資料，並各自查證。旅人說話的口吻與經歷是虛構的。",
+    "開源程式庫" to "本 App 使用 Kotlin、Jetpack Compose、Room、DataStore、Kotlin 協程與 kotlinx-datetime 等開源程式庫，皆採 Apache License 2.0。",
 )
 
 /** The privacy policy, on a sheet of parchment over the whole screen. */
@@ -57,17 +68,30 @@ internal fun PrivacyDialog(onDismiss: () -> Unit) {
 
 /** The sheet itself (apart from the dialog it is shown in). */
 @Composable
-internal fun PrivacySheet(onDismiss: () -> Unit) {
+internal fun PrivacySheet(onDismiss: () -> Unit) = InfoSheet("隱私權政策", PRIVACY_PARAGRAPHS, onDismiss)
+
+/** The credits, on a sheet of parchment over the whole screen. */
+@Composable
+internal fun CreditsDialog(onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) { CreditsSheet(onDismiss) }
+}
+
+@Composable
+internal fun CreditsSheet(onDismiss: () -> Unit) = InfoSheet("授權與資料來源", CREDITS_PARAGRAPHS, onDismiss)
+
+/** A page of headed paragraphs on parchment with a close button. */
+@Composable
+private fun InfoSheet(title: String, paragraphs: List<Pair<String, String>>, onDismiss: () -> Unit) {
     Box(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(12.dp)) {
         Canvas(Modifier.fillMaxSize()) { Pen(this, size).parchmentPage(30.dp.toPx(), 12.dp.toPx(), -1) }
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(start = 36.dp, end = 20.dp, top = 12.dp, bottom = 12.dp)) {
-            Text("隱私權政策", fontFamily = QUILL, fontSize = 24.sp, fontWeight = FontWeight.Black, color = SEPIA)
+            Text(tr(title), fontFamily = QUILL, fontSize = 24.sp, fontWeight = FontWeight.Black, color = SEPIA)
             Spacer(Modifier.height(10.dp))
-            PRIVACY_PARAGRAPHS.forEach { (head, body) ->
-                Text(head, fontFamily = QUILL, fontSize = 17.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0058C8))
-                Text(body, fontFamily = QUILL, fontSize = 14.sp, color = SEPIA, lineHeight = 22.sp, modifier = Modifier.padding(top = 2.dp, bottom = 10.dp))
+            paragraphs.forEach { (head, body) ->
+                Text(tr(head), fontFamily = QUILL, fontSize = 17.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0058C8))
+                Text(tr(body), fontFamily = QUILL, fontSize = 14.sp, color = SEPIA, lineHeight = 22.sp, modifier = Modifier.padding(top = 2.dp, bottom = 10.dp))
             }
-            TextButton(onClick = onDismiss, Modifier.align(Alignment.End)) { Text("關閉") }
+            TextButton(onClick = onDismiss, Modifier.align(Alignment.End)) { Text(tr("關閉")) }
         }
     }
 }

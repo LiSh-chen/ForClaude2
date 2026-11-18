@@ -53,6 +53,7 @@ abstract class FirstRunShots(step: Int) : ShotsBase(DeviceConfig.PIXEL_5, step) 
     @Test fun first_run_3() = page(3)
     @Test fun first_run_4() = page(4)
     @Test fun privacy() = paparazzi.snapshot { Page(bar = false) { _ -> PrivacySheet {} } }
+    @Test fun credits() = paparazzi.snapshot { Page(bar = false) { _ -> CreditsSheet {} } }
     @Test fun letter_finished() = paparazzi.snapshot {
         Page(bar = false) { pad ->
             androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier.padding(pad).padding(24.dp)) {
@@ -82,6 +83,7 @@ abstract class EnglishShots(step: Int) : ShotsBase(DeviceConfig.PIXEL_5, step, L
     @Test fun first_run_2() = paparazzi.snapshot { Page(bar = false) { _ -> OnboardingScreen(com.starmist.walker.data.UserSettings(), {}, permissionGranted = false, onRequestPermission = {}, onFinish = {}, startPage = 2) } }
     @Test fun first_run_3() = paparazzi.snapshot { Page(bar = false) { _ -> OnboardingScreen(com.starmist.walker.data.UserSettings(), {}, permissionGranted = false, onRequestPermission = {}, onFinish = {}, startPage = 3) } }
     @Test fun privacy() = paparazzi.snapshot { Page(bar = false) { _ -> PrivacySheet {} } }
+    @Test fun credits() = paparazzi.snapshot { Page(bar = false) { _ -> CreditsSheet {} } }
     @Test fun letter_finished() = paparazzi.snapshot {
         Page(bar = false) { pad ->
             androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier.padding(pad).padding(24.dp)) {

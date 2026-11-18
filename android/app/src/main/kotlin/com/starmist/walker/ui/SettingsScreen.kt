@@ -51,6 +51,7 @@ fun SettingsScreen(
     var showAdjust by remember { mutableStateOf(false) }
     var showStride by remember { mutableStateOf(false) }
     var showPrivacy by remember { mutableStateOf(false) }
+    var showCredits by remember { mutableStateOf(false) }
     var pendingImport by remember { mutableStateOf<android.net.Uri?>(null) }
 
     Column(
@@ -200,6 +201,7 @@ fun SettingsScreen(
 
         Section("關於") {
             OutlinedButton(onClick = { showPrivacy = true }, modifier = Modifier.fillMaxWidth()) { Text("隱私權政策") }
+            OutlinedButton(onClick = { showCredits = true }, modifier = Modifier.fillMaxWidth()) { Text("授權與資料來源") }
         }
 
         Section("診斷") {
@@ -211,6 +213,7 @@ fun SettingsScreen(
     if (showCalibration) CalibrationDialog(vm, settings.multiplier) { showCalibration = false }
     if (showAdjust) AdjustDialog(vm) { showAdjust = false }
     if (showPrivacy) PrivacyDialog { showPrivacy = false }
+    if (showCredits) CreditsDialog { showCredits = false }
     if (showStride) StrideDialog(settings, onApply = { m -> vm.updateSettings { it.copy(strideOverrideM = m) } }) {
         showStride = false
     }
