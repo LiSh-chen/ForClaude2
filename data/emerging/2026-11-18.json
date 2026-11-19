@@ -6,7 +6,7 @@
    "id": "grid_hardware",
    "name": "高壓電纜與電網互連硬體",
    "tier": "A",
-   "score": 85.481,
+   "score": 87.305,
    "coverage_ratio": 0.0,
    "n_headlines": 0,
    "status": "尚未被充分報導",
@@ -14,7 +14,7 @@
    "components": {
     "evidence": 100,
     "low_coverage": 100.0,
-    "fundamental": 73.9,
+    "fundamental": 81.2,
     "not_crowded": 60.0
    }
   },
@@ -22,7 +22,7 @@
    "id": "pq_security",
    "name": "抗量子密碼與硬體安全遷移",
    "tier": "A",
-   "score": 84.698,
+   "score": 83.991,
    "coverage_ratio": 0.0,
    "n_headlines": 0,
    "status": "尚未被充分報導",
@@ -31,14 +31,14 @@
     "evidence": 100,
     "low_coverage": 100.0,
     "fundamental": 71.7,
-    "not_crowded": 58.8
+    "not_crowded": 55.3
    }
   },
   {
-   "id": "power_semis",
-   "name": "高壓功率半導體（SiC / GaN）",
+   "id": "edge_ai_industrial",
+   "name": "工業邊緣 AI 與嵌入式運算",
    "tier": "B",
-   "score": 82.655,
+   "score": 82.522,
    "coverage_ratio": 0.0,
    "n_headlines": 0,
    "status": "尚未被充分報導",
@@ -46,15 +46,15 @@
    "components": {
     "evidence": 75,
     "low_coverage": 100.0,
-    "fundamental": 88.6,
-    "not_crowded": 65.0
+    "fundamental": 81.4,
+    "not_crowded": 73.4
    }
   },
   {
-   "id": "edge_ai_industrial",
-   "name": "工業邊緣 AI 與嵌入式運算",
+   "id": "power_semis",
+   "name": "高壓功率半導體（SiC / GaN）",
    "tier": "B",
-   "score": 82.104,
+   "score": 82.476,
    "coverage_ratio": 0.0,
    "n_headlines": 0,
    "status": "尚未被充分報導",
@@ -62,15 +62,15 @@
    "components": {
     "evidence": 75,
     "low_coverage": 100.0,
-    "fundamental": 81.4,
-    "not_crowded": 71.3
+    "fundamental": 87.9,
+    "not_crowded": 65.0
    }
   },
   {
    "id": "aging_care",
    "name": "高齡化與慢性病照護設備",
    "tier": "A",
-   "score": 80.894,
+   "score": 81.074,
    "coverage_ratio": 0.0,
    "n_headlines": 0,
    "status": "尚未被充分報導",
@@ -79,38 +79,22 @@
     "evidence": 100,
     "low_coverage": 100.0,
     "fundamental": 57.5,
-    "not_crowded": 57.5
+    "not_crowded": 58.4
    }
   },
   {
    "id": "adv_packaging_supply",
    "name": "先進封裝測試介面與材料",
    "tier": "B",
-   "score": 74.452,
-   "coverage_ratio": 0.392,
-   "n_headlines": 5,
+   "score": 80.015,
+   "coverage_ratio": 0.171,
+   "n_headlines": 2,
    "status": "尚未被充分報導",
    "rank": 6,
    "components": {
     "evidence": 75,
-    "low_coverage": 60.8,
+    "low_coverage": 82.9,
     "fundamental": 95.5,
-    "not_crowded": 64.4
-   }
-  },
-  {
-   "id": "water_infra",
-   "name": "水資源與超純水處理",
-   "tier": "B",
-   "score": 70.146,
-   "coverage_ratio": 0.07,
-   "n_headlines": 1,
-   "status": "尚未被充分報導",
-   "rank": 7,
-   "components": {
-    "evidence": 75,
-    "low_coverage": 93.0,
-    "fundamental": 45.9,
     "not_crowded": 64.5
    }
   },
@@ -118,16 +102,32 @@
    "id": "process_control",
    "name": "先進製程量測、檢測與可靠度驗證",
    "tier": "B",
-   "score": 69.442,
-   "coverage_ratio": 0.372,
-   "n_headlines": 3,
+   "score": 76.454,
+   "coverage_ratio": 0.091,
+   "n_headlines": 1,
+   "status": "尚未被充分報導",
+   "rank": 7,
+   "components": {
+    "evidence": 75,
+    "low_coverage": 90.9,
+    "fundamental": 76.9,
+    "not_crowded": 60.0
+   }
+  },
+  {
+   "id": "water_infra",
+   "name": "水資源與超純水處理",
+   "tier": "B",
+   "score": 71.498,
+   "coverage_ratio": 0.0,
+   "n_headlines": 0,
    "status": "尚未被充分報導",
    "rank": 8,
    "components": {
     "evidence": 75,
-    "low_coverage": 62.8,
-    "fundamental": 76.9,
-    "not_crowded": 60.0
+    "low_coverage": 100.0,
+    "fundamental": 45.9,
+    "not_crowded": 62.6
    }
   }
  ],
@@ -141,35 +141,35 @@
    "rank": 1,
    "entry_price": 368.5,
    "entry_date": "2026-11-18",
-   "composite": 71.72,
+   "composite": 72.28,
    "scores": {
     "sector": null,
     "leader": 100.0,
     "quality": 70.0,
     "growth": 81.1,
-    "valuation": 76.9,
+    "valuation": 79.9,
     "momentum": 58.7,
     "news": 40.0
    },
    "target": {
-    "base": 473.38,
-    "bull": 662.73,
-    "bear": 189.35,
-    "ev": 440.24,
+    "base": 478.81,
+    "bull": 670.33,
+    "bear": 191.52,
+    "ev": 445.29,
     "confidence": "低",
-    "upside": 0.2846,
-    "ev_upside": 0.1947,
+    "upside": 0.2993,
+    "ev_upside": 0.2084,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 387.75,
+      "value": 379.12,
       "weight": 0.5,
-      "upside": 0.0522
+      "upside": 0.0288
      },
      "peg": {
-      "value": 735.28,
+      "value": 787.24,
       "weight": 0.187,
-      "upside": 0.9953
+      "upside": 1.1363
      },
      "consensus": {
       "value": 453.25,
@@ -180,9 +180,9 @@
    },
    "stop": 322.88,
    "fundamentals": {
-    "market_cap": 28300800000,
-    "pe_ttm": 14.571,
-    "pe_fwd": 12.2006,
+    "market_cap": 28646400000,
+    "pe_ttm": 14.9679,
+    "pe_fwd": 12.3651,
     "peg": null,
     "roe": 0.1675,
     "gross_margin": 0.5272,
@@ -208,56 +208,131 @@
    "also_main": false
   },
   {
+   "ticker": "POWL",
+   "name": "Powell Industries, Inc.",
+   "zh_name": "Powell Industries",
+   "market": "US",
+   "sector": "grid_hardware",
+   "rank": 1,
+   "entry_price": 154.95,
+   "entry_date": "2026-11-18",
+   "composite": 56.08,
+   "scores": {
+    "sector": null,
+    "leader": 0.0,
+    "quality": 75.4,
+    "growth": 100.0,
+    "valuation": 78.9,
+    "momentum": 8.2,
+    "news": 40.0
+   },
+   "target": {
+    "base": 209.64,
+    "bull": 293.49,
+    "bear": 83.85,
+    "ev": 194.96,
+    "confidence": "中",
+    "upside": 0.3529,
+    "ev_upside": 0.2582,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 163.94,
+      "weight": 0.5,
+      "upside": 0.058
+     },
+     "peg": {
+      "value": 275.88,
+      "weight": 0.187,
+      "upside": 0.7805
+     },
+     "consensus": {
+      "value": 243.0,
+      "weight": 0.312,
+      "upside": 0.5682
+     }
+    }
+   },
+   "stop": 127.06,
+   "fundamentals": {
+    "market_cap": 5645225472,
+    "pe_ttm": 25.654,
+    "pe_fwd": 16.989,
+    "peg": 1.65,
+    "roe": 0.2991,
+    "gross_margin": 0.3128,
+    "op_margin": 0.2109,
+    "net_margin": 0.1759,
+    "rev_growth": 0.331,
+    "eps_growth": 0.582,
+    "de": null,
+    "beta": 1.234,
+    "target_mean": 243.0,
+    "n_analysts": 4,
+    "fcf_margin": null
+   },
+   "tech": {
+    "ret_1m": -0.060006707359461786,
+    "ret_3m": -0.21457700651430323,
+    "rel_3m": -0.1730217626842443,
+    "dist200": -0.273144682590556,
+    "vol_ann": 0.6761696135886182
+   },
+   "theme": "grid_hardware",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
    "ticker": "LSCC",
    "name": "Lattice Semiconductor Corporati",
    "zh_name": "Lattice",
    "market": "US",
    "sector": "edge_ai_industrial",
-   "rank": 1,
-   "entry_price": 109.8,
-   "entry_date": "2026-11-17",
-   "composite": 55.35,
+   "rank": 2,
+   "entry_price": 111.61,
+   "entry_date": "2026-11-18",
+   "composite": 54.66,
    "scores": {
     "sector": null,
     "leader": 0.0,
     "quality": 70.3,
     "growth": 100.0,
-    "valuation": 70.3,
-    "momentum": 24.7,
+    "valuation": 68.6,
+    "momentum": 22.2,
     "news": 40.0
    },
    "target": {
-    "base": 126.56,
-    "bull": 176.06,
-    "bear": 52.3,
-    "ev": 117.89,
+    "base": 127.07,
+    "bull": 176.27,
+    "bear": 53.27,
+    "ev": 118.46,
     "confidence": "中",
-    "upside": 0.1526,
-    "ev_upside": 0.0737,
+    "upside": 0.1385,
+    "ev_upside": 0.0614,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 105.87,
+      "value": 106.74,
       "weight": 0.5,
-      "upside": -0.0358
+      "upside": -0.0436
      },
      "peg": {
-      "value": 132.34,
+      "value": 132.76,
       "weight": 0.187,
-      "upside": 0.2052
+      "upside": 0.1895
      },
      "consensus": {
       "value": 156.19,
       "weight": 0.312,
-      "upside": 0.4225
+      "upside": 0.3994
      }
     }
    },
-   "stop": 90.04,
+   "stop": 91.52,
    "fundamentals": {
-    "market_cap": 15616381952,
-    "pe_ttm": 354.1935,
-    "pe_fwd": 25.0175,
+    "market_cap": 15873810432,
+    "pe_ttm": 360.0323,
+    "pe_fwd": 25.4299,
     "peg": 0.59,
     "roe": 0.0421,
     "gross_margin": 0.6949,
@@ -272,13 +347,88 @@
     "fcf_margin": 0.257
    },
    "tech": {
-    "ret_1m": 0.00984088716811371,
-    "ret_3m": -0.0669612273367014,
-    "rel_3m": -0.019289827534991755,
-    "dist200": -0.06361808645873779,
-    "vol_ann": 0.7190483064744554
+    "ret_1m": 0.0391024746768891,
+    "ret_3m": -0.05061242830731272,
+    "rel_3m": -0.009057184477253788,
+    "dist200": -0.04940520508870372,
+    "vol_ann": 0.7189899552233532
    },
    "theme": "edge_ai_industrial",
+   "book": "emerging",
+   "also_main": false
+  },
+  {
+   "ticker": "AEIS",
+   "name": "Advanced Energy Industries, Inc",
+   "zh_name": "Advanced Energy",
+   "market": "US",
+   "sector": "power_semis",
+   "rank": 3,
+   "entry_price": 215.4,
+   "entry_date": "2026-11-18",
+   "composite": 52.02,
+   "scores": {
+    "sector": null,
+    "leader": 33.3,
+    "quality": 58.9,
+    "growth": 100.0,
+    "valuation": 64.2,
+    "momentum": 6.0,
+    "news": 40.0
+   },
+   "target": {
+    "base": 344.64,
+    "bull": 482.5,
+    "bear": 137.86,
+    "ev": 320.52,
+    "confidence": "低",
+    "upside": 0.6,
+    "ev_upside": 0.488,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 277.67,
+      "weight": 0.5,
+      "upside": 0.2891
+     },
+     "peg": {
+      "value": 542.31,
+      "weight": 0.187,
+      "upside": 1.5177
+     },
+     "consensus": {
+      "value": 388.17,
+      "weight": 0.312,
+      "upside": 0.8021
+     }
+    }
+   },
+   "stop": 176.63,
+   "fundamentals": {
+    "market_cap": 8719820800,
+    "pe_ttm": 30.8596,
+    "pe_fwd": 12.0144,
+    "peg": 2.77,
+    "roe": 0.2002,
+    "gross_margin": 0.4076,
+    "op_margin": 0.1673,
+    "net_margin": 0.1272,
+    "rev_growth": 0.503,
+    "eps_growth": 1.32,
+    "de": 0.8751,
+    "beta": 1.37,
+    "target_mean": 388.1667,
+    "n_analysts": 12,
+    "fcf_margin": -0.0044
+   },
+   "tech": {
+    "ret_1m": -0.10118923687715453,
+    "ret_3m": -0.26363409404294136,
+    "rel_3m": -0.22207885021288243,
+    "dist200": -0.29522377411683653,
+    "vol_ann": 0.7434140921891177
+   },
+   "theme": "power_semis",
    "book": "emerging",
    "also_main": false
   },
@@ -288,57 +438,57 @@
    "zh_name": "ResMed",
    "market": "US",
    "sector": "aging_care",
-   "rank": 2,
-   "entry_price": 237.85,
-   "entry_date": "2026-11-17",
-   "composite": 71.4,
+   "rank": 4,
+   "entry_price": 242.61,
+   "entry_date": "2026-11-18",
+   "composite": 71.52,
    "scores": {
     "sector": null,
     "leader": 66.7,
     "quality": 99.1,
     "growth": 48.8,
-    "valuation": 60.9,
-    "momentum": 70.4,
+    "valuation": 59.2,
+    "momentum": 73.4,
     "news": 40.0
    },
    "target": {
-    "base": 272.82,
-    "bull": 339.81,
-    "bear": 172.34,
-    "ev": 261.1,
+    "base": 274.41,
+    "bull": 340.87,
+    "bear": 174.72,
+    "ev": 262.78,
     "confidence": "高",
-    "upside": 0.147,
-    "ev_upside": 0.0977,
+    "upside": 0.1311,
+    "ev_upside": 0.0831,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 242.18,
+      "value": 244.79,
       "weight": 0.4,
-      "upside": 0.0182
+      "upside": 0.009
      },
      "peg": {
-      "value": 326.35,
+      "value": 327.39,
       "weight": 0.15,
-      "upside": 0.3721
+      "upside": 0.3495
      },
      "dcf": {
-      "value": 304.56,
+      "value": 306.48,
       "weight": 0.2,
-      "upside": 0.2805
+      "upside": 0.2633
      },
      "consensus": {
       "value": 264.33,
       "weight": 0.25,
-      "upside": 0.1114
+      "upside": 0.0895
      }
     }
    },
-   "stop": 215.8,
+   "stop": 219.61,
    "fundamentals": {
-    "market_cap": 33455286272,
-    "pe_ttm": 21.6621,
-    "pe_fwd": 17.9831,
-    "peg": 1.28,
+    "market_cap": 34124812288,
+    "pe_ttm": 22.0956,
+    "pe_fwd": 18.343,
+    "peg": 1.27,
     "roe": 0.264,
     "gross_margin": 0.6177,
     "op_margin": 0.3402,
@@ -352,11 +502,11 @@
     "fcf_margin": 0.2264
    },
    "tech": {
-    "ret_1m": -0.005255235324779339,
-    "ret_3m": 0.03704490723421494,
-    "rel_3m": 0.08471630703592459,
-    "dist200": 0.06953113454203863,
-    "vol_ann": 0.31011107964754525
+    "ret_1m": -0.009029908560964861,
+    "ret_3m": 0.06497613469063523,
+    "rel_3m": 0.10653137852069416,
+    "dist200": 0.0910841211939395,
+    "vol_ann": 0.31066484668271427
    },
    "theme": "aging_care",
    "book": "emerging",
@@ -368,57 +518,57 @@
    "zh_name": "Stryker",
    "market": "US",
    "sector": "aging_care",
-   "rank": 3,
-   "entry_price": 317.54,
-   "entry_date": "2026-11-17",
-   "composite": 60.4,
+   "rank": 5,
+   "entry_price": 318.15,
+   "entry_date": "2026-11-18",
+   "composite": 60.72,
    "scores": {
     "sector": null,
     "leader": 100.0,
     "quality": 80.2,
     "growth": 18.0,
-    "valuation": 56.3,
-    "momentum": 40.1,
+    "valuation": 55.9,
+    "momentum": 42.7,
     "news": 40.0
    },
    "target": {
-    "base": 362.61,
-    "bull": 487.35,
-    "bear": 175.49,
-    "ev": 340.78,
+    "base": 363.72,
+    "bull": 489.25,
+    "bear": 175.43,
+    "ev": 341.75,
     "confidence": "中",
-    "upside": 0.1419,
-    "ev_upside": 0.0732,
+    "upside": 0.1432,
+    "ev_upside": 0.0742,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 320.8,
+      "value": 320.85,
       "weight": 0.4,
-      "upside": 0.0103
+      "upside": 0.0085
      },
      "peg": {
-      "value": 491.12,
+      "value": 492.69,
       "weight": 0.15,
-      "upside": 0.5466
+      "upside": 0.5486
      },
      "dcf": {
-      "value": 378.87,
+      "value": 381.28,
       "weight": 0.2,
-      "upside": 0.1931
+      "upside": 0.1984
      },
      "consensus": {
-      "value": 339.37,
+      "value": 340.89,
       "weight": 0.25,
-      "upside": 0.0688
+      "upside": 0.0715
      }
     }
    },
-   "stop": 284.27,
+   "stop": 284.93,
    "fundamentals": {
-    "market_cap": 120884625408,
-    "pe_ttm": 33.0771,
-    "pe_fwd": 19.4952,
-    "peg": 1.5,
+    "market_cap": 121116844032,
+    "pe_ttm": 33.8818,
+    "pe_fwd": 19.5327,
+    "peg": 1.53,
     "roe": 0.1602,
     "gross_margin": 0.657,
     "op_margin": 0.2397,
@@ -427,178 +577,18 @@
     "eps_growth": -0.117,
     "de": 0.6579,
     "beta": 0.774,
-    "target_mean": 339.373,
+    "target_mean": 340.8915,
     "n_analysts": 27,
     "fcf_margin": 0.1408
    },
    "tech": {
-    "ret_1m": 0.06578507734076511,
-    "ret_3m": -0.06304621451851178,
-    "rel_3m": -0.015374814716802132,
-    "dist200": -0.007387656992647873,
-    "vol_ann": 0.4056399424170981
+    "ret_1m": 0.04517082876380041,
+    "ret_3m": -0.026068141436749404,
+    "rel_3m": 0.015487102393309526,
+    "dist200": -0.004864866342874641,
+    "vol_ann": 0.4052659619921776
    },
    "theme": "aging_care",
-   "book": "emerging",
-   "also_main": false
-  },
-  {
-   "ticker": "XYL",
-   "name": "Xylem Inc.",
-   "zh_name": "Xylem",
-   "market": "US",
-   "sector": "water_infra",
-   "rank": 4,
-   "entry_price": 94.65,
-   "entry_date": "2026-11-17",
-   "composite": 55.23,
-   "scores": {
-    "sector": null,
-    "leader": 60.0,
-    "quality": 58.5,
-    "growth": 47.3,
-    "valuation": 91.3,
-    "momentum": 16.2,
-    "news": 40.0
-   },
-   "target": {
-    "base": 139.19,
-    "bull": 184.27,
-    "bear": 71.56,
-    "ev": 131.3,
-    "confidence": "中",
-    "upside": 0.4706,
-    "ev_upside": 0.3872,
-    "horizon_days": 250,
-    "methods": {
-     "pe": {
-      "value": 117.1,
-      "weight": 0.4,
-      "upside": 0.2372
-     },
-     "peg": {
-      "value": 176.4,
-      "weight": 0.15,
-      "upside": 0.8637
-     },
-     "dcf": {
-      "value": 172.63,
-      "weight": 0.2,
-      "upside": 0.8239
-     },
-     "consensus": {
-      "value": 125.44,
-      "weight": 0.25,
-      "upside": 0.3253
-     }
-    }
-   },
-   "stop": 86.93,
-   "fundamentals": {
-    "market_cap": 21706518528,
-    "pe_ttm": 21.2697,
-    "pe_fwd": 16.1783,
-    "peg": 1.28,
-    "roe": 0.0976,
-    "gross_margin": 0.3932,
-    "op_margin": 0.1551,
-    "net_margin": 0.1194,
-    "rev_growth": -0.03,
-    "eps_growth": 0.344,
-    "de": 0.2879,
-    "beta": 0.994,
-    "target_mean": 125.4375,
-    "n_analysts": 16,
-    "fcf_margin": 0.1336
-   },
-   "tech": {
-    "ret_1m": -0.08577221441244454,
-    "ret_3m": -0.18242660369984964,
-    "rel_3m": -0.13475520389814,
-    "dist200": -0.17062467674322834,
-    "vol_ann": 0.4137118526450671
-   },
-   "theme": "water_infra",
-   "book": "emerging",
-   "also_main": false
-  },
-  {
-   "ticker": "PNR",
-   "name": "Pentair plc.",
-   "zh_name": "Pentair",
-   "market": "US",
-   "sector": "water_infra",
-   "rank": 5,
-   "entry_price": 66.88,
-   "entry_date": "2026-11-17",
-   "composite": 49.37,
-   "scores": {
-    "sector": null,
-    "leader": 0.0,
-    "quality": 65.7,
-    "growth": 0.7,
-    "valuation": 96.9,
-    "momentum": 43.8,
-    "news": 40.0
-   },
-   "target": {
-    "base": 103.14,
-    "bull": 144.39,
-    "bear": 41.25,
-    "ev": 95.92,
-    "confidence": "低",
-    "upside": 0.5421,
-    "ev_upside": 0.4342,
-    "horizon_days": 250,
-    "methods": {
-     "pe": {
-      "value": 99.24,
-      "weight": 0.4,
-      "upside": 0.4839
-     },
-     "peg": {
-      "value": 159.93,
-      "weight": 0.15,
-      "upside": 1.3913
-     },
-     "dcf": {
-      "value": 105.09,
-      "weight": 0.2,
-      "upside": 0.5713
-     },
-     "consensus": {
-      "value": 73.73,
-      "weight": 0.25,
-      "upside": 0.1025
-     }
-    }
-   },
-   "stop": 61.42,
-   "fundamentals": {
-    "market_cap": 10677704704,
-    "pe_ttm": 18.2234,
-    "pe_fwd": 12.6093,
-    "peg": 0.97,
-    "roe": 0.156,
-    "gross_margin": 0.4017,
-    "op_margin": 0.2141,
-    "net_margin": 0.1543,
-    "rev_growth": -0.045,
-    "eps_growth": -0.188,
-    "de": 0.4247,
-    "beta": 1.01,
-    "target_mean": 73.7333,
-    "n_analysts": 15,
-    "fcf_margin": 0.1309
-   },
-   "tech": {
-    "ret_1m": 0.27407208559532203,
-    "ret_3m": 0.024657796525692666,
-    "rel_3m": 0.07232919632740231,
-    "dist200": -0.08782422397629286,
-    "vol_ann": 0.38801461404733495
-   },
-   "theme": "water_infra",
    "book": "emerging",
    "also_main": false
   }
