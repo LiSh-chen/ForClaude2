@@ -1,0 +1,96 @@
+{
+ "date": "2026-11-20",
+ "params_version": 2,
+ "provider": "live",
+ "llm": false,
+ "picks": [
+  {
+   "ticker": "MS",
+   "name": "Morgan Stanley",
+   "zh_name": "Morgan Stanley",
+   "market": "US",
+   "sector": "financials",
+   "rank": 1,
+   "entry_price": 174.98,
+   "entry_date": "2026-11-19",
+   "composite": 54.74,
+   "scores": {
+    "sector": 64.4,
+    "leader": 20.0,
+    "quality": 74.4,
+    "growth": 40.8,
+    "valuation": 65.6,
+    "momentum": 18.9,
+    "news": 63.5
+   },
+   "target": {
+    "base": 215.46,
+    "bull": 296.93,
+    "bear": 93.27,
+    "ev": 201.21,
+    "confidence": "中",
+    "upside": 0.2314,
+    "ev_upside": 0.1499,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 248.23,
+      "weight": 0.5,
+      "upside": 0.4186
+     },
+     "peg": {
+      "value": 134.7,
+      "weight": 0.187,
+      "upside": -0.2302
+     },
+     "consensus": {
+      "value": 211.5,
+      "weight": 0.312,
+      "upside": 0.2087
+     }
+    }
+   },
+   "stop": 159.94,
+   "fundamentals": {
+    "market_cap": 273501405184,
+    "pe_ttm": 13.8763,
+    "pe_fwd": 12.8302,
+    "peg": 1.58,
+    "roe": 0.1804,
+    "gross_margin": 0.8731,
+    "op_margin": 0.402,
+    "net_margin": 0.2563,
+    "rev_growth": 0.108,
+    "eps_growth": 0.082,
+    "de": 4.8976,
+    "beta": 1.22,
+    "target_mean": 211.5,
+    "n_analysts": 22,
+    "fcf_margin": null
+   },
+   "tech": {
+    "ret_1m": -0.0586303709324153,
+    "ret_3m": -0.17812545196872376,
+    "rel_3m": -0.11316376371942094,
+    "dist200": -0.091035359237993,
+    "vol_ann": 0.286410089464896
+   }
+  }
+ ],
+ "focus_sectors": {
+  "US": [
+   "shipping",
+   "ai_chips",
+   "consumer",
+   "financials",
+   "ai_servers"
+  ],
+  "TW": [
+   "financials",
+   "energy_materials",
+   "ai_chips",
+   "shipping",
+   "consumer"
+  ]
+ }
+}
