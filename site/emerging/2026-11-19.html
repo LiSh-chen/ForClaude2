@@ -20,7 +20,7 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <p><strong>這個專區在找什麼</strong>：驅動力已有可查證證據、但<strong>新聞尚未充分報導</strong>、且<strong>股價尚未被擠進去</strong>的結構性趨勢。「確定」只指驅動力（人口、法規時程、物理/成本限制、已簽約產能）有證據，<strong>不代表股價必漲</strong>——時間點與誰受益仍不確定，每個趨勢都列出『什麼情況下論點不成立』。趨勢清單為人工維護的研究假設（<code>config/themes.json</code>），使用前請自行查證原始來源。僅供研究，不構成投資建議。</p>
 </blockquote>
 <h2>一、趨勢雷達</h2>
-<p>綜合分 = evidence×0.30 + low_coverage×0.25 + fundamental×0.25 + not_crowded×0.20。『新聞覆蓋度』= 該趨勢近 48 小時新聞命中數 ÷ 主流產業的中位數（越低越冷門）。覆蓋度 0 只代表在本次掃描的 1429 則標題中沒有命中，<strong>不等於全世界都沒報導</strong>（也可能是關鍵字過窄或來源未涵蓋），因此『低覆蓋』只當作其中一項訊號，不單獨作為結論。</p>
+<p>綜合分 = evidence×0.30 + low_coverage×0.25 + fundamental×0.25 + not_crowded×0.20。『新聞覆蓋度』= 該趨勢近 48 小時新聞命中數 ÷ 主流產業的中位數（越低越冷門）。覆蓋度 0 只代表在本次掃描的 1411 則標題中沒有命中，<strong>不等於全世界都沒報導</strong>（也可能是關鍵字過窄或來源未涵蓋），因此『低覆蓋』只當作其中一項訊號，不單獨作為結論。</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -53,12 +53,12 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <td>2</td>
 <td>★ 抗量子密碼與硬體安全遷移</td>
 <td>A</td>
-<td>84</td>
+<td>82</td>
 <td>100</td>
-<td>100</td>
+<td>93</td>
 <td>72</td>
 <td>56</td>
-<td>0.00（0 則）</td>
+<td>0.07（1 則）</td>
 <td>尚未被充分報導</td>
 </tr>
 <tr>
@@ -87,18 +87,6 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 </tr>
 <tr>
 <td>5</td>
-<td>先進封裝測試介面與材料</td>
-<td>B</td>
-<td>81</td>
-<td>75</td>
-<td>87</td>
-<td>96</td>
-<td>66</td>
-<td>0.13（1 則）</td>
-<td>尚未被充分報導</td>
-</tr>
-<tr>
-<td>6</td>
 <td>高齡化與慢性病照護設備</td>
 <td>A</td>
 <td>81</td>
@@ -110,15 +98,27 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <td>尚未被充分報導</td>
 </tr>
 <tr>
-<td>7</td>
+<td>6</td>
 <td>先進製程量測、檢測與可靠度驗證</td>
 <td>B</td>
+<td>76</td>
 <td>75</td>
-<td>75</td>
-<td>85</td>
+<td>90</td>
 <td>77</td>
 <td>60</td>
-<td>0.15（1 則）</td>
+<td>0.10（1 則）</td>
+<td>尚未被充分報導</td>
+</tr>
+<tr>
+<td>7</td>
+<td>先進封裝測試介面與材料</td>
+<td>B</td>
+<td>74</td>
+<td>75</td>
+<td>59</td>
+<td>96</td>
+<td>62</td>
+<td>0.41（3 則）</td>
 <td>尚未被充分報導</td>
 </tr>
 <tr>
@@ -129,7 +129,7 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <td>75</td>
 <td>100</td>
 <td>46</td>
-<td>63</td>
+<td>62</td>
 <td>0.00（0 則）</td>
 <td>尚未被充分報導</td>
 </tr>
@@ -139,7 +139,7 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <h2>二、推薦標的</h2>
 <p>門檻比主榜寬（市值、流動性較低，容許較早期的公司），但仍要求：品質分 ≥ 40、有可估值的目標價（至少 2 種方法交叉驗證）、獲利為正、上檔 ≥ 10%。估值方法分歧度原則上 ≤ 60%；分歧 60%–80% 者，只有『最保守的方法仍高於現價』（方向一致、僅幅度分歧）才放行並標註。同一趨勢最多 2 檔，台/美各最多 5 檔，<strong>合格不足就照實少選</strong>。</p>
 <ul>
-<li><strong>台股</strong>：<strong>2／5 檔</strong>——合格標的不足，不為湊數放寬門檻。24 檔成分股中未通過的原因：已跌破前次推薦的停損價（論點失效），收復前不再推薦 7、資料不足，無法估值 6、波動過高（年化 &gt; 75%） 4、市值過小 2、財務品質不足 1、目標價低於現價 1、流動性不足 1。</li>
+<li><strong>台股</strong>：<strong>2／5 檔</strong>——合格標的不足，不為湊數放寬門檻。24 檔成分股中未通過的原因：資料不足，無法估值 7、已跌破前次推薦的停損價（論點失效），收復前不再推薦 6、波動過高（年化 &gt; 75%） 4、估值方法分歧過大 2、財務品質不足 1、目標價低於現價 1、流動性不足 1。</li>
 <li><strong>美股</strong>：5／5 檔（已達名額上限；另有 4 檔合格但未入選）</li>
 </ul>
 <div class="tw"><table>
@@ -165,9 +165,9 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <td>研華</td>
 <td>工業邊緣 AI 與嵌入式運算</td>
 <td>554.00</td>
-<td><strong>620.87</strong></td>
-<td>+12.1%</td>
-<td>275.41 / 851.18</td>
+<td><strong>614.18</strong></td>
+<td>+10.9%</td>
+<td>245.67 / 859.85</td>
 <td></td>
 </tr>
 <tr>
@@ -177,9 +177,9 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <td>晶碩</td>
 <td>高齡化與慢性病照護設備</td>
 <td>366.50</td>
-<td><strong>468.25</strong></td>
-<td>+27.8%</td>
-<td>187.30 / 655.55</td>
+<td><strong>476.53</strong></td>
+<td>+30.0%</td>
+<td>190.61 / 667.14</td>
 <td>估值幅度分歧、方向一致</td>
 </tr>
 <tr>
@@ -188,71 +188,71 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <td>POWL</td>
 <td>Powell Industries</td>
 <td>高壓電纜與電網互連硬體</td>
-<td>154.95</td>
-<td><strong>209.72</strong></td>
-<td>+35.3%</td>
-<td>83.89 / 293.61</td>
+<td>158.75</td>
+<td><strong>220.69</strong></td>
+<td>+39.0%</td>
+<td>88.28 / 308.97</td>
 <td></td>
 </tr>
 <tr>
 <td>美股</td>
 <td>2</td>
-<td>LSCC</td>
-<td>Lattice</td>
-<td>工業邊緣 AI 與嵌入式運算</td>
-<td>111.61</td>
-<td><strong>127.07</strong></td>
-<td>+13.9%</td>
-<td>53.27 / 176.27</td>
+<td>IBM</td>
+<td>IBM</td>
+<td>抗量子密碼與硬體安全遷移</td>
+<td>223.88</td>
+<td><strong>248.15</strong></td>
+<td>+10.8%</td>
+<td>127.27 / 328.74</td>
 <td></td>
 </tr>
 <tr>
 <td>美股</td>
 <td>3</td>
-<td>AEIS</td>
-<td>Advanced Energy</td>
-<td>高壓功率半導體（SiC / GaN）</td>
-<td>215.40</td>
-<td><strong>344.64</strong></td>
-<td>+60.0%</td>
-<td>137.86 / 482.50</td>
-<td>已套用上檔上限・估值幅度分歧、方向一致</td>
-</tr>
-<tr>
-<td>美股</td>
-<td>4</td>
-<td>RMD</td>
-<td>ResMed</td>
-<td>高齡化與慢性病照護設備</td>
-<td>242.61</td>
-<td><strong>274.41</strong></td>
-<td>+13.1%</td>
-<td>174.72 / 340.87</td>
+<td>LSCC</td>
+<td>Lattice</td>
+<td>工業邊緣 AI 與嵌入式運算</td>
+<td>110.92</td>
+<td><strong>126.59</strong></td>
+<td>+14.1%</td>
+<td>52.35 / 176.08</td>
 <td></td>
 </tr>
 <tr>
 <td>美股</td>
+<td>4</td>
+<td>AEIS</td>
+<td>Advanced Energy</td>
+<td>高壓功率半導體（SiC / GaN）</td>
+<td>212.24</td>
+<td><strong>339.58</strong></td>
+<td>+60.0%</td>
+<td>135.83 / 475.42</td>
+<td>已套用上檔上限・估值幅度分歧、方向一致</td>
+</tr>
+<tr>
+<td>美股</td>
 <td>5</td>
-<td>SYK</td>
-<td>Stryker</td>
+<td>RMD</td>
+<td>ResMed</td>
 <td>高齡化與慢性病照護設備</td>
-<td>318.15</td>
-<td><strong>363.72</strong></td>
-<td>+14.3%</td>
-<td>175.43 / 489.25</td>
+<td>236.88</td>
+<td><strong>272.68</strong></td>
+<td>+15.1%</td>
+<td>169.28 / 341.61</td>
 <td></td>
 </tr>
 </tbody>
 </table></div>
 <p><strong>推薦理由與估值</strong></p>
 <ul>
-<li><strong>2395.TW 研華</strong>（工業邊緣 AI 與嵌入式運算）：品質分 70、ROE 30.0%、營收年增 +82.5%、近 6 個月相對大盤 +28.7%、距 52 週高 -25.1%；目標價依據：同業相對本益比 479.60（50%）、PEG 成長調整 805.52（19%）、券商共識目標價 736.12（31%）；估值信心 中。</li>
-<li><strong>6491.TW 晶碩</strong>（高齡化與慢性病照護設備）：品質分 70、ROE 16.7%、營收年增 +19.0%、近 6 個月相對大盤 +29.2%、距 52 週高 -15.0%；目標價依據：同業相對本益比 379.55（50%）、PEG 成長調整 729.81（19%）、券商共識目標價 453.25（31%）；估值信心 低。</li>
-<li><strong>POWL Powell Industries</strong>（高壓電纜與電網互連硬體）：品質分 75、ROE 29.9%、營收年增 +33.1%、近 6 個月相對大盤 -41.3%、距 52 週高 -51.8%；目標價依據：同業相對本益比 164.11（50%）、PEG 成長調整 275.88（19%）、券商共識目標價 243.00（31%）；估值信心 中。</li>
-<li><strong>LSCC Lattice</strong>（工業邊緣 AI 與嵌入式運算）：品質分 70、ROE 4.2%、營收年增 +118.3%、近 6 個月相對大盤 -18.1%、距 52 週高 -28.1%；目標價依據：同業相對本益比 106.74（50%）、PEG 成長調整 132.76（19%）、券商共識目標價 156.19（31%）；估值信心 中。</li>
-<li><strong>AEIS Advanced Energy</strong>（高壓功率半導體（SiC / GaN））：品質分 59、ROE 20.0%、營收年增 +50.3%、近 6 個月相對大盤 -29.7%、距 52 週高 -44.6%；目標價依據：同業相對本益比 278.01（50%）、PEG 成長調整 542.31（19%）、券商共識目標價 388.17（31%）；估值信心 低。</li>
-<li><strong>RMD ResMed</strong>（高齡化與慢性病照護設備）：品質分 99、ROE 26.4%、營收年增 +5.9%、近 6 個月相對大盤 +17.7%、距 52 週高 -11.1%；目標價依據：同業相對本益比 244.79（40%）、PEG 成長調整 327.39（15%）、兩階段 DCF 306.48（20%）、券商共識目標價 264.33（25%）；估值信心 高。</li>
-<li><strong>SYK Stryker</strong>（高齡化與慢性病照護設備）：品質分 80、ROE 16.0%、營收年增 +7.6%、近 6 個月相對大盤 +1.0%、距 52 週高 -17.2%；目標價依據：同業相對本益比 320.85（40%）、PEG 成長調整 492.69（15%）、兩階段 DCF 381.28（20%）、券商共識目標價 340.89（25%）；估值信心 中。</li>
+<li><strong>2395.TW 研華</strong>（工業邊緣 AI 與嵌入式運算）：品質分 70、ROE 30.0%、營收年增 +82.5%、近 6 個月相對大盤 +28.7%、距 52 週高 -25.1%；目標價依據：同業相對本益比 448.13（50%）、PEG 成長調整 853.76（19%）、券商共識目標價 736.12（31%）；估值信心 中。</li>
+<li><strong>6491.TW 晶碩</strong>（高齡化與慢性病照護設備）：品質分 70、ROE 16.7%、營收年增 +19.0%、近 6 個月相對大盤 +29.2%、距 52 週高 -15.0%；目標價依據：同業相對本益比 376.46（50%）、PEG 成長調整 763.57（19%）、券商共識目標價 464.43（31%）；估值信心 低。</li>
+<li><strong>POWL Powell Industries</strong>（高壓電纜與電網互連硬體）：品質分 84、ROE 29.9%、營收年增 +33.1%、近 6 個月相對大盤 -37.7%、距 52 週高 -50.6%；目標價依據：同業相對本益比 164.46（40%）、PEG 成長調整 276.22（15%）、兩階段 DCF 263.64（20%）、券商共識目標價 243.00（25%）；估值信心 中。</li>
+<li><strong>IBM IBM</strong>（抗量子密碼與硬體安全遷移）：品質分 60、ROE 34.8%、營收年增 +4.7%、近 6 個月相對大盤 -6.6%、距 52 週高 -31.0%；目標價依據：同業相對本益比 218.53（40%）、PEG 成長調整 207.80（15%）、兩階段 DCF 323.03（20%）、券商共識目標價 259.85（25%）；估值信心 中。</li>
+<li><strong>LSCC Lattice</strong>（工業邊緣 AI 與嵌入式運算）：品質分 70、ROE 4.2%、營收年增 +118.3%、近 6 個月相對大盤 -16.8%、距 52 週高 -28.6%；目標價依據：同業相對本益比 105.71（50%）、PEG 成長調整 132.92（19%）、券商共識目標價 156.19（31%）；估值信心 中。</li>
+<li><strong>AEIS Advanced Energy</strong>（高壓功率半導體（SiC / GaN））：品質分 59、ROE 20.0%、營收年增 +50.3%、近 6 個月相對大盤 -30.8%、距 52 週高 -45.4%；目標價依據：同業相對本益比 273.37（50%）、PEG 成長調整 542.96（19%）、券商共識目標價 388.17（31%）；估值信心 低。</li>
+<li><strong>RMD ResMed</strong>（高齡化與慢性病照護設備）：品質分 99、ROE 26.4%、營收年增 +5.9%、近 6 個月相對大盤 +17.6%、距 52 週高 -13.2%；目標價依據：同業相對本益比 239.96（40%）、PEG 成長調整 327.79（15%）、兩階段 DCF 307.22（20%）、券商共識目標價 264.33（25%）；估值信心 高。</li>
 </ul>
 <h2>三、各趨勢檢視</h2>
 <h3>1. 高壓電纜與電網互連硬體（證據級 A）</h3>
@@ -268,7 +268,7 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <li>監管核准或費率案被大幅否決</li>
 <li>電力需求預測被大幅下修</li>
 </ul>
-<p><strong>市場狀態</strong>：近 48 小時相關新聞 0 則（覆蓋度 0.00，尚未被充分報導）；成分股近 6 個月平均相對大盤 -12.2%，0% 的成分股在 200 日線之上。</p>
+<p><strong>市場狀態</strong>：近 48 小時相關新聞 0 則（覆蓋度 0.00，尚未被充分報導）；成分股近 6 個月平均相對大盤 -11.4%，0% 的成分股在 200 日線之上。</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -286,27 +286,27 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <tr>
 <td>HUBB</td>
 <td>Hubbell</td>
-<td>225億</td>
+<td>221億</td>
 <td>+24.6%</td>
 <td>58</td>
-<td>-5.9%</td>
-<td>+14.3%</td>
+<td>-5.0%</td>
+<td>+15.8%</td>
 <td>✗ 估值方法分歧過大</td>
 </tr>
 <tr>
 <td>POWL</td>
 <td>Powell Industries</td>
-<td>56億</td>
+<td>58億</td>
 <td>+33.1%</td>
-<td>75</td>
-<td>-41.3%</td>
-<td>+35.3%</td>
+<td>84</td>
+<td>-37.7%</td>
+<td>+39.0%</td>
 <td>✅ 入選</td>
 </tr>
 <tr>
 <td>1609.TW</td>
 <td>大亞</td>
-<td>215億</td>
+<td>200億</td>
 <td>+28.5%</td>
 <td>28</td>
 <td>-11.0%</td>
@@ -316,17 +316,17 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <tr>
 <td>1605.TW</td>
 <td>華新</td>
-<td>1285億</td>
+<td>1212億</td>
 <td>+12.5%</td>
 <td>31</td>
 <td>-5.9%</td>
-<td>+42.0%</td>
+<td>+41.8%</td>
 <td>✗ 財務品質不足</td>
 </tr>
 <tr>
 <td>1608.TW</td>
 <td>華榮</td>
-<td>115億</td>
+<td>109億</td>
 <td>+25.9%</td>
 <td>49</td>
 <td>-1.9%</td>
@@ -336,7 +336,7 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <tr>
 <td>1618.TW</td>
 <td>合機</td>
-<td>61億</td>
+<td>58億</td>
 <td>+31.7%</td>
 <td>59</td>
 <td>-7.0%</td>
@@ -358,7 +358,9 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <li>遷移時程被大幅延後或取消</li>
 <li>標準被證實有可實用的破解攻擊且無替代方案</li>
 </ul>
-<p><strong>市場狀態</strong>：近 48 小時相關新聞 0 則（覆蓋度 0.00，尚未被充分報導）；成分股近 6 個月平均相對大盤 +20.9%，67% 的成分股在 200 日線之上。</p>
+<p><strong>市場狀態</strong>：近 48 小時相關新聞 1 則（覆蓋度 0.07，尚未被充分報導）；成分股近 6 個月平均相對大盤 +20.7%，67% 的成分股在 200 日線之上。</p>
+<p>相關報導：
+- <a href="https://news.google.com/rss/articles/CBMiVkFVX3lxTE04SlByYW45eG1QelFIcEVmeC1NM2dKWk9jNGVELTdVZzhvenpvaUlSekpqWlNYX1BLSUp6YlVTMHpuQWV3RnVHcXROcEhYb0N3aUtaUmpn?oc=5">Q-Day on the Horizon? NYCU and Jmem Tek Advance Post-Quantum Security Chips - 中央社 CNA</a>（中央社 財經 (via Google News)）</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -376,20 +378,20 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <tr>
 <td>IBM</td>
 <td>IBM</td>
-<td>2160億</td>
+<td>2116億</td>
 <td>+4.7%</td>
 <td>60</td>
-<td>+4.5%</td>
-<td>+9.3%</td>
-<td>✗ 目標價低於現價</td>
+<td>-6.6%</td>
+<td>+10.8%</td>
+<td>✅ 入選</td>
 </tr>
 <tr>
 <td>NET</td>
 <td>Cloudflare</td>
-<td>1078億</td>
+<td>1088億</td>
 <td>+39.2%</td>
 <td>50</td>
-<td>+44.7%</td>
+<td>+46.4%</td>
 <td>—</td>
 <td>✗ 資料不足，無法估值</td>
 </tr>
@@ -399,39 +401,39 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <td>132億</td>
 <td>+6.4%</td>
 <td>48</td>
-<td>-34.6%</td>
-<td>+30.3%</td>
+<td>-33.7%</td>
+<td>+29.9%</td>
 <td>✗ 估值方法分歧過大</td>
 </tr>
 <tr>
 <td>PANW</td>
 <td>Palo Alto Networks</td>
-<td>2783億</td>
+<td>2962億</td>
 <td>+34.5%</td>
 <td>55</td>
-<td>+39.3%</td>
-<td>-28.1%</td>
+<td>+46.6%</td>
+<td>-31.8%</td>
 <td>✗ 估值方法分歧過大</td>
 </tr>
 <tr>
 <td>6214.TW</td>
 <td>精誠</td>
-<td>471億</td>
+<td>467億</td>
 <td>+50.7%</td>
 <td>45</td>
 <td>+52.3%</td>
-<td>+0.0%</td>
+<td>+6.2%</td>
 <td>✗ 目標價低於現價</td>
 </tr>
 <tr>
 <td>6690.TWO</td>
 <td>安碁資訊</td>
-<td>54億</td>
+<td>52億</td>
 <td>+8.6%</td>
 <td>58</td>
 <td>+19.3%</td>
-<td>+13.9%</td>
-<td>✗ 市值過小</td>
+<td>+26.4%</td>
+<td>✗ 估值方法分歧過大</td>
 </tr>
 </tbody>
 </table></div>
@@ -448,7 +450,7 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <li>邊緣推論需求被雲端 API 完全取代</li>
 <li>工業資本支出長期低迷</li>
 </ul>
-<p><strong>市場狀態</strong>：近 48 小時相關新聞 0 則（覆蓋度 0.00，尚未被充分報導）；成分股近 6 個月平均相對大盤 -10.0%，25% 的成分股在 200 日線之上。</p>
+<p><strong>市場狀態</strong>：近 48 小時相關新聞 0 則（覆蓋度 0.00，尚未被充分報導）；成分股近 6 個月平均相對大盤 -10.6%，25% 的成分股在 200 日線之上。</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -466,77 +468,77 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <tr>
 <td>QCOM</td>
 <td>Qualcomm</td>
-<td>1710億</td>
+<td>1734億</td>
 <td>-8.4%</td>
 <td>86</td>
-<td>-18.9%</td>
-<td>+5.2%</td>
+<td>-19.8%</td>
+<td>+3.9%</td>
 <td>✗ 估值方法分歧過大</td>
 </tr>
 <tr>
 <td>ARM</td>
 <td>Arm Holdings</td>
-<td>1956億</td>
+<td>1896億</td>
 <td>+27.1%</td>
 <td>83</td>
-<td>-27.3%</td>
-<td>-9.0%</td>
+<td>-37.0%</td>
+<td>-7.1%</td>
 <td>✗ 波動過高（年化 &gt; 75%）</td>
 </tr>
 <tr>
 <td>LSCC</td>
 <td>Lattice</td>
-<td>159億</td>
+<td>158億</td>
 <td>+118.3%</td>
 <td>70</td>
-<td>-18.1%</td>
-<td>+13.9%</td>
+<td>-16.8%</td>
+<td>+14.1%</td>
 <td>✅ 入選</td>
 </tr>
 <tr>
 <td>ADI</td>
 <td>Analog Devices</td>
-<td>1851億</td>
+<td>1829億</td>
 <td>+39.6%</td>
 <td>79</td>
-<td>-2.0%</td>
-<td>+4.7%</td>
-<td>✗ 估值方法分歧過大</td>
+<td>+2.4%</td>
+<td>+5.8%</td>
+<td>✗ 已跌破前次推薦的停損價（論點失效），收復前不再推薦</td>
 </tr>
 <tr>
 <td>2395.TW</td>
 <td>研華</td>
-<td>4831億</td>
+<td>4561億</td>
 <td>+82.5%</td>
 <td>70</td>
 <td>+28.7%</td>
-<td>+12.1%</td>
+<td>+10.9%</td>
 <td>✅ 入選</td>
 </tr>
 <tr>
 <td>6166.TW</td>
 <td>凌華</td>
-<td>174億</td>
+<td>160億</td>
 <td>+45.5%</td>
 <td>49</td>
 <td>-23.2%</td>
-<td>+60.0%</td>
-<td>✗ 已跌破前次推薦的停損價（論點失效），收復前不再推薦</td>
+<td>—</td>
+<td>✗ 資料不足，無法估值</td>
 </tr>
 <tr>
 <td>3088.TWO</td>
 <td>艾訊</td>
-<td>111億</td>
+<td>105億</td>
 <td>+59.3%</td>
 <td>59</td>
 <td>-17.3%</td>
-<td>+27.0%</td>
+<td>+19.7%</td>
 <td>✗ 已跌破前次推薦的停損價（論點失效），收復前不再推薦</td>
 </tr>
 <tr>
 <td>6579.TW</td>
 <td>研揚</td>
-<td>228億</td>
+<td>219億</td>
 <td>+24.6%</td>
 <td>55</td>
 <td>-1.6%</td>
@@ -576,47 +578,47 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <tr>
 <td>ON</td>
 <td>onsemi</td>
-<td>262億</td>
+<td>256億</td>
 <td>+11.1%</td>
 <td>72</td>
-<td>-37.5%</td>
-<td>+42.3%</td>
+<td>-36.4%</td>
+<td>+44.7%</td>
 <td>✗ 已跌破前次推薦的停損價（論點失效），收復前不再推薦</td>
 </tr>
 <tr>
 <td>NVTS</td>
 <td>Navitas</td>
-<td>20億</td>
+<td>19億</td>
 <td>+38.4%</td>
 <td>46</td>
-<td>-66.8%</td>
+<td>-67.0%</td>
 <td>—</td>
 <td>✗ 資料不足，無法估值</td>
 </tr>
 <tr>
 <td>MPWR</td>
 <td>Monolithic Power</td>
-<td>639億</td>
+<td>632億</td>
 <td>+63.1%</td>
 <td>92</td>
-<td>-13.9%</td>
-<td>+5.5%</td>
+<td>-13.1%</td>
+<td>+6.2%</td>
 <td>✗ 目標價低於現價</td>
 </tr>
 <tr>
 <td>AEIS</td>
 <td>Advanced Energy</td>
-<td>87億</td>
+<td>86億</td>
 <td>+50.3%</td>
 <td>59</td>
-<td>-29.7%</td>
+<td>-30.8%</td>
 <td>+60.0%</td>
 <td>✅ 入選</td>
 </tr>
 <tr>
 <td>3016.TW</td>
 <td>嘉晶</td>
-<td>278億</td>
+<td>250億</td>
 <td>+37.1%</td>
 <td>53</td>
 <td>-1.8%</td>
@@ -626,27 +628,27 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <tr>
 <td>6415.TW</td>
 <td>矽力-KY</td>
-<td>1199億</td>
+<td>1084億</td>
 <td>+52.4%</td>
 <td>59</td>
 <td>-30.1%</td>
-<td>+31.8%</td>
+<td>+35.0%</td>
 <td>✗ 已跌破前次推薦的停損價（論點失效），收復前不再推薦</td>
 </tr>
 <tr>
 <td>6488.TWO</td>
 <td>環球晶</td>
-<td>2588億</td>
+<td>2334億</td>
 <td>+2.6%</td>
 <td>38</td>
 <td>-20.0%</td>
-<td>+52.0%</td>
+<td>+56.1%</td>
 <td>✗ 波動過高（年化 &gt; 75%）</td>
 </tr>
 <tr>
 <td>2481.TW</td>
 <td>強茂</td>
-<td>363億</td>
+<td>327億</td>
 <td>+33.0%</td>
 <td>44</td>
 <td>-23.7%</td>
@@ -655,7 +657,7 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 </tr>
 </tbody>
 </table></div>
-<h3>6. 高齡化與慢性病照護設備（證據級 A）</h3>
+<h3>5. 高齡化與慢性病照護設備（證據級 A）</h3>
 <p><strong>論點</strong>：人口老化是已知且不可逆的人口結構；糖尿病、睡眠呼吸中止、洗腎與視力矯正等慢性病的長期照護需求持續增加，且多為經常性耗材收入。</p>
 <p><strong>證據（研究假設，請自行查證）</strong></p>
 <ul>
@@ -668,7 +670,7 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <li>給付制度或藥價改革大幅壓縮設備與耗材報酬</li>
 <li>替代療法（如新藥）顯著降低器材需求</li>
 </ul>
-<p><strong>市場狀態</strong>：近 48 小時相關新聞 0 則（覆蓋度 0.00，尚未被充分報導）；成分股近 6 個月平均相對大盤 +8.8%，43% 的成分股在 200 日線之上。</p>
+<p><strong>市場狀態</strong>：近 48 小時相關新聞 0 則（覆蓋度 0.00，尚未被充分報導）；成分股近 6 個月平均相對大盤 +9.0%，43% 的成分股在 200 日線之上。</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -686,67 +688,67 @@ footer{max-width:1000px;margin:0 auto;padding:0 16px 40px;color:var(--muted);fon
 <tr>
 <td>RMD</td>
 <td>ResMed</td>
-<td>341億</td>
+<td>333億</td>
 <td>+5.9%</td>
 <td>99</td>
-<td>+17.7%</td>
-<td>+13.1%</td>
+<td>+17.6%</td>
+<td>+15.1%</td>
 <td>✅ 入選</td>
 </tr>
 <tr>
 <td>DXCM</td>
 <td>Dexcom</td>
-<td>308億</td>
+<td>299億</td>
 <td>+11.2%</td>
 <td>85</td>
-<td>+17.0%</td>
-<td>-8.3%</td>
+<td>+15.2%</td>
+<td>-6.5%</td>
 <td>✗ 估值方法分歧過大</td>
 </tr>
 <tr>
 <td>PODD</td>
 <td>Insulet</td>
-<td>97億</td>
+<td>95億</td>
 <td>+19.2%</td>
 <td>74</td>
-<td>-9.1%</td>
-<td>+7.5%</td>
+<td>-8.9%</td>
+<td>+8.9%</td>
 <td>✗ 估值方法分歧過大</td>
 </tr>
 <tr>
 <td>SYK</td>
 <td>Stryker</td>
-<td>1211億</td>
+<td>1192億</td>
 <td>+7.6%</td>
 <td>80</td>
-<td>+1.0%</td>
-<td>+14.3%</td>
-<td>✅ 入選</td>
+<td>+4.1%</td>
+<td>+15.5%</td>
+<td>未入選（名額）</td>
 </tr>
 <tr>
 <td>4104.TW</td>
 <td>佳醫</td>
-<td>132億</td>
+<td>131億</td>
 <td>+10.1%</td>
 <td>48</td>
 <td>+8.4%</td>
-<td>-17.5%</td>
+<td>-19.1%</td>
 <td>✗ 流動性不足</td>
 </tr>
 <tr>
 <td>6491.TW</td>
 <td>晶碩</td>
-<td>281億</td>
+<td>269億</td>
 <td>+19.0%</td>
 <td>70</td>
 <td>+29.2%</td>
-<td>+27.8%</td>
+<td>+30.0%</td>
 <td>✅ 入選</td>
 </tr>
 <tr>
 <td>1565.TWO</td>
 <td>精華</td>
-<td>41億</td>
+<td>39億</td>
 <td>-9.7%</td>
 <td>60</td>
 <td>-2.6%</td>
