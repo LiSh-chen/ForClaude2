@@ -5,92 +5,97 @@
  "llm": false,
  "picks": [
   {
-   "ticker": "MS",
-   "name": "Morgan Stanley",
-   "zh_name": "Morgan Stanley",
+   "ticker": "ABBV",
+   "name": "AbbVie Inc.",
+   "zh_name": "AbbVie",
    "market": "US",
-   "sector": "financials",
+   "sector": "healthcare",
    "rank": 1,
-   "entry_price": 174.98,
-   "entry_date": "2026-11-19",
-   "composite": 54.74,
+   "entry_price": 286.2,
+   "entry_date": "2026-11-20",
+   "composite": 77.87,
    "scores": {
-    "sector": 64.4,
-    "leader": 20.0,
-    "quality": 74.4,
-    "growth": 40.8,
-    "valuation": 65.6,
-    "momentum": 18.9,
-    "news": 63.5
+    "sector": 72.5,
+    "leader": 80.0,
+    "quality": 76.5,
+    "growth": 71.9,
+    "valuation": 99.8,
+    "momentum": 90.8,
+    "news": 40.0
    },
    "target": {
-    "base": 215.46,
-    "bull": 296.93,
-    "bear": 93.27,
-    "ev": 201.21,
+    "base": 400.2,
+    "bull": 528.44,
+    "bear": 207.84,
+    "ev": 377.76,
     "confidence": "中",
-    "upside": 0.2314,
-    "ev_upside": 0.1499,
+    "upside": 0.3983,
+    "ev_upside": 0.3199,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 248.23,
-      "weight": 0.5,
-      "upside": 0.4186
+      "value": 352.78,
+      "weight": 0.4,
+      "upside": 0.2326
      },
      "peg": {
-      "value": 134.7,
-      "weight": 0.187,
-      "upside": -0.2302
+      "value": 497.05,
+      "weight": 0.15,
+      "upside": 0.7367
+     },
+     "dcf": {
+      "value": 527.78,
+      "weight": 0.2,
+      "upside": 0.8441
      },
      "consensus": {
-      "value": 211.5,
-      "weight": 0.312,
-      "upside": 0.2087
+      "value": 315.88,
+      "weight": 0.25,
+      "upside": 0.1037
      }
     }
    },
-   "stop": 159.94,
+   "stop": 268.28,
    "fundamentals": {
-    "market_cap": 273501405184,
-    "pe_ttm": 13.8763,
-    "pe_fwd": 12.8302,
-    "peg": 1.58,
-    "roe": 0.1804,
-    "gross_margin": 0.8731,
-    "op_margin": 0.402,
-    "net_margin": 0.2563,
-    "rev_growth": 0.108,
-    "eps_growth": 0.082,
-    "de": 4.8976,
-    "beta": 1.22,
-    "target_mean": 211.5,
-    "n_analysts": 22,
-    "fcf_margin": null
+    "market_cap": 505891782656,
+    "pe_ttm": 49.1753,
+    "pe_fwd": 17.6473,
+    "peg": 0.57,
+    "roe": null,
+    "gross_margin": 0.7372,
+    "op_margin": 0.3664,
+    "net_margin": 0.1567,
+    "rev_growth": 0.103,
+    "eps_growth": 22.821,
+    "de": null,
+    "beta": 0.192,
+    "target_mean": 315.8846,
+    "n_analysts": 26,
+    "fcf_margin": 0.268
    },
    "tech": {
-    "ret_1m": -0.0586303709324153,
-    "ret_3m": -0.17812545196872376,
-    "rel_3m": -0.11316376371942094,
-    "dist200": -0.091035359237993,
-    "vol_ann": 0.286410089464896
+    "ret_1m": 0.00354153286222747,
+    "ret_3m": 0.08860329564124636,
+    "rel_3m": 0.18562189258758555,
+    "dist200": 0.19268808040609864,
+    "vol_ann": 0.20075495584210362
    }
   }
  ],
  "focus_sectors": {
   "US": [
-   "shipping",
-   "ai_chips",
    "consumer",
+   "healthcare",
    "financials",
-   "ai_servers"
+   "ai_chips",
+   "shipping"
   ],
   "TW": [
    "financials",
-   "energy_materials",
    "ai_chips",
    "shipping",
-   "consumer"
+   "energy_materials",
+   "internet_platforms"
   ]
  }
 }
