@@ -1,29 +1,25 @@
 # news-curator
 
-從大量新聞來源中,挑出「新穎、有洞見、影響深遠、有證據」的少數文章,定期寄給訂閱者。寧缺勿濫:沒有達標內容就不寄。
+可複製的「人工把關型」電子報引擎:從大量 RSS 來源挑出少數真正有價值的內容,
+**每天備好候選 → 你花約 30 分鐘審稿 → 才寄出**。沒有核准的內容就不寄,寧缺勿濫。
 
-流程:抓 RSS → 去重/排除已寄 → 評分 → 門檻+多樣性篩選 → 寄信 → 記錄已寄。
+引擎不含任何題材。每份電子報是 `newsletters/<名稱>/` 一個目錄(評分標準 `rubric.md`、參數 `newsletter.json`、來源 `sources.json`)。
+內建兩份:`gems`(生活冷知識:實用、反直覺、少人知道)、`insight`(大議題精選)。
 
-## 評分
-Claude 對每篇文章給 novelty / depth / impact / evidence (0–10) 與 trivia(瑣事程度,最多扣 40%),
-總分 0–100,預設 ≥55 才入選,單一來源最多 2 篇。沒有 `ANTHROPIC_API_KEY` 時退回關鍵字啟發式(品質明顯較差)。
-
-## 使用
 ```bash
-python -m curator run --dry-run --out preview.html   # 預覽,不寄信
-python -m curator subscribe you@example.com           # 本機名單 subscribers.txt (已 gitignore)
+python -m curator newsletters                              # 列出電子報
+python -m curator init pets --brief "給養貓新手的飼主,要科學證據、不要業配"   # 由 Claude 產生定義草稿 (需 ANTHROPIC_API_KEY)
+python -m curator init pets --copy-from gems               # 或複製現有的再手改
+python -m curator check pets --prune                       # 連線驗證來源,移除壞掉的
+python -m curator collect --profile pets                   # 抓取+評分+寫短文 → 待審佇列
+python -m curator queue list --profile pets                # 審稿 (或看 data/queue/pets.md)
+python -m curator queue approve 1 3 --profile pets
+python -m curator send --profile pets --dry-run --out p.html
 python -m pytest tests
 ```
-可調參數:`--days --top --min-score --per-source --model --sources`。來源在 `sources.json`。
 
-## 部署 (GitHub Actions)
-Repo Secrets:`ANTHROPIC_API_KEY`、`NEWS_SUBSCRIBERS`(逗號或換行分隔)、`SMTP_HOST`、`SMTP_PORT`、`SMTP_USER`、`SMTP_PASSWORD`、`MAIL_FROM`。
-`.github/workflows/digest.yml` 預設週一、週四寄出。名單放 Secret 而非檔案,因為 email 是個資。
-
-## 已知限制
-- 退訂目前是「回信說 unsubscribe」,由你手動改 Secret;訂閱量大時需要另做訂閱/退訂網頁。
-- `sources.json` 的 feed 網址未經實際連線驗證(開發環境網路受限),首次執行看日誌中的 ✓/✗ 並修正。
-- 評分只看標題+摘要,未讀全文。
+完整說明(自己用、給別人用的模板流程、部署、風險)見 [docs/newsletter-engine.md](docs/newsletter-engine.md)。
+`digest.yml` 為舊的全自動 insight 流程,新流程用 `newsletter.yml`。
 
 ---
 
