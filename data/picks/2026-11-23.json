@@ -1,0 +1,173 @@
+{
+ "date": "2026-11-23",
+ "params_version": 2,
+ "provider": "live",
+ "llm": false,
+ "picks": [
+  {
+   "ticker": "ABBV",
+   "name": "AbbVie Inc.",
+   "zh_name": "AbbVie",
+   "market": "US",
+   "sector": "healthcare",
+   "rank": 1,
+   "entry_price": 286.2,
+   "entry_date": "2026-11-20",
+   "composite": 79.21,
+   "scores": {
+    "sector": 79.1,
+    "leader": 80.0,
+    "quality": 76.5,
+    "growth": 71.9,
+    "valuation": 100.0,
+    "momentum": 90.8,
+    "news": 40.0
+   },
+   "target": {
+    "base": 401.74,
+    "bull": 530.41,
+    "bear": 208.73,
+    "ev": 379.22,
+    "confidence": "中",
+    "upside": 0.4037,
+    "ev_upside": 0.325,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 358.31,
+      "weight": 0.4,
+      "upside": 0.252
+     },
+     "peg": {
+      "value": 492.55,
+      "weight": 0.15,
+      "upside": 0.721
+     },
+     "dcf": {
+      "value": 527.78,
+      "weight": 0.2,
+      "upside": 0.8441
+     },
+     "consensus": {
+      "value": 315.88,
+      "weight": 0.25,
+      "upside": 0.1037
+     }
+    }
+   },
+   "stop": 268.28,
+   "fundamentals": {
+    "market_cap": 510514102272,
+    "pe_ttm": 49.6246,
+    "pe_fwd": 17.8086,
+    "peg": 0.58,
+    "roe": null,
+    "gross_margin": 0.7372,
+    "op_margin": 0.3664,
+    "net_margin": 0.1567,
+    "rev_growth": 0.103,
+    "eps_growth": 22.821,
+    "de": null,
+    "beta": 0.192,
+    "target_mean": 315.8846,
+    "n_analysts": 26,
+    "fcf_margin": 0.268
+   },
+   "tech": {
+    "ret_1m": 0.00354153286222747,
+    "ret_3m": 0.08860329564124636,
+    "rel_3m": 0.18562189258758555,
+    "dist200": 0.19268808154371397,
+    "vol_ann": 0.20075495584210362
+   }
+  },
+  {
+   "ticker": "NEM",
+   "name": "Newmont Corporation",
+   "zh_name": "Newmont",
+   "market": "US",
+   "sector": "energy_materials",
+   "rank": 2,
+   "entry_price": 94.68,
+   "entry_date": "2026-11-20",
+   "composite": 61.69,
+   "scores": {
+    "sector": 62.5,
+    "leader": 33.3,
+    "quality": 98.7,
+    "growth": 78.9,
+    "valuation": 55.1,
+    "momentum": 15.3,
+    "news": 40.0
+   },
+   "target": {
+    "base": 125.53,
+    "bull": 175.27,
+    "bear": 50.92,
+    "ev": 116.83,
+    "confidence": "中",
+    "upside": 0.3258,
+    "ev_upside": 0.2339,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 101.7,
+      "weight": 0.5,
+      "upside": 0.0741
+     },
+     "peg": {
+      "value": 174.02,
+      "weight": 0.187,
+      "upside": 0.838
+     },
+     "consensus": {
+      "value": 134.57,
+      "weight": 0.312,
+      "upside": 0.4213
+     }
+    }
+   },
+   "stop": 81.02,
+   "fundamentals": {
+    "market_cap": 105311838208,
+    "pe_ttm": 11.7564,
+    "pe_fwd": 10.1974,
+    "peg": 2.78,
+    "roe": 0.2726,
+    "gross_margin": 0.6804,
+    "op_margin": 0.5556,
+    "net_margin": 0.3473,
+    "rev_growth": 0.152,
+    "eps_growth": 0.407,
+    "de": 0.1558,
+    "beta": 0.573,
+    "target_mean": 134.5684,
+    "n_analysts": 19,
+    "fcf_margin": 0.3441
+   },
+   "tech": {
+    "ret_1m": -0.1702742984948611,
+    "ret_3m": -0.28036182153822453,
+    "rel_3m": -0.18334322459188535,
+    "dist200": -0.1518246011426012,
+    "vol_ann": 0.4472481904797186
+   }
+  }
+ ],
+ "focus_sectors": {
+  "US": [
+   "healthcare",
+   "financials",
+   "consumer",
+   "ai_chips",
+   "energy_materials"
+  ],
+  "TW": [
+   "ai_chips",
+   "financials",
+   "energy_materials",
+   "internet_platforms",
+   "shipping"
+  ]
+ }
+}
