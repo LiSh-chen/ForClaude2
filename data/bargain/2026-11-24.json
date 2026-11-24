@@ -1,0 +1,178 @@
+{
+ "date": "2026-11-24",
+ "params_version": 2,
+ "picks": [
+  {
+   "ticker": "AMAT",
+   "name": "Applied Materials, Inc.",
+   "zh_name": "Applied Materials",
+   "market": "US",
+   "sector": "semi_equipment",
+   "rank": 1,
+   "entry_price": 346.87,
+   "entry_date": "2026-11-23",
+   "composite": 64.61,
+   "scores": {
+    "sector": 31.2,
+    "leader": 66.7,
+    "quality": 84.0,
+    "growth": 100.0,
+    "valuation": 100.0,
+    "momentum": 6.1,
+    "news": 62.0
+   },
+   "target": {
+    "base": 529.15,
+    "bull": 740.81,
+    "bear": 211.66,
+    "ev": 492.11,
+    "confidence": "中",
+    "upside": 0.5255,
+    "ev_upside": 0.4187,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 426.75,
+      "weight": 0.5,
+      "upside": 0.2303
+     },
+     "peg": {
+      "value": 754.35,
+      "weight": 0.187,
+      "upside": 1.1747
+     },
+     "consensus": {
+      "value": 557.86,
+      "weight": 0.312,
+      "upside": 0.6083
+     }
+    }
+   },
+   "stop": 284.43,
+   "fundamentals": {
+    "market_cap": 275275153408,
+    "pe_ttm": 23.9882,
+    "pe_fwd": 14.0859,
+    "peg": 0.64,
+    "roe": 0.4337,
+    "gross_margin": 0.4999,
+    "op_margin": 0.3294,
+    "net_margin": 0.2929,
+    "rev_growth": 0.531,
+    "eps_growth": 0.431,
+    "de": 0.2502,
+    "beta": 1.673,
+    "target_mean": 557.8611,
+    "n_analysts": 36,
+    "fcf_margin": 0.0732
+   },
+   "tech": {
+    "ret_1m": -0.079120358641388,
+    "ret_3m": -0.27632571593782795,
+    "rel_3m": -0.2189994394965047,
+    "dist200": -0.22244766439196761,
+    "vol_ann": 0.7425953350605347
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 85.4,
+   "facts": {
+    "from_high": -0.519,
+    "pos52": 0.2488,
+    "bounce20": 0.1462,
+    "ret_1m": -0.0791,
+    "dist200": -0.2224,
+    "pe_discount": 0.3153,
+    "eps_up": 0.703,
+    "rev_growth": 0.531,
+    "upside": 0.5255
+   }
+  },
+  {
+   "ticker": "META",
+   "name": "Meta Platforms, Inc.",
+   "zh_name": "Meta Platforms",
+   "market": "US",
+   "sector": "internet_platforms",
+   "rank": 2,
+   "entry_price": 597.6,
+   "entry_date": "2026-11-23",
+   "composite": 68.85,
+   "scores": {
+    "sector": 58.4,
+    "leader": 25.0,
+    "quality": 84.3,
+    "growth": 94.4,
+    "valuation": 92.7,
+    "momentum": 41.3,
+    "news": 66.2
+   },
+   "target": {
+    "base": 800.08,
+    "bull": 1009.49,
+    "bear": 485.97,
+    "ev": 763.43,
+    "confidence": "高",
+    "upside": 0.3388,
+    "ev_upside": 0.2775,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 715.8,
+      "weight": 0.5,
+      "upside": 0.1978
+     },
+     "peg": {
+      "value": 949.32,
+      "weight": 0.187,
+      "upside": 0.5886
+     },
+     "consensus": {
+      "value": 845.38,
+      "weight": 0.312,
+      "upside": 0.4146
+     }
+    }
+   },
+   "stop": 534.33,
+   "fundamentals": {
+    "market_cap": 1527609688064,
+    "pe_ttm": 20.3889,
+    "pe_fwd": 16.7511,
+    "peg": 0.73,
+    "roe": 0.3226,
+    "gross_margin": 0.8103,
+    "op_margin": 0.3778,
+    "net_margin": 0.3115,
+    "rev_growth": 0.261,
+    "eps_growth": 2.648,
+    "de": 0.4216,
+    "beta": 1.279,
+    "target_mean": 845.3814,
+    "n_analysts": 58,
+    "fcf_margin": 0.0697
+   },
+   "tech": {
+    "ret_1m": -0.07005698526862703,
+    "ret_3m": 0.049156406103767925,
+    "rel_3m": 0.10648268254509119,
+    "dist200": -0.04777347898621087,
+    "vol_ann": 0.48882829353174123
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 58.0,
+   "facts": {
+    "from_high": -0.2315,
+    "pos52": 0.2879,
+    "bounce20": 0.0655,
+    "ret_1m": -0.0701,
+    "dist200": -0.0478,
+    "pe_discount": 0.1988,
+    "eps_up": 0.2172,
+    "rev_growth": 0.261,
+    "upside": 0.3388
+   }
+  }
+ ]
+}
