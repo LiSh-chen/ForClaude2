@@ -71,21 +71,15 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     val sightStamps = remember(route, areasForStamps) { route?.let { PoiStamps.of(it, areasForStamps) } ?: emptyList() }
 
     // Lazy: only the cards on screen are built, instead of all forty-five (and their pictures) when the tab opens.
+    PaperPage(padding) {
     LazyColumn(
-        Modifier.padding(padding),
-        contentPadding = PaddingValues(16.dp),
+        Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(14.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item { Text("收藏・真實世界", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold) }
         item {
-            OutlinedButton(onClick = { showPostcards = true }, modifier = Modifier.fillMaxWidth()) {
-                Text(trf("旅人與明信片（朋友 {0}・明信片 {1}）", ledger.friends.size, ledger.unlocked.size) + if (ledger.postcardsLeft > 0) " ✉" else "")
-            }
-        }
-        item {
-            OutlinedButton(onClick = { showQuests = true }, modifier = Modifier.fillMaxWidth()) {
-                Text(trf("任務與里程碑 {0} / {1}", questRows.count { it }, questRows.size))
-            }
+            EntryButtons(ledger.friends.size, ledger.unlocked.size, ledger.postcardsLeft > 0, questRows.count { it }, questRows.size, { showPostcards = true }, { showQuests = true })
         }
         if (current == null || route == null) {
             item { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) { RoutePicker(onStart = { vm.startRoute(it) }) } }
@@ -97,6 +91,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
                 album = album, onAlbum = { album = it }, sightStamps = sightStamps,
             )
         }
+    }
     }
 
     if (confirmRestart) {
@@ -112,6 +107,15 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     if (showQuests) QuestsDialog(questList, ledger) { showQuests = false }
     val card = detail
     if (card != null && route != null) CardDialog(route, card) { detail = null }
+}
+
+/** The two doors at the top of the collection page: travelers and postcards, quests and milestones. */
+@Composable
+internal fun EntryButtons(friends: Int, postcards: Int, news: Boolean, questsDone: Int, questsAll: Int, onTravelers: () -> Unit, onQuests: () -> Unit) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        EntryButton("✉", tr("旅人與明信片"), trf("朋友 {0}・明信片 {1}", friends, postcards), news, onTravelers, Modifier.weight(1f))
+        EntryButton("🏅", tr("任務與里程碑"), trf("{0} / {1} 完成", questsDone, questsAll), false, onQuests, Modifier.weight(1f))
+    }
 }
 
 /** Choose a route and which way round to walk it. */
@@ -154,11 +158,14 @@ internal fun LazyListScope.routeProgressItems(
     val collected = route.collected(km).map { it.id }.toSet()
 
     item {
-        Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight)) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("${route.region}・${route.name}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                LinearProgressIndicator(progress = { (km / route.totalKm).toFloat().coerceIn(0f, 1f) }, modifier = Modifier.fillMaxWidth().height(8.dp))
-                Text("已走約 ${"%.1f".format(km)} / ${route.totalKm.roundToInt()} 公里", fontWeight = FontWeight.SemiBold)
+        PaperCard(Modifier.fillMaxWidth(), Lift.Lifted, 14.dp) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("${route.region}・${route.name}", fontFamily = FontFamily.Serif, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                LinearProgressIndicator(
+                    progress = { (km / route.totalKm).toFloat().coerceIn(0f, 1f) }, color = Vintage.brass, trackColor = Vintage.parchmentDark,
+                    modifier = Modifier.fillMaxWidth().height(12.dp).clip(RoundedCornerShape(6.dp)),
+                )
+                Text("已走約 ${"%.1f".format(km)} / ${route.totalKm.roundToInt()} 公里", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 if (done) Text("環島完成！", color = Vintage.brassDark, fontWeight = FontWeight.Bold)
                 else {
                     Text(trf("目前在 {0} 附近", here.name), style = MaterialTheme.typography.bodyMedium)
@@ -178,10 +185,7 @@ internal fun LazyListScope.routeProgressItems(
     }
 
     item {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text("景點卡 ${collected.size} / ${route.cards.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-            ViewSwitch(album, onAlbum)
-        }
+        RibbonHeader("景點卡 ${collected.size} / ${route.cards.size}") { ViewSwitch(album, onAlbum) }
     }
     if (album) {
         // The album: every card as a picture, three to a row, in the order the route meets them.
@@ -214,10 +218,10 @@ internal fun LazyListScope.routeProgressItems(
     }
 
     val stamps = route.suppliesReached(km).map { it.id }.toSet()
-    item { Text("車站紀念章 ${stamps.size} / ${route.supplies.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
+    item { RibbonHeader("車站紀念章 ${stamps.size} / ${route.supplies.size}") }
     item { StampGrid(route, stamps) }
     val sights = PoiStamps.earned(sightStamps, km).map { it.id }.toSet()
-    item { Text("小景點章 ${sights.size} / ${route.pois.size}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
+    item { RibbonHeader("小景點章 ${sights.size} / ${route.pois.size}") }
     item { PoiStampGrid(sightStamps, sights) }
     item { OutlinedButton(onClick = onRestart, modifier = Modifier.fillMaxWidth()) { Text("重新選路線／重新出發") } }
 }
@@ -240,21 +244,16 @@ private fun ViewSwitch(album: Boolean, onAlbum: (Boolean) -> Unit) {
 /** A county's name with how many of its cards are collected; tap to open or close its list. */
 @Composable
 private fun CountyHeader(county: String, have: Int, total: Int, open: Boolean, onClick: () -> Unit) {
-    Row(
-        Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).clickable(onClick = onClick).padding(horizontal = 4.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(if (open) "▾" else "▸", color = Vintage.brassDark, fontWeight = FontWeight.Bold)
-        Text(county, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold, fontSize = 17.sp, modifier = Modifier.weight(1f))
-        Text("$have / $total", style = MaterialTheme.typography.labelLarge, color = if (have == total) Vintage.brassDark else Vintage.inkSoft)
+    RibbonHeader((if (open) "▾ " else "▸ ") + county, small = true, onClick = onClick) {
+        Text("$have / $total", style = MaterialTheme.typography.labelLarge, color = if (have == total) Vintage.brassDark else Vintage.inkSoft, fontWeight = FontWeight.Bold)
     }
 }
 
 @Composable
 private fun CardRow(card: Landmark, at: Double, owned: Boolean, township: String?, features: List<TownTag>, onOpen: () -> Unit) {
-    Card(
-        Modifier.fillMaxWidth().then(if (owned) Modifier.clickable(onClick = onOpen) else Modifier),
-        colors = CardDefaults.cardColors(containerColor = if (owned) Vintage.parchmentLight else Vintage.parchmentDark.copy(alpha = 0.6f)),
+    PaperCard(
+        Modifier.fillMaxWidth(), if (owned) Lift.Raised else Lift.Rest, 10.dp,
+        tint = if (owned) Vintage.parchmentLight else Vintage.parchmentDark.copy(alpha = 0.6f), onClick = if (owned) onOpen else null,
     ) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(Modifier.weight(1f)) {
@@ -267,7 +266,7 @@ private fun CardRow(card: Landmark, at: Double, owned: Boolean, township: String
                     Text("第 ${at.roundToInt()} 公里解鎖", style = MaterialTheme.typography.bodySmall)
                 }
             }
-            if (owned) FilledTonalButton(onClick = onOpen, contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)) { Text("查看") }
+            if (owned) BrassPill("查看", onOpen)
         }
     }
 }

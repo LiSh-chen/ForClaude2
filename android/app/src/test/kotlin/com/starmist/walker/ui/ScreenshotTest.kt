@@ -70,6 +70,21 @@ class ScreenshotTest : ShotsBase(DeviceConfig.PIXEL_5) {
         }
     }
 
+    /** The whole collection page as the app shows it: the notebook page on its desk, with the entry buttons and the layered cards. */
+    @Test fun collection_layered() = paparazzi.snapshot {
+        Page(tab = 3) { pad ->
+            val places = rememberTownAreas().cardPlaces
+            val features = rememberLandmarkFacts()
+            PaperPage(pad) {
+                androidx.compose.foundation.lazy.LazyColumn(Modifier.fillMaxSize(), contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
+                    item { androidx.compose.material3.Text("收藏・真實世界", style = androidx.compose.material3.MaterialTheme.typography.headlineSmall, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold) }
+                    item { EntryButtons(2, 2, true, 4, 53, {}, {}) }
+                    routeProgressItems(forward, com.starmist.core.route.RouteState(forward.id, 0L, 260.0), places, features, emptyList(), onToggle = {}, onOpen = {}, onRestart = {}, onSwitch = {})
+                }
+            }
+        }
+    }
+
     @Test fun collection_album() = paparazzi.snapshot {
         Page(tab = 3) { pad ->
             val places = rememberTownAreas().cardPlaces
