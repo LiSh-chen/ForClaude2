@@ -114,8 +114,8 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
 @Composable
 internal fun EntryButtons(friends: Int, postcards: Int, news: Boolean, questsDone: Int, questsAll: Int, onTravelers: () -> Unit, onQuests: () -> Unit) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        EntryButton("✉", tr("旅人與明信片"), trf("朋友 {0}・明信片 {1}", friends, postcards), news, onTravelers, Modifier.weight(1f))
-        EntryButton("🏅", tr("任務與里程碑"), trf("{0} / {1} 完成", questsDone, questsAll), false, onQuests, Modifier.weight(1f))
+        EntryButton("✉", tr("旅人信箱"), trf("朋友 {0}・明信片 {1}", friends, postcards), news, onTravelers, Modifier.weight(1f))
+        EntryButton("🏅", tr("任務清單"), trf("{0} / {1} 完成", questsDone, questsAll), false, onQuests, Modifier.weight(1f))
     }
 }
 

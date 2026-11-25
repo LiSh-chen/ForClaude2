@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -54,11 +55,12 @@ fun SettingsScreen(
     var showCredits by remember { mutableStateOf(false) }
     var pendingImport by remember { mutableStateOf<android.net.Uri?>(null) }
 
+    PaperPage(padding) {
     Column(
         Modifier
-            .padding(padding)
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Section("個人資料與目標") {
@@ -209,6 +211,7 @@ fun SettingsScreen(
             OutlinedButton(onClick = onOpenDiagnostics, modifier = Modifier.fillMaxWidth()) { Text("開啟診斷") }
         }
     }
+    }
 
     if (showCalibration) CalibrationDialog(vm, settings.multiplier) { showCalibration = false }
     if (showAdjust) AdjustDialog(vm) { showAdjust = false }
@@ -229,12 +232,13 @@ internal fun FontSizePicker(step: Int, onPick: (Int) -> Unit) {
     }
 }
 
+/** A group of settings: a ribbon with its name, and the paper with the settings pasted under it. */
 @Composable
-private fun Section(title: String, content: @Composable () -> Unit) {
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            content()
+internal fun Section(title: String, content: @Composable () -> Unit) {
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        RibbonHeader(title)
+        PaperCard(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { content() }
         }
     }
 }

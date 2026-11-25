@@ -61,7 +61,7 @@ internal fun Modifier.softShadow(lift: Lift, corner: Dp = 10.dp): Modifier = if 
 @Composable
 internal fun PaperPage(padding: PaddingValues, content: @Composable () -> Unit) {
     val shape = RoundedCornerShape(14.dp)
-    Box(Modifier.fillMaxSize().background(DESK).padding(padding).padding(horizontal = 8.dp, vertical = 8.dp)) {
+    Box(Modifier.fillMaxSize().background(DESK).padding(padding).padding(horizontal = 12.dp, vertical = 10.dp)) {
         Box(Modifier.fillMaxSize().softShadow(Lift.Raised, 14.dp).background(Vintage.parchment, shape).clip(shape)) { content() }
     }
 }
@@ -89,10 +89,10 @@ internal fun RibbonHeader(title: String, modifier: Modifier = Modifier, small: B
     val brush = if (small) Brush.horizontalGradient(listOf(Vintage.mossLight, Color(0xFFD5E2C8))) else Brush.horizontalGradient(listOf(Vintage.brassLight, Color(0xFFF0DCA0)))
     val fold = if (small) Vintage.moss else Vintage.brassDark
     Row(
-        modifier.fillMaxWidth().padding(start = 6.dp)
+        modifier.fillMaxWidth().padding(start = 9.dp)
             .softShadow(Lift.Raised, 8.dp)
             .drawBehind {
-                val f = 6.dp.toPx()
+                val f = 9.dp.toPx()
                 drawPath(Path().apply { moveTo(-f, size.height); lineTo(0f, size.height); lineTo(0f, size.height - f); close() }, fold)
             }
             .background(brush, shape)
@@ -136,11 +136,47 @@ internal fun EntryButton(icon: String, title: String, subtitle: String, badge: B
                     contentAlignment = Alignment.Center,
                 ) { Text(icon, fontSize = 20.sp) }
                 Column(Modifier.weight(1f)) {
-                    Text(title, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Vintage.ink)
-                    Text(subtitle, fontSize = 12.sp, color = Vintage.inkSoft)
+                    Text(title, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Vintage.ink, maxLines = 1)
+                    Text(subtitle, fontSize = 11.sp, color = Vintage.inkSoft, maxLines = 1)
                 }
             }
         }
         if (badge) RedDot(Modifier.align(Alignment.TopEnd).offset(x = (-4).dp, y = 4.dp))
     }
+}
+
+/** A raised brass label (like [BrassPill] but not pressable), for what a quest gives. */
+@Composable
+internal fun BrassLabel(text: String, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(50)
+    Box(
+        modifier.softShadow(Lift.Raised, 20.dp).background(Brush.verticalGradient(listOf(Vintage.brassLight, Vintage.brass)), shape).border(1.dp, Vintage.brassDark, shape)
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        contentAlignment = Alignment.Center,
+    ) { Text(text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Vintage.ink) }
+}
+
+/** Two or three choices in a pill: the chosen one is brass and raised, the others are written on the paper. */
+@Composable
+internal fun <T> PillTabs(options: List<Pair<T, String>>, selected: T, onSelect: (T) -> Unit, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(50)
+    Row(
+        modifier.fillMaxWidth().background(Vintage.edge.copy(alpha = 0.18f), shape).border(0.8.dp, Vintage.edge.copy(alpha = 0.5f), shape).padding(3.dp),
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
+    ) {
+        options.forEach { (value, label) ->
+            val on = value == selected
+            val m = Modifier.weight(1f).clip(shape)
+                .let { if (on) it.background(Brush.verticalGradient(listOf(Vintage.brassLight, Vintage.brass)), shape) else it }
+                .clickable { onSelect(value) }.padding(vertical = 7.dp)
+            Box(m, contentAlignment = Alignment.Center) { Text(label, fontWeight = FontWeight.Bold, color = if (on) Vintage.ink else Vintage.inkSoft) }
+        }
+    }
+}
+
+/** The soft shadow a bar throws upward onto the page above it. */
+internal fun Modifier.shadowAbove(): Modifier = drawBehind {
+    val h = 10.dp.toPx()
+    drawRect(Brush.verticalGradient(listOf(Color.Transparent, SHADOW.copy(alpha = 0.16f)), startY = -h, endY = 0f), Offset(0f, -h), Size(size.width, h))
+    drawRect(Vintage.edge.copy(alpha = 0.8f), Offset.Zero, Size(size.width, 1.dp.toPx()))
 }

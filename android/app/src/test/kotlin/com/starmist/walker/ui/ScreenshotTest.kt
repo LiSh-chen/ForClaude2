@@ -5,6 +5,7 @@ import com.starmist.core.time.minusDays
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -80,6 +81,51 @@ class ScreenshotTest : ShotsBase(DeviceConfig.PIXEL_5) {
                     item { androidx.compose.material3.Text("收藏・真實世界", style = androidx.compose.material3.MaterialTheme.typography.headlineSmall, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold) }
                     item { EntryButtons(2, 2, true, 4, 53, {}, {}) }
                     routeProgressItems(forward, com.starmist.core.route.RouteState(forward.id, 0L, 260.0), places, features, emptyList(), onToggle = {}, onOpen = {}, onRestart = {}, onSwitch = {})
+                }
+            }
+        }
+    }
+
+    /** The statistics page as the app shows it: the page on its desk, the period pill, the cards pasted on. */
+    @Test fun stats_layered() = paparazzi.snapshot {
+        val today = kotlinx.datetime.LocalDate(2026, 10, 28)
+        val history = (0L..100L).associate { back ->
+            val d = today.minusDays(back)
+            d to when { d.dayOfMonth == 20 -> 0L; d.dayOfWeek.value == 6 -> 11000L; d.dayOfWeek.value == 7 -> 9000L; else -> 4000L + (d.dayOfMonth * 137L) % 5000 }
+        }
+        val inputs = StatInputs(today, history, 8000, 0.7, 1100.0, 275.0, "某某卡" to 12.3, emptyList(), 109, 5, 9, 45)
+        Page(tab = 1) { pad ->
+            PaperPage(pad) {
+                androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
+                    PillTabs(listOf(0 to "週", 1 to "月", 2 to "年"), 1, {})
+                    androidx.compose.foundation.layout.Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
+                        SummaryCard("總計", "187,300 步", Modifier.weight(1f)); SummaryCard("日均", "6,938 步", Modifier.weight(1f))
+                    }
+                    buildStat(StatKind.HEATMAP, inputs, dayStatSeed(today))?.let { PaperCard(Modifier.fillMaxWidth()) { Box(Modifier.padding(14.dp)) { StatCardView(it) } } }
+                }
+            }
+        }
+    }
+
+    /** The settings page: each group is a ribbon with the paper pasted under it. */
+    @Test fun settings_layered() = paparazzi.snapshot {
+        Page(tab = 2) { pad ->
+            PaperPage(pad) {
+                androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)) {
+                    Section("個人資料與目標") {
+                        androidx.compose.material3.Text("身高（公分）　170")
+                        androidx.compose.material3.Text("體重（公斤）　62")
+                        androidx.compose.material3.Text("每日目標（步）　9000")
+                        PillTabs(listOf(0 to "男", 1 to "女", 2 to "不指定"), 1, {})
+                    }
+                    Section("關於") {
+                        androidx.compose.material3.OutlinedButton(onClick = {}, modifier = Modifier.fillMaxWidth()) { androidx.compose.material3.Text("隱私權政策") }
+                        androidx.compose.material3.OutlinedButton(onClick = {}, modifier = Modifier.fillMaxWidth()) { androidx.compose.material3.Text("授權與資料來源") }
+                    }
+                    Section("診斷") {
+                        androidx.compose.material3.Text("檢查感測器、權限與背景讀取狀態；懷疑漏記時先看這裡。")
+                        BrassPill("開啟診斷", {})
+                    }
                 }
             }
         }

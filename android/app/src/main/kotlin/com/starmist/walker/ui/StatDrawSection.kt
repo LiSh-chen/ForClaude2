@@ -115,7 +115,7 @@ fun StatDrawSection(vm: AppViewModel, settings: UserSettings, onRuler: (Ruler?) 
     var shaking by remember { mutableStateOf(false) }
     val canDraw = drawn.size < DRAWS_PER_DAY && pool.isNotEmpty() && !shaking
 
-    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Vintage.parchmentLight)) {
+    PaperCard(Modifier.fillMaxWidth(), Lift.Lifted, 14.dp) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("🎋", fontSize = if (drawn.isEmpty()) 56.sp else 36.sp, modifier = Modifier.rotate(shake.value))

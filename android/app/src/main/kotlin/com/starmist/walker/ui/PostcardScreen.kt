@@ -110,8 +110,8 @@ internal fun PostcardPicture(t: TownArea, art: String?, modifier: Modifier = Mod
 /** A postcard: the view of the place with the sender's stamp in the corner, the place's name, and what the sender wrote. */
 @Composable
 internal fun PostcardCard(t: TownArea, sender: Traveler, fact: PostcardFact?, modifier: Modifier = Modifier) {
-    val shape = RoundedCornerShape(4.dp)
-    Column(modifier.fillMaxWidth().background(Vintage.parchmentLight, shape).border(1.dp, Vintage.edge, shape).padding(10.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    PaperCard(modifier.fillMaxWidth(), Lift.Raised, 6.dp) {
+        Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Box {
             PostcardPicture(t, fact?.art, Modifier.fillMaxWidth().aspectRatio(1.5f))
             Box(
@@ -123,13 +123,15 @@ internal fun PostcardCard(t: TownArea, sender: Traveler, fact: PostcardFact?, mo
             Text("  " + t.county, fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft)
         }
         PostcardTowns.lines(sender, fact?.text ?: "").forEach { Text(it, fontFamily = QUILL, fontSize = 15.sp, lineHeight = 24.sp, color = SEPIA) }
+        }
     }
 }
 
 @Composable
 private fun ParchmentSheet(content: @Composable () -> Unit) {
-    val shape = RoundedCornerShape(10.dp)
-    Box(Modifier.fillMaxWidth().background(Vintage.parchment, shape).border(1.5.dp, Vintage.edge, shape).padding(16.dp)) { content() }
+    Box(Modifier.padding(14.dp)) {
+        PaperCard(Modifier.fillMaxWidth(), Lift.Lifted, 14.dp, tint = Vintage.parchment) { Box(Modifier.padding(16.dp)) { content() } }
+    }
 }
 
 /** One traveler in the list: 0 = not met yet, 1 = met, 2 = a friend. */
@@ -152,7 +154,8 @@ internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<
                     )
                 }
                 items(travelers, key = { "t_${it.traveler.id}" }) { r ->
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    PaperCard(Modifier.fillMaxWidth(), if (r.state == 0) Lift.Rest else Lift.Raised, 10.dp) {
+                    Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         TravelerAvatar(r.traveler.id, 52.dp, dim = r.state == 0)
                         Column(Modifier.weight(1f)) {
                             Text(if (r.state == 0) "？？？" else r.traveler.name, fontFamily = QUILL, fontSize = 17.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
@@ -161,21 +164,24 @@ internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<
                                 fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft,
                             )
                         }
-                        if (r.state == 2 && left > 0) TextButton(onClick = { onAsk(r.traveler) }) { Text(tr("請他寄一張"), fontFamily = QUILL, fontSize = 15.sp, fontWeight = FontWeight.Black, color = INK_RED) }
+                        if (r.state == 2 && left > 0) BrassPill(tr("請他寄一張"), { onAsk(r.traveler) })
+                    }
                     }
                 }
                 if (mine.isNotEmpty()) {
                     item { Text(trf("收到的明信片 {0} 張", mine.size), fontFamily = QUILL, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Vintage.ink) }
                     items(mine, key = { "mine_${it.town.county}|${it.town.name}" }) { r ->
-                        Row(Modifier.fillMaxWidth().clickable { onOpen(r.town) }.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        PaperCard(Modifier.fillMaxWidth(), Lift.Raised, 10.dp, onClick = { onOpen(r.town) }) {
+                        Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             PostcardPicture(r.town, r.fact?.art, Modifier.size(width = 60.dp, height = 40.dp))
                             Text("${r.town.county} ${r.town.name}", fontFamily = QUILL, fontSize = 16.sp, color = SEPIA, modifier = Modifier.weight(1f))
                             if (r.from != null) TravelerAvatar(r.from.id, 30.dp)
                         }
+                        }
                     }
                 }
             }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { TextButton(onClick = onClose) { Text(tr("關閉"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black) } }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { BrassPill(tr("關閉"), onClose) }
         }
     }
 }
@@ -187,7 +193,7 @@ internal fun PostcardOpenedSheet(t: TownArea, sender: Traveler, fact: PostcardFa
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(trf("{0}寄來一張明信片", sender.name), fontFamily = QUILL, fontSize = 22.sp, fontWeight = FontWeight.Black, color = INK_RED)
             PostcardCard(t, sender, fact)
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { TextButton(onClick = onClose) { Text(tr("收下"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black) } }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { BrassPill(tr("收下"), onClose) }
         }
     }
 }
@@ -203,7 +209,7 @@ internal fun TravelerMeetSheet(t: Traveler, stage: Int, onClose: () -> Unit) {
             Text(t.job, fontFamily = QUILL, fontSize = 14.sp, color = Vintage.inkSoft)
             Text("「" + (if (stage == 1) t.hello else t.friend) + "」", fontFamily = QUILL, fontSize = 16.sp, color = SEPIA)
             if (stage == 2) Text(tr("之後會收到他從路線外寄來的明信片。"), fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft)
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { TextButton(onClick = onClose) { Text(if (stage == 1) tr("你好") else tr("太好了"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black) } }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { BrassPill(if (stage == 1) tr("你好") else tr("太好了"), onClose) }
         }
     }
 }

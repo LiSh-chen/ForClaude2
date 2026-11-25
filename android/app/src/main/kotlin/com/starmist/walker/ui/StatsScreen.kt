@@ -5,7 +5,9 @@ import com.starmist.core.time.monthValue
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,19 +58,16 @@ fun StatsScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     val stride = com.starmist.core.metrics.BodyMetrics.strideMeters(settings.profile)
     val amount: (Long) -> String = { n -> ruler?.let { r -> "${niceCount(r.count(n * stride / 1000.0))} ${r.unit}" } ?: "${n.withCommas()} 步" }
 
+    PaperPage(padding) {
     Column(
         Modifier
-            .padding(padding)
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         StatDrawSection(vm, settings) { ruler = it }
-        TabRow(selectedTabIndex = periods.indexOfFirst { it.first == period }) {
-            periods.forEach { (p, label) ->
-                Tab(selected = p == period, onClick = { vm.selectPeriod(p) }, text = { Text(label) })
-            }
-        }
+        PillTabs(periods, period, { vm.selectPeriod(it) })
 
         val s = summary
         if (s == null) {
@@ -86,12 +85,16 @@ fun StatsScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
             TextButton(onClick = { vm.shiftPeriod(1) }, enabled = s.rangeEnd.isBefore(today)) { Text("下一期 ›") }
         }
 
-        BarChart(
-            buckets = s.buckets,
-            period = period,
-            goal = settings.dailyGoal,
-            amount = amount,
-        )
+        PaperCard(Modifier.fillMaxWidth()) {
+            Box(Modifier.padding(12.dp)) {
+                BarChart(
+                    buckets = s.buckets,
+                    period = period,
+                    goal = settings.dailyGoal,
+                    amount = amount,
+                )
+            }
+        }
         ruler?.let { Text(trf("單位：{0}", it.legend), style = MaterialTheme.typography.labelSmall, color = Vintage.inkSoft) }
 
         Row(
@@ -113,6 +116,7 @@ fun StatsScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
             SummaryCard("達標天數", "${s.goalDays} 天", Modifier.weight(1f))
         }
     }
+    }
 }
 
 private fun rangeLabel(period: Period, s: PeriodSummary): String = when (period) {
@@ -125,8 +129,8 @@ private fun rangeLabel(period: Period, s: PeriodSummary): String = when (period)
 }
 
 @Composable
-private fun SummaryCard(label: String, value: String, modifier: Modifier = Modifier) {
-    Card(modifier, colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+internal fun SummaryCard(label: String, value: String, modifier: Modifier = Modifier) {
+    PaperCard(modifier) {
         Column(Modifier.padding(12.dp)) {
             Text(label, style = MaterialTheme.typography.labelMedium)
             Text(value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)

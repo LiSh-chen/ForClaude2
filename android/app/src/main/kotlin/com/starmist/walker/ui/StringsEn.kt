@@ -371,4 +371,5 @@ internal val EN: Map<String, String> = mapOf(
     "本 App 使用 Kotlin、Jetpack Compose、Room、DataStore、Kotlin 協程與 kotlinx-datetime 等開源程式庫，皆採 Apache License 2.0。" to "This app uses open-source libraries such as Kotlin, Jetpack Compose, Room, DataStore, Kotlin coroutines and kotlinx-datetime, all under the Apache License 2.0.",
     "朋友 {0}・明信片 {1}" to "Friends {0} · postcards {1}", "{0} / {1} 完成" to "{0} / {1} done",
     "任務與里程碑" to "Quests and milestones",
+    "旅人信箱" to "Travelers", "任務清單" to "Quests",
 )

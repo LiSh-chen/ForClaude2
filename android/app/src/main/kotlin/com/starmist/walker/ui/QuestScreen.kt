@@ -28,8 +28,9 @@ import com.starmist.walker.data.Ledger
 
 @Composable
 private fun Sheet(content: @Composable () -> Unit) {
-    val shape = RoundedCornerShape(10.dp)
-    Box(Modifier.fillMaxWidth().background(Vintage.parchment, shape).border(1.5.dp, Vintage.edge, shape).padding(16.dp)) { content() }
+    Box(Modifier.padding(14.dp)) {
+        PaperCard(Modifier.fillMaxWidth(), Lift.Lifted, 14.dp, tint = Vintage.parchment) { Box(Modifier.padding(16.dp)) { content() } }
+    }
 }
 
 /** Every task with how far it is; finished ones are marked with a tick. */
@@ -41,9 +42,10 @@ internal fun QuestsSheet(quests: List<Quest>, ledger: Ledger, onClose: () -> Uni
             Text(trf("任務 {0} / {1}", rows.count { it.second.done }, rows.size), fontFamily = QUILL, fontSize = 26.sp, fontWeight = FontWeight.Black, color = INK_RED)
             LazyColumn(Modifier.heightIn(max = 480.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 rows.groupBy { it.first.group }.forEach { (group, list) ->
-                    item(key = "g_$group") { Text(tr(group), fontFamily = QUILL, fontSize = 17.sp, fontWeight = FontWeight.Black, color = Vintage.brassDark) }
+                    item(key = "g_$group") { RibbonHeader(tr(group)) }
                     items(list, key = { it.first.id }) { (q, p) ->
-                        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        PaperCard(Modifier.fillMaxWidth(), Lift.Raised, 10.dp) {
+                        Column(Modifier.fillMaxWidth().padding(10.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             Row(Modifier.fillMaxWidth()) {
                                 Text((if (p.done) "✓ " else "") + tr(q.title), fontFamily = QUILL, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = if (p.done) Vintage.moss else Vintage.ink, modifier = Modifier.weight(1f))
                                 Text("${p.have} / ${p.need}", fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft)
@@ -55,10 +57,11 @@ internal fun QuestsSheet(quests: List<Quest>, ledger: Ledger, onClose: () -> Uni
                             )
                             Text(trf("獎勵：明信片 ×{0}", q.postcards), fontFamily = QUILL, fontSize = 12.sp, color = Vintage.inkSoft)
                         }
+                        }
                     }
                 }
             }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { TextButton(onClick = onClose) { Text(tr("關閉"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black) } }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { BrassPill(tr("關閉"), onClose) }
         }
     }
 }
@@ -78,15 +81,13 @@ internal fun QuestCelebrationSheet(title: String, desc: String, reward: String?,
             Text(tr(title), fontFamily = QUILL, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Vintage.ink)
             Text(tr(desc), fontFamily = QUILL, fontSize = 14.sp, color = SEPIA)
             if (reward != null) {
-                Box(Modifier.border(1.5.dp, Vintage.brassDark, RoundedCornerShape(4.dp)).background(Vintage.parchmentLight, RoundedCornerShape(4.dp)).padding(horizontal = 14.dp, vertical = 6.dp)) {
-                    Text("✉ " + trf("獎勵：{0}", reward), fontFamily = QUILL, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Vintage.brassDark)
-                }
+                BrassLabel("✉ " + trf("獎勵：{0}", reward))
             } else {
                 Text(tr("獎勵即將開放，敬請期待！"), fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft)
             }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
-                TextButton(onClick = onDismiss) { Text(tr("太棒了"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black) }
-                if (onPostcards != null) TextButton(onClick = onPostcards) { Text(tr("請朋友寄信"), fontFamily = QUILL, fontSize = 18.sp, fontWeight = FontWeight.Black, color = INK_RED) }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.End), verticalAlignment = Alignment.CenterVertically) {
+                BrassPill(tr("太棒了"), onDismiss)
+                if (onPostcards != null) BrassPill(tr("請朋友寄信"), onPostcards)
             }
         }
     }
