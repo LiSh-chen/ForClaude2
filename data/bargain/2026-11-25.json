@@ -1,0 +1,178 @@
+{
+ "date": "2026-11-25",
+ "params_version": 2,
+ "picks": [
+  {
+   "ticker": "3661.TW",
+   "name": "ALCHIP TECHNOLOGIES LIMITD",
+   "zh_name": "世芯-KY",
+   "market": "TW",
+   "sector": "ai_chips",
+   "rank": 1,
+   "entry_price": 3605.0,
+   "entry_date": "2026-11-25",
+   "composite": 62.57,
+   "scores": {
+    "sector": 81.7,
+    "leader": 16.7,
+    "quality": 59.4,
+    "growth": 100.0,
+    "valuation": 82.8,
+    "momentum": 34.1,
+    "news": 40.0
+   },
+   "target": {
+    "base": 4683.89,
+    "bull": 6557.45,
+    "bear": 1873.56,
+    "ev": 4356.02,
+    "confidence": "中",
+    "upside": 0.2993,
+    "ev_upside": 0.2083,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 3468.82,
+      "weight": 0.5,
+      "upside": -0.0378
+     },
+     "peg": {
+      "value": 6573.09,
+      "weight": 0.187,
+      "upside": 0.8233
+     },
+     "consensus": {
+      "value": 5494.5,
+      "weight": 0.312,
+      "upside": 0.5241
+     }
+    }
+   },
+   "stop": 2956.1,
+   "fundamentals": {
+    "market_cap": 311291740160,
+    "pe_ttm": 40.1001,
+    "pe_fwd": 17.3226,
+    "peg": 1.08,
+    "roe": 0.1534,
+    "gross_margin": 0.269,
+    "op_margin": 0.1845,
+    "net_margin": 0.1831,
+    "rev_growth": 2.965,
+    "eps_growth": 1.318,
+    "de": 0.0047,
+    "beta": 1.37,
+    "target_mean": 5494.5,
+    "n_analysts": 16,
+    "fcf_margin": -0.4929
+   },
+   "tech": {
+    "ret_1m": 0.03147353361945626,
+    "ret_3m": -0.02726188219919312,
+    "rel_3m": 0.12816033024921292,
+    "dist200": -0.03673098510677786,
+    "vol_ann": 0.868783676575084
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 66.2,
+   "facts": {
+    "from_high": -0.3241,
+    "pos52": 0.3973,
+    "bounce20": 0.2739,
+    "ret_1m": 0.0315,
+    "dist200": -0.0367,
+    "pe_discount": -0.0817,
+    "eps_up": 1.3149,
+    "rev_growth": 2.965,
+    "upside": 0.2993
+   }
+  },
+  {
+   "ticker": "META",
+   "name": "Meta Platforms, Inc.",
+   "zh_name": "Meta Platforms",
+   "market": "US",
+   "sector": "internet_platforms",
+   "rank": 1,
+   "entry_price": 589.82,
+   "entry_date": "2026-11-24",
+   "composite": 67.42,
+   "scores": {
+    "sector": 53.8,
+    "leader": 25.0,
+    "quality": 84.3,
+    "growth": 94.4,
+    "valuation": 86.2,
+    "momentum": 37.5,
+    "news": 77.7
+   },
+   "target": {
+    "base": 793.79,
+    "bull": 1023.96,
+    "bear": 448.54,
+    "ev": 753.51,
+    "confidence": "高",
+    "upside": 0.3458,
+    "ev_upside": 0.2775,
+    "horizon_days": 250,
+    "methods": {
+     "pe": {
+      "value": 704.57,
+      "weight": 0.5,
+      "upside": 0.1946
+     },
+     "peg": {
+      "value": 950.45,
+      "weight": 0.187,
+      "upside": 0.6114
+     },
+     "consensus": {
+      "value": 842.54,
+      "weight": 0.312,
+      "upside": 0.4285
+     }
+    }
+   },
+   "stop": 527.62,
+   "fundamentals": {
+    "market_cap": 1507722133504,
+    "pe_ttm": 20.1235,
+    "pe_fwd": 16.5331,
+    "peg": 1.2,
+    "roe": 0.3226,
+    "gross_margin": 0.8103,
+    "op_margin": 0.3778,
+    "net_margin": 0.3115,
+    "rev_growth": 0.261,
+    "eps_growth": 2.648,
+    "de": 0.4216,
+    "beta": 1.279,
+    "target_mean": 842.5366,
+    "n_analysts": 58,
+    "fcf_margin": 0.0697
+   },
+   "tech": {
+    "ret_1m": -0.06460922099738697,
+    "ret_3m": 0.02455218036745843,
+    "rel_3m": 0.0863850216048404,
+    "dist200": -0.059528377287515366,
+    "vol_ann": 0.4891746763578718
+   },
+   "book": "bargain",
+   "also_main": false,
+   "bargain_score": 58.2,
+   "facts": {
+    "from_high": -0.2415,
+    "pos52": 0.2572,
+    "bounce20": 0.0517,
+    "ret_1m": -0.0646,
+    "dist200": -0.0595,
+    "pe_discount": 0.2,
+    "eps_up": 0.2172,
+    "rev_growth": 0.261,
+    "upside": 0.3458
+   }
+  }
+ ]
+}
