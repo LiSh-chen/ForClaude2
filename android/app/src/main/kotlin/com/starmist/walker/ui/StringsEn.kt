@@ -370,4 +370,5 @@ internal val EN: Map<String, String> = mapOf(
     "鄉鎮、景點與明信片中的事實，整理自維基百科（CC BY-SA 4.0）、政府機關與新聞媒體的公開資料，並各自查證。旅人說話的口吻與經歷是虛構的。" to "The facts about districts, sights and in the postcards are drawn from Wikipedia (CC BY-SA 4.0) and public material of government bodies and news media, each checked separately. The travelers' way of speaking and their experiences are fictional.",
     "本 App 使用 Kotlin、Jetpack Compose、Room、DataStore、Kotlin 協程與 kotlinx-datetime 等開源程式庫，皆採 Apache License 2.0。" to "This app uses open-source libraries such as Kotlin, Jetpack Compose, Room, DataStore, Kotlin coroutines and kotlinx-datetime, all under the Apache License 2.0.",
     "朋友 {0}・明信片 {1}" to "Friends {0} · postcards {1}", "{0} / {1} 完成" to "{0} / {1} done",
+    "任務與里程碑" to "Quests and milestones",
 )
