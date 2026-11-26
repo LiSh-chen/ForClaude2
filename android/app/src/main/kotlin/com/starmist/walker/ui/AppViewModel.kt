@@ -266,14 +266,17 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
     /** What [travelerId] wrote about the township [townKey] and its picture, when it has been researched. */
     fun postcardFact(townKey: String, travelerId: String): com.starmist.core.route.PostcardFact? = container.postcardFacts[townKey]?.get(travelerId)
 
-    /** Uses a quest postcard to ask the friend [travelerId] to write from somewhere new. */
-    fun requestPostcard(travelerId: String) {
+    /** Spends a stamp on a postcard from where you are to the friend [travelerId]; the answer, from somewhere off the route, comes after a short walk. */
+    fun sendPostcard(travelerId: String) {
         viewModelScope.launch {
             val l = container.collection.current()
-            if (l.postcardsLeft <= 0 || travelerId !in l.friends) return@launch
-            val town = townFor(travelerId, l.unlocked, l.unlocked.size + l.used)
-                ?: run { _message.value = I18n.tr("他還沒有新的地方可以寄，之後再請他吧。"); return@launch }
-            if (container.collection.receive(travelerId, town, null)) _pendingRouteEvents.update { it + RouteEvent.PostcardArrived(travelerId, town) }
+            if (l.postcardsLeft <= 0 || travelerId !in l.friends || travelerId in l.waiting) return@launch
+            val route = routeState.value?.let { com.starmist.core.route.Routes.byId(it.routeId) } ?: return@launch
+            val walked = routeState.value?.walkedKm ?: return@launch
+            val town = townFor(travelerId, l.unlocked + l.pending.map { it.split('>')[1] }, l.unlocked.size + l.used)
+                ?: run { _message.value = I18n.tr("他還沒有新的地方可以寄，之後再寄給他吧。"); return@launch }
+            val due = minOf(walked + com.starmist.core.route.Travelers.REPLY_KM, route.totalKm)
+            if (container.collection.send(travelerId, town, due)) _message.value = I18n.tr("明信片寄出了！再走一小段路，他就會回信。")
         }
     }
 
@@ -289,6 +292,7 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
         var l = container.collection.current()
         val quietBelow = if (l.met.isEmpty() && l.friends.isEmpty()) walkedKm - 60.0 else -1.0
         val out = ArrayList<RouteEvent>()
+        for ((t, k) in container.collection.deliver(walkedKm)) out += RouteEvent.PostcardArrived(t, k)
         for (e in com.starmist.core.route.Travelers.due(route, walkedKm, l.met, l.friends, l.mailed)) {
             val quiet = e.atKm < quietBelow
             when (e) {
@@ -319,7 +323,7 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
         val fresh = com.starmist.core.route.QuestEngine.newlyDone(quests, l.done, l.cards, l.towns)
         container.collection.markDone(fresh.map { it.id }, postcards = fresh.sumOf { it.postcards })
         if (!l.seeded) return emptyList()
-        return fresh.map { RouteEvent.QuestCompleted(it.id, it.title, it.desc, it.reward ?: I18n.trf("明信片 ×{0}", it.postcards)) }
+        return fresh.map { RouteEvent.QuestCompleted(it.id, it.title, it.desc, it.reward ?: I18n.trf("郵票 ×{0}", it.postcards)) }
     }
 
     private val _pendingRouteEvents = MutableStateFlow<List<RouteEvent>>(emptyList())

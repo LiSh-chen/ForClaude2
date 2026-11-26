@@ -26,7 +26,7 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
         }
     }
 
-    private val rows get() = Travelers.all.mapIndexed { i, t -> TravelerRow(t, if (i < 2) 2 else if (i == 2) 1 else 0) }
+    private val rows get() = Travelers.all.mapIndexed { i, t -> TravelerRow(t, if (i < 2) 2 else if (i == 2) 1 else 0, waiting = i == 1, points = if (i < 2) 3 - i else 0) }
 
     @Test fun travelers_page() = paparazzi.snapshot {
         val areas = rememberTownAreas()
@@ -60,7 +60,7 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
     }
 
     @Test fun quest_celebration() = paparazzi.snapshot {
-        Frame { QuestCelebrationSheet("北台灣經典", "集齊：台北101、基隆廟口、九份、福隆", "明信片 ×2", onPostcards = {}, onDismiss = {}) }
+        Frame { QuestCelebrationSheet("北台灣經典", "集齊：台北101、基隆廟口、九份、福隆", "郵票 ×2", onPostcards = {}, onDismiss = {}) }
     }
 
     private fun factShot(townName: String, travelerId: String) = paparazzi.snapshot {
@@ -87,6 +87,8 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
             }
         }
     }
+
+    @Test fun send_postcard() = paparazzi.snapshot { Frame { SendPostcardSheet(Travelers.byId("xipo")!!, {}, {}) } }
 
     @Test fun postcard_front() = faceShot(false, "平溪區", "atie")
     @Test fun postcard_back() = faceShot(true, "平溪區", "atie")

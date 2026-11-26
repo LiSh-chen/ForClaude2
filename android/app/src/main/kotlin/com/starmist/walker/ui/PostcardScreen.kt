@@ -115,21 +115,21 @@ private fun ParchmentSheet(content: @Composable () -> Unit) {
 }
 
 /** One traveler in the list: 0 = not met yet, 1 = met, 2 = a friend. */
-internal class TravelerRow(val traveler: Traveler, val state: Int)
+internal class TravelerRow(val traveler: Traveler, val state: Int, val waiting: Boolean = false, val points: Int = 0)
 
 /** A postcard received: the place, who wrote it, and what they wrote (with the picture). */
 internal class MailRow(val town: TownArea, val from: Traveler?, val fact: PostcardFact?)
 
 /** The postcard page: the travelers (with a button to ask a friend to write when a quest postcard is left) and the postcards received. */
 @Composable
-internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<MailRow>, onAsk: (Traveler) -> Unit, onOpen: (TownArea) -> Unit, onClose: () -> Unit) {
+internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<MailRow>, onSend: (Traveler) -> Unit, onOpen: (TownArea) -> Unit, onClose: () -> Unit) {
     ParchmentSheet {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(tr("旅人與明信片"), fontFamily = QUILL, fontSize = 28.sp, fontWeight = FontWeight.Black, color = INK_RED)
             LazyColumn(Modifier.heightIn(max = 520.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 item {
                     Text(
-                        if (left > 0) trf("任務換到 {0} 張請託：選一位朋友，請他寄一張明信片。", left) else tr("路上遇到的旅人，成為朋友後會寄明信片給你。"),
+                        if (left > 0) trf("你有 {0} 張郵票：選一位朋友，寄張明信片給他。", left) else tr("成為朋友後，可以用郵票寄明信片給他；完成任務就能得到郵票。"),
                         fontFamily = QUILL, fontSize = 15.sp, color = SEPIA,
                     )
                 }
@@ -144,7 +144,13 @@ internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<
                                 fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft,
                             )
                         }
-                        if (r.state == 2 && left > 0) BrassPill(tr("請他寄一張"), { onAsk(r.traveler) })
+                        if (r.state == 2) {
+                            Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                if (r.points > 0) Text(trf("友誼 ♥{0}", r.points), fontFamily = QUILL, fontSize = 12.sp, color = INK_RED)
+                                if (r.waiting) Text(tr("等他回信中…"), fontFamily = QUILL, fontSize = 12.sp, color = Vintage.inkSoft)
+                                else if (left > 0) BrassPill(tr("寄明信片給朋友"), { onSend(r.traveler) })
+                            }
+                        }
                     }
                     }
                 }
@@ -162,6 +168,27 @@ internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<
                 }
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { BrassPill(tr("關閉"), onClose) }
+        }
+    }
+}
+
+/** Choosing what to write on the postcard to a friend: three sentences, each the way you would write to that friend. */
+@Composable
+internal fun SendPostcardSheet(t: Traveler, onPick: (Int) -> Unit, onClose: () -> Unit) {
+    ParchmentSheet {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                TravelerAvatar(t.id, 52.dp)
+                Text(trf("寄明信片給{0}", t.name), fontFamily = QUILL, fontSize = 22.sp, fontWeight = FontWeight.Black, color = INK_RED)
+            }
+            Text(tr("明信片會寫上你現在走到的地方。選一句話寫在上面："), fontFamily = QUILL, fontSize = 14.sp, color = Vintage.inkSoft)
+            Travelers.cheers(t.id).forEachIndexed { i, line ->
+                PaperCard(Modifier.fillMaxWidth(), Lift.Raised, 10.dp, onClick = { onPick(i) }) {
+                    Text("「$line」", fontFamily = QUILL, fontSize = 15.sp, lineHeight = 22.sp, color = SEPIA, modifier = Modifier.padding(12.dp))
+                }
+            }
+            Text(trf("寄出要用一張郵票。走大約 {0} 公里後，他會回信。", Travelers.REPLY_KM.toInt()), fontFamily = QUILL, fontSize = 12.sp, color = Vintage.inkSoft)
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { BrassPill(tr("取消"), onClose) }
         }
     }
 }
@@ -197,7 +224,10 @@ internal fun TravelerMeetSheet(t: Traveler, stage: Int, onClose: () -> Unit) {
 @Composable
 fun PostcardsDialog(vm: AppViewModel, ledger: Ledger, onDismiss: () -> Unit) {
     var opened by remember { mutableStateOf<TownArea?>(null) }
-    val travelers = remember(ledger.met, ledger.friends) { Travelers.all.map { TravelerRow(it, if (it.id in ledger.friends) 2 else if (it.id in ledger.met) 1 else 0) } }
+    var sending by remember { mutableStateOf<Traveler?>(null) }
+    val travelers = remember(ledger.met, ledger.friends, ledger.pending, ledger.friendship) {
+        Travelers.all.map { TravelerRow(it, if (it.id in ledger.friends) 2 else if (it.id in ledger.met) 1 else 0, it.id in ledger.waiting, ledger.friendship[it.id] ?: 0) }
+    }
     val mine = remember(ledger.unlocked, ledger.senders) {
         ledger.unlocked.sorted().mapNotNull { k ->
             vm.townByKey(k)?.let { t -> val from = ledger.senders[k]; MailRow(t, from?.let(Travelers::byId), from?.let { vm.postcardFact(k, it) }) }
@@ -206,9 +236,11 @@ fun PostcardsDialog(vm: AppViewModel, ledger: Ledger, onDismiss: () -> Unit) {
     val show = opened
     val key = show?.let { "${it.county}|${it.name}" }
     val from = key?.let { ledger.senders[it] }?.let(Travelers::byId)
-    Dialog(onDismissRequest = { if (show != null) opened = null else onDismiss() }) {
-        if (show != null && key != null && from != null) PostcardOpenedSheet(show, from, vm.postcardFact(key, from.id)) { opened = null }
-        else PostcardsSheet(ledger.postcardsLeft, travelers, mine, onAsk = { vm.requestPostcard(it.id); onDismiss() }, onOpen = { opened = it }, onClose = onDismiss)
+    val to = sending
+    Dialog(onDismissRequest = { if (to != null) sending = null else if (show != null) opened = null else onDismiss() }) {
+        if (to != null) SendPostcardSheet(to, onPick = { vm.sendPostcard(to.id); onDismiss() }, onClose = { sending = null })
+        else if (show != null && key != null && from != null) PostcardOpenedSheet(show, from, vm.postcardFact(key, from.id)) { opened = null }
+        else PostcardsSheet(ledger.postcardsLeft, travelers, mine, onSend = { sending = it }, onOpen = { opened = it }, onClose = onDismiss)
     }
 }
 

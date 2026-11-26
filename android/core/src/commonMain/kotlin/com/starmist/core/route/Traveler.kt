@@ -82,6 +82,19 @@ object Travelers {
 
     fun byId(id: String): Traveler? = all.firstOrNull { it.id == id }
 
+    /** Kilometres to walk after sending a postcard to a friend before the friend's answer comes. */
+    const val REPLY_KM = 20.0
+
+    /** Three things to write on a postcard to this friend, each in the way you would write to them. */
+    fun cheers(id: String): List<String> = when (id) {
+        "xipo" -> listOf("船長，我又走了一段，腳還硬朗！", "今天風不大，適合慢慢走。", "沿路的海味我都記著，等你回信講講你那邊的。")
+        "ahbo" -> listOf("光很好，我邊走邊想起你的相機。", "這裡的雲有點意思，下次你來拍。", "我走到這裡了，你那邊的山好嗎？")
+        "xiaohe" -> listOf("路邊的田我都有看，有幾塊長得特別好！", "騎車慢一點，我用走的也不輸你。", "我走到這裡了，你那邊的稻子黃了嗎？")
+        "atie" -> listOf("剛剛有火車從旁邊開過去，我第一個想到你！", "我走到這裡了，這裡有沒有車站可以逛？", "等你回信，順便說說你最近追到哪一班車。")
+        "momo" -> listOf("我停下來看了很久，這裡的樣子你一定想畫。", "你的速寫本又多了幾頁吧？寄來給我看。", "我走到這裡了，這張明信片就當作我的速寫。")
+        else -> emptyList()
+    }
+
     /** Meetings on [route] with the kilometre each happens at, in order of walking. */
     fun meetingsOn(route: RouteDef): List<Triple<Traveler, Meeting, Double>> {
         val kmOf = route.cards.associate { it.first.id to it.second }

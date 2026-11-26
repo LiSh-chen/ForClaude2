@@ -29,7 +29,14 @@ data class Ledger(
     val senders: Map<String, String> = emptyMap(),
     /** How many quest postcards have been used. */
     val used: Int = 0,
+    /** Friendship points with each friend: one for each postcard sent to them. */
+    val friendship: Map<String, Int> = emptyMap(),
+    /** Postcards sent and not answered yet, as "traveler>township>kilometre at which the answer comes". */
+    val pending: Set<String> = emptySet(),
 ) {
+    /** The friends whose answer is still on its way. */
+    val waiting: Set<String> get() = pending.map { it.substringBefore('>') }.toSet()
+
     /** Quest postcards not yet used. */
     val postcardsLeft: Int get() = (earned - used).coerceAtLeast(0)
 }
@@ -47,6 +54,8 @@ class CollectionStore(private val store: DataStore<Preferences>) {
     private val mailedKey = stringPreferencesKey("mailed")
     private val sendersKey = stringPreferencesKey("senders")
     private val usedKey = intPreferencesKey("used")
+    private val friendshipKey = stringPreferencesKey("friendship")
+    private val pendingKey = stringPreferencesKey("pending")
 
     val flow: Flow<Ledger> = store.data.map { read(it) }
 
@@ -87,14 +96,39 @@ class CollectionStore(private val store: DataStore<Preferences>) {
         return ok
     }
 
+    /**
+     * Spends a stamp on a postcard to the friend [travelerId]; the answer, a postcard from [townKey], comes when the walk reaches [dueKm].
+     * False (nothing changed) when there is no stamp, no such friend, or an answer is already on its way.
+     */
+    suspend fun send(travelerId: String, townKey: String, dueKm: Double): Boolean {
+        var ok = false
+        change {
+            if (it.postcardsLeft <= 0 || travelerId !in it.friends || travelerId in it.waiting) it
+            else { ok = true; it.copy(used = it.used + 1, friendship = it.friendship + (travelerId to (it.friendship[travelerId] ?: 0) + 1), pending = it.pending + "$travelerId>$townKey>$dueKm") }
+        }
+        return ok
+    }
+
+    /** The answers whose time has come by [walkedKm]: they are put among the postcards received and returned as (traveler, township). */
+    suspend fun deliver(walkedKm: Double): List<Pair<String, String>> {
+        val out = ArrayList<Pair<String, String>>()
+        change { l ->
+            val due = l.pending.filter { (it.substringAfterLast('>').toDoubleOrNull() ?: 0.0) <= walkedKm + 1e-9 }
+            due.forEach { val (t, k) = it.split('>'); out += t to k }
+            l.copy(pending = l.pending - due.toSet(), unlocked = l.unlocked + out.map { it.second }, senders = l.senders + out.associate { it.second to it.first })
+        }
+        return out
+    }
+
     /** Forgets which scheduled postcards were sent on [routeId], so that a new lap on it can send them again. */
-    suspend fun newLapOn(routeId: String) { change { it.copy(mailed = it.mailed.filterNot { k -> k.split('|').getOrNull(1) == routeId }.toSet()) } }
+    suspend fun newLapOn(routeId: String) { change { it.copy(pending = emptySet(), mailed = it.mailed.filterNot { k -> k.split('|').getOrNull(1) == routeId }.toSet()) } }
 
     /** One line per part, for the backup. */
     suspend fun exportRaw(): String = current().let {
         listOf(
             it.cards.joinToString(","), it.towns.joinToString(";"), it.done.joinToString(","), it.seeded.toString(), it.unlocked.joinToString(";"), it.earned.toString(),
             it.met.joinToString(","), it.friends.joinToString(","), it.mailed.joinToString(";"), it.senders.entries.joinToString(";") { e -> "${e.key}>${e.value}" }, it.used.toString(),
+            it.friendship.entries.joinToString(",") { e -> "${e.key}=${e.value}" }, it.pending.joinToString(";"),
         ).joinToString("\n")
     }
 
@@ -105,7 +139,7 @@ class CollectionStore(private val store: DataStore<Preferences>) {
                 it,
                 Ledger(
                     split(l.getOrNull(0), ','), split(l.getOrNull(1), ';'), split(l.getOrNull(2), ','), l.getOrNull(3) == "true", split(l.getOrNull(4), ';'), l.getOrNull(5)?.toIntOrNull() ?: 0,
-                    split(l.getOrNull(6), ','), split(l.getOrNull(7), ','), split(l.getOrNull(8), ';'), senders(l.getOrNull(9)), l.getOrNull(10)?.toIntOrNull() ?: 0,
+                    split(l.getOrNull(6), ','), split(l.getOrNull(7), ','), split(l.getOrNull(8), ';'), senders(l.getOrNull(9)), l.getOrNull(10)?.toIntOrNull() ?: 0, friendship(l.getOrNull(11)), split(l.getOrNull(12), ';'),
                 ),
             )
         }
@@ -114,9 +148,11 @@ class CollectionStore(private val store: DataStore<Preferences>) {
     private fun split(s: String?, sep: Char) = s?.split(sep)?.filter { it.isNotBlank() }?.toSet() ?: emptySet()
     private fun senders(s: String?): Map<String, String> = split(s, ';').mapNotNull { e -> e.split('>').takeIf { it.size == 2 }?.let { it[0] to it[1] } }.toMap()
 
+    private fun friendship(s: String?): Map<String, Int> = split(s, ',').mapNotNull { e -> e.split('=').takeIf { it.size == 2 }?.let { it[0] to (it[1].toIntOrNull() ?: 0) } }.toMap()
+
     private fun read(p: Preferences) = Ledger(
         split(p[cardsKey], ','), split(p[townsKey], ';'), split(p[doneKey], ','), p[seededKey] ?: false, split(p[unlockedKey], ';'), p[earnedKey] ?: 0,
-        split(p[metKey], ','), split(p[friendsKey], ','), split(p[mailedKey], ';'), senders(p[sendersKey]), p[usedKey] ?: 0,
+        split(p[metKey], ','), split(p[friendsKey], ','), split(p[mailedKey], ';'), senders(p[sendersKey]), p[usedKey] ?: 0, friendship(p[friendshipKey]), split(p[pendingKey], ';'),
     )
 
     private fun write(p: MutablePreferences, c: Ledger) {
@@ -124,5 +160,6 @@ class CollectionStore(private val store: DataStore<Preferences>) {
         p[unlockedKey] = c.unlocked.joinToString(";"); p[earnedKey] = c.earned
         p[metKey] = c.met.joinToString(","); p[friendsKey] = c.friends.joinToString(","); p[mailedKey] = c.mailed.joinToString(";")
         p[sendersKey] = c.senders.entries.joinToString(";") { "${it.key}>${it.value}" }; p[usedKey] = c.used
+        p[friendshipKey] = c.friendship.entries.joinToString(",") { "${it.key}=${it.value}" }; p[pendingKey] = c.pending.joinToString(";")
     }
 }

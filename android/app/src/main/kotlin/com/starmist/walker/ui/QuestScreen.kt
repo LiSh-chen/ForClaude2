@@ -55,7 +55,7 @@ internal fun QuestsSheet(quests: List<Quest>, ledger: Ledger, onClose: () -> Uni
                                 progress = { if (p.need == 0) 0f else p.have.toFloat() / p.need }, modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
                                 color = if (p.done) Vintage.moss else Vintage.brass, trackColor = Vintage.parchmentDark,
                             )
-                            Text(trf("獎勵：明信片 ×{0}", q.postcards), fontFamily = QUILL, fontSize = 12.sp, color = Vintage.inkSoft)
+                            Text(trf("獎勵：郵票 ×{0}", q.postcards), fontFamily = QUILL, fontSize = 12.sp, color = Vintage.inkSoft)
                         }
                         }
                     }
