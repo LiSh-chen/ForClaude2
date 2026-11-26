@@ -148,7 +148,7 @@ internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<
                             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 if (r.points > 0) Text(trf("友誼 ♥{0}", r.points), fontFamily = QUILL, fontSize = 12.sp, color = INK_RED)
                                 if (r.waiting) Text(tr("等他回信中…"), fontFamily = QUILL, fontSize = 12.sp, color = Vintage.inkSoft)
-                                else if (left > 0) BrassPill(tr("寄明信片給朋友"), { onSend(r.traveler) })
+                                else if (left > 0) BrassPill(tr("寄明信片"), { onSend(r.traveler) })
                             }
                         }
                     }

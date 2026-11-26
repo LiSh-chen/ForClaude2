@@ -364,7 +364,7 @@ internal val EN: Map<String, String> = mapOf(
     "獎勵：郵票 ×{0}" to "Reward: stamp ×{0}", "任務完成！" to "Quest complete!", "去寄明信片" to "Send a postcard",
     "旅人與明信片" to "Travelers and postcards", "你有 {0} 張郵票：選一位朋友，寄張明信片給他。" to "You have {0} stamp(s): pick a friend and send them a postcard.",
     "路上遇到的旅人，成為朋友後會寄明信片給你。" to "Travelers you meet on the road send you postcards once they are friends.",
-    "還沒遇到" to "Not met yet", "認識・{0}" to "Acquaintance · {0}", "朋友・{0}" to "Friend · {0}", "寄明信片給朋友" to "Send a postcard to a friend",
+    "還沒遇到" to "Not met yet", "認識・{0}" to "Acquaintance · {0}", "朋友・{0}" to "Friend · {0}", "寄明信片" to "Send a postcard",
     "收到的明信片 {0} 張" to "{0} postcard(s) received", "{0}寄來一張明信片" to "A postcard from {0}", "這個地方不在你的環島路線上。" to "This place is off your route.",
     "路上遇到一位旅人" to "You meet a fellow traveler", "成為朋友" to "Friends now", "之後會收到他從路線外寄來的明信片。" to "You will get postcards from places off your route.",
     "你好" to "Hello", "太好了" to "Wonderful", "請朋友寄信" to "Ask a friend to write", "旅人與明信片（朋友 {0}・明信片 {1}）" to "Travelers and postcards (friends {0} · postcards {1})",
