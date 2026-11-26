@@ -13,30 +13,30 @@
    "rank": 1,
    "entry_price": 100.5,
    "entry_date": "2026-11-25",
-   "composite": 68.41,
+   "composite": 68.27,
    "scores": {
     "sector": 73.7,
     "leader": 75.0,
     "quality": 77.3,
     "growth": 100.0,
-    "valuation": 41.6,
+    "valuation": 42.2,
     "momentum": 46.4,
-    "news": 62.8
+    "news": 60.0
    },
    "target": {
-    "base": 125.33,
-    "bull": 160.16,
-    "bear": 73.07,
-    "ev": 119.23,
+    "base": 125.81,
+    "bull": 160.24,
+    "bear": 74.16,
+    "ev": 119.78,
     "confidence": "高",
-    "upside": 0.247,
-    "ev_upside": 0.1864,
+    "upside": 0.2518,
+    "ev_upside": 0.1919,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 108.6,
+      "value": 109.62,
       "weight": 0.471,
-      "upside": 0.0806
+      "upside": 0.0907
      },
      "dcf": {
       "value": 144.44,
@@ -52,9 +52,9 @@
    },
    "stop": 84.14,
    "fundamentals": {
-    "market_cap": 282017693696,
-    "pe_ttm": 5.5341,
-    "pe_fwd": 7.8699,
+    "market_cap": 276966637568,
+    "pe_ttm": 5.435,
+    "pe_fwd": 7.7289,
     "peg": 5.22,
     "roe": 0.1796,
     "gross_margin": 0.3366,
@@ -71,7 +71,7 @@
    "tech": {
     "ret_1m": -0.13733905579399142,
     "ret_3m": -0.19277108433734935,
-    "rel_3m": -0.037348871888943314,
+    "rel_3m": -0.037348864978939744,
     "dist200": 0.12017885661464223,
     "vol_ann": 0.48028965150568087
    }
@@ -83,55 +83,55 @@
    "market": "US",
    "sector": "healthcare",
    "rank": 1,
-   "entry_price": 300.28,
-   "entry_date": "2026-11-24",
-   "composite": 73.28,
+   "entry_price": 294.48,
+   "entry_date": "2026-11-25",
+   "composite": 72.06,
    "scores": {
-    "sector": 81.6,
+    "sector": 72.8,
     "leader": 80.0,
     "quality": 76.5,
     "growth": 71.9,
-    "valuation": 55.5,
-    "momentum": 92.9,
+    "valuation": 58.5,
+    "momentum": 93.5,
     "news": 40.0
    },
    "target": {
-    "base": 409.13,
-    "bull": 540.73,
-    "bear": 211.72,
-    "ev": 386.1,
+    "base": 408.67,
+    "bull": 543.42,
+    "bear": 206.55,
+    "ev": 385.09,
     "confidence": "中",
-    "upside": 0.3625,
-    "ev_upside": 0.2858,
+    "upside": 0.3878,
+    "ev_upside": 0.3077,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 374.51,
+      "value": 369.16,
       "weight": 0.4,
-      "upside": 0.2472
+      "upside": 0.2536
      },
      "peg": {
-      "value": 497.39,
+      "value": 499.75,
       "weight": 0.15,
-      "upside": 0.6564
+      "upside": 0.6971
      },
      "dcf": {
-      "value": 528.72,
+      "value": 535.35,
       "weight": 0.2,
-      "upside": 0.7608
+      "upside": 0.818
      },
      "consensus": {
       "value": 315.88,
       "weight": 0.25,
-      "upside": 0.052
+      "upside": 0.0727
      }
     }
    },
-   "stop": 282.26,
+   "stop": 276.81,
    "fundamentals": {
-    "market_cap": 530779799552,
-    "pe_ttm": 51.5945,
-    "pe_fwd": 18.5155,
+    "market_cap": 520527642624,
+    "pe_ttm": 50.5979,
+    "pe_fwd": 18.1579,
     "peg": 6.98,
     "roe": null,
     "gross_margin": 0.7372,
@@ -146,11 +146,11 @@
     "fcf_margin": 0.268
    },
    "tech": {
-    "ret_1m": 0.04722050989070126,
-    "ret_3m": 0.14919656711749663,
-    "rel_3m": 0.2110294083548786,
-    "dist200": 0.24742533332497185,
-    "vol_ann": 0.21474240235666797
+    "ret_1m": 0.02824817879150432,
+    "ret_3m": 0.14773647994465855,
+    "rel_3m": 0.2186472472072004,
+    "dist200": 0.22138346932270125,
+    "vol_ann": 0.21818326646024302
    }
   },
   {
@@ -160,45 +160,45 @@
    "market": "US",
    "sector": "healthcare",
    "rank": 2,
-   "entry_price": 40.31,
-   "entry_date": "2026-11-24",
-   "composite": 62.32,
+   "entry_price": 40.97,
+   "entry_date": "2026-11-25",
+   "composite": 60.58,
    "scores": {
-    "sector": 81.6,
+    "sector": 72.8,
     "leader": 60.0,
     "quality": 70.3,
     "growth": 15.1,
-    "valuation": 92.3,
-    "momentum": 32.2,
+    "valuation": 89.7,
+    "momentum": 35.6,
     "news": 40.0
    },
    "target": {
-    "base": 53.85,
-    "bull": 66.55,
-    "bear": 34.82,
-    "ev": 51.63,
+    "base": 53.83,
+    "bull": 66.45,
+    "bear": 34.89,
+    "ev": 51.62,
     "confidence": "中",
-    "upside": 0.336,
-    "ev_upside": 0.2809,
+    "upside": 0.3138,
+    "ev_upside": 0.2599,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 59.03,
+      "value": 58.94,
       "weight": 0.615,
-      "upside": 0.4644
+      "upside": 0.4385
      },
      "consensus": {
-      "value": 45.57,
+      "value": 45.65,
       "weight": 0.385,
-      "upside": 0.1305
+      "upside": 0.1142
      }
     }
    },
-   "stop": 37.12,
+   "stop": 37.93,
    "fundamentals": {
-    "market_cap": 177615732736,
-    "pe_ttm": 10.1793,
-    "pe_fwd": 11.4764,
+    "market_cap": 180523859968,
+    "pe_ttm": 10.346,
+    "pe_fwd": 11.6643,
     "peg": 0.46,
     "roe": 0.5838,
     "gross_margin": 0.8333,
@@ -208,16 +208,16 @@
     "eps_growth": -0.158,
     "de": 0.6174,
     "beta": 0.368,
-    "target_mean": 45.572,
+    "target_mean": 45.6492,
     "n_analysts": 12,
     "fcf_margin": 0.0982
    },
    "tech": {
-    "ret_1m": 0.0301558975968772,
-    "ret_3m": -0.14579354637921038,
-    "rel_3m": -0.0839607051418284,
-    "dist200": -0.044846100025937474,
-    "vol_ann": 0.34799826687999486
+    "ret_1m": 0.05947771297297022,
+    "ret_3m": -0.11435359474208362,
+    "rel_3m": -0.04344282747954176,
+    "dist200": -0.028538053718696776,
+    "vol_ann": 0.34990377530553146
    }
   }
  ],
@@ -232,8 +232,8 @@
   "TW": [
    "ai_chips",
    "shipping",
-   "energy_materials",
    "financials",
+   "energy_materials",
    "consumer"
   ]
  }

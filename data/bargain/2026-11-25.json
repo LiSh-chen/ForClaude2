@@ -11,35 +11,35 @@
    "rank": 1,
    "entry_price": 3605.0,
    "entry_date": "2026-11-25",
-   "composite": 62.57,
+   "composite": 62.29,
    "scores": {
     "sector": 81.7,
     "leader": 16.7,
     "quality": 59.4,
     "growth": 100.0,
-    "valuation": 82.8,
+    "valuation": 80.9,
     "momentum": 34.1,
     "news": 40.0
    },
    "target": {
-    "base": 4683.89,
-    "bull": 6557.45,
-    "bear": 1873.56,
-    "ev": 4356.02,
+    "base": 4626.97,
+    "bull": 6477.75,
+    "bear": 1850.79,
+    "ev": 4303.08,
     "confidence": "中",
-    "upside": 0.2993,
-    "ev_upside": 0.2083,
+    "upside": 0.2835,
+    "ev_upside": 0.1936,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 3468.82,
+      "value": 3451.13,
       "weight": 0.5,
-      "upside": -0.0378
+      "upside": -0.0427
      },
      "peg": {
-      "value": 6573.09,
+      "value": 6316.65,
       "weight": 0.187,
-      "upside": 0.8233
+      "upside": 0.7522
      },
      "consensus": {
       "value": 5494.5,
@@ -50,9 +50,9 @@
    },
    "stop": 2956.1,
    "fundamentals": {
-    "market_cap": 311291740160,
-    "pe_ttm": 40.1001,
-    "pe_fwd": 17.3226,
+    "market_cap": 324675993600,
+    "pe_ttm": 45.4216,
+    "pe_fwd": 18.0674,
     "peg": 1.08,
     "roe": 0.1534,
     "gross_margin": 0.269,
@@ -69,23 +69,23 @@
    "tech": {
     "ret_1m": 0.03147353361945626,
     "ret_3m": -0.02726188219919312,
-    "rel_3m": 0.12816033024921292,
+    "rel_3m": 0.1281603371592165,
     "dist200": -0.03673098510677786,
     "vol_ann": 0.868783676575084
    },
    "book": "bargain",
    "also_main": false,
-   "bargain_score": 66.2,
+   "bargain_score": 65.6,
    "facts": {
     "from_high": -0.3241,
     "pos52": 0.3973,
     "bounce20": 0.2739,
     "ret_1m": 0.0315,
     "dist200": -0.0367,
-    "pe_discount": -0.0817,
-    "eps_up": 1.3149,
+    "pe_discount": -0.0933,
+    "eps_up": 1.514,
     "rev_growth": 2.965,
-    "upside": 0.2993
+    "upside": 0.2835
    }
   },
   {
@@ -95,51 +95,51 @@
    "market": "US",
    "sector": "internet_platforms",
    "rank": 1,
-   "entry_price": 589.82,
-   "entry_date": "2026-11-24",
-   "composite": 67.42,
+   "entry_price": 609.89,
+   "entry_date": "2026-11-25",
+   "composite": 66.97,
    "scores": {
-    "sector": 53.8,
+    "sector": 54.1,
     "leader": 25.0,
     "quality": 84.3,
     "growth": 94.4,
-    "valuation": 86.2,
-    "momentum": 37.5,
-    "news": 77.7
+    "valuation": 79.6,
+    "momentum": 43.8,
+    "news": 74.4
    },
    "target": {
-    "base": 793.79,
-    "bull": 1023.96,
-    "bear": 448.54,
-    "ev": 753.51,
+    "base": 794.57,
+    "bull": 1027.82,
+    "bear": 444.68,
+    "ev": 753.75,
     "confidence": "高",
-    "upside": 0.3458,
-    "ev_upside": 0.2775,
+    "upside": 0.3028,
+    "ev_upside": 0.2359,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 704.57,
+      "value": 704.44,
       "weight": 0.5,
-      "upside": 0.1946
+      "upside": 0.155
      },
      "peg": {
-      "value": 950.45,
+      "value": 954.96,
       "weight": 0.187,
-      "upside": 0.6114
+      "upside": 0.5658
      },
      "consensus": {
       "value": 842.54,
       "weight": 0.312,
-      "upside": 0.4285
+      "upside": 0.3815
      }
     }
    },
-   "stop": 527.62,
+   "stop": 549.1,
    "fundamentals": {
-    "market_cap": 1507722133504,
-    "pe_ttm": 20.1235,
-    "pe_fwd": 16.5331,
-    "peg": 1.2,
+    "market_cap": 1559025942528,
+    "pe_ttm": 20.8083,
+    "pe_fwd": 17.0956,
+    "peg": 1.28,
     "roe": 0.3226,
     "gross_margin": 0.8103,
     "op_margin": 0.3778,
@@ -153,25 +153,25 @@
     "fcf_margin": 0.0697
    },
    "tech": {
-    "ret_1m": -0.06460922099738697,
-    "ret_3m": 0.02455218036745843,
-    "rel_3m": 0.0863850216048404,
-    "dist200": -0.059528377287515366,
-    "vol_ann": 0.4891746763578718
+    "ret_1m": -0.016607793986395114,
+    "ret_3m": 0.06876447065802171,
+    "rel_3m": 0.13967523792056358,
+    "dist200": -0.027068145243212216,
+    "vol_ann": 0.4934619653104473
    },
    "book": "bargain",
    "also_main": false,
-   "bargain_score": 58.2,
+   "bargain_score": 58.1,
    "facts": {
-    "from_high": -0.2415,
-    "pos52": 0.2572,
-    "bounce20": 0.0517,
-    "ret_1m": -0.0646,
-    "dist200": -0.0595,
-    "pe_discount": 0.2,
+    "from_high": -0.2157,
+    "pos52": 0.3366,
+    "bounce20": 0.0875,
+    "ret_1m": -0.0166,
+    "dist200": -0.0271,
+    "pe_discount": 0.15,
     "eps_up": 0.2172,
     "rev_growth": 0.261,
-    "upside": 0.3458
+    "upside": 0.3028
    }
   }
  ]
