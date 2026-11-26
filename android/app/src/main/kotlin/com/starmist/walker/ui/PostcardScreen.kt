@@ -107,26 +107,6 @@ internal fun PostcardPicture(t: TownArea, art: String?, modifier: Modifier = Mod
     }
 }
 
-/** A postcard: the view of the place with the sender's stamp in the corner, the place's name, and what the sender wrote. */
-@Composable
-internal fun PostcardCard(t: TownArea, sender: Traveler, fact: PostcardFact?, modifier: Modifier = Modifier) {
-    PaperCard(modifier.fillMaxWidth(), Lift.Raised, 6.dp) {
-        Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Box {
-            PostcardPicture(t, fact?.art, Modifier.fillMaxWidth().aspectRatio(1.5f))
-            Box(
-                Modifier.align(Alignment.TopEnd).padding(8.dp).background(Vintage.parchmentLight, RoundedCornerShape(2.dp)).border(1.dp, Vintage.brassDark, RoundedCornerShape(2.dp)).padding(3.dp),
-            ) { TravelerAvatar(sender.id, 40.dp) }
-        }
-        Row(verticalAlignment = Alignment.Bottom) {
-            Text(t.name, fontFamily = QUILL, fontSize = 22.sp, fontWeight = FontWeight.Black, color = INK_RED)
-            Text("  " + t.county, fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft)
-        }
-        PostcardTowns.lines(sender, fact?.text ?: "").forEach { Text(it, fontFamily = QUILL, fontSize = 15.sp, lineHeight = 24.sp, color = SEPIA) }
-        }
-    }
-}
-
 @Composable
 private fun ParchmentSheet(content: @Composable () -> Unit) {
     Box(Modifier.padding(14.dp)) {

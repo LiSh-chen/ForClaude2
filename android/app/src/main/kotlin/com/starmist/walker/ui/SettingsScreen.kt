@@ -55,7 +55,7 @@ fun SettingsScreen(
     var showCredits by remember { mutableStateOf(false) }
     var pendingImport by remember { mutableStateOf<android.net.Uri?>(null) }
 
-    PaperPage(padding) {
+    PaperPage(padding, TabLook.Settings) {
     Column(
         Modifier
             .fillMaxSize()

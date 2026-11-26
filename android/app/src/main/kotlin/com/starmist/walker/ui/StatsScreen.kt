@@ -58,7 +58,7 @@ fun StatsScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     val stride = com.starmist.core.metrics.BodyMetrics.strideMeters(settings.profile)
     val amount: (Long) -> String = { n -> ruler?.let { r -> "${niceCount(r.count(n * stride / 1000.0))} ${r.unit}" } ?: "${n.withCommas()} 步" }
 
-    PaperPage(padding) {
+    PaperPage(padding, TabLook.Stats) {
     Column(
         Modifier
             .fillMaxSize()

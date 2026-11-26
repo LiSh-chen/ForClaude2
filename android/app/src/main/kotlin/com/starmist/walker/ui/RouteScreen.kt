@@ -72,7 +72,7 @@ fun RouteScreen(vm: AppViewModel, settings: UserSettings, padding: PaddingValues
     val sightStamps = remember(route, areasForStamps) { route?.let { PoiStamps.of(it, areasForStamps) } ?: emptyList() }
 
     // Lazy: only the cards on screen are built, instead of all forty-five (and their pictures) when the tab opens.
-    PaperPage(padding) {
+    PaperPage(padding, TabLook.Collection) {
     LazyColumn(
         Modifier.fillMaxSize(),
         contentPadding = PaddingValues(14.dp),

@@ -164,7 +164,7 @@ internal fun StatCardView(card: StatCard) {
         Text(card.line, style = MaterialTheme.typography.bodyMedium)
         card.visual?.let { v ->
             when (v) {
-                is StatVisual.Heat -> HeatMapView(v)
+                is StatVisual.Heat -> Column { DeskCalendar(v); Text("紅章：達成每日目標；紅圈是今天。", fontSize = 11.sp, color = Vintage.inkSoft) }
                 is StatVisual.Bars -> BarsView(v)
             }
         }
@@ -188,36 +188,5 @@ private fun BarsView(v: StatVisual.Bars) {
                 Text(if (value >= 100) "${value.roundToLong().withCommas()} ${v.unit}" else "${"%.1f".format(value)} ${v.unit}", fontSize = 12.sp, maxLines = 1, textAlign = TextAlign.End, modifier = Modifier.width(88.dp))
             }
         }
-    }
-}
-
-/** A month as a calendar of squares, Monday first; the deeper the colour the more steps, a ring marks a day that reached the goal's colour, and the outline is today. */
-@Composable
-private fun HeatMapView(v: StatVisual.Heat) {
-    val offset = v.month.atDay(1).dayOfWeek.value - 1
-    val rows = (offset + v.steps.size + 6) / 7
-    val top = (v.steps.take(v.todayIndex + 1).maxOrNull() ?: 0L).coerceAtLeast(1L).coerceAtLeast(if (v.goal > 0) v.goal.toLong() else 1L)
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Row(Modifier.fillMaxWidth()) {
-            listOf("一", "二", "三", "四", "五", "六", "日").forEach { Text(it, Modifier.weight(1f), fontSize = 11.sp, textAlign = TextAlign.Center, color = Vintage.inkSoft) }
-        }
-        Canvas(Modifier.fillMaxWidth().aspectRatio(7f / rows)) {
-            val cell = size.width / 7f
-            val pad = cell * 0.08f
-            v.steps.forEachIndexed { d, n ->
-                val x = ((offset + d) % 7) * cell
-                val y = ((offset + d) / 7) * cell
-                val future = d > v.todayIndex
-                val color = when {
-                    future -> Vintage.edge.copy(alpha = 0.08f)
-                    n <= 0 -> Vintage.edge.copy(alpha = 0.18f)
-                    else -> Vintage.brass.copy(alpha = (0.25f + 0.75f * (n.toFloat() / top)).coerceIn(0.25f, 1f))
-                }
-                drawRoundRect(color, Offset(x + pad, y + pad), Size(cell - 2 * pad, cell - 2 * pad), CornerRadius(cell * 0.18f))
-                if (v.goal > 0 && !future && n >= v.goal) drawCircle(Color.White.copy(alpha = 0.9f), cell * 0.1f, Offset(x + cell / 2, y + cell / 2))
-                if (d == v.todayIndex) drawRoundRect(Vintage.ink, Offset(x + pad, y + pad), Size(cell - 2 * pad, cell - 2 * pad), CornerRadius(cell * 0.18f), style = Stroke(2.dp.toPx()))
-            }
-        }
-        Text("白點：達成每日目標。", fontSize = 11.sp, color = Vintage.inkSoft)
     }
 }

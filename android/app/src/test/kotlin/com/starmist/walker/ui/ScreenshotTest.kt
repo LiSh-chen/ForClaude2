@@ -76,7 +76,7 @@ class ScreenshotTest : ShotsBase(DeviceConfig.PIXEL_5) {
         Page(tab = 3) { pad ->
             val places = rememberTownAreas().cardPlaces
             val features = rememberLandmarkFacts()
-            PaperPage(pad) {
+            PaperPage(pad, TabLook.Collection) {
                 androidx.compose.foundation.lazy.LazyColumn(Modifier.fillMaxSize(), contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
                     item { androidx.compose.material3.Text("收藏・真實世界", style = androidx.compose.material3.MaterialTheme.typography.headlineSmall, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold) }
                     item { EntryButtons(2, 2, true, 4, 53, {}, {}) }
@@ -95,7 +95,7 @@ class ScreenshotTest : ShotsBase(DeviceConfig.PIXEL_5) {
         }
         val inputs = StatInputs(today, history, 8000, 0.7, 1100.0, 275.0, "某某卡" to 12.3, emptyList(), 109, 5, 9, 45)
         Page(tab = 1) { pad ->
-            PaperPage(pad) {
+            PaperPage(pad, TabLook.Stats) {
                 androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
                     PillTabs(listOf(0 to "週", 1 to "月", 2 to "年"), 1, {})
                     androidx.compose.foundation.layout.Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
@@ -110,7 +110,7 @@ class ScreenshotTest : ShotsBase(DeviceConfig.PIXEL_5) {
     /** The settings page: each group is a ribbon with the paper pasted under it. */
     @Test fun settings_layered() = paparazzi.snapshot {
         Page(tab = 2) { pad ->
-            PaperPage(pad) {
+            PaperPage(pad, TabLook.Settings) {
                 androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)) {
                     Section("個人資料與目標") {
                         androidx.compose.material3.Text("身高（公分）　170")
@@ -212,5 +212,11 @@ class ScreenshotTest : ShotsBase(DeviceConfig.PIXEL_5) {
                 }
             }
         }
+    }
+
+    /** The calendar of the statistics page as a desk calendar. */
+    @Test fun calendar_desk() = paparazzi.snapshot {
+        val steps = (1..31).map { d -> if (d > 28) 0L else if (d % 7 == 6) 11500L else if (d % 7 == 0) 9800L else if (d == 20) 0L else 3500L + (d * 613L) % 5200 }
+        Page(tab = 1) { pad -> PaperPage(pad, TabLook.Stats) { androidx.compose.foundation.layout.Box(Modifier.padding(14.dp)) { DeskCalendar(StatVisual.Heat(com.starmist.core.time.YearMonth(2026, 10), steps, 8000, 27)) } } }
     }
 }

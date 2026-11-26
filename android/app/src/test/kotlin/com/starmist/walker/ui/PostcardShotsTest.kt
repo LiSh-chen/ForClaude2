@@ -1,6 +1,7 @@
 package com.starmist.walker.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -73,4 +74,20 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
     @Test fun voice_xipo() = factShot("萬里區", "xipo")
     @Test fun voice_atie() = factShot("平溪區", "atie")
     @Test fun voice_momo() = factShot("三峽區", "momo")
+
+    private fun faceShot(back: Boolean, townName: String, travelerId: String) = paparazzi.snapshot {
+        val areas = rememberTownAreas()
+        val facts = com.starmist.core.route.ContentPack.parsePostcards(java.io.File("src/main/res/raw/postcard_facts.txt").readLines())
+        val t = areas.towns.first { it.name == townName }
+        val f = facts["${t.county}|${t.name}"]?.get(travelerId)
+        Frame {
+            androidx.compose.foundation.layout.Box(Modifier.fillMaxWidth().aspectRatio(CARD_RATIO)) {
+                if (back) PostcardBack(t, Travelers.byId(travelerId)!!, f, Modifier.fillMaxSize()) else PostcardFront(t, f, Modifier.fillMaxSize())
+            }
+        }
+    }
+
+    @Test fun postcard_front() = faceShot(false, "平溪區", "atie")
+    @Test fun postcard_back() = faceShot(true, "平溪區", "atie")
+    @Test fun postcard_back_long() = faceShot(true, "仁愛鄉", "ahbo")
 }

@@ -12,17 +12,17 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.Composable
 
-/** Page numbers used by the bar: today 0, stats 1, settings 2, collection 3. */
+/** Page numbers used by the bar: today 0, stats 1, settings 2, collection 3. Each part has its own colour, so one glance tells where you are. */
 @Composable
 fun AppBottomBar(selected: Int, onSelect: (Int) -> Unit) {
-    val colors = NavigationBarItemDefaults.colors(
-        indicatorColor = Vintage.brassLight, selectedIconColor = Vintage.ink, selectedTextColor = Vintage.ink,
+    fun colors(look: TabLook) = NavigationBarItemDefaults.colors(
+        indicatorColor = look.light, selectedIconColor = look.dark, selectedTextColor = look.dark,
         unselectedIconColor = Vintage.inkSoft, unselectedTextColor = Vintage.inkSoft,
     )
     NavigationBar(Modifier.shadowAbove(), containerColor = Vintage.parchmentDark) {
-        NavigationBarItem(selected == 0, { onSelect(0) }, { Icon(Icons.Filled.Home, contentDescription = null) }, label = { Text("今日") }, colors = colors)
-        NavigationBarItem(selected == 3, { onSelect(3) }, { Icon(Icons.Filled.Place, contentDescription = null) }, label = { Text("收藏") }, colors = colors)
-        NavigationBarItem(selected == 1, { onSelect(1) }, { Icon(Icons.Filled.DateRange, contentDescription = null) }, label = { Text("統計") }, colors = colors)
-        NavigationBarItem(selected == 2, { onSelect(2) }, { Icon(Icons.Filled.Settings, contentDescription = null) }, label = { Text("設定") }, colors = colors)
+        NavigationBarItem(selected == 0, { onSelect(0) }, { Icon(Icons.Filled.Home, contentDescription = null) }, label = { Text("今日") }, colors = colors(TabLook.Today))
+        NavigationBarItem(selected == 3, { onSelect(3) }, { Icon(Icons.Filled.Place, contentDescription = null) }, label = { Text("收藏") }, colors = colors(TabLook.Collection))
+        NavigationBarItem(selected == 1, { onSelect(1) }, { Icon(Icons.Filled.DateRange, contentDescription = null) }, label = { Text("統計") }, colors = colors(TabLook.Stats))
+        NavigationBarItem(selected == 2, { onSelect(2) }, { Icon(Icons.Filled.Settings, contentDescription = null) }, label = { Text("設定") }, colors = colors(TabLook.Settings))
     }
 }
