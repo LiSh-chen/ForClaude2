@@ -237,6 +237,7 @@ internal val EN: Map<String, String> = mapOf(
     "五" to "Fri",
     "六" to "Sat",
     "日" to "Sun",
+    "一月" to "Jan", "二月" to "Feb", "三月" to "Mar", "四月" to "Apr", "五月" to "May", "六月" to "Jun", "七月" to "Jul", "八月" to "Aug", "九月" to "Sep", "十月" to "Oct", "十一月" to "Nov", "十二月" to "Dec",
     "點一下翻面" to "Tap to turn over",
     "來自{0}的問候" to "Greetings from {0}",
     "紅章：達成每日目標；紅圈是今天。" to "Red stamp: daily goal reached; the circle is today.",
