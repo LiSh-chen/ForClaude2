@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 /** Page numbers used by the bar: today 0, stats 1, settings 2, collection 3. Each part has its own colour, so one glance tells where you are. */
 @Composable
 fun AppBottomBar(selected: Int, onSelect: (Int) -> Unit) {
-    fun colors(look: TabLook) = NavigationBarItemDefaults.colors(
+    @Composable fun colors(look: TabLook) = NavigationBarItemDefaults.colors(
         indicatorColor = look.light, selectedIconColor = look.dark, selectedTextColor = look.dark,
         unselectedIconColor = Vintage.inkSoft, unselectedTextColor = Vintage.inkSoft,
     )

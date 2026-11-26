@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -55,7 +56,7 @@ internal fun DeskCalendar(v: StatVisual.Heat, modifier: Modifier = Modifier) {
             val w = size.width - 2 * x
             val h = size.height - top - 10.dp.toPx()
             for ((dy, deg, col) in listOf(Triple(9.dp, 0.8f, Color(0xFFE9DEBF)), Triple(5.dp, -0.6f, Color(0xFFF3EBD0)))) {
-                androidx.compose.ui.graphics.drawscope.rotate(deg, Offset(size.width / 2, top + h / 2)) { drawRoundRect(col, Offset(x, top + dy.toPx()), Size(w, h), CornerRadius(6.dp.toPx())) }
+                rotate(deg, Offset(size.width / 2, top + h / 2)) { drawRoundRect(col, Offset(x, top + dy.toPx()), Size(w, h), CornerRadius(6.dp.toPx())) }
             }
         }.padding(top = 8.dp, bottom = 10.dp, start = 4.dp, end = 4.dp),
     ) {
