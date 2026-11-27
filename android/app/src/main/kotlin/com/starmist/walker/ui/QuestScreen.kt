@@ -144,7 +144,7 @@ private fun StampTile(title: String, group: String, done: Boolean) {
 
 @Composable
 fun QuestsDialog(quests: List<Quest>, ledger: Ledger, onDismiss: () -> Unit) {
-    Dialog(onDismissRequest = onDismiss) { QuestsSheet(quests, ledger, onDismiss) }
+    Dialog(onDismissRequest = onDismiss) { QuestsSheet(quests, ledger, onClose = onDismiss) }
 }
 
 /** The celebration shown the moment a task is completed. */
