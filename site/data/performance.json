@@ -19637,6 +19637,41 @@
    "theme": null
   },
   {
+   "date": "2026-11-16",
+   "ticker": "1590.TW",
+   "name": "亞德客-KY",
+   "market": "TW",
+   "sector": "robotics_auto",
+   "entry": 1055.0,
+   "entry_fixed": false,
+   "target": 1523.64,
+   "target_upside": 0.4442,
+   "stop": 905.71,
+   "expected_ret_now": 0.011831218807129451,
+   "ret_vs_expected": -0.08197339890191613,
+   "n_days": 8,
+   "r5": -0.10521327014218007,
+   "a5": -0.002187455056697707,
+   "r20": null,
+   "a20": null,
+   "r60": null,
+   "a60": null,
+   "r120": null,
+   "a120": null,
+   "rlast": -0.07014218009478668,
+   "alast": -0.024131801520489105,
+   "max_dd": -0.11090047393364932,
+   "max_high": 0.018957345971563955,
+   "min_low": -0.18862559241706156,
+   "last_price": 981.0,
+   "last_date": "2026-11-26",
+   "stop_hit": true,
+   "target_hit": false,
+   "params_version": 2,
+   "book": "bargain",
+   "theme": null
+  },
+  {
    "date": "2026-11-17",
    "ticker": "3661.TW",
    "name": "世芯-KY",
@@ -19666,6 +19701,41 @@
    "last_price": 3735.0,
    "last_date": "2026-11-26",
    "stop_hit": false,
+   "target_hit": false,
+   "params_version": 2,
+   "book": "bargain",
+   "theme": null
+  },
+  {
+   "date": "2026-11-17",
+   "ticker": "1590.TW",
+   "name": "亞德客-KY",
+   "market": "TW",
+   "sector": "robotics_auto",
+   "entry": 1045.0,
+   "entry_fixed": false,
+   "target": 1490.15,
+   "target_upside": 0.426,
+   "stop": 888.57,
+   "expected_ret_now": 0.009985983481496596,
+   "ret_vs_expected": -0.07123000262025259,
+   "n_days": 7,
+   "r5": -0.009569377990430672,
+   "a5": -0.010323695684646639,
+   "r20": null,
+   "a20": null,
+   "r60": null,
+   "a60": null,
+   "r120": null,
+   "a120": null,
+   "rlast": -0.06124401913875599,
+   "alast": -0.03779050681654483,
+   "max_dd": -0.1023923444976077,
+   "max_high": 0.028708133971291794,
+   "min_low": -0.18086124401913872,
+   "last_price": 981.0,
+   "last_date": "2026-11-26",
+   "stop_hit": true,
    "target_hit": false,
    "params_version": 2,
    "book": "bargain",
@@ -20774,10 +20844,18 @@
   },
   {
    "book": "bargain",
+   "date": "2026-11-16",
+   "n": 1,
+   "avg_ret": -0.07014218009478668,
+   "avg_alpha": -0.024131801520489105,
+   "n_days": 8
+  },
+  {
+   "book": "bargain",
    "date": "2026-11-17",
-   "n": 2,
-   "avg_ret": 0.050131625914278444,
-   "avg_alpha": 0.06479001998442724,
+   "n": 3,
+   "avg_ret": 0.013006410896600299,
+   "avg_alpha": 0.03059651105076988,
    "n_days": 7
   },
   {
@@ -20914,11 +20992,11 @@
   },
   "bargain": {
    "5": {
-    "n": 7,
-    "avg_ret": -0.041537974830959855,
-    "avg_alpha": -0.028829244576699616,
-    "win": 0.42857142857142855,
-    "win_alpha": 0.42857142857142855
+    "n": 8,
+    "avg_ret": -0.049497386744862384,
+    "avg_alpha": -0.025499020886699378,
+    "win": 0.375,
+    "win_alpha": 0.375
    },
    "20": {
     "n": 5,
@@ -21041,11 +21119,11 @@
  "bargain": {
   "summary": {
    "5": {
-    "n": 53,
-    "avg_ret": -0.03422817509175481,
-    "avg_alpha": -0.018246011828930236,
-    "win": 0.3584905660377358,
-    "win_alpha": 0.39622641509433965
+    "n": 55,
+    "avg_ret": -0.0350704714181021,
+    "avg_alpha": -0.017809995957720853,
+    "win": 0.34545454545454546,
+    "win_alpha": 0.38181818181818183
    },
    "20": {
     "n": 41,
@@ -21069,7 +21147,7 @@
     "win_alpha": null
    }
   },
-  "n": 60
+  "n": 62
  },
  "macro": {
   "rows": [
