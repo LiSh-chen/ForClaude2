@@ -16,8 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -95,7 +93,6 @@ private fun groupColor(group: String): Color = when (group) {
 private fun groupMark(group: String) = when (group) { "里程碑" -> "★"; "縣市・景點" -> "景"; "縣市・足跡" -> "足"; "區域" -> "區"; else -> "題" }
 
 /** Every task is a stamp: the ones done are printed in colour, the others are an empty frame waiting for it. */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun StampAlbum(stamps: List<Pair<Quest, Boolean>>, titles: List<String>) {
     val have = stamps.count { it.second }
@@ -111,9 +108,11 @@ internal fun StampAlbum(stamps: List<Pair<Quest, Boolean>>, titles: List<String>
             item(key = "sg_$group") {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     RibbonHeader(tr(group))
-                    FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), maxItemsInEachRow = 3) {
-                        list.forEach { (q, done) -> Box(Modifier.weight(1f)) { StampTile(tr(q.title), group, done) } }
-                        repeat((3 - list.size % 3) % 3) { Box(Modifier.weight(1f)) }
+                    list.chunked(3).forEach { rowList ->
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            rowList.forEach { (q, done) -> Box(Modifier.weight(1f)) { StampTile(tr(q.title), group, done) } }
+                            repeat(3 - rowList.size) { Box(Modifier.weight(1f)) }
+                        }
                     }
                 }
             }
