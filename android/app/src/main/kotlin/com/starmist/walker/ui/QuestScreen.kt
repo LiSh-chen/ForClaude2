@@ -99,11 +99,12 @@ private fun groupMark(group: String) = when (group) { "里程碑" -> "★"; "縣
 @Composable
 internal fun StampAlbum(stamps: List<Pair<Quest, Boolean>>, titles: List<String>) {
     val have = stamps.count { it.second }
+    val titleNames = titles.map { tr(it) }
     LazyColumn(Modifier.heightIn(max = 480.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(trf("已收集 {0} / {1} 枚", have, stamps.size), fontFamily = QUILL, fontSize = 15.sp, color = SEPIA)
-                Text(if (titles.isEmpty()) tr("稱號：還沒有（完成里程碑任務可以得到）") else trf("稱號：{0}", titles.joinToString("・") { tr(it) }), fontFamily = QUILL, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = INK_RED)
+                Text(if (titles.isEmpty()) tr("稱號：還沒有（完成里程碑任務可以得到）") else trf("稱號：{0}", titleNames.joinToString("・")), fontFamily = QUILL, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = INK_RED)
             }
         }
         stamps.groupBy { it.first.group }.forEach { (group, list) ->
