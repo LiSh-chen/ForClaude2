@@ -72,6 +72,11 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
         Frame { QuestsSheet(quests, ledger.copy(done = done), startOnAlbum = true) {} }
     }
 
+    @Test fun stamps_counties() = paparazzi.snapshot {
+        val quests = QuestCatalog.build(rememberTownAreas(), rememberTownBlurbs()).filter { it.group.startsWith("縣市") }.take(9)
+        Frame { androidx.compose.foundation.layout.Box(Modifier.padding(8.dp)) { StampAlbum(quests.mapIndexed { i, q -> q to (i != 4) }, listOf("背包旅人")) } }
+    }
+
     @Test fun quest_celebration() = paparazzi.snapshot {
         Frame { QuestCelebrationSheet("北台灣經典", "集齊：台北101、基隆廟口、九份、福隆", "郵票 ×2", onPostcards = {}, onDismiss = {}) }
     }

@@ -142,7 +142,7 @@ private fun StampTile(title: String, group: String, done: Boolean, county: List<
                 drawRect(color.copy(alpha = if (done) 0.8f else 0.5f), Offset(7.dp.toPx(), 7.dp.toPx()), androidx.compose.ui.geometry.Size(size.width - 14.dp.toPx(), size.height - 14.dp.toPx()), style = androidx.compose.ui.graphics.drawscope.Stroke(1.2.dp.toPx(), pathEffect = if (done) null else androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 4.dp.toPx()))))
             }
             if (county.isNotEmpty()) CountyShape(county, color.copy(alpha = 0.55f), color, Modifier.fillMaxWidth().aspectRatio(0.82f).padding(12.dp))
-            else Text(if (done) groupMark(group) else "？", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 26.sp, color = if (done) color else Vintage.edge.copy(alpha = 0.7f), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+            else Text(if (done) groupMark(group) else "?", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 26.sp, color = if (done) color else Vintage.edge.copy(alpha = 0.7f), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         }
         Text(if (done) title else "？？？", fontFamily = QUILL, fontSize = 11.sp, textAlign = TextAlign.Center, color = if (done) Vintage.ink else Vintage.inkSoft, maxLines = 2)
     }
