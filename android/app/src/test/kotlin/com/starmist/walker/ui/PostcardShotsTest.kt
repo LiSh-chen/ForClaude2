@@ -68,7 +68,7 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
             cards = setOf("taipei101", "keelung", "jiufen", "fulong", "toucheng", "sandiaojiao", "ruisui", "shuishang"),
             towns = blurbs.keys.take(14).toSet(), earned = 3,
         )
-        val done = quests.filter { QuestEngine.progress(it, ledger.cards, ledger.towns).done }.map { it.id }.toSet() + setOf("ms_cards_5", "ms_cards_10", "ms_towns_10")
+        val done = quests.filter { QuestEngine.progress(it, ledger.cards, ledger.towns).done }.map { it.id }.toSet() + setOf("ms_cards_5", "ms_cards_10", "ms_towns_10") + quests.filter { it.id.startsWith("cards:") || it.id.startsWith("towns:") }.take(6).map { it.id }
         Frame { QuestsSheet(quests, ledger.copy(done = done), startOnAlbum = true) {} }
     }
 

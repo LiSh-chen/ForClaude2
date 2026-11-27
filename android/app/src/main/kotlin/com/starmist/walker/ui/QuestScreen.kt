@@ -97,6 +97,7 @@ private fun groupMark(group: String) = when (group) { "里程碑" -> "★"; "縣
 internal fun StampAlbum(stamps: List<Pair<Quest, Boolean>>, titles: List<String>) {
     val have = stamps.count { it.second }
     val titleNames = titles.map { tr(it) }
+    val areas = rememberTownAreas()
     LazyColumn(Modifier.heightIn(max = 480.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -110,7 +111,11 @@ internal fun StampAlbum(stamps: List<Pair<Quest, Boolean>>, titles: List<String>
                     RibbonHeader(tr(group))
                     list.chunked(3).forEach { rowList ->
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            rowList.forEach { (q, done) -> Box(Modifier.weight(1f)) { StampTile(tr(q.title), group, done) } }
+                            rowList.forEach { (q, done) ->
+                                val county = if (group.startsWith("縣市")) q.id.substringAfter(':') else null
+                                val towns = if (county != null && done) areas.towns.filter { it.county == county } else emptyList()
+                                Box(Modifier.weight(1f)) { StampTile(tr(q.title), group, done, towns) }
+                            }
                             repeat(3 - rowList.size) { Box(Modifier.weight(1f)) }
                         }
                     }
@@ -121,7 +126,7 @@ internal fun StampAlbum(stamps: List<Pair<Quest, Boolean>>, titles: List<String>
 }
 
 @Composable
-private fun StampTile(title: String, group: String, done: Boolean) {
+private fun StampTile(title: String, group: String, done: Boolean, county: List<TownArea> = emptyList()) {
     val color = if (done) groupColor(group) else Vintage.edge
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(3.dp)) {
         Box(Modifier.fillMaxWidth().aspectRatio(0.82f), contentAlignment = Alignment.Center) {
@@ -136,7 +141,8 @@ private fun StampTile(title: String, group: String, done: Boolean) {
                 while (y < size.height) { drawCircle(Vintage.parchment, r, Offset(0f, y)); drawCircle(Vintage.parchment, r, Offset(size.width, y)); y += gap }
                 drawRect(color.copy(alpha = if (done) 0.8f else 0.5f), Offset(7.dp.toPx(), 7.dp.toPx()), androidx.compose.ui.geometry.Size(size.width - 14.dp.toPx(), size.height - 14.dp.toPx()), style = androidx.compose.ui.graphics.drawscope.Stroke(1.2.dp.toPx(), pathEffect = if (done) null else androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 4.dp.toPx()))))
             }
-            Text(if (done) groupMark(group) else "？", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 26.sp, color = if (done) color else Vintage.edge.copy(alpha = 0.7f))
+            if (county.isNotEmpty()) CountyShape(county, color.copy(alpha = 0.55f), color, Modifier.fillMaxWidth().aspectRatio(0.82f).padding(12.dp))
+            else Text(if (done) groupMark(group) else "？", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Black, fontSize = 26.sp, color = if (done) color else Vintage.edge.copy(alpha = 0.7f), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         }
         Text(if (done) title else "？？？", fontFamily = QUILL, fontSize = 11.sp, textAlign = TextAlign.Center, color = if (done) Vintage.ink else Vintage.inkSoft, maxLines = 2)
     }

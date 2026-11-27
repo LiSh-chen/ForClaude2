@@ -57,6 +57,9 @@ internal enum class TabLook(val light: Color, val mid: Color, val dark: Color, v
 /** Which part of the app the composables below are in (the colours of buttons and ribbons follow it). */
 internal val LocalTab = androidx.compose.runtime.staticCompositionLocalOf { TabLook.Today }
 
+/** Room kept free at the right end of the big ribbons, where the bookmark hangs (0 outside a page). */
+internal val LocalBookmarkInset = androidx.compose.runtime.staticCompositionLocalOf { 0.dp }
+
 /** How high a piece of paper is held above what is under it. */
 internal enum class Lift { Rest, Raised, Lifted }
 
@@ -74,7 +77,7 @@ internal fun Modifier.softShadow(lift: Lift, corner: Dp = 10.dp): Modifier = if 
 @Composable
 internal fun PaperPage(padding: PaddingValues, look: TabLook = TabLook.Today, content: @Composable () -> Unit) {
     val shape = RoundedCornerShape(14.dp)
-    androidx.compose.runtime.CompositionLocalProvider(LocalTab provides look) {
+    androidx.compose.runtime.CompositionLocalProvider(LocalTab provides look, LocalBookmarkInset provides 34.dp) {
         Box(Modifier.fillMaxSize().background(DESK).padding(padding).padding(horizontal = 12.dp, vertical = 10.dp)) {
             Box(Modifier.fillMaxSize().softShadow(Lift.Raised, 14.dp).background(pageColor(look), shape).clip(shape).drawBehind { drawPaper(look) }) { content() }
             Bookmark(look, Modifier.align(Alignment.TopEnd).padding(end = 22.dp))
@@ -177,7 +180,7 @@ internal fun RibbonHeader(title: String, modifier: Modifier = Modifier, small: B
     val brush = if (small) Brush.horizontalGradient(listOf(Vintage.mossLight, Color(0xFFD5E2C8))) else Brush.horizontalGradient(listOf(look.light, look.light.copy(alpha = 0.7f).compositeOver(Color.White)))
     val fold = if (small) Vintage.moss else look.dark
     Row(
-        modifier.fillMaxWidth().padding(start = 9.dp)
+        modifier.fillMaxWidth().padding(start = 9.dp, end = if (small) 0.dp else LocalBookmarkInset.current)
             .softShadow(Lift.Raised, 8.dp)
             .drawBehind {
                 val f = 9.dp.toPx()

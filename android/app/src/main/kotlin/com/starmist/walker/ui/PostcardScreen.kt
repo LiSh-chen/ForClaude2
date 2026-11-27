@@ -72,6 +72,33 @@ internal fun TownShape(t: TownArea, fill: Color, line: Color, modifier: Modifier
     }
 }
 
+/** All the townships of a county drawn together as the county's outline (north up). */
+@Composable
+internal fun CountyShape(towns: List<TownArea>, fill: Color, line: Color, modifier: Modifier = Modifier) {
+    val rings = remember(towns) {
+        val kx = cos(towns.map { it.lat }.average() * PI / 180).toFloat()
+        towns.flatMap { t -> t.rings.map { r -> (0 until r.size step 2).map { i -> (r[i + 1].toFloat() * kx) to r[i].toFloat() } } }
+    }
+    if (rings.isEmpty()) return
+    val b = remember(rings) { rings.flatten().let { p -> Bounds(p.minOf { it.first }, p.maxOf { it.first }, p.minOf { it.second }, p.maxOf { it.second }) } }
+    Canvas(modifier) {
+        val s = min(size.width / b.w, size.height / b.h) * 0.9f
+        val ox = (size.width - b.w * s) / 2f
+        val oy = (size.height - b.h * s) / 2f
+        for (ring in rings) {
+            val p = Path()
+            ring.forEachIndexed { i, pt ->
+                val x = ox + (pt.first - b.x0) * s
+                val y = oy + (b.y1 - pt.second) * s
+                if (i == 0) p.moveTo(x, y) else p.lineTo(x, y)
+            }
+            p.close()
+            drawPath(p, fill)
+            drawPath(p, line, style = Stroke(width = 0.8.dp.toPx()))
+        }
+    }
+}
+
 private class Bounds(val x0: Float, val x1: Float, val y0: Float, val y1: Float) {
     val w: Float get() = (x1 - x0).coerceAtLeast(1e-6f)
     val h: Float get() = (y1 - y0).coerceAtLeast(1e-6f)

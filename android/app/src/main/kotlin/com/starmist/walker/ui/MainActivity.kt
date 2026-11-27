@@ -28,6 +28,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -185,12 +186,25 @@ private fun AppRoot(vm: AppViewModel = viewModel(factory = appViewModelFactory(L
         snackbarHost = { SnackbarHost(snackbar) },
         bottomBar = { AppBottomBar(selected = if (showDiagnostics) 2 else tab, onSelect = { tab = it; showDiagnostics = false }) },
     ) { padding ->
-        when {
-            showDiagnostics -> DiagnosticsScreen(vm, padding, openAppSettings)
-            tab == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings, onOpenCard = { openCard = it }, onOpenPoi = { openPoi = it }, onOpenStation = { openStation = it })
-            tab == 1 -> StatsScreen(vm, current, padding)
-            tab == 3 -> RouteScreen(vm, current, padding)
-            else -> SettingsScreen(vm, current, padding, onOpenDiagnostics = { showDiagnostics = true })
+        // turning to another page: the new one slides in a little from the side it lies on, the old one fades out
+        val order = listOf(0, 3, 1, 2)
+        val page = if (showDiagnostics) 2 else tab
+        androidx.compose.animation.AnimatedContent(
+            targetState = page,
+            transitionSpec = {
+                val dir = if (order.indexOf(targetState) >= order.indexOf(initialState)) 1 else -1
+                (androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(240)) + androidx.compose.animation.slideInHorizontally(androidx.compose.animation.core.tween(280)) { dir * it / 7 }) togetherWith
+                    androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(140))
+            },
+            label = "page",
+        ) { shown ->
+            when {
+                showDiagnostics && shown == 2 -> DiagnosticsScreen(vm, padding, openAppSettings)
+                shown == 0 -> HomeScreen(vm, current, padding, requestPermission, openAppSettings, onOpenCard = { openCard = it }, onOpenPoi = { openPoi = it }, onOpenStation = { openStation = it })
+                shown == 1 -> StatsScreen(vm, current, padding)
+                shown == 3 -> RouteScreen(vm, current, padding)
+                else -> SettingsScreen(vm, current, padding, onOpenDiagnostics = { showDiagnostics = true })
+            }
         }
     }
 }

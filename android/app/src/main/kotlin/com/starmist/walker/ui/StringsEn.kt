@@ -249,6 +249,7 @@ internal val EN: Map<String, String> = mapOf(
     "稱號：還沒有（完成里程碑任務可以得到）" to "Title: none yet (earned by milestone quests)", "稱號：{0}" to "Title: {0}",
     "環島收藏家" to "Island Collector", "環島老手" to "Island Veteran", "資深行腳" to "Seasoned Walker", "背包旅人" to "Backpacker", "初出茅廬" to "Greenhorn",
     "足跡遍地" to "Footprints Everywhere", "鄉鎮探險家" to "Town Explorer", "小鎮散步客" to "Town Stroller",
+    "縣市" to "County",
     "點一下翻面" to "Tap to turn over",
     "來自{0}的問候" to "Greetings from {0}",
     "紅章：達成每日目標；紅圈是今天。" to "Red stamp: daily goal reached; the circle is today.",
