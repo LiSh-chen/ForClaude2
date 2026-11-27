@@ -276,7 +276,12 @@ class AppViewModel(private val container: AppServices) : ViewModel() {
             val town = townFor(travelerId, l.unlocked + l.pending.map { it.split('>')[1] }, l.unlocked.size + l.used)
                 ?: run { _message.value = I18n.tr("他還沒有新的地方可以寄，之後再寄給他吧。"); return@launch }
             val due = minOf(walked + com.starmist.core.route.Travelers.REPLY_KM, route.totalKm)
-            if (container.collection.send(travelerId, town, due)) _message.value = I18n.tr("明信片寄出了！再走一小段路，他就會回信。")
+            if (container.collection.send(travelerId, town, due)) {
+                val points = container.collection.current().friendship[travelerId] ?: 0
+                val name = com.starmist.core.route.Travelers.byId(travelerId)?.name ?: ""
+                _message.value = if (points in com.starmist.core.route.Travelers.STORY_AT) I18n.trf("明信片寄出了！友誼 ♥{0}：{1}說了一則自己的小故事，在旅人信箱裡看。", points, name)
+                else I18n.tr("明信片寄出了！再走一小段路，他就會回信。")
+            }
         }
     }
 

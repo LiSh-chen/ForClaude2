@@ -30,6 +30,14 @@ class TravelerTest {
         assertTrue(ev.first() is TravelerEvent.Met, shown)
     }
 
+    @Test fun everyFriendHasAStoryForEachStepAndThreeThingsToWrite() {
+        for (t in Travelers.all) {
+            assertEquals(Travelers.STORY_AT.size, Travelers.stories(t.id).size, t.id)
+            assertEquals(3, Travelers.cheers(t.id).size, t.id)
+            (Travelers.stories(t.id) + Travelers.cheers(t.id)).forEach { assertTrue(it.length in 10..140, "${t.id}: $it") }
+        }
+    }
+
     @Test fun nothingIsRepeatedOnceRecorded() {
         val all = Travelers.all.map { it.id }.toSet()
         assertTrue(Travelers.due(forward, forward.totalKm, all, all, emptySet()).none { it is TravelerEvent.Met || it is TravelerEvent.BecameFriend })

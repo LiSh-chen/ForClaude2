@@ -49,7 +49,7 @@ class I18nTest {
 
     @Test fun every_chinese_text_in_the_code_has_its_english() {
         // not texts to translate: the marks drawn on the walker, the invisible spacer, the name of the language in its own words
-        val skip = setOf("呼", "景", "中文", "今", "藏", "計", "設")
+        val skip = setOf("呼", "景", "中文", "今", "藏", "計", "設", "足", "區", "題")
         val files = File("src/main/kotlin").walkTopDown().filter { it.extension == "kt" && it.name != "StringsEn.kt" && it.name != "TownAreas.kt" }.toList()
         assertTrue("source files not found", files.isNotEmpty())
         val missing = files.flatMap { f -> literals(f.readText()).filter { it !in EN && it !in skip }.map { "${f.name}: $it" } }

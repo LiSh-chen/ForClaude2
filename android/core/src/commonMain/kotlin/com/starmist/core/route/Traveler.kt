@@ -85,6 +85,39 @@ object Travelers {
     /** Kilometres to walk after sending a postcard to a friend before the friend's answer comes. */
     const val REPLY_KM = 20.0
 
+    /** The friendship points at which a friend tells one more of their own stories. */
+    val STORY_AT = listOf(3, 6, 10)
+
+    /** Small stories a friend tells about themselves, one for each of [STORY_AT]. */
+    fun stories(id: String): List<String> = when (id) {
+        "xipo" -> listOf(
+            "年輕時我第一次出海，吐得比魚還多。老船長只說：看遠處，別看浪。到現在我走路累了，也還是這樣告訴自己。",
+            "我的羅盤是老船長送的，玻璃裂了一道，我捨不得換。每次迷路，它還是指得比手機準。",
+            "退休那天我把制服洗乾淨收進箱子，結果隔天又穿出門散步。你說，海這種東西，是不是戒不掉？",
+        )
+        "ahbo" -> listOf(
+            "我拍過最好的一張照片，是等了三個早上的結果。前兩天都是霧，但我沒白等，因為霧裡的山有另一種樣子。",
+            "有次為了拍雲海，我天沒亮就上山，結果忘了帶腳架。只好把相機架在背包上，反而拍出很穩的一張。",
+            "我的第一台相機是二手的，快門會卡。後來我習慣多按一次，現在換了新相機，還是會多按一次。",
+        )
+        "xiaohe" -> listOf(
+            "我騎單車看田，最怕下雨天的泥巴路。有一次連人帶車滑進水溝，農夫伯伯反而笑著把我拉起來。",
+            "我在筆記本上畫過二十幾種稻穗，每一種都不太一樣。老師說我畫得比寫報告認真，我覺得這是稱讚。",
+            "有個阿嬤塞給我一袋剛採的菜，說「學生仔，吃飽才有力氣騎車」。我到現在還記得那個味道。",
+        )
+        "atie" -> listOf(
+            "我第一次追火車是小學，站在平交道旁等了兩個小時，就為了看那一班。看到的時候，我整個人都在發抖。",
+            "我有個小本子，記每一班列車的車號。同伴笑我像在集郵，我說差不多啦，只是我的郵票會跑。",
+            "有一次錯過末班車，我在小站的長椅睡了一晚。早上第一班車進站的聲音，比任何鬧鐘都好聽。",
+        )
+        "momo" -> listOf(
+            "我的速寫本第一頁是一棵歪歪的樹。我一直沒撕掉它，因為每次翻到，就想起自己為什麼開始畫。",
+            "畫畫最難的不是畫像，是畫「感覺」。有次我畫了一整個下午的海，最後只留下三條線，但那三條線最像。",
+            "我把你走過的路，一段一段記在本子最後幾頁。等你走完，我想把它們拼成一張很長的畫送你。",
+        )
+        else -> emptyList()
+    }
+
     /** Three things to write on a postcard to this friend, each in the way you would write to them. */
     fun cheers(id: String): List<String> = when (id) {
         "xipo" -> listOf("船長，我又走了一段，腳還硬朗！", "今天風不大，適合慢慢走。", "沿路的海味我都記著，等你回信講講你那邊的。")

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
+import com.starmist.core.route.QuestEngine
 import com.starmist.core.route.Travelers
 import com.starmist.walker.data.Ledger
 import org.junit.Test
@@ -31,7 +32,7 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
     @Test fun travelers_page() = paparazzi.snapshot {
         val areas = rememberTownAreas()
         val a = areas.pick("阿里山鄉", "桃源區")
-        Frame { PostcardsSheet(1, rows, listOf(MailRow(a[0], Travelers.byId("ahbo"), null), MailRow(a.last(), Travelers.byId("xiaohe"), null)), {}, {}, {}) }
+        Frame { PostcardsSheet(1, rows, listOf(MailRow(a[0], Travelers.byId("ahbo"), null), MailRow(a.last(), Travelers.byId("xiaohe"), null)), {}, {}, {}, {}) }
     }
 
     @Test fun travelers_all() = paparazzi.snapshot {
@@ -57,6 +58,18 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
             towns = blurbs.keys.take(14).toSet(), earned = 3,
         )
         Frame { QuestsSheet(quests, ledger) {} }
+    }
+
+    @Test fun quests_album() = paparazzi.snapshot {
+        val areas = rememberTownAreas()
+        val blurbs = rememberTownBlurbs()
+        val quests = QuestCatalog.build(areas, blurbs)
+        val ledger = Ledger(
+            cards = setOf("taipei101", "keelung", "jiufen", "fulong", "toucheng", "sandiaojiao", "ruisui", "shuishang"),
+            towns = blurbs.keys.take(14).toSet(), earned = 3,
+        )
+        val done = quests.filter { QuestEngine.progress(it, ledger.cards, ledger.towns).done }.map { it.id }.toSet() + setOf("ms_cards_5", "ms_cards_10", "ms_towns_10")
+        Frame { QuestsSheet(quests, ledger.copy(done = done), startOnAlbum = true) {} }
     }
 
     @Test fun quest_celebration() = paparazzi.snapshot {
@@ -87,6 +100,8 @@ class PostcardShotsTest : ShotsBase(DeviceConfig.PIXEL_5) {
             }
         }
     }
+
+    @Test fun stories() = paparazzi.snapshot { Frame { StorySheet(Travelers.byId("atie")!!, 6) {} } }
 
     @Test fun send_postcard() = paparazzi.snapshot { Frame { SendPostcardSheet(Travelers.byId("xipo")!!, {}, {}) } }
 

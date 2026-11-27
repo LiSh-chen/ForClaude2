@@ -122,7 +122,7 @@ internal class MailRow(val town: TownArea, val from: Traveler?, val fact: Postca
 
 /** The postcard page: the travelers (with a button to ask a friend to write when a quest postcard is left) and the postcards received. */
 @Composable
-internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<MailRow>, onSend: (Traveler) -> Unit, onOpen: (TownArea) -> Unit, onClose: () -> Unit) {
+internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<MailRow>, onSend: (Traveler) -> Unit, onStories: (Traveler) -> Unit, onOpen: (TownArea) -> Unit, onClose: () -> Unit) {
     ParchmentSheet {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(tr("旅人與明信片"), fontFamily = QUILL, fontSize = 28.sp, fontWeight = FontWeight.Black, color = INK_RED)
@@ -134,7 +134,7 @@ internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<
                     )
                 }
                 items(travelers, key = { "t_${it.traveler.id}" }) { r ->
-                    PaperCard(Modifier.fillMaxWidth(), if (r.state == 0) Lift.Rest else Lift.Raised, 10.dp) {
+                    PaperCard(Modifier.fillMaxWidth(), if (r.state == 0) Lift.Rest else Lift.Raised, 10.dp, onClick = if (r.state == 2 && r.points >= Travelers.STORY_AT.first()) ({ onStories(r.traveler) }) else null) {
                     Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         TravelerAvatar(r.traveler.id, 52.dp, dim = r.state == 0)
                         Column(Modifier.weight(1f)) {
@@ -143,6 +143,7 @@ internal fun PostcardsSheet(left: Int, travelers: List<TravelerRow>, mine: List<
                                 when (r.state) { 0 -> tr("還沒遇到"); 1 -> trf("認識・{0}", r.traveler.job); else -> trf("朋友・{0}", r.traveler.job) },
                                 fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft,
                             )
+                            if (r.state == 2 && r.points >= Travelers.STORY_AT.first()) Text(trf("小故事 {0} 則（點開來看）", Travelers.STORY_AT.count { it <= r.points }), fontFamily = QUILL, fontSize = 12.sp, color = INK_RED)
                         }
                         if (r.state == 2) {
                             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -193,6 +194,32 @@ internal fun SendPostcardSheet(t: Traveler, onPick: (Int) -> Unit, onClose: () -
     }
 }
 
+/** The stories a friend has told so far (one for each step of friendship), and what the next one needs. */
+@Composable
+internal fun StorySheet(t: Traveler, points: Int, onClose: () -> Unit) {
+    ParchmentSheet {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                TravelerAvatar(t.id, 52.dp)
+                Column {
+                    Text(trf("{0}的小故事", t.name), fontFamily = QUILL, fontSize = 22.sp, fontWeight = FontWeight.Black, color = INK_RED)
+                    Text(trf("友誼 ♥{0}", points), fontFamily = QUILL, fontSize = 13.sp, color = Vintage.inkSoft)
+                }
+            }
+            Travelers.stories(t.id).forEachIndexed { i, story ->
+                val need = Travelers.STORY_AT[i]
+                PaperCard(Modifier.fillMaxWidth(), if (points >= need) Lift.Raised else Lift.Rest, 10.dp) {
+                    Text(
+                        if (points >= need) story else trf("友誼 ♥{0} 時解鎖", need),
+                        fontFamily = QUILL, fontSize = 15.sp, lineHeight = 23.sp, color = if (points >= need) SEPIA else Vintage.inkSoft, modifier = Modifier.padding(12.dp),
+                    )
+                }
+            }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { BrassPill(tr("關閉"), onClose) }
+        }
+    }
+}
+
 /** A postcard that has just come, or one opened again from the list. */
 @Composable
 internal fun PostcardOpenedSheet(t: TownArea, sender: Traveler, fact: PostcardFact?, onClose: () -> Unit) {
@@ -225,6 +252,7 @@ internal fun TravelerMeetSheet(t: Traveler, stage: Int, onClose: () -> Unit) {
 fun PostcardsDialog(vm: AppViewModel, ledger: Ledger, onDismiss: () -> Unit) {
     var opened by remember { mutableStateOf<TownArea?>(null) }
     var sending by remember { mutableStateOf<Traveler?>(null) }
+    var reading by remember { mutableStateOf<Traveler?>(null) }
     val travelers = remember(ledger.met, ledger.friends, ledger.pending, ledger.friendship) {
         Travelers.all.map { TravelerRow(it, if (it.id in ledger.friends) 2 else if (it.id in ledger.met) 1 else 0, it.id in ledger.waiting, ledger.friendship[it.id] ?: 0) }
     }
@@ -237,10 +265,12 @@ fun PostcardsDialog(vm: AppViewModel, ledger: Ledger, onDismiss: () -> Unit) {
     val key = show?.let { "${it.county}|${it.name}" }
     val from = key?.let { ledger.senders[it] }?.let(Travelers::byId)
     val to = sending
-    Dialog(onDismissRequest = { if (to != null) sending = null else if (show != null) opened = null else onDismiss() }) {
-        if (to != null) SendPostcardSheet(to, onPick = { vm.sendPostcard(to.id); onDismiss() }, onClose = { sending = null })
+    val story = reading
+    Dialog(onDismissRequest = { if (story != null) reading = null else if (to != null) sending = null else if (show != null) opened = null else onDismiss() }) {
+        if (story != null) StorySheet(story, ledger.friendship[story.id] ?: 0) { reading = null }
+        else if (to != null) SendPostcardSheet(to, onPick = { vm.sendPostcard(to.id); onDismiss() }, onClose = { sending = null })
         else if (show != null && key != null && from != null) PostcardOpenedSheet(show, from, vm.postcardFact(key, from.id)) { opened = null }
-        else PostcardsSheet(ledger.postcardsLeft, travelers, mine, onSend = { sending = it }, onOpen = { opened = it }, onClose = onDismiss)
+        else PostcardsSheet(ledger.postcardsLeft, travelers, mine, onSend = { sending = it }, onStories = { reading = it }, onOpen = { opened = it }, onClose = onDismiss)
     }
 }
 
