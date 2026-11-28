@@ -11,24 +11,24 @@
    "rank": 1,
    "entry_price": 3595.0,
    "entry_date": "2026-11-27",
-   "composite": 62.74,
+   "composite": 62.72,
    "scores": {
     "sector": 84.3,
     "leader": 16.7,
     "quality": 59.4,
     "growth": 100.0,
-    "valuation": 83.2,
+    "valuation": 83.0,
     "momentum": 30.7,
     "news": 40.0
    },
    "target": {
-    "base": 4740.86,
-    "bull": 6637.21,
-    "bear": 1896.35,
-    "ev": 4409.0,
+    "base": 4736.4,
+    "bull": 6630.96,
+    "bear": 1894.56,
+    "ev": 4404.85,
     "confidence": "中",
-    "upside": 0.3187,
-    "ev_upside": 0.2264,
+    "upside": 0.3175,
+    "ev_upside": 0.2253,
     "horizon_days": 250,
     "methods": {
      "pe": {
@@ -37,9 +37,9 @@
       "upside": -0.005
      },
      "peg": {
-      "value": 6588.24,
+      "value": 6564.43,
       "weight": 0.187,
-      "upside": 0.8326
+      "upside": 0.826
      },
      "consensus": {
       "value": 5494.5,
@@ -51,7 +51,7 @@
    "stop": 2947.9,
    "fundamentals": {
     "market_cap": 310428237824,
-    "pe_ttm": 39.9889,
+    "pe_ttm": 41.5463,
     "pe_fwd": 17.2746,
     "peg": 1.19,
     "roe": 0.1534,
@@ -69,7 +69,7 @@
    "tech": {
     "ret_1m": -0.02309782608695654,
     "ret_3m": -0.08507604990939377,
-    "rel_3m": 0.04468819380408029,
+    "rel_3m": 0.04468823531442745,
     "dist200": -0.040150309841583076,
     "vol_ann": 0.8691687460288781
    },
@@ -83,95 +83,95 @@
     "ret_1m": -0.0231,
     "dist200": -0.0402,
     "pe_discount": -0.0101,
-    "eps_up": 1.3149,
+    "eps_up": 1.4051,
     "rev_growth": 2.965,
-    "upside": 0.3187
+    "upside": 0.3175
    }
   },
   {
-   "ticker": "META",
-   "name": "Meta Platforms, Inc.",
-   "zh_name": "Meta Platforms",
+   "ticker": "COHR",
+   "name": "Coherent Corp.",
+   "zh_name": "Coherent",
    "market": "US",
-   "sector": "internet_platforms",
+   "sector": "networking_optics",
    "rank": 1,
-   "entry_price": 609.89,
-   "entry_date": "2026-11-25",
-   "composite": 64.29,
+   "entry_price": 223.79,
+   "entry_date": "2026-11-27",
+   "composite": 52.18,
    "scores": {
-    "sector": 45.3,
-    "leader": 25.0,
-    "quality": 84.3,
-    "growth": 94.4,
-    "valuation": 79.5,
-    "momentum": 43.8,
-    "news": 62.9
+    "sector": 39.1,
+    "leader": 50.0,
+    "quality": 53.6,
+    "growth": 100.0,
+    "valuation": 60.0,
+    "momentum": 10.4,
+    "news": 71.3
    },
    "target": {
-    "base": 794.16,
-    "bull": 1027.72,
-    "bear": 443.82,
-    "ev": 753.29,
-    "confidence": "高",
-    "upside": 0.3021,
-    "ev_upside": 0.2351,
+    "base": 335.18,
+    "bull": 469.25,
+    "bear": 134.07,
+    "ev": 311.71,
+    "confidence": "中",
+    "upside": 0.4977,
+    "ev_upside": 0.3929,
     "horizon_days": 250,
     "methods": {
      "pe": {
-      "value": 703.62,
+      "value": 260.23,
       "weight": 0.5,
-      "upside": 0.1537
+      "upside": 0.1629
      },
      "peg": {
-      "value": 954.96,
+      "value": 481.78,
       "weight": 0.187,
-      "upside": 0.5658
+      "upside": 1.1528
      },
      "consensus": {
-      "value": 842.54,
+      "value": 367.12,
       "weight": 0.312,
-      "upside": 0.3815
+      "upside": 0.6405
      }
     }
    },
-   "stop": 549.1,
+   "stop": 183.51,
    "fundamentals": {
-    "market_cap": 1559025942528,
-    "pe_ttm": 20.8083,
-    "pe_fwd": 17.0956,
-    "peg": 1.28,
-    "roe": 0.3226,
-    "gross_margin": 0.8103,
-    "op_margin": 0.3778,
-    "net_margin": 0.3115,
-    "rev_growth": 0.261,
-    "eps_growth": 2.648,
-    "de": 0.4216,
-    "beta": 1.279,
-    "target_mean": 842.5366,
-    "n_analysts": 58,
-    "fcf_margin": 0.0697
+    "market_cap": 44077379584,
+    "pe_ttm": 46.3333,
+    "pe_fwd": 14.2076,
+    "peg": 3.13,
+    "roe": 0.0927,
+    "gross_margin": 0.3816,
+    "op_margin": 0.1411,
+    "net_margin": 0.1218,
+    "rev_growth": 0.499,
+    "eps_growth": 0.601,
+    "de": 0.3728,
+    "beta": 2.234,
+    "target_mean": 367.1185,
+    "n_analysts": 25,
+    "fcf_margin": -0.213
    },
    "tech": {
-    "ret_1m": -0.016607793986395114,
-    "ret_3m": 0.06876447065802171,
-    "rel_3m": 0.13967523792056358,
-    "dist200": -0.027068147137837673,
-    "vol_ann": 0.4934619653104473
+    "ret_1m": -0.06594600481347013,
+    "ret_3m": -0.1984599444781221,
+    "rel_3m": -0.1447407488806921,
+    "dist200": -0.24418011143479024,
+    "vol_ann": 1.1151217962877265
    },
    "book": "bargain",
    "also_main": false,
-   "bargain_score": 58.1,
+   "bargain_score": 78.5,
    "facts": {
-    "from_high": -0.2157,
-    "pos52": 0.3366,
-    "bounce20": 0.0875,
-    "ret_1m": -0.0166,
-    "dist200": -0.0271,
-    "pe_discount": 0.15,
-    "eps_up": 0.2172,
-    "rev_growth": 0.261,
-    "upside": 0.3021
+    "from_high": -0.4758,
+    "pos52": 0.2557,
+    "bounce20": 0.3183,
+    "ret_1m": -0.0659,
+    "dist200": -0.2442,
+    "pe_discount": 0.2457,
+    "eps_up": 2.2612,
+    "rev_growth": 0.499,
+    "upside": 0.4977
    }
   }
  ]
