@@ -1,0 +1,32 @@
+{
+  "name": "myth",
+  "title": "每日生活新知",
+  "tagline": "推翻一個常見說法,附上原始論文、做法與證據限制。沒把握的不寫。",
+  "subject_prefix": "生活新知",
+  "mode": "topics",
+  "weights": {
+    "practical": 0.3,
+    "surprise": 0.3,
+    "life": 0.15,
+    "evidence": 0.25
+  },
+  "penalties": {
+    "mainstream": 0.4
+  },
+  "min_score": 50.0,
+  "top": 5,
+  "per_source": 2,
+  "per_category": 2,
+  "enrich": false,
+  "categories": [
+    "健康",
+    "飲食",
+    "居家",
+    "心理",
+    "睡眠",
+    "學習",
+    "親子",
+    "金錢",
+    "數位"
+  ]
+}

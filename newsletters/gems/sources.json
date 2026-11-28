@@ -1,0 +1,17 @@
+{
+  "_comment": "「生活冷知識」來源。刻意偏向小眾/一手來源 (研究新聞稿、科普、冷門專欄),而非主流頭條。weight 為來源品質先驗。網址未經連線驗證,首次執行看日誌 ✓/✗ 後增刪。",
+  "feeds": [
+    {"name": "泛科學 PanSci",        "url": "https://pansci.asia/feed",                                 "weight": 0.8},
+    {"name": "The Conversation",     "url": "https://theconversation.com/global/articles.atom",         "weight": 0.8},
+    {"name": "ScienceDaily",         "url": "https://www.sciencedaily.com/rss/all.xml",                 "weight": 0.7},
+    {"name": "Harvard Health",       "url": "https://www.health.harvard.edu/blog/feed",                 "weight": 0.8},
+    {"name": "Atlas Obscura",        "url": "https://www.atlasobscura.com/feeds/latest",                "weight": 0.6},
+    {"name": "Nautilus",             "url": "https://nautil.us/feed/",                                  "weight": 0.7},
+    {"name": "Undark",               "url": "https://undark.org/feed/",                                 "weight": 0.7},
+    {"name": "Our World in Data",    "url": "https://ourworldindata.org/atom.xml",                      "weight": 0.8},
+    {"name": "Hackaday",             "url": "https://hackaday.com/blog/feed/",                          "weight": 0.6},
+    {"name": "Kottke.org",           "url": "https://feeds.kottke.org/main",                            "weight": 0.6},
+    {"name": "Lobsters",             "url": "https://lobste.rs/rss",                                    "weight": 0.5},
+    {"name": "報導者 The Reporter",   "url": "https://www.twreporter.org/a/rss2.xml",                    "weight": 0.7}
+  ]
+}
